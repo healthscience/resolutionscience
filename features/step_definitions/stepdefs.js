@@ -24,3 +24,28 @@ const { Given, When, Then } = require('cucumber');
     // Write code here that turns the phrase above into concrete actions
     return 'pending';
   });
+
+  Given('The healthscience navigation menu is present', function () {
+           // Write code here that turns the phrase above into concrete actions
+           return 'pending';
+         });
+
+   When('The heart menu link is clicked', function () {
+             // Write code here that turns the phrase above into concrete actions
+             return 'pending';
+           });
+
+   Then('A chart component will be displayed', function () {
+             // Write code here that turns the phrase above into concrete actions
+             return 'pending';
+   });
+
+   When('The simulation menu link is clicked', function () {
+    // Write code here that turns the phrase above into concrete actions
+    return 'pending';
+   });
+
+   Then('A heart simulation component will be displayed', function () {
+      // Write code here that turns the phrase above into concrete actions
+      return 'pending';
+    });

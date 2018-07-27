@@ -20,11 +20,12 @@ const { Given, When, Then } = require('cucumber');
     return 'pending';
   });
 
-  Then('A public\/private key generation completes', function () {
+  Then('A public private key generation completes', function () {
     // Write code here that turns the phrase above into concrete actions
     return 'pending';
   });
 
+<<<<<<< HEAD
   Given('The healthscience navigation menu is present', function () {
            // Write code here that turns the phrase above into concrete actions
            return 'pending';
@@ -49,3 +50,14 @@ const { Given, When, Then } = require('cucumber');
       // Write code here that turns the phrase above into concrete actions
       return 'pending';
     });
+=======
+  When('an IPFS button is clicked', function () {
+    // Write code here that turns the phrase above into concrete actions
+    return 'pending';
+  });
+
+  Then('File content is read', function () {
+     // Write code here that turns the phrase above into concrete actions
+     return 'pending';
+   });
+>>>>>>> upstream/master

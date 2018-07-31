@@ -4,14 +4,21 @@
     <p>
       Settings and Networks
     </p>
-
-    
+    <heart-Plugin></heart-Plugin>
   </div>
 </template>
 
 <script>
-export default {
+import heartPlugin from './healthscience/hsNavHeart'
 
+export default {
+  name: 'heart-page',
+  components: { heartPlugin },
+  methods: {
+    open (link) {
+      this.$electron.shell.openExternal(link)
+    }
+  }
 }
 </script>
 

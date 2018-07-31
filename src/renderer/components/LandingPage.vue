@@ -26,10 +26,11 @@
 
 <script>
   import SystemInformation from './LandingPage/SystemInformation'
+  import heartPlugin from '././healthscience/hsNavHeart'
 
   export default {
     name: 'landing-page',
-    components: { SystemInformation },
+    components: { SystemInformation, heartPlugin },
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)

@@ -7,9 +7,9 @@ describe('Account.vue', () => {
       el: document.createElement('div'),
       render: h => h(Account)
     }).$mount()
-console.log('selector')
-console.log(vm.$el)
-console.log(vm.$el.querySelector('#account'))
-//    expect(vm.$el.querySelectorAll('#account').length).to(1)
+    console.log('selector')
+    console.log(vm.$el)
+    console.log(vm.$el.querySelector('#account'))
+  //    expect(vm.$el.querySelectorAll('#account').length).to(1)
   })
 })

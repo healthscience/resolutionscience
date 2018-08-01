@@ -16,9 +16,10 @@
         <h3>Bubble Chart</h3>
         <!--<bubble-chart></bubble-chart>-->
       </div>
-      <div class="column">
+      <div id="heart-chart" class="column">
         <h3>Reactivity - Live update upon change in datasets</h3>
-        <reactive :chart-data="datacollection"></reactive>
+        <reactive :chart-data="datacollection" :width="1200" :height="600"></reactive>
+        <button class="button is-primary" @click="fillData(0)">One day</button>
         <button class="button is-primary" @click="fillData(1)">One month</button>
         <button class="button is-primary" @click="fillData(2)">Two months</button>
         <button class="button is-primary" @click="fillData(3)">Three months</button>
@@ -53,10 +54,7 @@
       }
     },
     created () {
-      this.fillData(1)
-    },
-    mounted () {
-      this.fillData(1)
+      this.fillData(0)
     },
     methods: {
       fillData (seg) {
@@ -71,14 +69,15 @@
             datasets: [
               {
                 label: 'Heart Beats Per Minute',
-                backgroundColor: '#f87979',
+                backgroundColor: '#ed7d7d',
+                borderColor: '#ea1212',
                 data: localthis.heartback
               }
             ]
           }
           console.log(localthis.datacollection)
         }
-        this.liveFlow.getData(seg, callbackD)
+        this.liveFlow.getData(seg, '"E3:30:80:7A:77:B5', callbackD)
       }
     }
   }
@@ -97,5 +96,9 @@
 
   a {
     color: #42b983;
+  }
+
+  #heart-chart {
+    width: 1200px;
   }
 </style>

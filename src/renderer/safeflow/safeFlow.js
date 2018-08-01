@@ -71,25 +71,135 @@ safeFlow.prototype.dataOut = function () {
 * @method getData
 *
 */
-safeFlow.prototype.getData = function (seg, callback) {
-  var dataholder = {}
-  var dataheart = []
-  var datalabel = []
-  axios.get('http://165.227.244.213:8881/heartdata//pubkey/token' + seg)
+safeFlow.prototype.getData = function (seg, sensor, callback) {
+  // need source, devices, data
+  let deviceID = sensor
+  let queryTime = this.timeUtility(seg)
+  let dataTypes = this.dataTypes(deviceID)
+  console.log(queryTime)
+  console.log('http://165.227.244.213:8881/heartdata/publickey/token' + queryTime)
+  var dataRaw = []
+  // var dataRawlabel = []
+  axios.get('http://165.227.244.213:8881/heartdata/publickey/token' + queryTime)
     .then((resp) => {
-      resp.data.forEach(function (couple) {
-        var mString = moment(couple.timestamp * 1000).format('MM-DD-YYYY')
-        datalabel.push(mString)
-        dataheart.push(3)
+      // console.log(resp.data)
+      let chunkData = this.chunkUtilty(resp.data)
+      chunkData[0].forEach(function (couple) {
+        var mString = moment(couple.timestamp * 1000).format('YYYY-MM-DD hh:mm')
+        dataRaw.push([couple.heartrate, mString, couple.compref, couple.deviceid, couple.publickey, couple.steps])
+        // dataRawheart.push(couple.heartrate)
       })
-      dataholder.labels = datalabel
-      dataholder.datasets = dataheart
-      console.log(dataholder)
-      callback(dataholder)
+      //  need to pass to Tidy data before returning
+      let tidyHeartData = this.tidyHeart(dataRaw)
+      // what data structure was asked for?
+      let structureReturn = this.structureData('chartjs', dataTypes, tidyHeartData)
+      callback(structureReturn)
     })
     .catch((err) => {
       console.log(err)
     })
+}
+
+/**
+* Data Types linked to Devices/Data Source/ Storage
+* @method dataTypes
+*
+*/
+safeFlow.prototype.dataTypes = function (sourceID) {
+  // get detail on spec for data source
+  // Protocol Standard roughttime opentimestart, network protocol standard ie interna design choices
+  let dataProtocolCall = 'DaMaHub.org/resolve/' + sourceID
+
+  return dataProtocolCall
+}
+
+/**
+* Date and Time
+* @method timeUtility
+*
+*/
+safeFlow.prototype.timeUtility = function (seg) {
+  //  turn segment into time query profile
+  let startMonth
+  if (seg === 0) {
+    // asking for one 24 display
+    const nowTime = moment()
+    startMonth = moment(nowTime).subtract(1, 'day').format('YYYY-MM-DD hh:mm')
+  } else {
+    const startOfMonth = moment().startOf('month').format('YYYY-MM-DD hh:mm')
+    //  const endOfMonth = moment().endOf('month').format('YYYY-MM-DD hh:mm')
+    //  reset the day to first of momoth adjust month for segment required
+    if (seg === 1) {
+      startMonth = startOfMonth
+    } else {
+      let adSeg = seg - 1
+      startMonth = moment(startOfMonth).subtract(adSeg, 'months').format('YYYY-MM-DD hh:mm')
+    }
+  }
+  //  get the micro time for start of month date and pass to query
+  let startQuerytime = moment(startMonth).valueOf()
+  let timestamp = startQuerytime / 1000
+  return timestamp
+}
+
+/**
+* Chunck data
+* @method chunkUtilty
+*
+*/
+safeFlow.prototype.chunkUtilty = function (dataIn) {
+  let perChunk = 1440 // items per chunk
+  var resultArrayHolder = []
+  let inputArray = dataIn // ['a', 'b', 'c', 'd', 'e']
+  resultArrayHolder = inputArray.reduce((resultArray, item, index) => {
+    const chunkIndex = Math.floor(index / perChunk)
+    if (!resultArray[chunkIndex]) {
+      resultArray[chunkIndex] = [] // start a new chunk
+    }
+    resultArray[chunkIndex].push(item)
+    return resultArray
+  }, [])
+  // result: [['a','b'], ['c','d'], ['e']]
+  // console.log(resultArrayHolder)
+  return resultArrayHolder
+}
+
+/**
+* Tidy Heart Data
+* @method tidyHeart
+*
+*/
+safeFlow.prototype.tidyHeart = function (heartIn) {
+  // console.log(heartIn)
+  let cleanHeart = []
+  // need to import error codes from device/mobile app
+  // let errorCodes = [255]
+  // iterate over arrays and remove both time and BMP number keep track of error Account
+  cleanHeart = heartIn.filter(function (item) { return item[0] !== 255 })
+  console.log(cleanHeart)
+  return cleanHeart
+}
+
+/**
+* return the data structure requested
+* @method structureData
+*
+*/
+safeFlow.prototype.structureData = function (structureAsked, dataTypes, dataIn) {
+  let dataholder = {}
+  let datalabel = []
+  let dataheart = []
+  if (structureAsked === 'chartjs') {
+    // loop through and build two sperate arrays
+    dataIn.forEach(function (couple) {
+      datalabel.push(couple[1])
+      dataheart.push(couple[0])
+    })
+    dataholder.labels = datalabel
+    dataholder.datasets = dataheart
+    console.log(dataholder)
+  }
+  return dataholder
 }
 
 module.exports = safeFlow

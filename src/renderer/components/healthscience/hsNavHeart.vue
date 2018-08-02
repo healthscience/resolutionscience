@@ -17,7 +17,18 @@
         <!--<bubble-chart></bubble-chart>-->
       </div>
       <div id="heart-chart" class="column">
+        <h1>Select Device/Sensor Data:</h1>
+        <ul>
+          <li>
+            <header>Device - <a class="" href="" id="E3:30:80:7A:77:B5" @click.prevent="selectContext(device1)" v-bind:class="{ 'active': device1.active}">{{ device1.name }}</a> <a href="" class="" id="E3:30:80:7A:77:B5" @click.prevent="selectContext(device2)" v-bind:class="{ 'active': device2.active}">{{ device2.name }}</a></header>
+            <ul>
+              <li id="bmp-data-sensor"><a class="" href="" id="bmp-data" @click.prevent="selectContext(sensor1)" v-bind:class="{ 'active': sensor1.active}">{{ sensor1.name }}</a></li>
+              <li id="steps-data-sensor"><a class="" href="" id="steps-data" @click.prevent="selectContext(sensor2)" v-bind:class="{ 'active': sensor2.active}">{{ sensor2.name }}</a></li>
+            </ul>
+          </li>
+        </ul>
         <h3>Reactivity - Live update upon change in datasets</h3>
+        <div id="chart-message">{{ chartmessage }}</div>
         <reactive :chart-data="datacollection" :width="1200" :height="600"></reactive>
         <button class="button is-primary" @click="fillData(0)">One day</button>
         <button class="button is-primary" @click="fillData(1)">One month</button>
@@ -50,7 +61,34 @@
         liveFlow: new SAFEflow(),
         datacollection: null,
         labelback: [],
-        heartback: []
+        heartback: [],
+        device1:
+        {
+          name: 'Mi Band2',
+          id: 'C5:4C:89:9D:44:10',
+          active: false
+        },
+        device2:
+        {
+          name: 'Amazfit',
+          id: 'E3:30:80:7A:77:B5',
+          active: true
+        },
+        sensor1:
+        {
+          name: 'BMP - lightLED',
+          id: 'smartcontractaddressDaMaHub',
+          active: true
+        },
+        sensor2:
+        {
+          name: 'Steps - Accelerometer',
+          id: 'smartContractaddressDaMaHub',
+          active: false
+        },
+        chartmessage: 'Chart Loading',
+        activedevice: '',
+        activesensor: ''
       }
     },
     created () {
@@ -58,26 +96,61 @@
     },
     methods: {
       fillData (seg) {
-        console.log(seg)
         var localthis = this
+        this.filterDeviceActive()
+        this.filterSensorActive()
         function callbackD (dataH) {
           let results = dataH
           localthis.labelback = results.labels
           localthis.heartback = results.datasets
-          localthis.datacollection = {
-            labels: localthis.labelback,
-            datasets: [
-              {
-                label: 'Heart Beats Per Minute',
-                backgroundColor: '#ed7d7d',
-                borderColor: '#ea1212',
-                data: localthis.heartback
-              }
-            ]
+          if (dataH === 'no data') {
+            // no data to display
+            localthis.chartmessage = 'No data to display'
+            localthis.datacollection = {
+              labels: [],
+              datasets: [
+                {
+                  label: 'Heart Beats Per Minute',
+                  backgroundColor: '#ed7d7d',
+                  borderColor: '#ea1212',
+                  data: []
+                }
+              ]
+            }
+          } else {
+            localthis.chartmessage = ''
+            localthis.datacollection = {
+              labels: localthis.labelback,
+              datasets: [
+                {
+                  label: 'Heart Beats Per Minute',
+                  backgroundColor: '#ed7d7d',
+                  borderColor: '#ea1212',
+                  data: localthis.heartback
+                }
+              ]
+            }
           }
-          console.log(localthis.datacollection)
+          // console.log(localthis.datacollection)
         }
-        this.liveFlow.getData(seg, '"E3:30:80:7A:77:B5', callbackD)
+        this.liveFlow.getData(seg, this.activedevice, this.activesensor, callbackD)
+      },
+      selectContext (s) {
+        s.active = !s.active
+      },
+      filterDeviceActive () {
+        if (this.device1.active === true) {
+          this.activedevice = this.device1.id
+        } else if (this.device2.active === true) {
+          this.activedevice = this.device2.id
+        }
+      },
+      filterSensorActive () {
+        if (this.sensor1.active === true) {
+          this.activesensor = this.sensor1.id
+        } else if (this.sensor2.active === true) {
+          this.activesensor = this.sensor2.id
+        }
       }
     }
   }
@@ -100,5 +173,9 @@
 
   #heart-chart {
     width: 1200px;
+  }
+
+  .active{
+    background-color:#8ec16d;
   }
 </style>

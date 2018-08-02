@@ -71,29 +71,33 @@ safeFlow.prototype.dataOut = function () {
 * @method getData
 *
 */
-safeFlow.prototype.getData = function (seg, sensor, callback) {
+safeFlow.prototype.getData = function (seg, device, sensor, callback) {
   // need source, devices, data
-  let deviceID = sensor
+  let deviceID = device
+  let sensorID = sensor
   let queryTime = this.timeUtility(seg)
-  let dataTypes = this.dataTypes(deviceID)
-  console.log(queryTime)
-  console.log('http://165.227.244.213:8881/heartdata/publickey/token' + queryTime)
+  let dataTypes = this.dataTypes(deviceID, sensorID)
   var dataRaw = []
+  let structureReturn
   // var dataRawlabel = []
-  axios.get('http://165.227.244.213:8881/heartdata/publickey/token' + queryTime)
+  axios.get('http://165.227.244.213:8881/heartdata/publickey/token/' + queryTime + '/' + deviceID)
     .then((resp) => {
-      // console.log(resp.data)
-      let chunkData = this.chunkUtilty(resp.data)
-      chunkData[0].forEach(function (couple) {
-        var mString = moment(couple.timestamp * 1000).format('YYYY-MM-DD hh:mm')
-        dataRaw.push([couple.heartrate, mString, couple.compref, couple.deviceid, couple.publickey, couple.steps])
-        // dataRawheart.push(couple.heartrate)
-      })
-      //  need to pass to Tidy data before returning
-      let tidyHeartData = this.tidyHeart(dataRaw)
-      // what data structure was asked for?
-      let structureReturn = this.structureData('chartjs', dataTypes, tidyHeartData)
-      callback(structureReturn)
+      if (resp.data.length > 0) {
+        let chunkData = this.chunkUtilty(resp.data)
+        chunkData[0].forEach(function (couple) {
+          var mString = moment(couple.timestamp * 1000).format('YYYY-MM-DD hh:mm')
+          dataRaw.push([couple.heartrate, mString, couple.compref, couple.deviceid, couple.publickey, couple.steps])
+          // dataRawheart.push(couple.heartrate)
+        })
+        //  need to pass to Tidy data before returning
+        let tidyHeartData = this.tidyHeart(dataRaw)
+        // what data structure was asked for?
+        structureReturn = this.structureData('chartjs', dataTypes, tidyHeartData)
+        callback(structureReturn)
+      } else {
+        structureReturn = 'no data'
+        callback(structureReturn)
+      }
     })
     .catch((err) => {
       console.log(err)
@@ -105,7 +109,7 @@ safeFlow.prototype.getData = function (seg, sensor, callback) {
 * @method dataTypes
 *
 */
-safeFlow.prototype.dataTypes = function (sourceID) {
+safeFlow.prototype.dataTypes = function (sourceID, sensorID) {
   // get detail on spec for data source
   // Protocol Standard roughttime opentimestart, network protocol standard ie interna design choices
   let dataProtocolCall = 'DaMaHub.org/resolve/' + sourceID
@@ -176,7 +180,6 @@ safeFlow.prototype.tidyHeart = function (heartIn) {
   // let errorCodes = [255]
   // iterate over arrays and remove both time and BMP number keep track of error Account
   cleanHeart = heartIn.filter(function (item) { return item[0] !== 255 })
-  console.log(cleanHeart)
   return cleanHeart
 }
 
@@ -197,7 +200,6 @@ safeFlow.prototype.structureData = function (structureAsked, dataTypes, dataIn) 
     })
     dataholder.labels = datalabel
     dataholder.datasets = dataheart
-    console.log(dataholder)
   }
   return dataholder
 }

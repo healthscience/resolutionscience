@@ -80,8 +80,9 @@ safeFlow.prototype.getData = function (seg, device, sensor, callback) {
   var dataRaw = []
   let structureReturn
   // var dataRawlabel = []
-  axios.get('http://165.227.244.213:8881/heartdata/publickey/token/' + queryTime + '/' + deviceID)
+  axios.get('http://165.227.244.213:8881/heartdata/publickey/token' + queryTime + '/' + deviceID)
     .then((resp) => {
+      console.log(resp.data)
       if (resp.data.length > 0) {
         let chunkData = this.chunkUtilty(resp.data)
         chunkData[0].forEach(function (couple) {
@@ -128,16 +129,17 @@ safeFlow.prototype.timeUtility = function (seg) {
   if (seg === 0) {
     // asking for one 24 display
     const nowTime = moment()
-    startMonth = moment(nowTime).subtract(1, 'day').format('YYYY-MM-DD hh:mm')
+    startMonth = moment.utc(nowTime).startOf('day')
+    console.log(startMonth)
   } else {
-    const startOfMonth = moment().startOf('month').format('YYYY-MM-DD hh:mm')
-    //  const endOfMonth = moment().endOf('month').format('YYYY-MM-DD hh:mm')
+    const startOfMonth = moment.utc().startOf('month')
     //  reset the day to first of momoth adjust month for segment required
     if (seg === 1) {
       startMonth = startOfMonth
     } else {
       let adSeg = seg - 1
-      startMonth = moment(startOfMonth).subtract(adSeg, 'months').format('YYYY-MM-DD hh:mm')
+      startMonth = moment(startOfMonth).subtract(adSeg, 'months')
+      console.log(startMonth)
     }
   }
   //  get the micro time for start of month date and pass to query

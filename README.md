@@ -1,6 +1,13 @@
 # resolutionscience
 
-> An electron-vue project
+> An electron-vue project forked to provide a Peer to Peer Graphical Interface
+
+> The healthscience network is adding 'plugins' charting, simulations to the base funcationality.  See https://github.com/Dsensor/resolutionscience
+
+#### funcationality
+
+> Charting using charts.js
+> Data from healthscience.network cTestNetwork REST API
 
 #### Build Setup
 

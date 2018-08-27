@@ -77,13 +77,13 @@
         sensor1:
         {
           name: 'BMP - lightLED',
-          id: 'smartcontractaddressDaMaHub',
+          id: 'SCDaMaHub-time-heartrate',
           active: true
         },
         sensor2:
         {
           name: 'Steps - Accelerometer',
-          id: 'smartContractaddressDaMaHub',
+          id: 'SCDaMaHub-time-steps',
           active: false
         },
         chartmessage: 'Chart Loading',
@@ -110,7 +110,7 @@
               labels: [],
               datasets: [
                 {
-                  label: 'Heart Beats Per Minute',
+                  label: 'No data available',
                   backgroundColor: '#ed7d7d',
                   borderColor: '#ea1212',
                   data: []
@@ -123,7 +123,7 @@
               labels: localthis.labelback,
               datasets: [
                 {
-                  label: 'Heart Beats Per Minute',
+                  label: localthis.activesensor,
                   backgroundColor: '#ed7d7d',
                   borderColor: '#ea1212',
                   data: localthis.heartback

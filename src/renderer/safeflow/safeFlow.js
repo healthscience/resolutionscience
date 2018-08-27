@@ -80,7 +80,8 @@ safeFlow.prototype.getData = function (seg, device, sensor, callback) {
   var dataRaw = []
   let structureReturn
   // var dataRawlabel = []
-  axios.get('http://165.227.244.213:8881/heartdata/publickey/token' + queryTime + '/' + deviceID)
+  console.log(sensorID)
+  axios.get('http://165.227.244.213:8881/heartdata/<pubkey>/<token>/<' + queryTime + '/' + deviceID)
     .then((resp) => {
       console.log(resp.data)
       if (resp.data.length > 0) {
@@ -90,10 +91,18 @@ safeFlow.prototype.getData = function (seg, device, sensor, callback) {
           dataRaw.push([couple.heartrate, mString, couple.compref, couple.deviceid, couple.publickey, couple.steps])
           // dataRawheart.push(couple.heartrate)
         })
-        //  need to pass to Tidy data before returning
-        let tidyHeartData = this.tidyHeart(dataRaw)
-        // what data structure was asked for?
-        structureReturn = this.structureData('chartjs', dataTypes, tidyHeartData)
+        //  what type of date is asked for?
+        if (sensorID === 'SCDaMaHub-time-heartrate') {
+          //  need to pass to Tidy data before returning
+          let tidyData = this.tidyHeart(dataRaw)
+          // what data structure was asked for?
+          structureReturn = this.structureData('chartjs', dataTypes, tidyData)
+        } else if (sensorID === 'SCDaMaHub-time-steps') {
+          //  need to pass to Tidy data before returning
+          let tidyData = this.tidyActivity(dataRaw)
+          // what data structure was asked for?
+          structureReturn = this.structureData('chartjs', dataTypes, tidyData)
+        }
         callback(structureReturn)
       } else {
         structureReturn = 'no data'
@@ -112,10 +121,17 @@ safeFlow.prototype.getData = function (seg, device, sensor, callback) {
 */
 safeFlow.prototype.dataTypes = function (sourceID, sensorID) {
   // get detail on spec for data source
+  let dataFilter
   // Protocol Standard roughttime opentimestart, network protocol standard ie interna design choices
-  let dataProtocolCall = 'DaMaHub.org/resolve/' + sourceID
+  // let dataProtocolCall = 'DaMaHub.org/resolve/' + sourceID
+  // mock the filtering from dataChain smartcontract/protocol
+  if (sensorID === 'SCDaMaHub-time-heartrate') {
+    dataFilter = [1, 0]
+  } else if (sensorID === 'SCDaMaHub-time-steps') {
+    dataFilter = [1, 5]
+  }
 
-  return dataProtocolCall
+  return dataFilter
 }
 
 /**
@@ -171,6 +187,21 @@ safeFlow.prototype.chunkUtilty = function (dataIn) {
 }
 
 /**
+* Tidy Activity Data
+* @method tidyActivity
+*
+*/
+safeFlow.prototype.tidyActivity = function (dataIn) {
+  // console.log(heartIn)
+  let cleanData = []
+  // need to import error codes from device/mobile app
+  // let errorCodes = [255]
+  // iterate over arrays and remove both time and BMP number keep track of error Account
+  cleanData = dataIn.filter(function (item) { return item[0] !== 255 })
+  return cleanData
+}
+
+/**
 * Tidy Heart Data
 * @method tidyHeart
 *
@@ -197,8 +228,8 @@ safeFlow.prototype.structureData = function (structureAsked, dataTypes, dataIn) 
   if (structureAsked === 'chartjs') {
     // loop through and build two sperate arrays
     dataIn.forEach(function (couple) {
-      datalabel.push(couple[1])
-      dataheart.push(couple[0])
+      datalabel.push(couple[dataTypes[0]])
+      dataheart.push(couple[dataTypes[1]])
     })
     dataholder.labels = datalabel
     dataholder.datasets = dataheart

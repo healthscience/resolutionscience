@@ -20,14 +20,37 @@
         <h1>Select Device/Sensor Data:</h1>
         <ul>
           <li>
-            <header>Device - <a class="" href="" id="E3:30:80:7A:77:B5" @click.prevent="selectContext(device1)" v-bind:class="{ 'active': device1.active}">{{ device1.name }}</a> <a href="" class="" id="E3:30:80:7A:77:B5" @click.prevent="selectContext(device2)" v-bind:class="{ 'active': device2.active}">{{ device2.name }}</a></header>
-            <ul>
-              <li id="bmp-data-sensor"><a class="" href="" id="bmp-data" @click.prevent="selectContext(sensor1)" v-bind:class="{ 'active': sensor1.active}">{{ sensor1.name }}</a></li>
-              <li id="steps-data-sensor"><a class="" href="" id="steps-data" @click.prevent="selectContext(sensor2)" v-bind:class="{ 'active': sensor2.active}">{{ sensor2.name }}</a></li>
-            </ul>
+            <header>Device - </header>
+              <ul>
+                <li><a class="" href="" id="E3:30:80:7A:77:B5" @click.prevent="selectContext(device1)" v-bind:class="{ 'active': device1.active}">{{ device1.name }}</a></li>
+                <li><a href="" class="" id="E3:30:80:7A:77:B5" @click.prevent="selectContext(device2)" v-bind:class="{ 'active': device2.active}">{{ device2.name }}</a></li>
+              </ul>
+          </li>
+          <li>
+            <header> Sensors - </header>
+              <ul>
+                <li id="bmp-data-sensor"><a class="" href="" id="bmp-data" @click.prevent="selectContext(sensor1)" v-bind:class="{ 'active': sensor1.active}">{{ sensor1.name }}</a></li>
+                <li id="steps-data-sensor"><a class="" href="" id="steps-data" @click.prevent="selectContext(sensor2)" v-bind:class="{ 'active': sensor2.active}">{{ sensor2.name }}</a></li>
+              </ul>
+          </li>
+          <li>
+            <header> Science Computations - </header>
+              <ul>
+                <li id="science-compute"><a class="" href="" id="" @click.prevent="selectContext(compute1)" v-bind:class="{ 'active': compute1.active}">{{ compute1.name }}</a></li>
+                <li id="science-compute"><a class="" href="" id="" @click.prevent="selectContext(compute2)" v-bind:class="{ 'active': compute2.active}">{{ compute2.name }}</a></li>
+                <li id="science-compute"><a class="" href="" id="" @click.prevent="selectContext(compute3)" v-bind:class="{ 'active': compute3.active}">{{ compute3.name }}</a></li>
+                <li id="science-compute"><a class="" href="" id="" @click.prevent="selectContext(compute4)" v-bind:class="{ 'active': compute4.active}">{{ compute4.name }}</a></li>
+              </ul>
+          </li>
+          <li>
+            <header> Visualisation - </header>
+              <ul>
+                <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectContext(vis1)" v-bind:class="{ 'active': vis1.active}">{{ vis1.name }}</a></li>
+                <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectContext(vis2)" v-bind:class="{ 'active': vis2.active}">{{ vis2.name }}</a></li>
+              </ul>
           </li>
         </ul>
-        <h3>Reactivity - Live update upon change in datasets</h3>
+        <h3>Reactive data charting - Live updates</h3>
         <div id="chart-message">{{ chartmessage }}</div>
         <reactive :chart-data="datacollection" :width="1200" :height="600"></reactive>
         <button class="button is-primary" @click="fillData(0)">One day</button>
@@ -86,9 +109,47 @@
           id: 'SCDaMaHub-time-steps',
           active: false
         },
+        compute1:
+        {
+          name: 'recorded data',
+          id: 'wasm-sc-1',
+          active: true
+        },
+        compute2:
+        {
+          name: 'Average',
+          id: 'wasm-sc-2',
+          active: false
+        },
+        compute3:
+        {
+          name: 'error data',
+          id: 'wasm-sc-3',
+          active: false
+        },
+        compute4:
+        {
+          name: 'correlations',
+          id: 'wasm-sc-4',
+          active: false
+        },
+        vis1:
+        {
+          name: 'chart',
+          id: 'vis-sc-1',
+          active: true
+        },
+        vis2:
+        {
+          name: 'table',
+          id: 'vis-sc-2',
+          active: false
+        },
         chartmessage: 'Chart Loading',
         activedevice: '',
-        activesensor: ''
+        activesensor: '',
+        activecompute: '',
+        activevis: ''
       }
     },
     created () {
@@ -99,8 +160,11 @@
         var localthis = this
         this.filterDeviceActive()
         this.filterSensorActive()
+        this.filterScienceActive()
+        this.filterVisActive()
         function callbackD (dataH) {
           let results = dataH
+          // need to prepare different visualisations, data return will fit only one select option
           localthis.labelback = results.labels
           localthis.heartback = results.datasets
           if (dataH === 'no data') {
@@ -133,7 +197,7 @@
           }
           // console.log(localthis.datacollection)
         }
-        this.liveFlow.getData(seg, this.activedevice, this.activesensor, callbackD)
+        this.liveFlow.systemCoordinate(seg, this.activedevice, this.activesensor, this.activecompute, this.activevis, callbackD)
       },
       selectContext (s) {
         s.active = !s.active
@@ -150,6 +214,24 @@
           this.activesensor = this.sensor1.id
         } else if (this.sensor2.active === true) {
           this.activesensor = this.sensor2.id
+        }
+      },
+      filterScienceActive () {
+        if (this.compute1.active === true) {
+          this.activecompute = this.compute1.id
+        } else if (this.compute2.active === true) {
+          this.activecompute = this.compute2.id
+        } else if (this.compute3.active === true) {
+          this.activecompute = this.compute3.id
+        } else if (this.compute4.active === true) {
+          this.activecompute = this.compute4.id
+        }
+      },
+      filterVisActive () {
+        if (this.vis1.active === true) {
+          this.activevis = this.vis1.id
+        } else if (this.vis2.active === true) {
+          this.activevis = this.vis2.id
         }
       }
     }
@@ -177,5 +259,6 @@
 
   .active{
     background-color:#8ec16d;
+    color: white;
   }
 </style>

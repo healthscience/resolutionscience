@@ -12,7 +12,7 @@
 import heartPlugin from './healthscience/hsNavHeart'
 
 export default {
-  name: 'heart-page',
+  name: 'chart-page',
   components: { heartPlugin },
   methods: {
     open (link) {

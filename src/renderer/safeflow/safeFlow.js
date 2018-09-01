@@ -17,7 +17,9 @@ const moment = require('moment')
 var safeFlow = function () {
   console.log('SAFEflow live')
   events.EventEmitter.call(this)
+  this.liveData = {}
   this.datacollection = []
+  this.dataStart()
 }
 
 /**
@@ -36,34 +38,162 @@ safeFlow.prototype.LKNtime = function () {
 }
 
 /**
-*  Accept data In  GRPC call verifed
-* @method dataIn
+*  Default setting set by peer
+* @method dataStart
 *
 */
-safeFlow.prototype.dataIn = function (timeCode) {
-  console.log('in code' + timeCode)
-  var datacollection = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-    datasets: [
-      {
-        label: 'Data One',
-        backgroundColor: '#f87979',
-        data: [getRandomInt(), getRandomInt(), getRandomInt(), getRandomInt(), getRandomInt(), getRandomInt(), getRandomInt(), getRandomInt(), getRandomInt(), getRandomInt(), getRandomInt(), getRandomInt()]
-      }
-    ]
-  }
-  function getRandomInt () {
-    return Math.floor(Math.random() * (50 - 5 + 1)) + 5
-  }
-  return datacollection
+safeFlow.prototype.dataStart = function (timeCode) {
+  // the default data context on new start of ResSci client
+  let seg = 0
+  let device = 'E3:30:80:7A:77:B5'
+  let sensor = 'SCDaMaHub-time-heartrate'
+  let compute = 'wasm-sc-1'
+  let visulisation = 'vis-sc-1'
+  let callback = null
+  this.dataSystem(seg, device, sensor, compute, visulisation, callback)
 }
 
 /**
-*  Mock data return
-* @method dataOut
+*  system Input to drive Entity(data components)
+* @method systemCoordinate
 *
 */
-safeFlow.prototype.dataOut = function () {
+safeFlow.prototype.systemCoordinate = function (seg, device, sensor, compute, visulisation, callback) {
+  // bring live the dataJob managers
+  // science entity components
+  // data listeners
+  // compute manger
+  this.dataSystem(seg, device, sensor, compute, visulisation, callback)
+}
+
+/**
+* what science components are active
+* @method scienceEntities
+*
+*/
+safeFlow.prototype.scienceEntities = function () {
+  // query local Store or Networks
+  // produces UI components on start
+  // these hardwired for now
+}
+
+/**
+* Data Listenering
+* @method dataSystem
+*
+*/
+safeFlow.prototype.dataSystem = async function (seg, device, sensor, compute, visulisation, callback) {
+  // setups on initial entity query and populates other options
+  // FIRST/returning start of RSci or an event coming in from the UI
+  // if FIRST/return, select default device and 1 days time period and prepare data in its different visualisation forms
+  // then listen for events from the UI, new data recorded or new science computation entering the network
+  // listenings on gRPC streaming sockets?
+  // if new event, is data already live in memory?  If yes check for data updates
+  let localthis = this
+  let dataChunks = []
+  let structureReturn
+  if (callback === null) {
+    console.log('start no callback')
+    // first time launch prepare data and await event call from UI
+    let tempDevice = ['E3:30:80:7A:77:B5', 'C5:4C:89:9D:44:10']
+    tempDevice.forEach(async function (iDevice) {
+      await localthis.getData(seg, iDevice, sensor).then(function (result) {
+        console.log('await data returned start of device loop')
+        console.log(iDevice)
+        console.log(result)
+        dataChunks = []
+        // Do something with result.
+        if (result.length > 0) {
+          let chunkData = localthis.chunkUtilty(result)
+          chunkData[0].forEach(function (couple) {
+            var mString = moment(couple.timestamp * 1000).format('YYYY-MM-DD hh:mm')
+            dataChunks.push([couple.heartrate, mString, couple.compref, couple.deviceid, couple.publickey, couple.steps])
+          })
+          //  loop over all (or top used visualisations)
+          // heardwire two devices
+          let tempSensor = ['SCDaMaHub-time-heartrate', 'SCDaMaHub-time-steps']
+          tempSensor.forEach(function (iType) {
+            if (iType === 'SCDaMaHub-time-heartrate') {
+              let dataTypes = localthis.dataTypes(iDevice, 'SCDaMaHub-time-heartrate')
+              console.log('start of heart data per device')
+              //  need to pass to Tidy data before returning
+              let tidyData = localthis.tidyHeart(dataChunks)
+              // what data structure was asked for?
+              structureReturn = localthis.structureData('chartjs', dataTypes, tidyData)
+              // set the Data holder
+              let tempHolder = {}
+              tempHolder.time = seg
+              tempHolder.dataType = iType
+              tempHolder.datalive = chunkData
+              tempHolder.visPrepared = structureReturn
+              console.log(iDevice)
+              console.log(iType)
+              localthis.liveData[iDevice] = {}
+              localthis.liveData[iDevice][iType] = tempHolder
+            }
+            if (iType === 'SCDaMaHub-time-steps') {
+              console.log('start of activity data per device')
+              let dataTypes = localthis.dataTypes(iDevice, 'SCDaMaHub-time-steps')
+              //  need to pass to Tidy data before returning
+              let tidyData = localthis.tidyActivity(dataChunks)
+              // what data structure was asked for?
+              structureReturn = localthis.structureData('chartjs', dataTypes, tidyData)
+              // set the Data holder
+              let tempHolder = {}
+              tempHolder.time = seg
+              tempHolder.dataType = sensor
+              tempHolder.datalive = chunkData
+              tempHolder.visPrepared = structureReturn
+              localthis.liveData[iDevice][iType] = tempHolder
+            }
+          })
+        }
+      })
+    })
+  } else {
+    console.log('event data call from UI')
+    // first check if data is live in network already?
+    console.log(localthis.liveData)
+    // let truefalse = localHolder.hasOwnProperty('E3:30:80:7A:77:B5')
+    if (localthis.liveData.hasOwnProperty(device)) {
+      console.log('data object already exists')
+      // no need to call for external data reference live data
+      console.log(localthis.liveData[device][sensor].visPrepared)
+      callback(localthis.liveData[device][sensor].visPrepared)
+    } else {
+      console.log('fresh device data call')
+      // if not make fresh data call from source
+      let dataTypes = localthis.dataTypes(device, sensor)
+      await this.getData(seg, device, sensor).then(function (result) {
+        // Do something with result.
+        if (result.length > 0) {
+          let chunkData = localthis.chunkUtilty(result)
+          chunkData[0].forEach(function (couple) {
+            var mString = moment(couple.timestamp * 1000).format('YYYY-MM-DD hh:mm')
+            dataChunks.push([couple.heartrate, mString, couple.compref, couple.deviceid, couple.publickey, couple.steps])
+          })
+        }
+        //  what type of data is asked for?
+        if (dataChunks.length > 0) {
+          if (sensor === 'SCDaMaHub-time-heartrate') {
+            //  need to pass to Tidy data before returning
+            let tidyData = localthis.tidyHeart(dataChunks)
+            // what data structure was asked for?
+            structureReturn = localthis.structureData('chartjs', dataTypes, tidyData)
+          } else if (sensor === 'SCDaMaHub-time-steps') {
+            //  need to pass to Tidy data before returning
+            let tidyData = localthis.tidyActivity(dataChunks)
+            // what data structure was asked for?
+            structureReturn = localthis.structureData('chartjs', dataTypes, tidyData)
+          }
+          callback(structureReturn)
+        } else {
+          structureReturn = 'no data'
+          callback(structureReturn)
+        }
+      })
+    }
+  }
 }
 
 /**
@@ -71,47 +201,16 @@ safeFlow.prototype.dataOut = function () {
 * @method getData
 *
 */
-safeFlow.prototype.getData = function (seg, device, sensor, callback) {
+safeFlow.prototype.getData = async function (seg, device) {
   // need source, devices, data
-  let deviceID = device
-  let sensorID = sensor
+
   let queryTime = this.timeUtility(seg)
-  let dataTypes = this.dataTypes(deviceID, sensorID)
-  var dataRaw = []
-  let structureReturn
-  // var dataRawlabel = []
-  console.log(sensorID)
-  axios.get('http://165.227.244.213:8881/heartdata/<pubkey>/<token>/<' + queryTime + '/' + deviceID)
-    .then((resp) => {
-      console.log(resp.data)
-      if (resp.data.length > 0) {
-        let chunkData = this.chunkUtilty(resp.data)
-        chunkData[0].forEach(function (couple) {
-          var mString = moment(couple.timestamp * 1000).format('YYYY-MM-DD hh:mm')
-          dataRaw.push([couple.heartrate, mString, couple.compref, couple.deviceid, couple.publickey, couple.steps])
-          // dataRawheart.push(couple.heartrate)
-        })
-        //  what type of date is asked for?
-        if (sensorID === 'SCDaMaHub-time-heartrate') {
-          //  need to pass to Tidy data before returning
-          let tidyData = this.tidyHeart(dataRaw)
-          // what data structure was asked for?
-          structureReturn = this.structureData('chartjs', dataTypes, tidyData)
-        } else if (sensorID === 'SCDaMaHub-time-steps') {
-          //  need to pass to Tidy data before returning
-          let tidyData = this.tidyActivity(dataRaw)
-          // what data structure was asked for?
-          structureReturn = this.structureData('chartjs', dataTypes, tidyData)
-        }
-        callback(structureReturn)
-      } else {
-        structureReturn = 'no data'
-        callback(structureReturn)
-      }
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+  let deviceID = device
+  // var dataRaw = []
+  // return new Promise(function (resolve) {
+  //  nosql query but headng towards a gRPC listener on stream socket
+  let jsondata = await axios.get('http://165.227.244.213:8881/heartdata/<publickey>/<token>' + queryTime + '/' + deviceID)
+  return jsondata.data
 }
 
 /**
@@ -146,7 +245,6 @@ safeFlow.prototype.timeUtility = function (seg) {
     // asking for one 24 display
     const nowTime = moment()
     startMonth = moment.utc(nowTime).startOf('day')
-    console.log(startMonth)
   } else {
     const startOfMonth = moment.utc().startOf('month')
     //  reset the day to first of momoth adjust month for segment required
@@ -155,7 +253,6 @@ safeFlow.prototype.timeUtility = function (seg) {
     } else {
       let adSeg = seg - 1
       startMonth = moment(startOfMonth).subtract(adSeg, 'months')
-      console.log(startMonth)
     }
   }
   //  get the micro time for start of month date and pass to query
@@ -237,4 +334,29 @@ safeFlow.prototype.structureData = function (structureAsked, dataTypes, dataIn) 
   return dataholder
 }
 
-module.exports = safeFlow
+/**
+* data error analysis
+* @method dataErrorAnalysis
+*
+*/
+safeFlow.prototype.dataErrorAnalysis = function (dataDay) {
+  //  given the dataType, expected data entries v actual data recorded from device sensor
+  let dataExpectedBPM = 24 * 60
+  let actutalDataBMP = dataDay.length
+  let dataErrorDifference = dataExpectedBPM - actutalDataBMP
+
+  return dataErrorDifference
+}
+
+/**
+* computation gateway
+* @method computationGateway
+*
+*/
+safeFlow.prototype.computationGateway = function (compType) {
+  // what computation needed to be excuted
+  // average hr daily, weekly, monthly, rolling 30 day etc network averages
+  // average Steps  "  " "
+  // correlations - HR steps, between devices
+}
+export default safeFlow

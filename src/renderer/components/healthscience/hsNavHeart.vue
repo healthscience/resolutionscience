@@ -2,27 +2,13 @@
   <section class="container">
     <h1>Heart</h1>
     <div class="columns">
-      <div class="column">
-        <h3>Line Chart</h3>
-        <!--<line-chart></line-chart>-->
-      </div>
-      <div class="column">
-        <h3>Bar Chart</h3>
-        <!--<bar-chart></bar-chart>-->
-      </div>
-    </div>
-    <div class="columns">
-      <div class="column">
-        <h3>Bubble Chart</h3>
-        <!--<bubble-chart></bubble-chart>-->
-      </div>
       <div id="heart-chart" class="column">
-        <h1>Select Device/Sensor Data:</h1>
+        <h1>Select Device/Sensor Data: <a class="" href="" id="update-compute" @click.prevent="startComputeUpdate(updatecompute)" v-bind:class="{ 'active': updatecompute.active}">{{ updatecompute.name }}</a></h1>
         <ul>
           <li>
             <header>Device - </header>
               <ul>
-                <li><a class="" href="" id="E3:30:80:7A:77:B5" @click.prevent="selectContext(device1)" v-bind:class="{ 'active': device1.active}">{{ device1.name }}</a></li>
+                <li><a class="" href="" id="F1:D1:D5:6A:32:D6" @click.prevent="selectContext(device1)" v-bind:class="{ 'active': device1.active}">{{ device1.name }}</a></li>
                 <li><a href="" class="" id="E3:30:80:7A:77:B5" @click.prevent="selectContext(device2)" v-bind:class="{ 'active': device2.active}">{{ device2.name }}</a></li>
               </ul>
           </li>
@@ -59,6 +45,15 @@
         <button class="button is-primary" @click="fillData(3)">Three months</button>
         <button class="button is-primary" @click="fillData(6)">6 months</button>
         <button class="button is-primary" @click="fillData(12)">One Year</button>
+        <h3>Science Statistics - Live updates</h3>
+        <div id="chart-message">{{ chartmessageS }}</div>
+        <reactivestats :chart-data="datastatistics" :width="1200" :height="600"></reactivestats>
+        <button class="button is-primary" @click="fillStats(0)">One day</button>
+        <button class="button is-primary" @click="fillStats(1)">One month</button>
+        <button class="button is-primary" @click="fillStats(2)">Two months</button>
+        <button class="button is-primary" @click="fillStats(3)">Three months</button>
+        <button class="button is-primary" @click="fillStats(6)">6 months</button>
+        <button class="button is-primary" @click="fillStats(12)">One Year</button>
       </div>
     </div>
   </section>
@@ -69,6 +64,7 @@
   import BarChart from '@/components/charts/BarChart'
   import BubbleChart from '@/components/charts/BubbleChart'
   import Reactive from '@/components/charts/Reactive'
+  import Reactivestats from '@/components/charts/Reactivestats'
   import SAFEflow from '../../safeflow/safeFlow.js'
 
   export default {
@@ -77,12 +73,14 @@
       LineChart,
       BarChart,
       BubbleChart,
-      Reactive
+      Reactive,
+      Reactivestats
     },
     data () {
       return {
         liveFlow: new SAFEflow(),
         datacollection: null,
+        datastatistics: null,
         labelback: [],
         heartback: [],
         device1:
@@ -94,7 +92,7 @@
         device2:
         {
           name: 'Amazfit',
-          id: 'E3:30:80:7A:77:B5',
+          id: 'F1:D1:D5:6A:32:D6',
           active: true
         },
         sensor1:
@@ -145,15 +143,24 @@
           id: 'vis-sc-2',
           active: false
         },
+        updatecompute:
+        {
+          name: 'Update Computations',
+          id: 'update-compute-1',
+          active: false
+        },
         chartmessage: 'Chart Loading',
         activedevice: '',
         activesensor: '',
         activecompute: '',
-        activevis: ''
+        activeupdatecompute: '',
+        activevis: '',
+        computeFlag: ''
       }
     },
     created () {
       this.fillData(0)
+      this.fillStats(0)
     },
     methods: {
       fillData (seg) {
@@ -197,7 +204,55 @@
           }
           // console.log(localthis.datacollection)
         }
-        this.liveFlow.systemCoordinate(seg, this.activedevice, this.activesensor, this.activecompute, this.activevis, callbackD)
+        this.computeFlag = 'raw'
+        this.liveFlow.systemCoordinate(seg, this.activedevice, this.activesensor, this.activecompute, this.activevis, this.computeFlag, callbackD)
+      },
+      fillStats (seg) {
+        var localthis = this
+        this.filterDeviceActive()
+        this.filterSensorActive()
+        this.filterScienceActive()
+        this.filterVisActive()
+        function callbackD (dataH) {
+          let results = dataH
+          // need to prepare different visualisations, data return will fit only one select option
+          localthis.labelback = results.labels
+          localthis.heartback = results.datasets
+          if (dataH === 'no data') {
+            // no data to display
+            localthis.chartmessage = 'No data to display'
+            localthis.datastatistics = {
+              labels: [],
+              datasets: [
+                {
+                  label: 'No data available',
+                  backgroundColor: '#ed7d7d',
+                  borderColor: '#ea1212',
+                  data: []
+                }
+              ]
+            }
+          } else {
+            localthis.chartmessage = ''
+            localthis.datastatistics = {
+              labels: localthis.labelback,
+              datasets: [
+                {
+                  label: localthis.activesensor,
+                  backgroundColor: '#ed7d7d',
+                  borderColor: '#ea1212',
+                  data: localthis.heartback
+                }
+              ]
+            }
+          }
+          // console.log(localthis.datacollection)
+        }
+        this.computeFlag = 'statistics'
+        this.liveFlow.systemCoordinate(seg, this.activedevice, this.activesensor, this.activecompute, this.activevis, this.computeFlag, callbackD)
+      },
+      startComputeUpdate () {
+        this.liveFlow.computationSystem('update', this.activedevice)
       },
       selectContext (s) {
         s.active = !s.active

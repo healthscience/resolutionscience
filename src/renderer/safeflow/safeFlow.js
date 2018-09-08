@@ -19,9 +19,10 @@ var safeFlow = function () {
   events.EventEmitter.call(this)
   this.liveData = {}
   this.datacollection = []
+  this.tempPubkey = 'addpubkeyaddress'
+  this.tempToken = 'addtoken'
+  this.liveStarttime = 0
   this.dataStart()
-  this.tempPubkey = 'pubkey'
-  this.tempToken = 'token'
 }
 
 /**
@@ -98,8 +99,9 @@ safeFlow.prototype.dataSystem = async function (seg, device, sensor, compute, vi
   if (callback === null) {
     console.log('start no callback')
     // first time launch prepare data and await event call from UI
-    let tempDevice = ['F1:D1:D5:6A:32:D6', 'E3:30:80:7A:77:B5', 'C5:4C:89:9D:44:10']
+    let tempDevice = ['F1:D1:D5:6A:32:D6'] // , 'E3:30:80:7A:77:B5', 'C5:4C:89:9D:44:10']
     tempDevice.forEach(async function (iDevice) {
+      console.log('llopoop')
       await localthis.getData(seg, iDevice, sensor).then(function (result) {
         console.log('await data returned start of device loop')
         dataChunks = []
@@ -108,7 +110,7 @@ safeFlow.prototype.dataSystem = async function (seg, device, sensor, compute, vi
           let chunkData = localthis.chunkUtilty(result)
           chunkData[0].forEach(function (couple) {
             var mString = moment(couple.timestamp * 1000).format('YYYY-MM-DD hh:mm')
-            dataChunks.push([couple.heartrate, mString, couple.compref, couple.deviceid, couple.publickey, couple.steps])
+            dataChunks.push([couple.heart_rate, mString, couple.compref, couple.device_id, couple.publickey, couple.steps])
           })
           //  loop over all (or top used visualisations)
           // heardwire two devices
@@ -129,6 +131,8 @@ safeFlow.prototype.dataSystem = async function (seg, device, sensor, compute, vi
               tempHolder.visPrepared = structureReturn
               localthis.liveData[iDevice] = {}
               localthis.liveData[iDevice][iType] = tempHolder
+              console.log('any comopute data pre')
+              console.log(localthis.liveData)
             }
             if (iType === 'SCDaMaHub-time-steps') {
               console.log('start of activity data per device')
@@ -165,8 +169,10 @@ safeFlow.prototype.dataSystem = async function (seg, device, sensor, compute, vi
         callback(avgStsPrepared)
       })
     } else {
+      console.log('raw data call to network')
       console.log(localthis.liveData)
-      if (localthis.liveData.hasOwnProperty(device)) {
+      // filter for back or forward one days
+      if (localthis.liveData.hasOwnProperty(device) && seg !== -1 && seg !== -2) {
         console.log('data object already exists')
         // no need to call for external data reference live data
         console.log(localthis.liveData[device][sensor].visPrepared)
@@ -176,12 +182,14 @@ safeFlow.prototype.dataSystem = async function (seg, device, sensor, compute, vi
         // if not make fresh data call from source
         let dataTypes = localthis.dataTypes(device, sensor)
         await this.getData(seg, device, sensor).then(function (result) {
+          console.log('data returned raw')
           // Do something with result.
           if (result.length > 0) {
+            console.log('progress with prepare data')
             let chunkData = localthis.chunkUtilty(result)
             chunkData[0].forEach(function (couple) {
               var mString = moment(couple.timestamp * 1000).format('YYYY-MM-DD hh:mm')
-              dataChunks.push([couple.heartrate, mString, couple.compref, couple.deviceid, couple.publickey, couple.steps])
+              dataChunks.push([couple.heart_rate, mString, couple.compref, couple.device_id, couple.publickey, couple.steps])
             })
           }
           //  what type of data is asked for?
@@ -235,13 +243,13 @@ safeFlow.prototype.getCompuateData = async function (seg, device) {
 */
 safeFlow.prototype.getData = async function (seg, device) {
   // need source, devices, data
-
+  console.log('get data axios')
   let queryTime = this.timeUtility(seg)
   let deviceID = device
   // var dataRaw = []
   // return new Promise(function (resolve) {
   //  nosql query but headng towards a gRPC listener on stream socket
-  let jsondata = await axios.get('http://165.227.244.213:8881/heartdata/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID)
+  let jsondata = await axios.get('http://165.227.244.213:8881/devicedata/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID)
   return jsondata.data
 }
 
@@ -286,24 +294,36 @@ safeFlow.prototype.dataTypes = function (sourceID, sensorID) {
 */
 safeFlow.prototype.timeUtility = function (seg) {
   //  turn segment into time query profile
-  let startMonth
-  if (seg === 0) {
+  console.log('time utilty')
+  console.log(this.liveStarttime)
+  let startTime
+  if (this.liveStarttime && seg === -1) {
+    // move back one day in time
+    console.log('back one day')
+    startTime = (this.liveStarttime - 86400) * 1000
+  } else if (this.liveStarttime && seg === -2) {
+    // move forward day in time
+    console.log('forward one day')
+    startTime = (this.liveStarttime + 86400) * 1000
+  } else if (seg === 0) {
     // asking for one 24 display
     const nowTime = moment()
-    startMonth = moment.utc(nowTime).startOf('day')
+    startTime = moment.utc(nowTime).startOf('day')
   } else {
     const startOfMonth = moment.utc().startOf('month')
     //  reset the day to first of momoth adjust month for segment required
     if (seg === 1) {
-      startMonth = startOfMonth
+      startTime = startOfMonth
     } else {
       let adSeg = seg - 1
-      startMonth = moment(startOfMonth).subtract(adSeg, 'months')
+      startTime = moment(startOfMonth).subtract(adSeg, 'months')
     }
   }
   //  get the micro time for start of month date and pass to query
-  let startQuerytime = moment(startMonth).valueOf()
+  let startQuerytime = moment(startTime).valueOf()
   let timestamp = startQuerytime / 1000
+  this.liveStarttime = timestamp
+  console.log(timestamp)
   return timestamp
 }
 
@@ -437,16 +457,16 @@ safeFlow.prototype.computationSystem = async function (compType, device) {
   // pass on the last date to retrieve new daily data batches
   // let lastAverageDate = new Date()
   // get start date and get up to date
-  let startDate = 1533078000
-  let daysInmonth = 31
+  let startDate = 1535756400 // september 1st 2018
+  let daysInmonth = 30
   let accDaily = 0
   let millsSecDay = 86400
   while (accDaily < daysInmonth) {
-    await this.getCompuateData(startDate, device).then(function (dataBatch) {
+    await this.getCompuateData(startDate, 'E3:30:80:7A:77:B5').then(function (dataBatch) {
       console.log('daily compute data')
       console.log(startDate)
       // let dayList = [40, 50, 60, 70, 80]
-      localthis.prepareSinglearray(startDate, device, compType, dataBatch)
+      localthis.prepareSinglearray(startDate, 'E3:30:80:7A:77:B5', compType, dataBatch)
       startDate = startDate + millsSecDay
       accDaily++
     })
@@ -464,7 +484,7 @@ safeFlow.prototype.prepareSinglearray = function (startDate, device, avgType, ar
   let tidyCount = 0
   for (let sing of arrBatchobj) {
     if (sing.heartrate !== 255) {
-      singleArray.push(sing.heartrate)
+      singleArray.push(sing.heart_rate)
     } else {
       tidyCount++
     }
@@ -505,7 +525,7 @@ safeFlow.prototype.saveData = async function (startDate, device, count, tidy, av
   saveJSON.timestamp = startDate
   saveJSON.compref = 'sc-eth-333939'
   saveJSON.average = average
-  saveJSON.deviceid = device
+  saveJSON.device_id = device
   saveJSON.clean = count
   saveJSON.tidy = tidy
   console.log(saveJSON)

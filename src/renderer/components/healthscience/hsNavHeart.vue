@@ -40,6 +40,8 @@
         <div id="chart-message">{{ chartmessage }}</div>
         <reactive :chart-data="datacollection" :width="1200" :height="600"></reactive>
         <button class="button is-primary" @click="fillData(0)">One day</button>
+        <button class="button is-primary" @click="fillData(-1)">back day</button>
+        <button class="button is-primary" @click="fillData(-2)">forward day</button>
         <button class="button is-primary" @click="fillData(1)">One month</button>
         <button class="button is-primary" @click="fillData(2)">Two months</button>
         <button class="button is-primary" @click="fillData(3)">Three months</button>
@@ -48,7 +50,7 @@
         <h3>Science Statistics - Live updates</h3>
         <div id="chart-message">{{ chartmessageS }}</div>
         <reactivestats :chart-data="datastatistics" :width="1200" :height="600"></reactivestats>
-        <button class="button is-primary" @click="fillStats(0)">One day</button>
+        <button class="button is-primary" @click="fillStats(0)">Year to date</button>
         <button class="button is-primary" @click="fillStats(1)">One month</button>
         <button class="button is-primary" @click="fillStats(2)">Two months</button>
         <button class="button is-primary" @click="fillStats(3)">Three months</button>

@@ -3,12 +3,12 @@
     <h1>Heart</h1>
     <div class="columns">
       <div id="heart-chart" class="column">
-        <h1>Select Device/Sensor Data: <a class="" href="" id="update-compute" @click.prevent="startComputeUpdate(updatecompute)" v-bind:class="{ 'active': updatecompute.active}">{{ updatecompute.name }}</a></h1>
+        <h1>Select Device/Sensor Data: </h1>
         <ul>
           <li>
             <header>Device - </header>
               <ul>
-                <li><a class="" href="" id="F1:D1:D5:6A:32:D6" @click.prevent="selectContext(device1)" v-bind:class="{ 'active': device1.active}">{{ device1.name }}</a></li>
+                <li><a class="" href="" id="C5:4C:89:9D:44:10" @click.prevent="selectContext(device1)" v-bind:class="{ 'active': device1.active}">{{ device1.name }}</a></li>
                 <li><a href="" class="" id="E3:30:80:7A:77:B5" @click.prevent="selectContext(device2)" v-bind:class="{ 'active': device2.active}">{{ device2.name }}</a></li>
               </ul>
           </li>

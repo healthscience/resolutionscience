@@ -19,8 +19,8 @@ var safeFlow = function () {
   events.EventEmitter.call(this)
   this.liveData = {}
   this.datacollection = []
-  this.tempPubkey = 'addpubkeyaddress'
-  this.tempToken = 'addtoken'
+  this.tempPubkey = 'publickey'
+  this.tempToken = 'token'
   this.liveStarttime = 0
   this.dataStart()
 }
@@ -101,9 +101,7 @@ safeFlow.prototype.dataSystem = async function (seg, device, sensor, compute, vi
     // first time launch prepare data and await event call from UI
     let tempDevice = ['F1:D1:D5:6A:32:D6'] // , 'E3:30:80:7A:77:B5', 'C5:4C:89:9D:44:10']
     tempDevice.forEach(async function (iDevice) {
-      console.log('llopoop')
       await localthis.getData(seg, iDevice, sensor).then(function (result) {
-        console.log('await data returned start of device loop')
         dataChunks = []
         // Do something with result.
         if (result.length > 0) {
@@ -118,7 +116,6 @@ safeFlow.prototype.dataSystem = async function (seg, device, sensor, compute, vi
           tempSensor.forEach(function (iType) {
             if (iType === 'SCDaMaHub-time-heartrate') {
               let dataTypes = localthis.dataTypes(iDevice, 'SCDaMaHub-time-heartrate')
-              console.log('start of heart data per device')
               //  need to pass to Tidy data before returning
               let tidyData = localthis.tidyHeart(dataChunks)
               // what data structure was asked for?
@@ -131,11 +128,8 @@ safeFlow.prototype.dataSystem = async function (seg, device, sensor, compute, vi
               tempHolder.visPrepared = structureReturn
               localthis.liveData[iDevice] = {}
               localthis.liveData[iDevice][iType] = tempHolder
-              console.log('any comopute data pre')
-              console.log(localthis.liveData)
             }
             if (iType === 'SCDaMaHub-time-steps') {
-              console.log('start of activity data per device')
               let dataTypes = localthis.dataTypes(iDevice, 'SCDaMaHub-time-steps')
               //  need to pass to Tidy data before returning
               let tidyData = localthis.tidyActivity(dataChunks)
@@ -156,18 +150,37 @@ safeFlow.prototype.dataSystem = async function (seg, device, sensor, compute, vi
   } else {
     console.log('event data call from UI')
     // first check if data is live in network already?
-    // what is the flag raw or statitics?
+    // what is the flag raw or statitics? F1:D1:D5:6A:32:D6
     if (flag === 'statistics') {
       // display average statistics hardwire for now
       console.log('statistics data flow logic')
       console.log(device)
-      await this.getAverageData(1533078000, 'E3:30:80:7A:77:B5').then(function (statData) {
-        console.log('stats average data back')
-        console.log(statData)
-        // prepare charting data from statistics Charting
-        let avgStsPrepared = localthis.structureStatisticsData('chartjs', '', statData)
-        callback(avgStsPrepared)
-      })
+      // any other mac address for this device?
+      let deviceArray = []
+      if (device === 'F1:D1:D5:6A:32:D6') {
+        deviceArray = ['F1:D1:D5:6A:32:D6', 'E3:30:80:7A:77:B5']
+      } else if (device === 'C5:4C:89:9D:44:10') {
+        deviceArray = ['C5:4C:89:9D:44:10', 'F3:6E:2A:A7:0F:FB']
+      }
+      console.log(deviceArray)
+      let dataAggregator = {}
+      dataAggregator.datasets = []
+      dataAggregator.labels = []
+      for (let devMac of deviceArray) {
+        console.log('loop same dice mac list')
+        console.log(devMac)
+        await this.getAverageData(1533078000, devMac).then(function (statData) {
+          console.log('stats average data back')
+          // console.log(statData)
+          // prepare charting data from statistics Charting
+          let avgStsPrepared = localthis.structureStatisticsData('chartjs', '', statData)
+          console.log(avgStsPrepared)
+          dataAggregator.datasets = avgStsPrepared.datasets
+          dataAggregator.labels = avgStsPrepared.labels
+        })
+      }
+      console.log(dataAggregator)
+      callback(dataAggregator)
     } else {
       console.log('raw data call to network')
       console.log(localthis.liveData)
@@ -225,7 +238,7 @@ safeFlow.prototype.getCompuateData = async function (seg, device) {
   // need source, devices, data
 
   let queryTime = seg // this.timeUtility(seg)
-  console.log(queryTime)
+  // console.log(queryTime)
   let deviceID = device
   // var dataRaw = []
   // return new Promise(function (resolve) {
@@ -261,7 +274,7 @@ safeFlow.prototype.getData = async function (seg, device) {
 safeFlow.prototype.getAverageData = async function (seg, device) {
   //  nosql query but headng towards a gRPC listener on stream socket
   let queryTime = seg // this.timeUtility(seg)
-  let jsondata = await axios.get('http://165.227.244.213:8881/heart24data/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + device + '/sc-eth-333939')
+  let jsondata = await axios.get('http://165.227.244.213:8881/heart24data/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + device)
   console.log('back heart average')
   console.log(jsondata)
   return jsondata.data
@@ -325,6 +338,29 @@ safeFlow.prototype.timeUtility = function (seg) {
   this.liveStarttime = timestamp
   console.log(timestamp)
   return timestamp
+}
+
+/**
+* Calendar Utilty
+* @method calendarUtility
+*
+*/
+safeFlow.prototype.calendarUtility = function (startYear) {
+  // segment the year months days in months
+  console.log('calendar utilty')
+  let startY = startYear
+  let secondsInday = 86400
+  let calendarUtil = []
+  // let months = 'January, February, March, April, May, June, July, August, September, October, November, December'
+  let monthsNumber = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+  // need logic for leap years
+  let daysInmonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+  for (let numM of monthsNumber) {
+    let longDateformat = startY + (numM * daysInmonth[numM] * secondsInday)
+    let dayCount = daysInmonth[numM]
+    calendarUtil.push({dayCount, longDateformat})
+  }
+  return calendarUtil
 }
 
 /**
@@ -457,19 +493,40 @@ safeFlow.prototype.computationSystem = async function (compType, device) {
   // pass on the last date to retrieve new daily data batches
   // let lastAverageDate = new Date()
   // get start date and get up to date
-  let startDate = 1535756400 // september 1st 2018
-  let daysInmonth = 30
-  let accDaily = 0
-  let millsSecDay = 86400
-  while (accDaily < daysInmonth) {
-    await this.getCompuateData(startDate, 'E3:30:80:7A:77:B5').then(function (dataBatch) {
-      console.log('daily compute data')
-      console.log(startDate)
-      // let dayList = [40, 50, 60, 70, 80]
-      localthis.prepareSinglearray(startDate, 'E3:30:80:7A:77:B5', compType, dataBatch)
-      startDate = startDate + millsSecDay
-      accDaily++
-    })
+  let startDate = 1514764800 // January 1st 2018
+  // build date array for year
+  let yearArray = this.calendarUtility(startDate)
+  // console.log(yearArray)
+  this.dayCounter = 0
+  // loop over all months
+  for (let scDate of yearArray) {
+    console.log('start of month looping')
+    console.log(scDate)
+    let daysInmonth = scDate.dayCount
+    let accDaily = 0
+    let millsSecDay = 86400
+    // console.log(accDaily)
+    console.log(device)
+    localthis.dayCounter = scDate.longDateformat
+    while (accDaily < daysInmonth) {
+      // console.log('daily loop') C5:4C:89:9D:44:10
+      let dateNow = localthis.dayCounter * 1000
+      let dateRead = new Date(dateNow)
+      console.log(dateRead)
+      console.log(localthis.dayCounter)
+      console.log(accDaily)
+      await this.getCompuateData(localthis.dayCounter, device).then(function (dataBatch) {
+        console.log('daily compute data')
+
+        console.log(dataBatch)
+        if (dataBatch.length > 0) {
+          localthis.prepareSinglearray(localthis.dayCounter, device, compType, dataBatch)
+        }
+        localthis.dayCounter = localthis.dayCounter + millsSecDay
+        // console.log(localthis.dayCounter)
+        accDaily++
+      })
+    }
   }
 }
 
@@ -480,10 +537,12 @@ safeFlow.prototype.computationSystem = async function (compType, device) {
 */
 safeFlow.prototype.prepareSinglearray = function (startDate, device, avgType, arrBatchobj) {
   // statistical avg. smart contract/crypt ID ref & verfied wasm/network/trubit assume done
+  // console.log('length array in prepare')
+  // console.log(arrBatchobj.length)
   let singleArray = []
   let tidyCount = 0
   for (let sing of arrBatchobj) {
-    if (sing.heartrate !== 255) {
+    if (sing.heart_rate !== 255) {
       singleArray.push(sing.heart_rate)
     } else {
       tidyCount++
@@ -525,7 +584,7 @@ safeFlow.prototype.saveData = async function (startDate, device, count, tidy, av
   saveJSON.timestamp = startDate
   saveJSON.compref = 'sc-eth-333939'
   saveJSON.average = average
-  saveJSON.device_id = device
+  saveJSON.device_mac = device
   saveJSON.clean = count
   saveJSON.tidy = tidy
   console.log(saveJSON)

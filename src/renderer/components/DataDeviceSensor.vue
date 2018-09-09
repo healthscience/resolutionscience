@@ -1,9 +1,82 @@
 <template>
-  <div id="datadevices-sensors">
-    <h1>Data Devices and Sensors</h1>
-    <p>
-      List of active and history
-    </p>
+  <div id="devices-sensors-data">
+    <h1>Devices, Sensors & Data</h1>
+    <div id="device-data-status">
+      <ul>
+        <li>
+          <header>Amazfit fitness tracker</header>
+          <div id="hardware">
+            <header>Hardware</header>
+            <div id="hardware-manufactureid">
+              Mac 'F1:D1:D5:6A:32:D6', 'E3:30:80:7A:77:B5'
+            </div>
+            <div id="hardware-firmware">
+              Fimrware Hash 3388294cdc0d833dc92jd9f99yhp <a id="" href="">IPS location</a>
+            </div>
+          </div>
+          <div id="sensors">
+            <header>Sensors</header>
+            <div id="sensor-type">
+              Accelerometer -> Steps -> DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/activity/steps</a>
+            </div>
+            <div id="sensor-type">
+              LED -> BMP -> DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/heart/bmp</a>
+            </div>
+          </div>
+          <div id="mobile">
+            <header>Mobile</header>
+            <div id="data-location">
+              Android -> HS-GadgetBridge -> Github -> github.com/healthscience/GadgetBridge
+            </div>
+          </div>
+          <div id="data">
+            <header>Data</header>
+            <div id="data-location">
+              SAFEnetwork ->
+            </div>
+            <div id="data-volume">
+              8MB -> 168,022 entries  Date range: April 2018 to now
+            </div>
+          </div>
+        </li>
+        <li>
+          <header>Miband2 fitness tracker</header>
+          <div id="hardware">
+            <header>Hardware</header>
+            <div id="hardware-manufactureid">
+              Mac 'C5:4C:89:9D:44:10',  'F3:6E:2A:A7:0F:FB'
+            </div>
+            <div id="hardware-firmware">
+              Fimrware Hash 3388294cdc0d83jgvoj5d0w23 <a id="" href="">IPS location</a>
+            </div>
+          </div>
+          <div id="sensors">
+            <header>Sensors</header>
+            <div id="sensor-type">
+              Accelerometer -> Steps -> DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/activity/steps</a>
+            </div>
+            <div id="sensor-type">
+              LED -> BMP -> DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/heart/bmp</a>
+            </div>
+          </div>
+          <div id="mobile">
+            <header>Mobile</header>
+            <div id="data-location">
+              Android -> HS-GadgetBridge -> Github -> github.com/healthscience/GadgetBridge
+            </div>
+          </div>
+          <div id="data">
+            <header>Data</header>
+            <div id="data-location">
+              SAFEnetwork ->
+            </div>
+            <div id="data-volume">
+              23MB -> 348,834 entries  Date range: Feb 2018 to now
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -16,4 +89,43 @@ export default {
 
 <style>
 
+#devices-sensors-data {
+  margin: 1em;
+}
+
+#devices-sensors-data header {
+  font-weight: bold;
+}
+
+#hardware {
+  margin: 1em;
+}
+
+#hardware header {
+  font-weight: bold;
+}
+
+#sensors {
+  margin: 1em;
+}
+
+#sensors header {
+  font-weight: bold;
+}
+
+#mobile {
+  margin: 1em;
+}
+
+#mobile header {
+  font-weight: bold;
+}
+
+#data {
+  margin: 1em;
+}
+
+#data header {
+  font-weight: bold;
+}
 </style>

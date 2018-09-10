@@ -19,7 +19,7 @@ var safeFlow = function () {
   events.EventEmitter.call(this)
   this.liveData = {}
   this.datacollection = []
-  this.tempPubkey = 'publickey'
+  this.tempPubkey = 'pub key'
   this.tempToken = 'token'
   this.liveStarttime = 0
   this.dataStart()

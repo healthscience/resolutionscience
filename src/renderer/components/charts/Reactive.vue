@@ -6,32 +6,43 @@
     data () {
       return {
         options: {
+          responsive: true,
+          hoverMode: 'index',
+          stacked: false,
+          title: {
+            display: true,
+            text: 'Chart.js Line Chart - Multi Axis'
+          },
           scales: {
             yAxes: [{
+              type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+              display: true,
+              position: 'left',
+              id: 'bpm',
               ticks: {
                 beginAtZero: true
-              },
-              gridLines: {
-                display: false
               }
-            }],
-            xAxes: [ {
+            }, {
+              type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+              display: true,
+              position: 'right',
+              id: 'steps',
+              // grid line settings
               gridLines: {
-                display: false
+                drawOnChartArea: false // only want the grid lines for one axis to show up
+              },
+              ticks: {
+                beginAtZero: true
               }
             }]
-          },
-          legend: {
-            display: false
-          },
-          responsive: true,
-          maintainAspectRatio: true
+          }
         }
       }
     },
     mounted () {
       // this.chartData is created in the mixin
-      console.log(this.chartData)
+      // console.log(this.chartData)
+      // console.log(reactiveProp)
       this.renderChart(this.chartData, this.options)
     }
   })

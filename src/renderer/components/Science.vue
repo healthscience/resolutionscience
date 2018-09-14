@@ -15,7 +15,7 @@
               DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/activity/steps</a>
             </div>
             <div id="sensor-type">
-              DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/heart/bmp</a>
+              DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/heart/bpm</a>
             </div>
           </div>
           <div id="computations">
@@ -52,7 +52,7 @@
               DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/activity/steps</a>
             </div>
             <div id="sensor-type">
-              DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/heart/bmp</a>
+              DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/heart/bpm</a>
             </div>
           </div>
           <div id="computations">
@@ -89,7 +89,7 @@
               DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/activity/steps</a>
             </div>
             <div id="sensor-type">
-              DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/heart/bmp</a>
+              DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/heart/bpm</a>
             </div>
           </div>
           <div id="computations">

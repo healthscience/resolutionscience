@@ -8,15 +8,17 @@
           <li>
             <header>Device - </header>
               <ul>
-                <li><a class="" href="" id="C5:4C:89:9D:44:10" @click.prevent="selectContext(device1)" v-bind:class="{ 'active': device1.active}">{{ device1.name }}</a></li>
-                <li><a href="" class="" id="E3:30:80:7A:77:B5" @click.prevent="selectContext(device2)" v-bind:class="{ 'active': device2.active}">{{ device2.name }}</a></li>
+                <li v-for="dev in devices">
+		              <a href="" id="" @click.prevent="selectContext(dev)" v-bind:class="{ 'active': dev.active}">{{ dev.device_name }}</a>
+                </li>
               </ul>
           </li>
           <li>
             <header> Sensors - </header>
               <ul>
-                <li id="bmp-data-sensor"><a class="" href="" id="bmp-data" @click.prevent="selectContext(sensor1)" v-bind:class="{ 'active': sensor1.active}">{{ sensor1.name }}</a></li>
-                <li id="steps-data-sensor"><a class="" href="" id="steps-data" @click.prevent="selectContext(sensor2)" v-bind:class="{ 'active': sensor2.active}">{{ sensor2.name }}</a></li>
+                <li id="bmp-data-sensor" v-for="sen in sensors">
+		              <a class="" href="" id="bmp-data" @click.prevent="selectContext(sen)" v-bind:class="{ 'active': sen.active}">{{ sen.device_sensorid }}</a>
+                </li>
               </ul>
           </li>
           <li>
@@ -85,30 +87,10 @@
         datastatistics: null,
         labelback: [],
         heartback: [],
-        device1:
-        {
-          name: 'Mi Band2',
-          id: 'C5:4C:89:9D:44:10',
-          active: false
-        },
-        device2:
-        {
-          name: 'Amazfit',
-          id: 'F1:D1:D5:6A:32:D6',
-          active: true
-        },
-        sensor1:
-        {
-          name: 'BMP - lightLED',
-          id: 'SCDaMaHub-time-heartrate',
-          active: true
-        },
-        sensor2:
-        {
-          name: 'Steps - Accelerometer',
-          id: 'SCDaMaHub-time-steps',
-          active: false
-        },
+        colorback: '',
+        colorlineback: '',
+        devices: [],
+        sensors: [],
         compute1:
         {
           name: 'recorded data',
@@ -145,15 +127,10 @@
           id: 'vis-sc-2',
           active: false
         },
-        updatecompute:
-        {
-          name: 'Update Computations',
-          id: 'update-compute-1',
-          active: false
-        },
         chartmessage: 'Chart Loading',
-        activedevice: '',
-        activesensor: '',
+        chartmessageS: 'Statistics Chart Loading',
+        activedevice: [],
+        activesensor: [],
         activecompute: '',
         activeupdatecompute: '',
         activevis: '',
@@ -161,10 +138,31 @@
       }
     },
     created () {
-      this.fillData(0)
-      this.fillStats(0)
+      this.dataContext()
     },
     methods: {
+      dataContext () {
+        // make call to set start dataContext for this pubkey
+        var localthis = this
+        function callbackC (dataH) {
+          localthis.devices = dataH
+          localthis.dataType()
+        }
+        this.computeFlag = 'context'
+        this.liveFlow.systemContext(this.computeFlag, callbackC)
+      },
+      dataType () {
+        // make call to set start dataType for the device sensors
+        var localthis = this
+        function callbackT (dataH) {
+          localthis.sensors = dataH
+          localthis.liveFlow.dataStart()
+          // localthis.fillData(0)
+          // localthis.fillStats(0)
+        }
+        this.computeFlag = 'datatype'
+        this.liveFlow.systemContext(this.computeFlag, callbackT)
+      },
       fillData (seg) {
         var localthis = this
         this.filterDeviceActive()
@@ -173,40 +171,68 @@
         this.filterVisActive()
         function callbackD (dataH) {
           let results = dataH
+          console.log('in vue')
+          console.log(results)
           // need to prepare different visualisations, data return will fit only one select option
-          localthis.labelback = results.labels
-          localthis.heartback = results.datasets
+          localthis.labelback = results[0].labels
+          localthis.heartback = results[0].datasets
+          localthis.colorback = results[0].backgroundColor
+          localthis.colorlineback = results[0].borderColor
+          localthis.activityback = results[1].datasets
+          // localthis.colorback2 = results[1].backgroundColor
+          // localthis.colorlineback2 = results[1].borderColor
+
           if (dataH === 'no data') {
             // no data to display
             localthis.chartmessage = 'No data to display'
             localthis.datacollection = {
-              labels: [],
+              labels: localthis.labelback,
               datasets: [
                 {
-                  label: 'No data available',
+                  label: 'Beats per Minute',
+                  borderColor: '#ed7d7d',
                   backgroundColor: '#ed7d7d',
+                  fill: false,
+                  data: localthis.heartback,
+                  yAxisID: 'bpm'
+                }, {
+                  label: 'Activity Steps',
                   borderColor: '#ea1212',
-                  data: []
+                  backgroundColor: '#ea1212',
+                  fill: false,
+                  data: localthis.activityback,
+                  yAxisID: 'steps'
                 }
               ]
             }
           } else {
-            localthis.chartmessage = ''
+            localthis.chartmessage = 'BPM'
             localthis.datacollection = {
               labels: localthis.labelback,
               datasets: [
                 {
-                  label: localthis.activesensor,
-                  backgroundColor: '#ed7d7d',
+                  label: 'Beats per minute',
                   borderColor: '#ea1212',
-                  data: localthis.heartback
+                  backgroundColor: '#ed7d7d',
+                  fill: true,
+                  data: localthis.heartback,
+                  yAxisID: 'bpm'
+                }, {
+                  label: 'Activity - Steps',
+                  borderColor: '#050d2d',
+                  backgroundColor: '#050d2d',
+                  fill: false,
+                  data: localthis.activityback,
+                  yAxisID: 'steps'
                 }
               ]
             }
+            // console.log(localthis.datacollection)
           }
-          // console.log(localthis.datacollection)
         }
         this.computeFlag = 'raw'
+        // console.log(this.activesensor)
+        // console.log(this.activedevice)
         this.liveFlow.systemCoordinate(seg, this.activedevice, this.activesensor, this.activecompute, this.activevis, this.computeFlag, callbackD)
       },
       fillStats (seg) {
@@ -218,59 +244,82 @@
         function callbackD (dataH) {
           let results = dataH
           // need to prepare different visualisations, data return will fit only one select option
-          localthis.labelback = results.labels
-          localthis.heartback = results.datasets
+          localthis.labelback = results[0].labels
+          localthis.heartback = results[0].datasets
+          localthis.colorback = results[0].backgroundColor
+          localthis.colorlineback = results[0].borderColor
+          localthis.activityback = results[1].datasets
+          // localthis.colorback2 = results[1].backgroundColor
+          // localthis.colorlineback2 = results[1].borderColor
+
           if (dataH === 'no data') {
             // no data to display
             localthis.chartmessage = 'No data to display'
             localthis.datastatistics = {
-              labels: [],
+              labels: localthis.labelback,
               datasets: [
                 {
-                  label: 'No data available',
+                  label: 'Beats per Minute',
+                  borderColor: '#ed7d7d',
                   backgroundColor: '#ed7d7d',
+                  fill: false,
+                  data: localthis.heartback,
+                  yAxisID: 'bpm'
+                }, {
+                  label: 'Activity Steps',
                   borderColor: '#ea1212',
-                  data: []
+                  backgroundColor: '#ea1212',
+                  fill: false,
+                  data: localthis.activityback,
+                  yAxisID: 'steps'
                 }
               ]
             }
           } else {
-            localthis.chartmessage = ''
+            localthis.chartmessage = 'BPM'
             localthis.datastatistics = {
               labels: localthis.labelback,
               datasets: [
                 {
-                  label: localthis.activesensor,
-                  backgroundColor: '#ed7d7d',
+                  label: 'Device 1',
                   borderColor: '#ea1212',
-                  data: localthis.heartback
+                  backgroundColor: '#ed7d7d',
+                  fill: true,
+                  data: localthis.heartback,
+                  yAxisID: 'bpm'
+                }, {
+                  label: 'Device 2',
+                  borderColor: '#050d2d',
+                  backgroundColor: '#050d2d',
+                  fill: false,
+                  data: localthis.activityback,
+                  yAxisID: 'steps'
                 }
               ]
             }
+            // console.log(localthis.datastatistics)
           }
-          // console.log(localthis.datacollection)
         }
         this.computeFlag = 'statistics'
         this.liveFlow.systemCoordinate(seg, this.activedevice, this.activesensor, this.activecompute, this.activevis, this.computeFlag, callbackD)
-      },
-      startComputeUpdate () {
-        this.liveFlow.computationSystem('update', this.activedevice)
       },
       selectContext (s) {
         s.active = !s.active
       },
       filterDeviceActive () {
-        if (this.device1.active === true) {
-          this.activedevice = this.device1.id
-        } else if (this.device2.active === true) {
-          this.activedevice = this.device2.id
+        this.activedevice = []
+        for (let dact of this.devices) {
+          if (dact.active === true) {
+            this.activedevice.push(dact.device_mac)
+          }
         }
       },
       filterSensorActive () {
-        if (this.sensor1.active === true) {
-          this.activesensor = this.sensor1.id
-        } else if (this.sensor2.active === true) {
-          this.activesensor = this.sensor2.id
+        this.activesensor = []
+        for (let sact of this.sensors) {
+          if (sact.active === true) {
+            this.activesensor.push(sact.compref)
+          }
         }
       },
       filterScienceActive () {

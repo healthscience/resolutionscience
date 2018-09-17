@@ -171,17 +171,38 @@
         this.filterVisActive()
         function callbackD (dataH) {
           let results = dataH
-          console.log('in vue')
-          console.log(results)
-          // need to prepare different visualisations, data return will fit only one select option
-          localthis.labelback = results[0].labels
-          localthis.heartback = results[0].datasets
-          localthis.colorback = results[0].backgroundColor
-          localthis.colorlineback = results[0].borderColor
-          localthis.activityback = results[1].datasets
-          // localthis.colorback2 = results[1].backgroundColor
-          // localthis.colorlineback2 = results[1].borderColor
-
+          // console.log('in vue')
+          // console.log(results)
+          // is there one or two datasets?
+          if (results.length === 2) {
+            // need to prepare different visualisations, data return will fit only one select option
+            for (let res of results) {
+              if (res.senItem === 'heartchain/heart/bpm') {
+                localthis.labelback = res.vueData.labels
+                localthis.heartback = res.vueData.datasets
+                localthis.colorback = res.vueData.backgroundColor
+                localthis.colorlineback = res.vueData.borderColor
+              } else if (res.senItem === 'heartchain/heart/activity/steps') {
+                localthis.activityback = res.vueData.datasets
+                localthis.colorback2 = res.vueData.backgroundColor
+                localthis.colorlineback2 = res.vueData.borderColor
+              }
+            }
+          } else {
+            if (results[0].senItem === 'heartchain/heart/bpm') {
+              localthis.activityback = []
+              localthis.labelback = results[0].vueData.labels
+              localthis.heartback = results[0].vueData.datasets
+              localthis.colorback = results[0].vueData.backgroundColor
+              localthis.colorlineback = results[0].vueData.borderColor
+            } else if (results[0].senItem === 'heartchain/heart/activity/steps') {
+              localthis.heartback = []
+              localthis.labelback = results[0].vueData.labels
+              localthis.activityback = results[0].vueData.datasets
+              localthis.colorback2 = results[0].vueData.backgroundColor
+              localthis.colorlineback2 = results[0].vueData.borderColor
+            }
+          }
           if (dataH === 'no data') {
             // no data to display
             localthis.chartmessage = 'No data to display'
@@ -189,6 +210,7 @@
               labels: localthis.labelback,
               datasets: [
                 {
+                  type: 'line',
                   label: 'Beats per Minute',
                   borderColor: '#ed7d7d',
                   backgroundColor: '#ed7d7d',
@@ -196,10 +218,11 @@
                   data: localthis.heartback,
                   yAxisID: 'bpm'
                 }, {
+                  type: 'bar',
                   label: 'Activity Steps',
                   borderColor: '#ea1212',
                   backgroundColor: '#ea1212',
-                  fill: false,
+                  fill: true,
                   data: localthis.activityback,
                   yAxisID: 'steps'
                 }
@@ -211,15 +234,17 @@
               labels: localthis.labelback,
               datasets: [
                 {
+                  type: 'line',
                   label: 'Beats per minute',
                   borderColor: '#ea1212',
-                  backgroundColor: '#ed7d7d',
+                  backgroundColor: 'rgba(255, 99, 132, 0.2)',
                   fill: true,
                   data: localthis.heartback,
                   yAxisID: 'bpm'
                 }, {
+                  type: 'bar',
                   label: 'Activity - Steps',
-                  borderColor: '#050d2d',
+                  borderColor: '#020b2d',
                   backgroundColor: '#050d2d',
                   fill: false,
                   data: localthis.activityback,
@@ -249,9 +274,6 @@
           localthis.colorback = results[0].backgroundColor
           localthis.colorlineback = results[0].borderColor
           localthis.activityback = results[1].datasets
-          // localthis.colorback2 = results[1].backgroundColor
-          // localthis.colorlineback2 = results[1].borderColor
-
           if (dataH === 'no data') {
             // no data to display
             localthis.chartmessage = 'No data to display'
@@ -283,7 +305,7 @@
                 {
                   label: 'Device 1',
                   borderColor: '#ea1212',
-                  backgroundColor: '#ed7d7d',
+                  backgroundColor: 'rgba(255, 99, 132, 0.2)',
                   fill: true,
                   data: localthis.heartback,
                   yAxisID: 'bpm'

@@ -19,8 +19,8 @@ var safeFlow = function () {
   events.EventEmitter.call(this)
   this.liveData = {}
   this.datacollection = []
-  this.tempPubkey = '<add public key'
-  this.tempToken = '<add token for data storage access>'
+  this.tempPubkey = '<publickeyaddress>'
+  this.tempToken = '<token>'
   this.liveStarttime = 0
   this.activeContext = []
   this.devicePairs = {}
@@ -73,11 +73,15 @@ safeFlow.prototype.systemCoordinate = async function (seg, device, sensor, compu
   // what data flag  raw  or statistics or simulation?
   if (flag === 'raw') {
     // how many sensor ie data sets are being asked for?
+    // keep track of loop cycle numberEntries
+    this.countSensors = sensor.length
+    this.counterSensor = 0
     // loop over and return data aggregate and return to callback
     this.dataForUI = []
     for await (let senItem of sensor) {
+      this.counterSensor++
       this.dataSystem(seg, device[0], senItem, compute, visulisation, flag, 2).then(function (vueData) {
-        localthis.dataForUI.push(vueData)
+        localthis.dataForUI.push({senItem, vueData})
       })
         .then(function (vueData) {
           callback(localthis.dataForUI)
@@ -264,13 +268,13 @@ safeFlow.prototype.dataSystem = async function (seg, device, sensor, compute, vi
     let dataVueback = []
     // filter for back or forward one days
     if (localthis.liveData[device].hasOwnProperty(sensor) && seg !== -1 && seg !== -2) {
-      console.log('data object already exists')
       // no need to call for external data reference live data
       return localthis.liveData[device][sensor].visPrepared
     } else {
       // if not make fresh data call from source
       let dataTypes = localthis.dataMatchtypes(device, sensor)
-      await this.getData(seg, device).then(function (result) {
+      let startDay = localthis.timeUtility(seg)
+      await localthis.getComputeData(startDay, device).then(function (result) {
         // Do something with result.
         if (result.length > 0) {
           let chunkData = localthis.chunkUtilty(result)
@@ -355,13 +359,14 @@ safeFlow.prototype.getContextType = async function () {
 
 /**
 *  Get compute Data
-* @method getCompuateData
+* @method getComputeData
 *
 */
-safeFlow.prototype.getCompuateData = async function (seg, device) {
+safeFlow.prototype.getComputeData = async function (seg, device) {
   // need source, devices, data
   let queryTime = seg // this.timeUtility(seg)
   let deviceID = device
+  console.log(device)
   //  nosql query but headng towards a gRPC listener on stream socket
   let jsondata = await axios.get('http://165.227.244.213:8881/computedata/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID)
   return jsondata.data
@@ -377,6 +382,7 @@ safeFlow.prototype.getData = async function (seg, device) {
   let queryTime = this.timeUtility(seg)
   let deviceID = device
   let jsondata = await axios.get('http://165.227.244.213:8881/devicedata/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID)
+  // console.log(jsondata.data)
   return jsondata.data
 }
 
@@ -415,6 +421,7 @@ safeFlow.prototype.dataMatchtypes = function (sourceID, sensorID) {
 */
 safeFlow.prototype.timeUtility = function (seg) {
   //  turn segment into time query profile
+  console.log('timeUtility')
   let startTime
   if (this.liveStarttime && seg === -1) {
     // move back one day in time
@@ -440,7 +447,14 @@ safeFlow.prototype.timeUtility = function (seg) {
   //  get the micro time for start of month date and pass to query
   let startQuerytime = moment(startTime).valueOf()
   let timestamp = startQuerytime / 1000
-  this.liveStarttime = timestamp
+  // not the last pass of the loop
+  if (seg === -1 && this.countSensors !== this.counterSensor) {
+    this.liveStarttime = timestamp + 86400
+  } else if (seg === -2 && this.countSensors !== this.counterSensor) {
+    this.liveStarttime = timestamp - 86400
+  } else {
+    this.liveStarttime = timestamp
+  }
   return timestamp
 }
 
@@ -492,7 +506,7 @@ safeFlow.prototype.chunkUtilty = function (dataIn) {
 *
 */
 safeFlow.prototype.tidyActivity = function (dataIn) {
-  // console.log(heartIn)
+  // console.log(dataIn)
   let cleanData = []
   // need to import error codes from device/mobile app
   // let errorCodes = [255]
@@ -618,7 +632,7 @@ safeFlow.prototype.computationSystem = async function (compType, device) {
       // console.log('daily loop') C5:4C:89:9D:44:10
       // let dateNow = localthis.dayCounter * 1000
       // let dateRead = new Date(dateNow)
-      await this.getCompuateData(localthis.dayCounter, device).then(function (dataBatch) {
+      await this.getComputeData(localthis.dayCounter, device).then(function (dataBatch) {
         if (dataBatch.length > 0) {
           localthis.prepareSinglearray(localthis.dayCounter, device, compType, dataBatch)
         }
@@ -685,7 +699,7 @@ safeFlow.prototype.saveData = async function (startDate, device, count, tidy, av
   saveJSON.tidy = tidy
   await axios.post('http://165.227.244.213:8881/averageSave/' + this.tempPubkey + '/' + this.tempToken + '/' + device, saveJSON)
     .then(function (response) {
-      console.log(response)
+      // console.log(response)
     })
 }
 export default safeFlow

@@ -1,7 +1,7 @@
 <script>
-  import {Line, mixins} from 'vue-chartjs'
+  import {Bar, mixins} from 'vue-chartjs'
   const { reactiveProp } = mixins
-  export default Line.extend({
+  export default Bar.extend({
     mixins: [reactiveProp],
     data () {
       return {
@@ -11,7 +11,7 @@
           stacked: false,
           title: {
             display: true,
-            text: 'Chart.js Line Chart - Multi Axis'
+            text: 'Device Raw Data Charting'
           },
           scales: {
             yAxes: [{
@@ -21,6 +21,10 @@
               id: 'bpm',
               ticks: {
                 beginAtZero: true
+              },
+              scaleLabel: {
+                display: true,
+                labelString: 'Beats Per Minute Heart Rate'
               }
             }, {
               type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
@@ -33,6 +37,10 @@
               },
               ticks: {
                 beginAtZero: true
+              },
+              scaleLabel: {
+                display: true,
+                labelString: 'Number of Steps'
               }
             }]
           }

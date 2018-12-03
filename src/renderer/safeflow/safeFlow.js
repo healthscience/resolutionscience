@@ -19,8 +19,8 @@ var safeFlow = function () {
   events.EventEmitter.call(this)
   this.liveData = {}
   this.datacollection = []
-  this.tempPubkey = '<publickeyaddress>'
-  this.tempToken = '<token>'
+  this.tempPubkey = ''
+  this.tempToken = ''
   this.liveStarttime = 0
   this.activeContext = []
   this.devicePairs = {}
@@ -217,7 +217,7 @@ safeFlow.prototype.dataSystem = async function (seg, device, sensor, compute, vi
         if (result.length > 1) {
           let chunkData = localthis.chunkUtilty(result)
           chunkData[0].forEach(function (couple) {
-            var mString = moment(couple.timestamp * 1000).format('YYYY-MM-DD hh:mm')
+            var mString = moment(couple.timestamp * 1000).toDate() // .format('YYYY-MM-DD hh:mm')
             dataChunks.push([couple.heart_rate, mString, couple.compref, couple.device_id, couple.publickey, couple.steps])
           })
           //  loop over all (or top used visualisations)
@@ -279,7 +279,7 @@ safeFlow.prototype.dataSystem = async function (seg, device, sensor, compute, vi
         if (result.length > 0) {
           let chunkData = localthis.chunkUtilty(result)
           chunkData[0].forEach(function (couple) {
-            var mString = moment(couple.timestamp * 1000).format('YYYY-MM-DD hh:mm')
+            var mString = moment(couple.timestamp * 1000).toDate()
             dataChunks.push([couple.heart_rate, mString, couple.compref, couple.device_mac, couple.publickey, couple.steps])
           })
         }
@@ -570,7 +570,7 @@ safeFlow.prototype.structureStatisticsData = function (structureAsked, dataTypes
   if (structureAsked === 'chartjs') {
     // loop through and build two sperate arrays
     dataIn.forEach(function (couple) {
-      let mString = moment(couple.timestamp * 1000).format('YYYY-MM-DD hh:mm')
+      let mString = moment(couple.timestamp * 1000).toDate() // .format('YYYY-MM-DD hh:mm')
       datalabel.push(mString)
       dataheart.push(couple.average)
     })

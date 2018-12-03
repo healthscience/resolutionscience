@@ -1,6 +1,6 @@
 <template>
   <div id="account">
-    <h1>Account Settintg and Network Status</h1>
+    <h1>Account Settings and Network Status</h1>
     <p>
       Settings and Networks
     </p>

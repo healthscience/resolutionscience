@@ -37,10 +37,17 @@
                 <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectContext(vis2)" v-bind:class="{ 'active': vis2.active}">{{ vis2.name }}</a></li>
               </ul>
           </li>
+          <li>
+            <ul>
+              <li id="lear-type"><a class="" href="" id="" @click.prevent="filterLearn(learn)" v-bind:class="{ 'active': learn.active}">{{ learn.name }}</a></li>
+            </ul>
+          </li>
         </ul>
-        <h3>Reactive data charting - Live updates</h3>
+        <h3>CHARTING - </h3>
         <div id="chart-message">{{ chartmessage }}</div>
-        <reactive :chart-data="datacollection" :width="1200" :height="600"></reactive>
+
+        <reactive :chart-data="datacollection" :options="options" :width="1200" :height="600"></reactive>
+
         <button class="button is-primary" @click="fillData(0)">One day</button>
         <button class="button is-primary" @click="fillData(-1)">back day</button>
         <button class="button is-primary" @click="fillData(-2)">forward day</button>
@@ -49,9 +56,12 @@
         <button class="button is-primary" @click="fillData(3)">Three months</button>
         <button class="button is-primary" @click="fillData(6)">6 months</button>
         <button class="button is-primary" @click="fillData(12)">One Year</button>
+
         <h3>Science Statistics - Live updates</h3>
         <div id="chart-message">{{ chartmessageS }}</div>
+
         <reactivestats :chart-data="datastatistics" :width="1200" :height="600"></reactivestats>
+
         <button class="button is-primary" @click="fillStats(0)">Year to date</button>
         <button class="button is-primary" @click="fillStats(1)">One month</button>
         <button class="button is-primary" @click="fillStats(2)">Two months</button>
@@ -70,6 +80,23 @@
   import Reactive from '@/components/charts/Reactive'
   import Reactivestats from '@/components/charts/Reactivestats'
   import SAFEflow from '../../safeflow/safeFlow.js'
+  const moment = require('moment')
+
+  function newDate () {
+    const nowTime = moment()
+    const startTime = moment.utc(nowTime).startOf('day')
+    const time = moment.duration('1:0:00')
+    startTime.add(time)
+    return startTime
+  }
+
+  function newDateEnd () {
+    const nowTime2 = moment()
+    const startTime2 = moment.utc(nowTime2).startOf('day')
+    const time2 = moment.duration('4:0:00')
+    startTime2.add(time2)
+    return startTime2
+  }
 
   export default {
     name: 'VueChartJS',
@@ -85,12 +112,15 @@
         liveFlow: new SAFEflow(),
         datacollection: null,
         datastatistics: null,
+        options: {},
         labelback: [],
         heartback: [],
         colorback: '',
         colorlineback: '',
         devices: [],
         sensors: [],
+        analysisStart: 0,
+        analysisEnd: 0,
         compute1:
         {
           name: 'recorded data',
@@ -127,6 +157,12 @@
           id: 'vis-sc-2',
           active: false
         },
+        learn:
+        {
+          name: 'learn',
+          id: 'learn-status',
+          active: false
+        },
         chartmessage: 'Chart Loading',
         chartmessageS: 'Statistics Chart Loading',
         activedevice: [],
@@ -134,11 +170,13 @@
         activecompute: '',
         activeupdatecompute: '',
         activevis: '',
+        activelearn: '',
         computeFlag: ''
       }
     },
     created () {
       this.dataContext()
+      this.chartOptionsSet()
     },
     methods: {
       dataContext () {
@@ -360,6 +398,167 @@
           this.activevis = this.vis1.id
         } else if (this.vis2.active === true) {
           this.activevis = this.vis2.id
+        }
+      },
+      filterLearn (s) {
+        console.log(s)
+        s.active = !s.active
+        if (s.active === true) {
+          this.activelearn = this.learn.id
+          console.log(this.activelearn)
+          this.learnStartStop()
+        }
+      },
+      learnStartStop () {
+        console.log('called collect start analysis--')
+        console.log(this.analysisStart + ' start')
+        console.log(this.analysisEnd + ' end')
+        // const startA = this.options.analysisStart
+        // const endA = this.options.analysisEnd
+        // pass to computations system
+      },
+      chartOptionsSet () {
+        var localthis = this
+        this.options = {
+          responsive: true,
+          tooltips: {
+            mode: 'index',
+            intersect: true
+          },
+          stacked: false,
+          title: {
+            display: true,
+            text: 'Device Data Charting'
+          },
+          scales: {
+            xAxes: [{
+              display: true,
+              type: 'time',
+              time: {
+                format: 'YYYY-MM-DD hh:mm',
+                // round: 'day'
+                tooltipFormat: 'll HH:mm'
+              },
+              position: 'bottom',
+              ticks: {
+                maxRotation: 75,
+                reverse: true
+              }
+            }],
+            yAxes: [{
+              type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+              display: true,
+              position: 'left',
+              id: 'bpm',
+              ticks: {
+                beginAtZero: true
+              },
+              scaleLabel: {
+                display: true,
+                labelString: 'Beats Per Minute Heart Rate'
+              }
+            },
+            {
+              type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+              display: true,
+              position: 'right',
+              id: 'steps',
+              // grid line settings
+              gridLines: {
+                drawOnChartArea: false // only want the grid lines for one axis to show up
+              },
+              ticks: {
+                beginAtZero: true
+              },
+              scaleLabel: {
+                display: true,
+                labelString: 'Number of Steps'
+              }
+            }]
+          },
+          annotation: {
+            events: ['click'],
+            annotations: [{
+              drawTime: 'afterDatasetsDraw',
+              type: 'line',
+              mode: 'horizontal',
+              scaleID: 'bpm',
+              value: 72,
+              borderColor: 'cyan',
+              borderWidth: 6,
+              label: {
+                enabled: true,
+                content: 'average daily heart rate'
+              },
+              draggable: true,
+              onClick: function (e) {
+                console.log(e.type, this)
+              }
+            },
+            {
+              drawTime: 'afterDatasetsDraw',
+              type: 'line',
+              mode: 'horizontal',
+              scaleID: 'bpm',
+              value: 58,
+              borderColor: 'pink',
+              borderWidth: 6,
+              label: {
+                enabled: true,
+                content: 'average resting heart rate'
+              },
+              draggable: true,
+              onClick: function (e) {
+                console.log(e.type, this)
+              }
+            },
+            {
+              id: 'time',
+              scaleID: 'x-axis-0',
+              type: 'line',
+              mode: 'vertical',
+              value: newDate(),
+              borderColor: 'blue',
+              borderWidth: 12,
+              label: {
+                enabled: true,
+                content: 'start point'
+              },
+              draggable: true,
+              onClick: function (e) {
+                // console.log(e.type, this.options.value)
+                localthis.analysisStart = this.options.value
+                // console.log(this.analysisStart + 'any ting')
+              },
+              onDrag: function (event) {
+                // console.log(event.subject.config.value)
+                localthis.analysisStart = this.options.value
+              }
+            },
+            {
+              id: 'time2',
+              scaleID: 'x-axis-0',
+              type: 'line',
+              mode: 'vertical',
+              value: newDateEnd(),
+              borderColor: 'red',
+              borderWidth: 12,
+              label: {
+                enabled: true,
+                content: 'end point'
+              },
+              draggable: true,
+              onClick: function (et) {
+                console.log(et.type, this)
+                localthis.analysisEnd = this.options.value
+                console.log(this.options.value)
+              },
+              onDrag: function (event) {
+                // console.log(event.subject.config.value)
+                localthis.analysisEnd = event.subject.config.value
+              }
+            }]
+          }
         }
       }
     }

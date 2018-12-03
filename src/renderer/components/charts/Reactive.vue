@@ -1,55 +1,32 @@
 <script>
   import {Bar, mixins} from 'vue-chartjs'
+  // eslint-disable-next-line
+  import annotation from 'chartjs-plugin-annotation'
+  // eslint-disable-next-line
+  import draggable from 'chartjs-plugin-draggable'
   const { reactiveProp } = mixins
+
   export default Bar.extend({
     mixins: [reactiveProp],
+    props: {
+      options: {
+        type: Object
+      }
+    },
     data () {
-      return {
-        options: {
-          responsive: true,
-          hoverMode: 'index',
-          stacked: false,
-          title: {
-            display: true,
-            text: 'Device Raw Data Charting'
-          },
-          scales: {
-            yAxes: [{
-              type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-              display: true,
-              position: 'left',
-              id: 'bpm',
-              ticks: {
-                beginAtZero: true
-              },
-              scaleLabel: {
-                display: true,
-                labelString: 'Beats Per Minute Heart Rate'
-              }
-            }, {
-              type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-              display: true,
-              position: 'right',
-              id: 'steps',
-              // grid line settings
-              gridLines: {
-                drawOnChartArea: false // only want the grid lines for one axis to show up
-              },
-              ticks: {
-                beginAtZero: true
-              },
-              scaleLabel: {
-                display: true,
-                labelString: 'Number of Steps'
-              }
-            }]
-          }
-        }
+    },
+    methods: {
+      learnClicked () {
+        console.log('called collect start analsys')
+        // const startA = this.analysisStart
+        // const endA = this.analysisEnd
+        // pass to computations system
       }
     },
     mounted () {
       // this.chartData is created in the mixin
       // console.log(this.chartData)
+      // console.log(this.options)
       // console.log(reactiveProp)
       this.renderChart(this.chartData, this.options)
     }

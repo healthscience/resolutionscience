@@ -57,13 +57,7 @@
 
 <script>
   import SystemInformation from './LandingPage/SystemInformation'
-<<<<<<< HEAD
   import heartPlugin from '././healthscience/hsNavHeart'
-
-  export default {
-    name: 'landing-page',
-    components: { SystemInformation, heartPlugin },
-=======
   import Password from 'vue-password-strength-meter'
   import FileReader from './LandingPage/file-reader.vue'
   import keythereum from 'keythereum'
@@ -72,6 +66,7 @@
     name: 'landing-page',
     components: {
       SystemInformation,
+      heartPlugin,
       Password,
       FileReader
     },
@@ -82,7 +77,6 @@
       feedbackM: '',
       warningM: ''
     }),
->>>>>>> upstream/master
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)

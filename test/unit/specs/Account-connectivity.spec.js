@@ -10,6 +10,10 @@ describe('Account.vue', () => {
     console.log('selector')
     console.log(vm.$el)
     console.log(vm.$el.querySelector('#account'))
+<<<<<<< HEAD
   //    expect(vm.$el.querySelectorAll('#account').length).to(1)
+=======
+    //    expect(vm.$el.querySelectorAll('#account').length).to(1)
+>>>>>>> upstream/master
   })
 })

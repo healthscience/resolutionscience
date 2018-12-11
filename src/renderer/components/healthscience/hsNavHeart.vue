@@ -258,9 +258,10 @@
                 }, {
                   type: 'bar',
                   label: 'Activity Steps',
-                  borderColor: '#ea1212',
-                  backgroundColor: '#ea1212',
-                  fill: true,
+                  // borderColor: '#ea1212',
+                  // borderWidth: .5,
+                  // backgroundColor: '#ea1212',
+                  fill: false,
                   data: localthis.activityback,
                   yAxisID: 'steps'
                 }
@@ -282,6 +283,7 @@
                 }, {
                   type: 'bar',
                   label: 'Activity - Steps',
+                  lineThickness: 0.2,
                   borderColor: '#020b2d',
                   backgroundColor: '#050d2d',
                   fill: false,
@@ -433,6 +435,7 @@
           scales: {
             xAxes: [{
               display: true,
+              barPercentage: 0.1,
               type: 'time',
               time: {
                 format: 'YYYY-MM-DD hh:mm',

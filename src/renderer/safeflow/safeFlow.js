@@ -19,8 +19,8 @@ var safeFlow = function () {
   events.EventEmitter.call(this)
   this.liveData = {}
   this.datacollection = []
-  this.tempPubkey = ''
-  this.tempToken = ''
+  this.tempPubkey = '33FQ8dJEApww33p31935'
+  this.tempToken = '990d88dd03dd9dd9sj4765s120sllkudp389in'
   this.liveStarttime = 0
   this.activeContext = []
   this.devicePairs = {}

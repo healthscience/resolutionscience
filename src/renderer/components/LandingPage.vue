@@ -21,19 +21,112 @@
         </div>
       </div>
     </main>
+    <div id="secure-start">
+      <div id="returning-start">
+        Please navigate to private key:
+        <file-reader @load="text = $event"></file-reader>
+        <br />
+        <br />
+        <br />
+        <br />
+      </div>
+      <div id="firsttime-start">
+        Create a new account: start by enter a password:
+        <form>
+          <password
+            v-model="password"
+            :toggle="true"
+            @score="showScore"
+            @feedback="showFeedback"/>
+          <p>
+            <div id="pw-feedback">
+              {{ feedbackM }}
+            </div>
+            <div id="pw-warning">
+              {{ warningM }}
+            </div>
+          </p>
+          <p class="control">
+            <button v-if="keybuttonseen"  @click.prevent="createNewkey" class="button is-primary">Create public address & private key</button>
+          </p>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
   import SystemInformation from './LandingPage/SystemInformation'
+<<<<<<< HEAD
   import heartPlugin from '././healthscience/hsNavHeart'
 
   export default {
     name: 'landing-page',
     components: { SystemInformation, heartPlugin },
+=======
+  import Password from 'vue-password-strength-meter'
+  import FileReader from './LandingPage/file-reader.vue'
+  import keythereum from 'keythereum'
+
+  export default {
+    name: 'landing-page',
+    components: {
+      SystemInformation,
+      Password,
+      FileReader
+    },
+    data: () => ({
+      password: null,
+      text: '',
+      keybuttonseen: false,
+      feedbackM: '',
+      warningM: ''
+    }),
+>>>>>>> upstream/master
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
+      },
+      showFeedback ({suggestions, warning}) {
+        console.log('🙏', suggestions)
+        console.log('⚠', warning)
+        this.feedbackM = suggestions
+        this.warningM = warning
+      },
+      showScore (score) {
+        console.log(score)
+        if (score >= 4) {
+          // show create Key button
+          this.keybuttonseen = true
+        }
+      },
+      createNewkey () {
+        var params = { keyBytes: 32, ivBytes: 16 }
+        // synchronous
+        var dk = keythereum.create(params)
+        console.log(dk)
+        var password = this.password
+        // var kdf = 'pbkdf2' // or "scrypt" to use the scrypt kdf
+
+        // Note: if options is unspecified, the values in keythereum.constants are used.
+        var options = {
+          kdf: 'pbkdf2',
+          cipher: 'aes-128-ctr',
+          kdfparams: {
+            c: 262144,
+            dklen: 32,
+            prf: 'hmac-sha256'
+          }
+        }
+        var keyObject = keythereum.dump(password, dk.privateKey, dk.salt, dk.iv, options)
+        console.log(keyObject)
+        var localfile = keythereum.exportToFile(keyObject)
+        console.log(localfile)
+        if (localfile.length > 0) {
+        // double check file exists and display public keyBytes
+          this.keybuttonseen = false
+        }
+        // finally create token for mobile app.
       }
     }
   }

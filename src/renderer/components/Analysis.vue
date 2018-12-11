@@ -1,10 +1,17 @@
 <template>
   <div id="account">
+<<<<<<< HEAD:src/renderer/components/Account.vue
     <h1>Account Settings and Network Status</h1>
+=======
+    <h1>Analysis Toolkit</h1>
+>>>>>>> upstream/master:src/renderer/components/Analysis.vue
     <p>
-      Settings and Networks
+      Apply curiosity with rigour
     </p>
+<<<<<<< HEAD:src/renderer/components/Account.vue
     <heart-Plugin></heart-Plugin>
+=======
+>>>>>>> upstream/master:src/renderer/components/Analysis.vue
   </div>
 </template>
 

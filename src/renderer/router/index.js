@@ -11,9 +11,9 @@ export default new Router({
       component: require('@/components/LandingPage').default
     },
     {
-      path: '/account',
-      name: 'account-page',
-      component: require('@/components/Account').default
+      path: '/analysis',
+      name: 'analysis-page',
+      component: require('@/components/Analysis').default
     },
     {
       path: '/science',

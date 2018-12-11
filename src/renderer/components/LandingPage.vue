@@ -88,7 +88,6 @@
         this.warningM = warning
       },
       showScore (score) {
-        console.log(score)
         if (score >= 4) {
           // show create Key button
           this.keybuttonseen = true
@@ -98,10 +97,7 @@
         var params = { keyBytes: 32, ivBytes: 16 }
         // synchronous
         var dk = keythereum.create(params)
-        console.log(dk)
         var password = this.password
-        // var kdf = 'pbkdf2' // or "scrypt" to use the scrypt kdf
-
         // Note: if options is unspecified, the values in keythereum.constants are used.
         var options = {
           kdf: 'pbkdf2',
@@ -113,12 +109,12 @@
           }
         }
         var keyObject = keythereum.dump(password, dk.privateKey, dk.salt, dk.iv, options)
-        console.log(keyObject)
         var localfile = keythereum.exportToFile(keyObject)
-        console.log(localfile)
         if (localfile.length > 0) {
-        // double check file exists and display public keyBytes
+          const newPaddress = keyObject.address
+          // double check file exists and display public keyBytes
           this.keybuttonseen = false
+          this.feedbackM = 'New key has been created, address: ' + newPaddress
         }
         // finally create token for mobile app.
       }

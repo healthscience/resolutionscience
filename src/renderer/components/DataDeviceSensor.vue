@@ -4,6 +4,35 @@
     <div id="device-data-status">
       <ul>
         <li>
+          <header>TESTnetwork</header>
+          <div id="hardware">
+            <header>Hardware</header>
+            <div id="hardware-manufactureid">
+              DigitalOcean
+            </div>
+            <div id="askfor-token">
+              First time generation of token
+                <first-token @load="text = $event"></first-token>
+            </div>
+            <div id="enter-token">
+              Please navigate token file:
+              <file-reader @load="text = $event"></file-reader>
+            </div>
+            <div id="hardware-firmware">
+              OS Linux <a id="" href="">Cloud</a>
+            </div>
+          </div>
+          <div id="data">
+            <header>Data</header>
+            <div id="data-location">
+              TestServer
+            </div>
+            <div id="data-volume">
+
+            </div>
+          </div>
+        </li>
+        <li>
           <header>Amazfit fitness tracker</header>
           <div id="hardware">
             <header>Hardware</header>
@@ -81,9 +110,17 @@
 </template>
 
 <script>
+  import FileReader from './LandingPage/token-reader.vue'
+  import FirstToken from './LandingPage/token-first.vue'
 
 export default {
-
+    name: 'data-page',
+    components: {
+      FileReader,
+      FirstToken
+    },
+    data: () => ({
+    })
 }
 </script>
 

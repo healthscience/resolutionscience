@@ -109,7 +109,7 @@
     },
     data () {
       return {
-        liveFlow: new SAFEflow(),
+        liveFlow: null,
         datacollection: null,
         datastatistics: null,
         options: {},
@@ -171,17 +171,28 @@
         activeupdatecompute: '',
         activevis: '',
         activelearn: '',
-        computeFlag: ''
+        computeFlag: '',
+        systemd: {}
+      }
+    },
+    computed: {
+      system: function () {
+        return this.$store.state.system
       }
     },
     created () {
+      this.setAccess()
       this.dataContext()
       this.chartOptionsSet()
     },
     methods: {
+      setAccess () {
+        this.liveFlow = new SAFEflow(this.system)
+      },
       dataContext () {
         // make call to set start dataContext for this pubkey
         var localthis = this
+        console.log(this.system)
         function callbackC (dataH) {
           localthis.devices = dataH
           localthis.dataType()
@@ -544,7 +555,7 @@
               type: 'line',
               mode: 'vertical',
               value: newDateEnd(),
-              borderColor: 'red',
+              borderColor: '#7A33FF',
               borderWidth: 12,
               label: {
                 enabled: true,

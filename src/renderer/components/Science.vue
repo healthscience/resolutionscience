@@ -126,7 +126,7 @@ export default {
   name: 'Science',
   data () {
     return {
-      liveFlow: new SAFEflow(),
+      liveFlow: null,
       device1:
       {
         name: 'Mi Band2',
@@ -209,9 +209,18 @@ export default {
       computeFlag: ''
     }
   },
+  computed: {
+    system: function () {
+      return this.$store.state.system
+    }
+  },
   created () {
+    this.setAccess()
   },
   methods: {
+    setAccess () {
+      this.liveFlow = new SAFEflow(this.system)
+    },
     startComputeUpdate () {
       // this.activedevice = '' // 'F1:D1:D5:6A:32:D6', 'E3:30:80:7A:77:B5', 'C5:4C:89:9D:44:10',  'F3:6E:2A:A7:0F:FB'
       this.liveFlow.computationSystem('update', this.activedevice)

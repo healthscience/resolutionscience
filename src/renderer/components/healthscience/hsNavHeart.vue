@@ -1,6 +1,9 @@
 <template>
   <section class="container">
     <h1>Heart</h1>
+    <div id="learn-type">
+      <button class="" href="" id="learn-button" @click.prevent="filterLearn(learn)" v-bind:class="{ 'active': learn.active}">{{ learn.name }}</button>
+    </div>
     <div class="columns">
       <div id="heart-chart" class="column">
         <h1>Select Device/Sensor Data: </h1>
@@ -37,12 +40,8 @@
                 <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectContext(vis2)" v-bind:class="{ 'active': vis2.active}">{{ vis2.name }}</a></li>
               </ul>
           </li>
-          <li>
-            <ul>
-              <li id="lear-type"><a class="" href="" id="" @click.prevent="filterLearn(learn)" v-bind:class="{ 'active': learn.active}">{{ learn.name }}</a></li>
-            </ul>
-          </li>
         </ul>
+        <Learn-Report :reportData="reportData" ></Learn-Report>
         <h3>CHARTING - </h3>
         <div id="chart-message">{{ chartmessage }}</div>
 
@@ -52,10 +51,10 @@
         <button class="button is-primary" @click="fillData(-1)">back day</button>
         <button class="button is-primary" @click="fillData(-2)">forward day</button>
         <button class="button is-primary" @click="fillData(1)">One month</button>
-        <button class="button is-primary" @click="fillData(2)">Two months</button>
+        <!-- <button class="button is-primary" @click="fillData(2)">Two months</button>
         <button class="button is-primary" @click="fillData(3)">Three months</button>
         <button class="button is-primary" @click="fillData(6)">6 months</button>
-        <button class="button is-primary" @click="fillData(12)">One Year</button>
+        <button class="button is-primary" @click="fillData(12)">One Year</button> -->
 
         <h3>Science Statistics - Live updates</h3>
         <div id="chart-message">{{ chartmessageS }}</div>
@@ -79,6 +78,7 @@
   import BubbleChart from '@/components/charts/BubbleChart'
   import Reactive from '@/components/charts/Reactive'
   import Reactivestats from '@/components/charts/Reactivestats'
+  import LearnReport from '@/components/reports/learn-report.vue'
   import SAFEflow from '../../safeflow/safeFlow.js'
   const moment = require('moment')
 
@@ -105,7 +105,8 @@
       BarChart,
       BubbleChart,
       Reactive,
-      Reactivestats
+      Reactivestats,
+      LearnReport
     },
     data () {
       return {
@@ -113,6 +114,7 @@
         datacollection: null,
         datastatistics: null,
         options: {},
+        reportData: {},
         labelback: [],
         heartback: [],
         colorback: '',
@@ -171,8 +173,7 @@
         activeupdatecompute: '',
         activevis: '',
         activelearn: '',
-        computeFlag: '',
-        systemd: {}
+        computeFlag: ''
       }
     },
     computed: {
@@ -192,7 +193,6 @@
       dataContext () {
         // make call to set start dataContext for this pubkey
         var localthis = this
-        console.log(this.system)
         function callbackC (dataH) {
           localthis.devices = dataH
           localthis.dataType()
@@ -426,9 +426,17 @@
         console.log('called collect start analysis--')
         console.log(this.analysisStart + ' start')
         console.log(this.analysisEnd + ' end')
-        // const startA = this.options.analysisStart
-        // const endA = this.options.analysisEnd
         // pass to computations system
+        let reportDataback = {}
+        reportDataback.learnSummarySeen = true
+        reportDataback.ridentity = 10987654321
+        reportDataback.heartmax = 153
+        reportDataback.heartmin = 52
+        reportDataback.recovertime = 3.45
+        reportDataback.similarcount = 325
+        reportDataback.recoverchange = '+.02'
+        this.reportData = reportDataback
+        console.log(this.reportData)
       },
       chartOptionsSet () {
         var localthis = this
@@ -546,7 +554,7 @@
               },
               onDrag: function (event) {
                 // console.log(event.subject.config.value)
-                localthis.analysisStart = this.options.value
+                localthis.analysisStart = event.subject.config.value
               }
             },
             {
@@ -563,13 +571,13 @@
               },
               draggable: true,
               onClick: function (et) {
-                console.log(et.type, this)
+                // console.log(et.type, this)
                 localthis.analysisEnd = this.options.value
-                console.log(this.options.value)
+                // console.log(this.options.value)
               },
-              onDrag: function (event) {
+              onDrag: function (eventt) {
                 // console.log(event.subject.config.value)
-                localthis.analysisEnd = event.subject.config.value
+                localthis.analysisEnd = eventt.subject.config.value
               }
             }]
           }
@@ -598,8 +606,25 @@
     width: 1200px;
   }
 
+  #heart-chart ul li {
+    font-size: 1.1em;
+  }
+
   .active{
     background-color:#8ec16d;
     color: white;
   }
+
+#learn-button {
+  font-size: 1.6em
+
+}
+
+.is-primary {
+  font-size: 1.6em
+}
+
+#learn-type {
+  float: right;
+}
 </style>

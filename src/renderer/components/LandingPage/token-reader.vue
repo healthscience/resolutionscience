@@ -47,7 +47,8 @@
           const tJSONstring = reader.result
           const tokenJSON = JSON.parse(tJSONstring)
           // now use getter to store state
-          localthis.$store.commit('setToken', tokenJSON)
+          localthis.$store.commit('setBoth', tokenJSON)
+          localthis.verifyfeedbackM = 'Data token live'
         }
         reader.readAsText(file)
 

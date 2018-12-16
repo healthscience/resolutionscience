@@ -11,14 +11,19 @@ export default new Router({
       component: require('@/components/LandingPage').default
     },
     {
+      path: '/science',
+      name: 'acc-page',
+      component: require('@/components/Science').default
+    },
+    {
       path: '/analysis',
       name: 'analysis-page',
       component: require('@/components/Analysis').default
     },
     {
-      path: '/science',
-      name: 'acc-page',
-      component: require('@/components/Science').default
+      path: '/help',
+      name: 'help-page',
+      component: require('@/components/Help').default
     },
     {
       path: '/datadevicesensor',

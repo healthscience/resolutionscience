@@ -1,6 +1,6 @@
 <template>
-  <div id="account">
-    <h1>Analysis Toolkit</h1>
+  <div id="analysis">
+    <h1>DIY Toolkit</h1>
     <p>
       Apply curiosity with rigour
     </p>
@@ -27,6 +27,10 @@ export default {
 *  Authorisation views
 *
 */
+#analysis {
+  margin: 1em;
+}
+
 #authorisation {
 	display:none;
 	margin:40px;

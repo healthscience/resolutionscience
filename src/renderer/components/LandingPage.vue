@@ -30,7 +30,7 @@
         <br />
         <br />
       </div>
-      <div id="firsttime-start">
+      <div v-if="newKeystartseen" id="firsttime-start">
         Create a new account: start by enter a password:
         <form>
           <password
@@ -74,6 +74,7 @@
       password: null,
       text: '',
       keybuttonseen: false,
+      newKeystartseen: true,
       feedbackM: '',
       warningM: ''
     }),

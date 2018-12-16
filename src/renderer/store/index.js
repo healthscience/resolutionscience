@@ -9,10 +9,19 @@ export default new Vuex.Store({
   state: {
     system: {'publickey': '', 'token': ''}
   },
+  getters: {
+    liveSystem: state => state.system
+  },
   mutations: {
     // Mutations
-    setToken: (state, inVerified) => {
+    setBoth: (state, inVerified) => {
       state.system = inVerified
+    },
+    setPublickey: (state, inVerified) => {
+      state.system.publickey = inVerified
+    },
+    setToken: (state, inVerified) => {
+      state.system.token = inVerified
     }
   },
   modules,

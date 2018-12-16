@@ -17,9 +17,10 @@ const moment = require('moment')
 var safeFlow = function (accessT) {
   console.log('SAFEflow live')
   events.EventEmitter.call(this)
+  this.baseAPI = 'http://165.227.244.213:8881'
   this.liveData = {}
   this.datacollection = []
-  this.tempPubkey = accessT.pubilckey
+  this.tempPubkey = accessT.publickey
   this.tempToken = accessT.token
   this.liveStarttime = 0
   this.activeContext = []
@@ -342,7 +343,7 @@ safeFlow.prototype.dataStatistics = async function (seg, device, sensor, compute
 */
 safeFlow.prototype.getContextData = async function () {
   //  nosql query but headng towards a gRPC listener on stream socket
-  let jsondata = await axios.get('http://165.227.244.213:8881/contextdata/' + this.tempPubkey + '/' + this.tempToken)
+  let jsondata = await axios.get(this.baseAPI + '/contextdata/' + this.tempPubkey + '/' + this.tempToken)
   return jsondata.data
 }
 
@@ -353,7 +354,7 @@ safeFlow.prototype.getContextData = async function () {
 */
 safeFlow.prototype.getContextType = async function () {
   //  nosql query but headng towards a gRPC listener on stream socket
-  let jsondata = await axios.get('http://165.227.244.213:8881/contexttype/' + this.tempPubkey + '/' + this.tempToken)
+  let jsondata = await axios.get(this.baseAPI + '/contexttype/' + this.tempPubkey + '/' + this.tempToken)
   return jsondata.data
 }
 
@@ -368,7 +369,7 @@ safeFlow.prototype.getComputeData = async function (seg, device) {
   let deviceID = device
   console.log(device)
   //  nosql query but headng towards a gRPC listener on stream socket
-  let jsondata = await axios.get('http://165.227.244.213:8881/computedata/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID)
+  let jsondata = await axios.get(this.baseAPI + '/computedata/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID)
   return jsondata.data
 }
 
@@ -381,7 +382,7 @@ safeFlow.prototype.getData = async function (seg, device) {
   // need source, devices, data
   let queryTime = this.timeUtility(seg)
   let deviceID = device
-  let jsondata = await axios.get('http://165.227.244.213:8881/devicedata/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID)
+  let jsondata = await axios.get(this.baseAPI + '/devicedata/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID)
   // console.log(jsondata.data)
   return jsondata.data
 }
@@ -394,7 +395,7 @@ safeFlow.prototype.getData = async function (seg, device) {
 safeFlow.prototype.getAverageData = async function (seg, device) {
   //  nosql query but headng towards a gRPC listener on stream socket
   let queryTime = seg // this.timeUtility(seg)
-  let jsondata = await axios.get('http://165.227.244.213:8881/heart24data/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + device + '/sc-eth-333939')
+  let jsondata = await axios.get(this.baseAPI + '/heart24data/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + device + '/sc-eth-333939')
   return jsondata.data
 }
 
@@ -697,9 +698,30 @@ safeFlow.prototype.saveData = async function (startDate, device, count, tidy, av
   saveJSON.device_mac = device
   saveJSON.clean = count
   saveJSON.tidy = tidy
-  await axios.post('http://165.227.244.213:8881/averageSave/' + this.tempPubkey + '/' + this.tempToken + '/' + device, saveJSON)
+  await axios.post(this.baseAPI + '/averageSave/' + this.tempPubkey + '/' + this.tempToken + '/' + device, saveJSON)
     .then(function (response) {
       // console.log(response)
     })
 }
+
+/**
+*  make one-off first time api call
+* @method firstToken
+*
+*/
+safeFlow.prototype.firstToken = async function (pubkeyIN, callBackF) {
+  // need source, devices, data
+  console.log('first time call safeflow')
+  console.log(pubkeyIN)
+  // prepare JSON object for POST
+  let saveJSON = {}
+  saveJSON.publickey = pubkeyIN
+  await axios.post(this.baseAPI + '/firsttoken/', pubkeyIN)
+    .then(function (response) {
+      console.log('first time token back')
+      console.log(response)
+      callBackF(response.data)
+    })
+}
+
 export default safeFlow

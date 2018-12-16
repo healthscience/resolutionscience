@@ -7,19 +7,19 @@
           <header>TESTnetwork</header>
           <div id="hardware">
             <header>Hardware</header>
-            <div id="hardware-manufactureid">
-              DigitalOcean
-            </div>
-            <div id="askfor-token">
+            <div v-if="firstTimetokenseen" id="askfor-token">
               First time generation of token
                 <first-token @load="text = $event"></first-token>
             </div>
-            <div id="enter-token">
+            <div v-if="repeatTimetokenseen" id="enter-token">
               Please navigate token file:
               <file-reader @load="text = $event"></file-reader>
             </div>
             <div id="hardware-firmware">
               OS Linux <a id="" href="">Cloud</a>
+            </div>
+            <div id="hardware-manufactureid">
+              DigitalOcean
             </div>
           </div>
           <div id="data">
@@ -112,16 +112,41 @@
 <script>
   import FileReader from './LandingPage/token-reader.vue'
   import FirstToken from './LandingPage/token-first.vue'
+  import fs from 'fs'
 
-export default {
+  export default {
     name: 'data-page',
     components: {
       FileReader,
       FirstToken
     },
     data: () => ({
-    })
-}
+      firstTimetokenseen: false,
+      repeatTimetokenseen: false
+    }),
+    created () {
+      this.checkforToken()
+    },
+    methods: {
+      checkforToken () {
+        // does a token file exist?
+        const path = process.cwd() + '/keystore/healthscience-token.json'
+        console.log(path)
+        try {
+          if (fs.existsSync(path)) {
+            console.log('file found')
+            // file exists start open decrypt
+            this.repeatTimetokenseen = true
+          } else {
+            console.log('file err found')
+            this.firstTimetokenseen = true
+          }
+        } catch (err) {
+          console.error(err)
+        }
+      }
+    }
+  }
 </script>
 
 <style>

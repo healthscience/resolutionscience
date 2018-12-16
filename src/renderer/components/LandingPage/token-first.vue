@@ -14,6 +14,8 @@
 <script>
   import Passwordk from 'vue-password-strength-meter'
   // import keythereum from 'keythereum'
+  import SAFEflow from '../../safeflow/safeFlow.js'
+  import fs from 'fs'
 
   export default {
     name: 'tokenfirst-page',
@@ -22,6 +24,7 @@
       FileReader
     },
     data: () => ({
+      liveFlow: null,
       keyObject: {},
       verifyfeedbackM: '',
       viewToken: '',
@@ -31,11 +34,23 @@
       pwinputSeen: false,
       passwordk: null,
       text: '',
-      tokenbuttonseen: false,
+      tokenbuttonseen: true,
       feedbackM: '',
       warningM: ''
     }),
+    created () {
+      this.setAccess()
+    },
+    computed: {
+      system: function () {
+        return this.$store.state.system
+      }
+    },
     methods: {
+      setAccess () {
+        const firstAsk = {'publickey': 'first', 'token': 'ask'}
+        this.liveFlow = new SAFEflow(firstAsk)
+      },
       checkforToken () {
         // if file exists display UI to open file
         this.verifyKeypw()
@@ -45,8 +60,10 @@
       },
       askforToken () {
         // first check verifcation of private keys
-        this.checkforToken()
+        // call keythereum
+        // next make api first call
         // make call to data store for first stage token permission
+        this.firstTokenAPIcall()
         // returns public key from data store, sign message with one off token and send background
         // save publicaddress and token to local file (encrypt with key and password access)
       },
@@ -59,6 +76,31 @@
       },
       signTokenrequest () {
         // sign message and save returning acccess token, encrypt and pw lock.
+      },
+      firstTokenAPIcall () {
+        // make call
+        var localthis = this
+        function callbackC (firstBk) {
+          console.log('temp token')
+          console.log(firstBk)
+          // set token  next stage sign and send back for secure token
+          localthis.$store.commit('setToken', firstBk.firstT)
+          // and write to localfile// writeFile function with filename, content and callback function
+          let latestSystem = localthis.$store.getters.liveSystem
+          let stringForsystem = JSON.stringify(latestSystem)
+          // todo encrypt file
+          fs.writeFile('keystore/healthscience-token.json', stringForsystem, function (err) {
+            if (err) throw err
+            console.log('token json file created.')
+            localthis.verifyfeedbackM = 'Access token granted and ready to use.'
+          })
+        }
+        this.computeFlag = 'context'
+        this.liveFlow.firstToken(this.system, callbackC)
+      },
+      viewToken () {
+        // get token and display
+        this.verifyfeedbackM = 'Access token = ' + this.$store.getters.liveSystem
       }
     }
   }

@@ -2,7 +2,7 @@
   <div id="key-system">
     <div id="key-verify" v-if="fileinputSeen">
       <label class="text-reader">
-        Read File
+        Read Key File
         <input type="file" @change="loadTextFromFile">
       </label>
     </div>
@@ -27,6 +27,7 @@
       FileReader
     },
     data: () => ({
+      pkaddress: '',
       keyObject: {},
       verifyfeedbackM: '',
       fileinputSeen: true,
@@ -42,10 +43,10 @@
         // prompt for Password
         const filepath = ev.target.files[0].path
         const extractPkey = filepath.substr(filepath.length - 40)
-        var address = extractPkey
+        this.pkaddress = extractPkey
         // Specify a data directory (optional; defaults to ~/.ethereum)
         var datadir = process.cwd()
-        this.keyObject = keythereum.importFromFile(address, datadir)
+        this.keyObject = keythereum.importFromFile(this.pkaddress, datadir)
         this.pwinputSeen = true
       },
       verifyKeypw () {
@@ -63,6 +64,10 @@
           this.fileinputSeen = false
           this.pwinputSeen = false
           this.verifyfeedbackM = 'Key has been verifed.'
+          // set public key startTime
+          // const tokenJSONsetP = {}
+          // tokenJSONsetP.publickey = this.pkaddress
+          this.$store.commit('setPublickey', this.pkaddress)
         } else {
           // password failed
           this.verifyfeedbackM = 'Password not correct.'

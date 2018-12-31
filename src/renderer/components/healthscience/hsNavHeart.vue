@@ -1,9 +1,6 @@
 <template>
   <section class="container">
     <h1>Heart</h1>
-    <div id="learn-type">
-      <button class="" href="" id="learn-button" @click.prevent="filterLearn(learn)" v-bind:class="{ 'active': learn.active}">{{ learn.name }}</button>
-    </div>
     <div class="columns">
       <div id="heart-chart" class="column">
         <h1>Select Device/Sensor Data: </h1>
@@ -25,29 +22,56 @@
               </ul>
           </li>
           <li>
-            <header> Science Computations - </header>
-              <ul>
-                <li id="science-compute"><a class="" href="" id="" @click.prevent="selectContext(compute1)" v-bind:class="{ 'active': compute1.active}">{{ compute1.name }}</a></li>
-                <li id="science-compute"><a class="" href="" id="" @click.prevent="selectContext(compute2)" v-bind:class="{ 'active': compute2.active}">{{ compute2.name }}</a></li>
-                <li id="science-compute"><a class="" href="" id="" @click.prevent="selectContext(compute3)" v-bind:class="{ 'active': compute3.active}">{{ compute3.name }}</a></li>
-                <li id="science-compute"><a class="" href="" id="" @click.prevent="selectContext(compute4)" v-bind:class="{ 'active': compute4.active}">{{ compute4.name }}</a></li>
-              </ul>
-          </li>
-          <li>
             <header> Visualisation - </header>
               <ul>
                 <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectContext(vis1)" v-bind:class="{ 'active': vis1.active}">{{ vis1.name }}</a></li>
-                <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectContext(vis2)" v-bind:class="{ 'active': vis2.active}">{{ vis2.name }}</a></li>
+                <!-- <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectContext(vis2)" v-bind:class="{ 'active': vis2.active}">{{ vis2.name }}</a></li> -->
               </ul>
+          </li>
+          <li>
+            <header> Science Computations - </header>
+              <ul>
+                <li>
+                  <select v-model="selected">
+                  <option v-for="scoption in scoptions" v-bind:value="scoption.value">
+                    {{ scoption.text }}
+                  </option>
+                </select>
+                <!--<span>Selected: {{ selected }}</span>-->
+                </li>
+              </ul>
+          </li>
+          <li>
+            <div id="learn-type">
+              <button class="" href="" id="learn-button" @click.prevent="filterLearn(learn)" v-bind:class="{ 'active': learn.active}">{{ learn.name }}</button>
+            </div>
           </li>
         </ul>
         <Learn-Report :reportData="reportData" ></Learn-Report>
         <h3>CHARTING - </h3>
+
+        <div v-if="averageSeen" id="average-charting">
+          <h3>Science Statistics</h3>
+          <div>
+            <div id="chart-message">{{ chartmessageS }}</div>
+            <div id="close-average">
+              <button id="close-report" @click.prevent="closeAvgSummary()">Finsish & Close</button>
+            </div>
+          </div>
+
+          <reactivestats :chart-data="datastatistics" :width="1200" :height="600"></reactivestats>
+          <button class="button is-primary" @click="fillStats(0)">Year to date</button>
+          <button class="button is-primary" @click="fillStats(1)">One month</button>
+          <button class="button is-primary" @click="fillStats(2)">Two months</button>
+          <button class="button is-primary" @click="fillStats(3)">Three months</button>
+          <button class="button is-primary" @click="fillStats(6)">6 months</button>
+          <button class="button is-primary" @click="fillStats(12)">One Year</button>
+        </div>
+
         <div id="chart-message">{{ chartmessage }}</div>
+        <reactive :chartData="datacollection" :options="options" :width="1200" :height="600"></reactive>
 
-        <reactive :chart-data="datacollection" :options="options" :width="1200" :height="600"></reactive>
-
-        <button class="button is-primary" @click="fillData(0)">One day</button>
+        <button class="button is-primary" @click="fillData(0)">Today</button>
         <button class="button is-primary" @click="fillData(-1)">back day</button>
         <button class="button is-primary" @click="fillData(-2)">forward day</button>
         <button class="button is-primary" @click="fillData(1)">One month</button>
@@ -55,18 +79,6 @@
         <button class="button is-primary" @click="fillData(3)">Three months</button>
         <button class="button is-primary" @click="fillData(6)">6 months</button>
         <button class="button is-primary" @click="fillData(12)">One Year</button> -->
-
-        <h3>Science Statistics - Live updates</h3>
-        <div id="chart-message">{{ chartmessageS }}</div>
-
-        <reactivestats :chart-data="datastatistics" :width="1200" :height="600"></reactivestats>
-
-        <button class="button is-primary" @click="fillStats(0)">Year to date</button>
-        <button class="button is-primary" @click="fillStats(1)">One month</button>
-        <button class="button is-primary" @click="fillStats(2)">Two months</button>
-        <button class="button is-primary" @click="fillStats(3)">Three months</button>
-        <button class="button is-primary" @click="fillStats(6)">6 months</button>
-        <button class="button is-primary" @click="fillStats(12)">One Year</button>
       </div>
     </div>
   </section>
@@ -81,22 +93,6 @@
   import LearnReport from '@/components/reports/learn-report.vue'
   import SAFEflow from '../../safeflow/safeFlow.js'
   const moment = require('moment')
-
-  function newDate () {
-    const nowTime = moment()
-    const startTime = moment.utc(nowTime).startOf('day')
-    const time = moment.duration('1:0:00')
-    startTime.add(time)
-    return startTime
-  }
-
-  function newDateEnd () {
-    const nowTime2 = moment()
-    const startTime2 = moment.utc(nowTime2).startOf('day')
-    const time2 = moment.duration('4:0:00')
-    startTime2.add(time2)
-    return startTime2
-  }
 
   export default {
     name: 'VueChartJS',
@@ -113,7 +109,16 @@
         liveFlow: null,
         datacollection: null,
         datastatistics: null,
+        selected: 'A',
+        scoptions: [
+          { text: 'Activity and HR data', value: 'A', cid: 'wasm-sc-1' },
+          { text: 'Average HR', value: 'B', cid: 'wasm-sc-2' },
+          { text: 'Resting HR Recovery', value: 'C', cid: 'wasm-sc-3' },
+          { text: 'error data', value: 'D', cid: 'wasm-sc-4' },
+          { text: 'HealthSpan', value: 'E', cid: 'wasm-sc-5' }
+        ],
         options: {},
+        averageSeen: false,
         reportData: {},
         labelback: [],
         heartback: [],
@@ -179,7 +184,15 @@
     computed: {
       system: function () {
         return this.$store.state.system
+      },
+      datacollection: function () {
+        return {
+          labels: [],
+          datasets: []
+        }
       }
+    },
+    mounted () {
     },
     created () {
       this.setAccess()
@@ -206,11 +219,15 @@
         function callbackT (dataH) {
           localthis.sensors = dataH
           localthis.liveFlow.dataStart()
-          // localthis.fillData(0)
-          // localthis.fillStats(0)
         }
         this.computeFlag = 'datatype'
         this.liveFlow.systemContext(this.computeFlag, callbackT)
+      },
+      getAverages (max) {
+        var newAHR = 72 // Math.floor(Math.random() * Math.floor(max))
+        var newARHR = 55
+        this.options.annotation.annotations[0].value = newAHR
+        this.options.annotation.annotations[1].value = newARHR
       },
       fillData (seg) {
         var localthis = this
@@ -218,10 +235,9 @@
         this.filterSensorActive()
         this.filterScienceActive()
         this.filterVisActive()
+
         function callbackD (dataH) {
           let results = dataH
-          // console.log('in vue')
-          // console.log(results)
           // is there one or two datasets?
           if (results.length === 2) {
             // need to prepare different visualisations, data return will fit only one select option
@@ -279,6 +295,10 @@
               ]
             }
           } else {
+            // console.log('draw chart')
+            localthis.getAverages(70)
+            var startChartDate = moment(localthis.labelback[0])
+            localthis.updateChartoptions(startChartDate)
             localthis.chartmessage = 'BPM'
             localthis.datacollection = {
               labels: localthis.labelback,
@@ -303,12 +323,9 @@
                 }
               ]
             }
-            // console.log(localthis.datacollection)
           }
         }
         this.computeFlag = 'raw'
-        // console.log(this.activesensor)
-        // console.log(this.activedevice)
         this.liveFlow.systemCoordinate(seg, this.activedevice, this.activesensor, this.activecompute, this.activevis, this.computeFlag, callbackD)
       },
       fillStats (seg) {
@@ -414,29 +431,50 @@
         }
       },
       filterLearn (s) {
-        console.log(s)
+        // console.log(s)
         s.active = !s.active
         if (s.active === true) {
           this.activelearn = this.learn.id
-          console.log(this.activelearn)
+          // console.log(this.activelearn)
           this.learnStartStop()
         }
       },
+      filterCompute (cs) {
+        // console.log(cs)
+        for (let csi of this.scoptions) {
+          if (csi.value === cs) {
+            this.activecompute = csi.cid
+          }
+        }
+        return this.activecompute
+      },
       learnStartStop () {
-        console.log('called collect start analysis--')
-        console.log(this.analysisStart + ' start')
-        console.log(this.analysisEnd + ' end')
         // pass to computations system
-        let reportDataback = {}
-        reportDataback.learnSummarySeen = true
-        reportDataback.ridentity = 10987654321
-        reportDataback.heartmax = 153
-        reportDataback.heartmin = 52
-        reportDataback.recovertime = 3.45
-        reportDataback.similarcount = 325
-        reportDataback.recoverchange = '+.02'
-        this.reportData = reportDataback
-        console.log(this.reportData)
+        let computeSelected = this.selected
+        console.log(computeSelected)
+        console.log(this.analysisStart)
+        console.log(this.analysisEnd)
+        let computationSMid = this.filterCompute(computeSelected)
+        console.log(computationSMid)
+        if (computationSMid === 'wasm-sc-3') {
+          let reportDataback = {}
+          reportDataback.learnSummarySeen = true
+          reportDataback.ridentity = 10987654321
+          reportDataback.heartmax = 153
+          reportDataback.heartmin = 52
+          reportDataback.recovertime = 3.45
+          reportDataback.similarcount = 325
+          reportDataback.recoverchange = '+.02'
+          this.reportData = reportDataback
+          // console.log(this.reportData)
+          this.learn.active = false
+        } else if (computationSMid === 'wasm-sc-2') {
+          this.averageSeen = true
+        }
+      },
+      closeAvgSummary () {
+        this.averageSeen = false
+        this.learn.active = false
       },
       chartOptionsSet () {
         var localthis = this
@@ -473,7 +511,10 @@
               position: 'left',
               id: 'bpm',
               ticks: {
-                beginAtZero: true
+                beginAtZero: true,
+                steps: 10,
+                stepValue: 5,
+                max: 180
               },
               scaleLabel: {
                 display: true,
@@ -514,7 +555,7 @@
               },
               draggable: true,
               onClick: function (e) {
-                console.log(e.type, this)
+                // console.log(e.type, this)
               }
             },
             {
@@ -531,7 +572,7 @@
               },
               draggable: true,
               onClick: function (e) {
-                console.log(e.type, this)
+                // console.log(e.type, this)
               }
             },
             {
@@ -539,7 +580,7 @@
               scaleID: 'x-axis-0',
               type: 'line',
               mode: 'vertical',
-              value: newDate(),
+              value: 0,
               borderColor: 'blue',
               borderWidth: 12,
               label: {
@@ -562,7 +603,7 @@
               scaleID: 'x-axis-0',
               type: 'line',
               mode: 'vertical',
-              value: newDateEnd(),
+              value: 0,
               borderColor: '#7A33FF',
               borderWidth: 12,
               label: {
@@ -582,6 +623,36 @@
             }]
           }
         }
+      },
+      updateChartoptions (startChartDate) {
+        this.newDate(startChartDate) // moment('12/21/2018', 'MM-DD-YYYY')
+        this.newDateEnd(startChartDate) // moment('12/21/2018', 'MM-DD-YYYY')
+      },
+      newDate (selectDay) {
+        var nowTime = ''
+        if (selectDay === 0) {
+          nowTime = moment()
+        } else {
+          nowTime = moment(selectDay)
+          nowTime = nowTime.subtract(selectDay, 'days')
+        }
+        // console.log(nowTime)
+        var startTime = moment.utc(nowTime).startOf('day')
+        const time = moment.duration('2:0:00')
+        startTime.add(time)
+        // startTime = moment('12/21/2018', 'MM-DD-YYYY')
+        this.options.annotation.annotations[2].value = startTime
+        // this.$set(this.options.annotation.annotations[2], 'value', startTime)
+        // console.log(this.options.annotation.annotations[2])
+      },
+      newDateEnd (endTimeIN) {
+        var nowTime2 = moment(endTimeIN)
+        var startTime2 = moment.utc(nowTime2).startOf('day')
+        var time2 = moment.duration('4:0:00')
+        startTime2.add(time2)
+        this.options.annotation.annotations[3].value = startTime2
+        // this.$set(this.options.annotation.annotations[3], 'value', startTime2)
+        // console.log(startTime2)
       }
     }
   }
@@ -616,7 +687,8 @@
   }
 
 #learn-button {
-  font-size: 1.6em
+  font-size: 1.6em;
+  padding: .25em;
 
 }
 
@@ -625,6 +697,14 @@
 }
 
 #learn-type {
+  float: right;
+}
+
+.is-primary {
+  margin-left: 12px;
+}
+
+#close-average {
   float: right;
 }
 </style>

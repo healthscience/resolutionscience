@@ -24,13 +24,13 @@
     <div id="secure-start">
       <div id="returning-start">
         Please navigate to private key:
-        <file-reader @load="text = $event"></file-reader>
+        <file-reader @load="text = $event" @removeCreatekey="newKeystartseen = $event"></file-reader>
         <br />
         <br />
         <br />
         <br />
       </div>
-      <div v-if="newKeystartseen" id="firsttime-start">
+      <div v-if="newKeystartseen"  id="firsttime-start">
         Create a new account: start by enter a password:
         <form>
           <password
@@ -118,6 +118,11 @@
           this.feedbackM = 'New key has been created, address: ' + newPaddress
         }
         // finally create token for mobile app.
+      },
+      listenkSeen (evIN) {
+        console.log('event called to remove create')
+        console.log(evIN)
+        this.newKeystartseen = false
       }
     }
   }

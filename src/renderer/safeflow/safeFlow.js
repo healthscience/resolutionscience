@@ -367,7 +367,7 @@ safeFlow.prototype.getComputeData = async function (seg, device) {
   // need source, devices, data
   let queryTime = seg // this.timeUtility(seg)
   let deviceID = device
-  console.log(device)
+  // console.log(device)
   //  nosql query but headng towards a gRPC listener on stream socket
   let jsondata = await axios.get(this.baseAPI + '/computedata/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID)
   return jsondata.data
@@ -422,7 +422,7 @@ safeFlow.prototype.dataMatchtypes = function (sourceID, sensorID) {
 */
 safeFlow.prototype.timeUtility = function (seg) {
   //  turn segment into time query profile
-  console.log('timeUtility')
+  // console.log('timeUtility')
   let startTime
   if (this.liveStarttime && seg === -1) {
     // move back one day in time

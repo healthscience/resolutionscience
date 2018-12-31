@@ -6,12 +6,12 @@
         <input type="file" @change="loadTextFromFile">
       </label>
     </div>
-    <div id="keypw-feedback">{{ verifyfeedbackM }}</div>
     <div id="pwinput-prompt" v-if="pwinputSeen">
       Please enter password
       <passwordk v-model="passwordk" :toggle="true" />
       <button @click.prevent="verifyKeypw" class="button is-primary">Verify key ownership</button>
     </div>
+    <div id="keypw-feedback">{{ verifyfeedbackM }}</div>
   </div>
 </template>
 
@@ -61,12 +61,15 @@
         // success
         if (privateKey) {
           // passed
+          this.$emit('removeCreatekey', false)
           this.fileinputSeen = false
           this.pwinputSeen = false
           this.verifyfeedbackM = 'Key has been verifed.'
           // set public key startTime
           // const tokenJSONsetP = {}
           // tokenJSONsetP.publickey = this.pkaddress
+          // remove create key via events
+
           this.$store.commit('setPublickey', this.pkaddress)
         } else {
           // password failed
@@ -95,5 +98,15 @@
   left: 0;
   z-index: -1;
   opacity: 0;
+}
+#pwinput-prompt {
+  text-align: center;
+}
+.is-primary {
+  font-size: 1.4em;
+}
+#keypw-feedback {
+  font-size: 1.4em;
+  text-align: center;
 }
 </style>

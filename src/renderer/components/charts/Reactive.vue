@@ -10,23 +10,20 @@
     mixins: [reactiveProp],
     props: {
       options: {
-        type: Object
+        type: Object,
+        default: null
       }
     },
-    data () {
-    },
-    methods: {
-      learnClicked () {
-        console.log('called collect start analsys')
-        // const startA = this.analysisStart
-        // const endA = this.analysisEnd
-        // pass to computations system
+    watch: {
+      chartData: function () {
+        this._chart.destroy()
+        this.renderChart(this.chartData, this.options)
       }
     },
     mounted () {
       // this.chartData is created in the mixin
       // console.log(this.chartData)
-      // console.log(this.options)
+      console.log(this.options)
       // console.log(reactiveProp)
       this.renderChart(this.chartData, this.options)
     }

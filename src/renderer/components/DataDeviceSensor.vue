@@ -13,7 +13,7 @@
             </div>
             <div v-if="repeatTimetokenseen" id="enter-token">
               Please navigate token file:
-              <file-reader @load="text = $event"></file-reader>
+              <token-reader @load="text = $event"></token-reader>
             </div>
             <div id="hardware-firmware">
               OS Linux <a id="" href="">Cloud</a>
@@ -110,14 +110,14 @@
 </template>
 
 <script>
-  import FileReader from './LandingPage/token-reader.vue'
+  import TokenReader from './LandingPage/token-reader.vue'
   import FirstToken from './LandingPage/token-first.vue'
   import fs from 'fs'
 
   export default {
     name: 'data-page',
     components: {
-      FileReader,
+      TokenReader,
       FirstToken
     },
     data: () => ({

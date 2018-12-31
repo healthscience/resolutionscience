@@ -6,7 +6,13 @@
         <input type="file" @change="loadTextFromFile">
       </label>
     </div>
-    <div id="keypw-feedback">{{ verifyfeedbackM }}</div>
+    <div id="keypw-feedback">
+      {{ verifyfeedbackM }}
+    </div>
+    <div v-if="viewPkey" id="publickey-view">
+      <button @click.prevent="viewPublickey" class="button is-primary">View publickey address</button>
+      {{ pubkeyView }}
+    </div>
     <div id="pwinput-prompt" v-if="pwinputSeen">
       Please enter password
       <passwordk v-model="passwordk" :toggle="true" />
@@ -29,8 +35,11 @@
     data: () => ({
       keyObject: {},
       verifyfeedbackM: '',
+      token: {},
       fileinputSeen: true,
       pwinputSeen: false,
+      viewPkey: false,
+      pubkeyView: '',
       passwordk: null,
       text: '',
       keybuttonseen: false,
@@ -47,8 +56,10 @@
           const tJSONstring = reader.result
           const tokenJSON = JSON.parse(tJSONstring)
           // now use getter to store state
+          localthis.token = tokenJSON
           localthis.$store.commit('setBoth', tokenJSON)
           localthis.verifyfeedbackM = 'Data token live'
+          localthis.viewPkey = true
         }
         reader.readAsText(file)
 
@@ -58,7 +69,11 @@
       },
       verifyKeypw () {
         // verify key password for token
-
+      },
+      viewPublickey () {
+        console.log('want to view public key address')
+        console.log(this.token)
+        this.pubkeyView = this.token.publickey
       }
     }
   }

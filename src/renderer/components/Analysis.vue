@@ -1,9 +1,6 @@
 <template>
   <div id="analysis">
-    <h1>DIY Toolkit</h1>
-    <p>
-      Apply curiosity with rigour
-    </p>
+    <h1>DIY Toolkit - Apply curiosity with rigour</h1>
     <heart-Plugin></heart-Plugin>
   </div>
 </template>

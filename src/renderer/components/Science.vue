@@ -4,10 +4,10 @@
     <div id="science-compute-status">
       <ul>
         <li>
-          <header class="science-start">Heart Simulation</header>
+          <header class="science-start">HealthSpan Heart Simulation</header>
           <div id="description">
             <header class="science-part">Description</header>
-            A network machine learning simulation of a human heart used to predict heart health.
+            Combines all network machine learning of the scientific computations to build a simulation of a human heart.
           </div>
           <div id="sensors">
             <header class="science-part">Sensors / DataType</header>

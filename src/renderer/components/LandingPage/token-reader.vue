@@ -11,7 +11,9 @@
     </div>
     <div v-if="viewPkey" id="publickey-view">
       <button @click.prevent="viewPublickey" class="button is-primary">View publickey address</button>
+      <button @click.prevent="viewtToken" class="button is-primary">View Token</button>
       {{ pubkeyView }}
+      {{ tokenTView }}
     </div>
     <div id="pwinput-prompt" v-if="pwinputSeen">
       Please enter password
@@ -32,14 +34,20 @@
       Passwordk,
       FileReader
     },
+    props: {
+      viewPkey: {
+        type: Boolean,
+        default: false
+      }
+    },
     data: () => ({
       keyObject: {},
       verifyfeedbackM: '',
       token: {},
       fileinputSeen: true,
       pwinputSeen: false,
-      viewPkey: false,
       pubkeyView: '',
+      tokenTView: '',
       passwordk: null,
       text: '',
       keybuttonseen: false,
@@ -73,7 +81,12 @@
       viewPublickey () {
         console.log('want to view public key address')
         console.log(this.token)
-        this.pubkeyView = this.token.publickey
+        this.pubkeyView = 'Publickey = ' + this.token.publickey
+      },
+      viewtToken () {
+        console.log('want to view test TOken')
+        console.log(this.token)
+        this.tokenTView = 'TestToken = ' + this.token.token
       }
     }
   }

@@ -7,13 +7,13 @@
           <header>TESTnetwork</header>
           <div id="hardware">
             <header>Hardware</header>
-            <div v-if="firstTimetokenseen" id="askfor-token">
+            <div v-if="firstTimetokenseen" id="askfor-token" >
               First time generation of token
-                <first-token @load="text = $event"></first-token>
+                <first-token @load="text = $event" @removeGenbutton="firstGenerateseen($event)"></first-token>
             </div>
             <div v-if="repeatTimetokenseen" id="enter-token">
               Please navigate token file:
-              <token-reader @load="text = $event"></token-reader>
+              <token-reader @load="text = $event" :viewPkey=viewPkey></token-reader>
             </div>
             <div id="hardware-firmware">
               OS Linux <a id="" href="">Cloud</a>
@@ -32,78 +32,7 @@
             </div>
           </div>
         </li>
-        <li>
-          <header>Amazfit fitness tracker</header>
-          <div id="hardware">
-            <header>Hardware</header>
-            <div id="hardware-manufactureid">
-              Mac 'F1:D1:D5:6A:32:D6', 'E3:30:80:7A:77:B5'
-            </div>
-            <div id="hardware-firmware">
-              Fimrware Hash 3388294cdc0d833dc92jd9f99yhp <a id="" href="">IPS location</a>
-            </div>
-          </div>
-          <div id="sensors">
-            <header>Sensors</header>
-            <div id="sensor-type">
-              Accelerometer -> Steps -> DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/activity/steps</a>
-            </div>
-            <div id="sensor-type">
-              LED -> BMP -> DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/heart/bmp</a>
-            </div>
-          </div>
-          <div id="mobile">
-            <header>Mobile</header>
-            <div id="data-location">
-              Android -> HS-GadgetBridge -> Github -> github.com/healthscience/GadgetBridge
-            </div>
-          </div>
-          <div id="data">
-            <header>Data</header>
-            <div id="data-location">
-              SAFEnetwork ->
-            </div>
-            <div id="data-volume">
-              8MB -> 168,022 entries  Date range: April 2018 to now
-            </div>
-          </div>
-        </li>
-        <li>
-          <header>Miband2 fitness tracker</header>
-          <div id="hardware">
-            <header>Hardware</header>
-            <div id="hardware-manufactureid">
-              Mac 'C5:4C:89:9D:44:10',  'F3:6E:2A:A7:0F:FB'
-            </div>
-            <div id="hardware-firmware">
-              Fimrware Hash 3388294cdc0d83jgvoj5d0w23 <a id="" href="">IPS location</a>
-            </div>
-          </div>
-          <div id="sensors">
-            <header>Sensors</header>
-            <div id="sensor-type">
-              Accelerometer -> Steps -> DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/activity/steps</a>
-            </div>
-            <div id="sensor-type">
-              LED -> BMP -> DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/heart/bmp</a>
-            </div>
-          </div>
-          <div id="mobile">
-            <header>Mobile</header>
-            <div id="data-location">
-              Android -> HS-GadgetBridge -> Github -> github.com/healthscience/GadgetBridge
-            </div>
-          </div>
-          <div id="data">
-            <header>Data</header>
-            <div id="data-location">
-              SAFEnetwork ->
-            </div>
-            <div id="data-volume">
-              23MB -> 348,834 entries  Date range: Feb 2018 to now
-            </div>
-          </div>
-        </li>
+        <device-list></device-list>
       </ul>
     </div>
   </div>
@@ -112,13 +41,15 @@
 <script>
   import TokenReader from './LandingPage/token-reader.vue'
   import FirstToken from './LandingPage/token-first.vue'
+  import deviceList from './healthscience/deviceData.vue'
   import fs from 'fs'
 
   export default {
     name: 'data-page',
     components: {
       TokenReader,
-      FirstToken
+      FirstToken,
+      deviceList
     },
     data: () => ({
       firstTimetokenseen: false,
@@ -144,6 +75,12 @@
         } catch (err) {
           console.error(err)
         }
+      },
+      firstGenerateseen (evSeen) {
+        console.log('remove generation buutton')
+        this.firstTimetokenseen = evSeen
+        this.repeatTimetokenseen = true
+        this.viewPkey = true
       }
     }
   }

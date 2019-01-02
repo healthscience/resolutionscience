@@ -1,7 +1,7 @@
 <template>
   <div id="token-first">
     <button v-if="tokenbuttonseen" @click.prevent="askforToken" class="button is-primary">Generate Data Access Token</button>
-    <button v-if="viewTokenbuttonseen" @click.prevent="viewToken" class="button is-primary">View TESTnetwork token</button>
+    <button v-if="viewTokenbuttonseen" @click.prevent="viewTokenB" class="button is-primary">View TESTnetwork token</button>
     <div v-if="viewTokenseen" id="view-token">{{ viewToken }}</div>
     <div id="keypw-feedback">{{ verifyfeedbackM }}</div>
     <div id="pwinput-prompt" v-if="pwinputSeen">
@@ -29,7 +29,7 @@
       verifyfeedbackM: '',
       viewToken: '',
       viewTokenseen: false,
-      viewTokenbuttoSeen: false,
+      viewTokenbuttonseen: false,
       fileinputSeen: true,
       pwinputSeen: false,
       passwordk: null,
@@ -93,12 +93,14 @@
             if (err) throw err
             console.log('token json file created.')
             localthis.verifyfeedbackM = 'Access token granted and ready to use.'
+            // remove generate button and show view keybuttonseen
+            localthis.$emit('removeGenbutton', false)
           })
         }
         this.computeFlag = 'context'
         this.liveFlow.firstToken(this.system, callbackC)
       },
-      viewToken () {
+      viewTokenB () {
         // get token and display
         this.verifyfeedbackM = 'Access token = ' + this.$store.getters.liveSystem
       }

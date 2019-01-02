@@ -1,9 +1,8 @@
 <template>
   <section class="container">
-    <h1>Heart</h1>
+    <h1>Heart - select Device/Sensor Data: </h1>
     <div class="columns">
       <div id="heart-chart" class="column">
-        <h1>Select Device/Sensor Data: </h1>
         <ul>
           <li>
             <header>Device - </header>
@@ -31,9 +30,9 @@
           <li>
             <header> Science Computations - </header>
               <ul>
-                <li>
+                <li >
                   <select v-model="selected">
-                  <option v-for="scoption in scoptions" v-bind:value="scoption.value">
+                  <option class="science-compute" v-for="scoption in scoptions" v-bind:value="scoption.value">
                     {{ scoption.text }}
                   </option>
                 </select>
@@ -48,10 +47,8 @@
           </li>
         </ul>
         <Learn-Report :reportData="reportData" ></Learn-Report>
-        <h3>CHARTING - </h3>
-
-        <div v-if="averageSeen" id="average-charting">
-          <h3>Science Statistics</h3>
+          <div v-if="averageSeen" id="average-charting">
+          <h3></h3>
           <div>
             <div id="chart-message">{{ chartmessageS }}</div>
             <div id="close-average">
@@ -170,8 +167,8 @@
           id: 'learn-status',
           active: false
         },
-        chartmessage: 'Chart Loading',
-        chartmessageS: 'Statistics Chart Loading',
+        chartmessage: 'Select time to load chart',
+        chartmessageS: 'Select time to load chart',
         activedevice: [],
         activesensor: [],
         activecompute: '',
@@ -706,5 +703,9 @@
 
 #close-average {
   float: right;
+}
+
+.science-compute {
+  font-size: 1.6em;
 }
 </style>

@@ -41,6 +41,43 @@
           </div>
         </li>
         <li>
+          <header class="science-start">Heart Rate Recovery</header>
+          <div id="description">
+            <header class="science-part">Description</header>
+            The use of bayesian statistical methods to show the time it take for the heart to reach resting heart rate value after activity.
+          </div>
+          <div id="sensors">
+            <header class="science-part">Sensors / DataType</header>
+            <div id="sensor-type">
+              DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/activity/steps</a>
+            </div>
+            <div id="sensor-type">
+              DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/heart/bpm</a>
+            </div>
+          </div>
+          <div id="computations">
+            <header class="science-part">Computations</header>
+            <div id="compute-location">
+              WASM File ->   github ->  IPFS ->   Smart Contract ->
+            </div>
+            <div id="compute-analysis">
+              Computation Status - DIY toolkit Learn button  Predictions: coming soon
+            </div>
+          </div>
+          <div id="vis-sim">
+            <header class="science-part">Visualisation</header>
+            <div id="vis-location">
+              Chart and numbers
+            </div>
+          </div>
+          <div id="outcome-oracle">
+            <header class="science-part">Outcome Oracle</header>
+            <div id="oracle-type">
+              Open -> Blind -> Review ->
+            </div>
+          </div>
+        </li>
+        <li>
           <header class="science-start">Statistics - average (mean)</header>
           <div id="description">
             <header class="science-part">Description</header>
@@ -127,66 +164,6 @@ export default {
   data () {
     return {
       liveFlow: null,
-      device1:
-      {
-        name: 'Mi Band2',
-        id: 'C5:4C:89:9D:44:10',
-        active: false
-      },
-      device2:
-      {
-        name: 'Amazfit',
-        id: 'F1:D1:D5:6A:32:D6',
-        active: true
-      },
-      sensor1:
-      {
-        name: 'BMP - lightLED',
-        id: 'SCDaMaHub-time-heartrate',
-        active: true
-      },
-      sensor2:
-      {
-        name: 'Steps - Accelerometer',
-        id: 'SCDaMaHub-time-steps',
-        active: false
-      },
-      compute1:
-      {
-        name: 'recorded data',
-        id: 'wasm-sc-1',
-        active: true
-      },
-      compute2:
-      {
-        name: 'Average',
-        id: 'wasm-sc-2',
-        active: false
-      },
-      compute3:
-      {
-        name: 'error data',
-        id: 'wasm-sc-3',
-        active: false
-      },
-      compute4:
-      {
-        name: 'correlations',
-        id: 'wasm-sc-4',
-        active: false
-      },
-      vis1:
-      {
-        name: 'chart',
-        id: 'vis-sc-1',
-        active: true
-      },
-      vis2:
-      {
-        name: 'table',
-        id: 'vis-sc-2',
-        active: false
-      },
       updatecompute:
       {
         name: 'Update Computations',
@@ -199,7 +176,6 @@ export default {
         id: 'update-compute-2',
         active: false
       },
-      chartmessage: 'Chart Loading',
       activedevice: '',
       activesensor: '',
       activecompute: '',

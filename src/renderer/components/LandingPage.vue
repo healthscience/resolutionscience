@@ -83,8 +83,8 @@
         this.$electron.shell.openExternal(link)
       },
       showFeedback ({suggestions, warning}) {
-        console.log('🙏', suggestions)
-        console.log('⚠', warning)
+        // console.log('🙏', suggestions)
+        // console.log('⚠', warning)
         this.feedbackM = suggestions
         this.warningM = warning
       },
@@ -113,6 +113,7 @@
         var localfile = keythereum.exportToFile(keyObject)
         if (localfile.length > 0) {
           const newPaddress = keyObject.address
+          this.$store.commit('setPublickey', newPaddress)
           // double check file exists and display public keyBytes
           this.keybuttonseen = false
           this.feedbackM = 'New key has been created, address: ' + newPaddress
@@ -120,8 +121,8 @@
         // finally create token for mobile app.
       },
       listenkSeen (evIN) {
-        console.log('event called to remove create')
-        console.log(evIN)
+        // console.log('event called to remove create')
+        // console.log(evIN)
         this.newKeystartseen = false
       }
     }

@@ -23,7 +23,7 @@
     mounted () {
       // this.chartData is created in the mixin
       // console.log(this.chartData)
-      console.log(this.options)
+      // console.log(this.options)
       // console.log(reactiveProp)
       this.renderChart(this.chartData, this.options)
     }

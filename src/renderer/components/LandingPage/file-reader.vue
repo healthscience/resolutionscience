@@ -44,6 +44,7 @@
         const filepath = ev.target.files[0].path
         const extractPkey = filepath.substr(filepath.length - 40)
         this.pkaddress = extractPkey
+        this.$store.commit('setPublickey', this.pkaddress)
         // Specify a data directory (optional; defaults to ~/.ethereum)
         var datadir = process.cwd()
         this.keyObject = keythereum.importFromFile(this.pkaddress, datadir)

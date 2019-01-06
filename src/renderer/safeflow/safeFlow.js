@@ -17,7 +17,7 @@ const moment = require('moment')
 var safeFlow = function (accessT) {
   console.log('SAFEflow live')
   events.EventEmitter.call(this)
-  this.baseAPI = 'http://165.227.244.213:8881'
+  this.baseAPI = 'http://165.227.244.213:8882'
   this.liveData = {}
   this.datacollection = []
   this.tempPubkey = accessT.publickey
@@ -48,10 +48,10 @@ safeFlow.prototype.LKNtime = function () {
 * @method dataStart
 *
 */
-safeFlow.prototype.dataStart = function (timeCode) {
+safeFlow.prototype.dataStart = function (dContext) {
   // the default data context on new start of ResSci client
   let seg = 0
-  let device = 'F1:D1:D5:6A:32:D6'
+  let device = dContext[0].device_mac
   let sensor = 'heartchain/heart/bpm'
   let compute = 'wasm-sc-1'
   let visulisation = 'vis-sc-1'
@@ -67,6 +67,7 @@ safeFlow.prototype.dataStart = function (timeCode) {
 */
 safeFlow.prototype.systemCoordinate = async function (seg, device, sensor, compute, visulisation, flag, callback) {
   let localthis = this
+  console.log(device)
   // bring live the dataJob managers
   // science entity components
   // data listeners
@@ -95,6 +96,7 @@ safeFlow.prototype.systemCoordinate = async function (seg, device, sensor, compu
     for await (let divcs of device) {
       this.dataStatistics(seg, divcs, sensor[0], compute, visulisation, flag, 2).then(function (vueData) {
         localthis.StatsForUI.push(vueData)
+        // console.log(vueData)
       })
         .then(function (vueData) {
           callback(localthis.StatsForUI)
@@ -319,12 +321,13 @@ safeFlow.prototype.dataStatistics = async function (seg, device, sensor, compute
   // console.log('statistics data flow logic')
   // console.log(device)
   // any other mac address for this device?
+  let timePeriodavg = seg
   let deviceArray = localthis.deviceUtility(device)
   let dataAggregator = {}
   dataAggregator.datasets = []
   dataAggregator.labels = []
   for (let devMac of deviceArray) {
-    await this.getAverageData(1533078000, devMac).then(function (statData) {
+    await this.getAverageData(timePeriodavg, devMac, compute).then(function (statData) {
       // prepare charting data from statistics Charting
       let avgStsPrepared = localthis.structureStatisticsData('chartjs', '', statData)
       dataAggregator.datasets = [...dataAggregator.datasets, ...avgStsPrepared.datasets]
@@ -367,7 +370,8 @@ safeFlow.prototype.getComputeData = async function (seg, device) {
   // need source, devices, data
   let queryTime = seg // this.timeUtility(seg)
   let deviceID = device
-  // console.log(device)
+  console.log(queryTime)
+  console.log(device)
   //  nosql query but headng towards a gRPC listener on stream socket
   let jsondata = await axios.get(this.baseAPI + '/computedata/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID)
   return jsondata.data
@@ -392,10 +396,10 @@ safeFlow.prototype.getData = async function (seg, device) {
 * @method getAverageData
 *
 */
-safeFlow.prototype.getAverageData = async function (seg, device) {
+safeFlow.prototype.getAverageData = async function (seg, device, compType) {
   //  nosql query but headng towards a gRPC listener on stream socket
-  let queryTime = seg // this.timeUtility(seg)
-  let jsondata = await axios.get(this.baseAPI + '/heart24data/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + device + '/sc-eth-333939')
+  let queryTime = this.timeUtility(seg)
+  let jsondata = await axios.get(this.baseAPI + '/heart24data/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + device + '/' + compType)
   return jsondata.data
 }
 
@@ -435,6 +439,9 @@ safeFlow.prototype.timeUtility = function (seg) {
     // asking for one 24 display
     const nowTime = moment()
     startTime = moment.utc(nowTime).startOf('day')
+  } else if (seg === 12) {
+    // return start of year timeout
+    startTime = moment().startOf('year')
   } else {
     const startOfMonth = moment.utc().startOf('month')
     //  reset the day to first of momoth adjust month for segment required
@@ -464,9 +471,14 @@ safeFlow.prototype.timeUtility = function (seg) {
 * @method calendarUtility
 *
 */
-safeFlow.prototype.calendarUtility = function (startYear) {
+safeFlow.prototype.calendarUtility = function (startDYear) {
   // segment the year months days in months
-  let startY = startYear
+  let startY = moment().startOf('year').valueOf()
+  let yearCommence = startY / 1000
+  console.log(yearCommence)
+  const monthNo = moment(startY).month()
+  const currentmonthNo = monthNo + 1
+  console.log(monthNo)
   let secondsInday = 86400
   let calendarUtil = []
   // let months = 'January, February, March, April, May, June, July, August, September, October, November, December'
@@ -474,10 +486,13 @@ safeFlow.prototype.calendarUtility = function (startYear) {
   // need logic for leap years
   let daysInmonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
   for (let numM of monthsNumber) {
-    let longDateformat = startY + (numM * daysInmonth[numM] * secondsInday)
-    let dayCount = daysInmonth[numM]
-    calendarUtil.push({dayCount, longDateformat})
+    if (numM >= monthNo && numM <= currentmonthNo) {
+      let longDateformat = yearCommence + (numM * daysInmonth[numM] * secondsInday)
+      let dayCount = daysInmonth[numM]
+      calendarUtil.push({dayCount, longDateformat})
+    }
   }
+  console.log(calendarUtil)
   return calendarUtil
 }
 
@@ -601,8 +616,7 @@ safeFlow.prototype.dataErrorAnalysis = function (dataDay) {
 * @method computationSystem
 *
 */
-safeFlow.prototype.computationSystem = async function (compType, device) {
-  let localthis = this
+safeFlow.prototype.computationSystem = function (compType, device) {
   // what computation needed to be excuted? Form a list
   // what data is required? average hr daily, weekly, monthly, rolling 30 day etc network averages
   // list examplesaverage
@@ -612,27 +626,67 @@ safeFlow.prototype.computationSystem = async function (compType, device) {
   // simulation of Human Heart
   // gRPC call to live computations and/or start if needing updated
   // hard wired example computation - average BMP steps, cover/error
+  if (compType === 'wasm-sc-2') {
+    console.log('average statistics computations')
+    this.prepareAverageStatistics(compType, device)
+  } else if (compType === '') {
+    console.log('not computation avaiable at present.')
+  }
+}
+
+/**
+* prepare average HR and steps and error statistics
+* @method prepareAverageStatistics
+*
+*/
+safeFlow.prototype.prepareAverageStatistics = async function (compType, device) {
+  let localthis = this
+  let startDate = 0
+  // verify wasm file and read CNRL information
   // when was the last average calculated? - query avg. data or if null the first date of data type saved
   // get the existing average dataArray
-  // let averageExisting = await this.getAverageData()
-  // pass on the last date to retrieve new daily data batches
-  // let lastAverageDate = new Date()
-  // get start date and get up to date
-  let startDate = 1514764800 // January 1st 2018
+  await this.getAverageData(0, device, compType).then(function (avgData) {
+    // order to get last entry, extract dataExpectedBPM
+    if (avgData.length === 0) {
+      // no data, first time use. find first data entry dataExpectedBPM
+      localthis.getData(0, device, compType).then(function (deviceData) {
+        console.log('start date')
+        console.log(deviceData)
+        if (deviceData[0].dataraw === 'none') {
+          startDate = 0
+          localthis.prepareAvgCompute(startDate, compType, device)
+        } else {
+          startDate = deviceData[0].timestamp
+          localthis.prepareAvgCompute(startDate, compType, device)
+        }
+      })
+    } else {
+      // find last average compute
+      console.log('existing averages exist')
+      const lastAvgCdate = avgData.slice(-1)[0]
+      localthis.prepareAvgCompute(lastAvgCdate, compType, device)
+    }
+  })
+}
+
+/**
+*  prepare dates for average compute
+* @method prepareAvgCompute
+*
+*/
+safeFlow.prototype.prepareAvgCompute = async function (startDate, compType, device) {
+  let localthis = this
   // build date array for year
   let yearArray = this.calendarUtility(startDate)
   // console.log(yearArray)
   this.dayCounter = 0
   // loop over all months
-  for (let scDate of yearArray) {
-    let daysInmonth = scDate.dayCount
+  for (let scMonth of yearArray) {
+    let daysInmonth = scMonth.dayCount
     let accDaily = 0
     let millsSecDay = 86400
-    localthis.dayCounter = scDate.longDateformat
+    localthis.dayCounter = scMonth.longDateformat
     while (accDaily < daysInmonth) {
-      // console.log('daily loop') C5:4C:89:9D:44:10
-      // let dateNow = localthis.dayCounter * 1000
-      // let dateRead = new Date(dateNow)
       await this.getComputeData(localthis.dayCounter, device).then(function (dataBatch) {
         if (dataBatch.length > 0) {
           localthis.prepareSinglearray(localthis.dayCounter, device, compType, dataBatch)
@@ -654,7 +708,7 @@ safeFlow.prototype.prepareSinglearray = function (startDate, device, avgType, ar
   let singleArray = []
   let tidyCount = 0
   for (let sing of arrBatchobj) {
-    if (sing.heart_rate !== 255) {
+    if (sing.heart_rate !== 255 || sing.heart_rate !== 0 || sing.heart_rate !== -1) {
       singleArray.push(sing.heart_rate)
     } else {
       tidyCount++
@@ -679,28 +733,29 @@ safeFlow.prototype.averageStatistics = function (startDate, device, avgType, dat
   let averageResult = sum / numberEntries
   let roundAverage = Math.round(averageResult)
   // where to save
-  this.saveData(startDate, device, numberEntries, tidyCount, roundAverage)
+  this.saveaverageData(startDate, device, avgType, numberEntries, tidyCount, roundAverage)
 }
 
 /**
 *  Insert data to peer dataStore via Axios
-* @method saveData
+* @method saveaverageData
 *
 */
-safeFlow.prototype.saveData = async function (startDate, device, count, tidy, average) {
+safeFlow.prototype.saveaverageData = async function (startDate, device, avgType, count, tidy, average) {
   // need source, devices, data
+  console.log('saving average hr data')
   // prepare JSON object for POST
   let saveJSON = {}
   saveJSON.publickey = this.tempPubkey
   saveJSON.timestamp = startDate
-  saveJSON.compref = 'sc-eth-333939'
+  saveJSON.compref = avgType
   saveJSON.average = average
   saveJSON.device_mac = device
   saveJSON.clean = count
   saveJSON.tidy = tidy
   await axios.post(this.baseAPI + '/averageSave/' + this.tempPubkey + '/' + this.tempToken + '/' + device, saveJSON)
     .then(function (response) {
-      // console.log(response)
+      console.log(response)
     })
 }
 

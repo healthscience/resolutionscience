@@ -13,7 +13,7 @@
             </div>
             <div v-if="repeatTimetokenseen" id="enter-token">
               Please navigate token file:
-              <token-reader @load="text = $event" :viewPkey=viewPkey></token-reader>
+              <token-reader @load="text = $event" :viewPkey="viewPkey"> </token-reader>
             </div>
             <div id="hardware-firmware">
               OS Linux <a id="" href="">Cloud</a>

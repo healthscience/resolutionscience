@@ -56,7 +56,6 @@
     }),
     created () {
       this.setAccess()
-      this.dataContext()
     },
     computed: {
       system: function () {
@@ -65,7 +64,12 @@
     },
     methods: {
       setAccess () {
-        this.liveFlow = new SAFEflow(this.system)
+        if (this.$store.state.system.token.length !== 0) {
+          this.liveFlow = new SAFEflow(this.system)
+          this.dataContext()
+        } else {
+          // no token yet
+        }
       },
       dataContext () {
         // make call to set start dataContext for this pubkey

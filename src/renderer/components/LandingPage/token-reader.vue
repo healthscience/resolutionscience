@@ -79,13 +79,9 @@
         // verify key password for token
       },
       viewPublickey () {
-        console.log('want to view public key address')
-        console.log(this.token)
         this.pubkeyView = 'Publickey = ' + this.token.publickey
       },
       viewtToken () {
-        console.log('want to view test TOken')
-        console.log(this.token)
         this.tokenTView = 'TestToken = ' + this.token.token
       }
     }

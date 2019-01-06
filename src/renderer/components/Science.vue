@@ -99,6 +99,9 @@
             </div>
             <div id="compute-analysis">
               <a class="" href="" id="update-compute" @click.prevent="startComputeUpdate(updatecompute)" v-bind:class="{ 'active': updatecompute.active}">{{ updatecompute.name }}</a>
+              <div id="status-compute" v-if="avgStatusCompute">
+                {{ avgStatusCompMessage }}
+              </div>
             </div>
           </div>
           <div id="vis-sim">
@@ -135,7 +138,7 @@
               WASM File ->   github ->  IPFS ->   Smart Contract ->
             </div>
             <div id="compute-analysis">
-              <a class="" href="" id="update-compute" @click.prevent="startComputeUpdate(updatecompute2)" v-bind:class="{ 'active': updatecompute2.active}">{{ updatecompute2.name }}</a>
+              <!-- <a class="" href="" id="update-compute" @click.prevent="startComputeUpdate(updatecompute2)" v-bind:class="{ 'active': updatecompute2.active}">{{ updatecompute2.name }}</a>-->
             </div>
           </div>
           <div id="vis-sim">
@@ -164,6 +167,8 @@ export default {
   data () {
     return {
       liveFlow: null,
+      avgStatusCompute: false,
+      avgStatusCompMessage: '',
       updatecompute:
       {
         name: 'Update Computations',
@@ -198,8 +203,12 @@ export default {
       this.liveFlow = new SAFEflow(this.system)
     },
     startComputeUpdate () {
-      // this.activedevice = '' // 'F1:D1:D5:6A:32:D6', 'E3:30:80:7A:77:B5', 'C5:4C:89:9D:44:10',  'F3:6E:2A:A7:0F:FB'
-      this.liveFlow.computationSystem('update', this.activedevice)
+      this.activedevice = this.$store.getters.liveContext
+      console.log('before active device')
+      console.log(this.activedevice)
+      this.liveFlow.computationSystem('wasm-sc-2', this.activedevice[0].device_mac)
+      this.avgStatusCompMessage = 'Average compute is taking place'
+      this.avgStatusCompute = true
     },
     selectContext (s) {
       s.active = !s.active

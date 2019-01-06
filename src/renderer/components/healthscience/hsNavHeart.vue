@@ -57,25 +57,25 @@
           </div>
 
           <reactivestats :chart-data="datastatistics" :width="1200" :height="600"></reactivestats>
-          <button class="button is-primary" @click="fillStats(0)">Year to date</button>
+          <!-- <button class="button is-primary" @click="fillStats(0)">Year to date</button>
           <button class="button is-primary" @click="fillStats(1)">One month</button>
           <button class="button is-primary" @click="fillStats(2)">Two months</button>
           <button class="button is-primary" @click="fillStats(3)">Three months</button>
           <button class="button is-primary" @click="fillStats(6)">6 months</button>
-          <button class="button is-primary" @click="fillStats(12)">One Year</button>
+          <button class="button is-primary" @click="fillStats(12)">One Year</button> -->
         </div>
 
         <div id="chart-message">{{ chartmessage }}</div>
         <reactive :chartData="datacollection" :options="options" :width="1200" :height="600"></reactive>
 
-        <button class="button is-primary" @click="fillData(0)">Today</button>
-        <button class="button is-primary" @click="fillData(-1)">back day</button>
-        <button class="button is-primary" @click="fillData(-2)">forward day</button>
-        <button class="button is-primary" @click="fillData(1)">One month</button>
+        <button class="button is-primary" @click="setContextData(0)">Today</button>
+        <button class="button is-primary" @click="setContextData(-1)">back day</button>
+        <button class="button is-primary" @click="setContextData(-2)">forward day</button>
+        <button class="button is-primary" @click="setContextData(1)">One month</button>
         <!-- <button class="button is-primary" @click="fillData(2)">Two months</button>
         <button class="button is-primary" @click="fillData(3)">Three months</button>
-        <button class="button is-primary" @click="fillData(6)">6 months</button>
-        <button class="button is-primary" @click="fillData(12)">One Year</button> -->
+        <button class="button is-primary" @click="fillData(6)">6 months</button> -->
+        <button class="button is-primary" @click="setContextData(12)">One Year</button>
       </div>
     </div>
   </section>
@@ -171,7 +171,7 @@
         chartmessageS: 'Select time to load chart',
         activedevice: [],
         activesensor: [],
-        activecompute: '',
+        activecompute: 'wasm-sc-1',
         activeupdatecompute: '',
         activevis: '',
         activelearn: '',
@@ -205,6 +205,7 @@
         var localthis = this
         function callbackC (dataH) {
           localthis.devices = dataH
+          localthis.$store.commit('setContext', dataH)
           localthis.dataType()
         }
         this.computeFlag = 'context'
@@ -215,7 +216,7 @@
         var localthis = this
         function callbackT (dataH) {
           localthis.sensors = dataH
-          localthis.liveFlow.dataStart()
+          localthis.liveFlow.dataStart(localthis.devices)
         }
         this.computeFlag = 'datatype'
         this.liveFlow.systemContext(this.computeFlag, callbackT)
@@ -225,6 +226,17 @@
         var newARHR = 55
         this.options.annotation.annotations[0].value = newAHR
         this.options.annotation.annotations[1].value = newARHR
+      },
+      setContextData (seg) {
+        // get seg and then look at compute context and call appropriate
+        const compContext = this.activecompute
+        console.log('context set at')
+        console.log(compContext)
+        if (compContext === 'wasm-sc-1') {
+          this.fillData(seg)
+        } else if (compContext === 'wasm-sc-2') {
+          this.fillStats(seg)
+        }
       },
       fillData (seg) {
         var localthis = this
@@ -329,7 +341,7 @@
         var localthis = this
         this.filterDeviceActive()
         this.filterSensorActive()
-        this.filterScienceActive()
+        // this.filterScienceActive()
         this.filterVisActive()
         function callbackD (dataH) {
           let results = dataH
@@ -472,6 +484,7 @@
       closeAvgSummary () {
         this.averageSeen = false
         this.learn.active = false
+        this.activecompute = 'wasm-sc-1'
       },
       chartOptionsSet () {
         var localthis = this

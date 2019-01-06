@@ -87,6 +87,7 @@
           localthis.$store.commit('setToken', firstBk.firstT)
           // and write to localfile// writeFile function with filename, content and callback function
           let latestSystem = localthis.$store.getters.liveSystem
+          console.log(latestSystem)
           let stringForsystem = JSON.stringify(latestSystem)
           // todo encrypt file
           fs.writeFile('keystore/healthscience-token.json', stringForsystem, function (err) {

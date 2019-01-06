@@ -7,10 +7,12 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    system: {'publickey': '', 'token': ''}
+    system: {'publickey': '', 'token': ''},
+    context: {}
   },
   getters: {
-    liveSystem: state => state.system
+    liveSystem: state => state.system,
+    liveContext: state => state.context
   },
   mutations: {
     // Mutations
@@ -22,6 +24,9 @@ export default new Vuex.Store({
     },
     setToken: (state, inVerified) => {
       state.system.token = inVerified
+    },
+    setContext: (state, inVerified) => {
+      state.context = inVerified
     }
   },
   modules,

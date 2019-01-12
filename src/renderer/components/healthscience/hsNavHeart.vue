@@ -1,6 +1,6 @@
 <template>
   <section class="container">
-    <h1>Heart - select Device/Sensor Data: </h1>
+    <h1>Human -> Body(movement - steps) + Heart</h1>
     <div class="columns">
       <div id="heart-chart" class="column">
         <ul>
@@ -23,8 +23,9 @@
           <li>
             <header> Visualisation - </header>
               <ul>
-                <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectContext(vis1)" v-bind:class="{ 'active': vis1.active}">{{ vis1.name }}</a></li>
-                <!-- <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectContext(vis2)" v-bind:class="{ 'active': vis2.active}">{{ vis2.name }}</a></li> -->
+                <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis1)" v-bind:class="{ 'active': vis1.active}">{{ vis1.name }}</a></li>
+                <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis2)" v-bind:class="{ 'active': vis2.active}">{{ vis2.name }}</a></li>
+                <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis3)" v-bind:class="{ 'active': vis3.active}">{{ vis3.name }}</a></li>
               </ul>
           </li>
           <li>
@@ -46,36 +47,47 @@
             </div>
           </li>
         </ul>
+        <Statistics-Tools :statsData="statsData" ></Statistics-Tools>
         <Learn-Report :reportData="reportData" ></Learn-Report>
+
+        <div v-if="visChartview" id="charts-live">
           <div v-if="averageSeen" id="average-charting">
-          <h3></h3>
-          <div>
-            <div id="chart-message">{{ chartmessageS }}</div>
-            <div id="close-average">
-              <button id="close-report" @click.prevent="closeAvgSummary()">Finsish & Close</button>
+            <h3></h3>
+            <div>
+              <div id="chart-message">{{ chartmessage }}</div>
+              <div id="chart-message">{{ chartmessageS }}</div>
+              <div id="close-average">
+                <button id="close-report" @click.prevent="closeAvgSummary()">Finsish & Close</button>
+              </div>
             </div>
+            <reactivestats :chart-data="datastatistics" :width="1200" :height="600"></reactivestats>
           </div>
-
-          <reactivestats :chart-data="datastatistics" :width="1200" :height="600"></reactivestats>
-          <!-- <button class="button is-primary" @click="fillStats(0)">Year to date</button>
-          <button class="button is-primary" @click="fillStats(1)">One month</button>
-          <button class="button is-primary" @click="fillStats(2)">Two months</button>
-          <button class="button is-primary" @click="fillStats(3)">Three months</button>
-          <button class="button is-primary" @click="fillStats(6)">6 months</button>
-          <button class="button is-primary" @click="fillStats(12)">One Year</button> -->
+          <reactive :chartData="datacollection" :options="options" :width="1200" :height="600"></reactive>
         </div>
+      <div v-if="visTableview" id="table-view">
+        Table View
+      </div>
 
-        <div id="chart-message">{{ chartmessage }}</div>
-        <reactive :chartData="datacollection" :options="options" :width="1200" :height="600"></reactive>
+      <div v-if="visSimview" id="sim-view">
+        <simulation-View></simulation-View>
+      </div>
 
-        <button class="button is-primary" @click="setContextData(0)">Today</button>
-        <button class="button is-primary" @click="setContextData(-1)">back day</button>
-        <button class="button is-primary" @click="setContextData(-2)">forward day</button>
-        <button class="button is-primary" @click="setContextData(1)">One month</button>
-        <!-- <button class="button is-primary" @click="fillData(2)">Two months</button>
-        <button class="button is-primary" @click="fillData(3)">Three months</button>
-        <button class="button is-primary" @click="fillData(6)">6 months</button> -->
-        <button class="button is-primary" @click="setContextData(12)">One Year</button>
+      <div id="time-context">
+        <div id="select-time">
+          <button class="button is-primary" @click="setContextData(12)">- 1 Year</button>
+          <button class="button is-primary" @click="setContextData(1)">- 1 month</button>
+          <button class="button is-primary" @click="setContextData(-1)">Back day</button>
+          <button class="button is-now" @click="setContextData(0)">Today</button>
+          <button class="button is-future" @click="setContextData(-2)">Forward day</button>
+          <button class="button is-future" @click="setContextData(1)">+ 1 month</button>
+          <button class="button is-future" @click="setContextData(12)">+ 1 year</button>
+        </div>
+        <div id="view-time">
+          {{ liveTime }}
+          <div id="calendar-selector">
+          </div>
+        </div>
+      </div>
       </div>
     </div>
   </section>
@@ -88,6 +100,8 @@
   import Reactive from '@/components/charts/Reactive'
   import Reactivestats from '@/components/charts/Reactivestats'
   import LearnReport from '@/components/reports/learn-report.vue'
+  import StatisticsTools from '@/components/reports/statisticstools.vue'
+  import simulationView from '@/components/simulation/simulation-life.vue'
   import SAFEflow from '../../safeflow/safeFlow.js'
   const moment = require('moment')
 
@@ -99,11 +113,14 @@
       BubbleChart,
       Reactive,
       Reactivestats,
-      LearnReport
+      LearnReport,
+      simulationView,
+      StatisticsTools
     },
     data () {
       return {
         liveFlow: null,
+        liveTime: 0,
         datacollection: null,
         datastatistics: null,
         selected: 'A',
@@ -112,11 +129,13 @@
           { text: 'Average HR', value: 'B', cid: 'wasm-sc-2' },
           { text: 'Resting HR Recovery', value: 'C', cid: 'wasm-sc-3' },
           { text: 'error data', value: 'D', cid: 'wasm-sc-4' },
-          { text: 'HealthSpan', value: 'E', cid: 'wasm-sc-5' }
+          { text: 'HealthSpan', value: 'E', cid: 'wasm-sc-5' },
+          { text: 'Statistics Tools', value: 'F', cid: 'wasm-sc-6' }
         ],
         options: {},
         averageSeen: false,
         reportData: {},
+        statsData: {},
         labelback: [],
         heartback: [],
         colorback: '',
@@ -161,6 +180,12 @@
           id: 'vis-sc-2',
           active: false
         },
+        vis3:
+        {
+          name: 'simulation',
+          id: 'vis-sc-3',
+          active: false
+        },
         learn:
         {
           name: 'learn',
@@ -175,7 +200,10 @@
         activeupdatecompute: '',
         activevis: '',
         activelearn: '',
-        computeFlag: ''
+        computeFlag: '',
+        visChartview: true,
+        visTableview: false,
+        visSimview: false
       }
     },
     computed: {
@@ -230,8 +258,6 @@
       setContextData (seg) {
         // get seg and then look at compute context and call appropriate
         const compContext = this.activecompute
-        console.log('context set at')
-        console.log(compContext)
         if (compContext === 'wasm-sc-1') {
           this.fillData(seg)
         } else if (compContext === 'wasm-sc-2') {
@@ -307,6 +333,7 @@
             // console.log('draw chart')
             localthis.getAverages(70)
             var startChartDate = moment(localthis.labelback[0])
+            localthis.liveTime = startChartDate
             localthis.updateChartoptions(startChartDate)
             localthis.chartmessage = 'BPM'
             localthis.datacollection = {
@@ -405,6 +432,35 @@
       selectContext (s) {
         s.active = !s.active
       },
+      selectVis (visIN) {
+        console.log(visIN)
+        // visIN.active = !visIN.active
+        if (visIN.id === 'vis-sc-1') {
+          if (visIN.active === true) {
+            this.visChartview = false
+            this.vis1.active = false
+          } else {
+            this.vis1.active = true
+            this.visChartview = true
+          }
+        } else if (visIN.id === 'vis-sc-2') {
+          if (visIN.active === true) {
+            this.visTableview = false
+            this.vis2.active = false
+          } else {
+            this.vis2.active = true
+            this.visTableview = true
+          }
+        } else if (visIN.id === 'vis-sc-3') {
+          if (visIN.active === true) {
+            this.visSimview = false
+            this.vis3.active = false
+          } else {
+            this.vis3.active = true
+            this.visSimview = true
+          }
+        }
+      },
       filterDeviceActive () {
         this.activedevice = []
         for (let dact of this.devices) {
@@ -479,6 +535,13 @@
           this.learn.active = false
         } else if (computationSMid === 'wasm-sc-2') {
           this.averageSeen = true
+        } else if (computationSMid === 'wasm-sc-6') {
+          console.log('stats tools')
+          this.learn.active = false
+          let statstoolsStart = {}
+          statstoolsStart.statsToolsSeen = true
+          this.statsData = statstoolsStart
+          console.log(this.statsData)
         }
       },
       closeAvgSummary () {
@@ -703,15 +766,24 @@
 }
 
 .is-primary {
-  font-size: 1.6em
+  font-size: 1.6em;
+  margin-left: 12px;
 }
 
 #learn-type {
   float: right;
 }
 
-.is-primary {
+.is-now {
+  font-size: 1.6em;
   margin-left: 12px;
+  color: green;
+}
+
+.is-future {
+  font-size: 1.6em;
+  margin-left: 12px;
+  color: orange;
 }
 
 #close-average {
@@ -720,5 +792,15 @@
 
 .science-compute {
   font-size: 1.6em;
+}
+
+#time-context {
+  min-margin: 40px;
+  text-align: center;
+}
+
+#view-time {
+  margin-top: 10px;
+  font-size: 1.4em;
 }
 </style>

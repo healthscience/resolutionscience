@@ -6,7 +6,8 @@
         <span class="title">
           Welcome to the Resolution Science Graphical User Interface
         </span>
-        <system-information></system-information>
+        <h1>DIY Toolkit - Apply curiosity with rigour</h1>
+        <!-- <system-information></system-information>-->
       </div>
 
       <div class="right-side">

@@ -1,6 +1,10 @@
 <template>
   <div id="science">
     <h1>Science & Computations</h1>
+    <button class="" href="" id="add-new-science" @click.prevent="addnewScience()">New Science</button>
+    <!-- <section v-if="newScienceSeen" id="new-science"> -->
+    <science-contribute  :contributeData="contributeData"></science-contribute>
+    <!-- </section>  -->
     <div id="science-compute-status">
       <ul>
         <li>
@@ -162,13 +166,20 @@
 
 <script>
 import SAFEflow from '../safeflow/safeFlow.js'
+import scienceContribute from '@/components/healthscience/scienceContribute.vue'
+
 export default {
   name: 'Science',
+  components: {
+    scienceContribute
+  },
   data () {
     return {
       liveFlow: null,
       avgStatusCompute: false,
       avgStatusCompMessage: '',
+      newScienceSeen: false,
+      contributeData: {},
       updatecompute:
       {
         name: 'Update Computations',
@@ -244,6 +255,11 @@ export default {
       } else if (this.vis2.active === true) {
         this.activevis = this.vis2.id
       }
+    },
+    addnewScience () {
+      let scienceStart = {}
+      scienceStart.formSeen = true
+      this.contributeData = scienceStart
     }
   }
 }

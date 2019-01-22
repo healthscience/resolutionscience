@@ -40,56 +40,39 @@
   </div>
 </template>
 
-
 <script>
-  import SAFEflow from '../../safeflow/safeFlow.js'
-
   export default {
     name: 'devices-page',
     components: {
     },
     data: () => ({
-      liveFlow: null,
+      liveSafeFlow: {},
       computeFlag: '',
       devices: [],
       sensors: []
     }),
     created () {
-      this.setAccess()
+    },
+    mounted () {
+      this.checkContext()
     },
     computed: {
       system: function () {
         return this.$store.state.system
+      },
+      safeFlow: function () {
+        return this.$store.state.safeFlow
+      },
+      context: function () {
+        return this.$store.state.context
       }
     },
     methods: {
-      setAccess () {
-        if (this.$store.state.system.token.length !== 0) {
-          this.liveFlow = new SAFEflow(this.system)
-          this.dataContext()
-        } else {
-          // no token yet
-        }
-      },
-      dataContext () {
-        // make call to set start dataContext for this pubkey
-        var localthis = this
-        function callbackC (dataH) {
-          localthis.devices = dataH
-          localthis.dataType()
-        }
-        this.computeFlag = 'context'
-        this.liveFlow.systemContext(this.computeFlag, callbackC)
-      },
-      dataType () {
-        // make call to set start dataType for the device sensors
-        var localthis = this
-        function callbackT (dataH) {
-          localthis.sensors = dataH
-          localthis.liveFlow.dataStart()
-        }
-        this.computeFlag = 'datatype'
-        this.liveFlow.systemContext(this.computeFlag, callbackT)
+      checkContext () {
+        let startContext = this.$store.getters.liveContext
+        // set devices and sensor from Store
+        this.devices = startContext.device
+        this.sensors = startContext.datatype
       }
     }
   }

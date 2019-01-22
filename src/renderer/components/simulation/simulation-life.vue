@@ -2,6 +2,12 @@
   <div id="simulation-live">
     <div id="heart-sim" >
       <header>Heart</header>
+      <div id="sim-toolbar">
+        <div id="sim-tools">
+          2D 3D  Playback speed: Realtime  1/4/ 1/2 *2 *10
+        </div>
+        <button id="sim-controls">Play Start Stop Pause</button>
+      </div>
       <heart-Canvas-Sim></heart-Canvas-Sim>
     </div>
     <div id="movement-sim" >

@@ -99,7 +99,7 @@
           })
         }
         this.computeFlag = 'context'
-        this.liveFlow.firstToken(this.system, callbackC)
+        this.liveFlow.liveTestStorage.firstToken(this.system, callbackC)
       },
       viewTokenB () {
         // get token and display

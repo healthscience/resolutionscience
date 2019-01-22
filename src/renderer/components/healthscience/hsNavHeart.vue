@@ -94,6 +94,7 @@
 </template>
 
 <script>
+  import SAFEflow from '../../safeflow/safeFlow.js'
   import LineChart from '@/components/charts/LineChart'
   import BarChart from '@/components/charts/BarChart'
   import BubbleChart from '@/components/charts/BubbleChart'
@@ -102,7 +103,6 @@
   import LearnReport from '@/components/reports/learn-report.vue'
   import StatisticsTools from '@/components/reports/statisticstools.vue'
   import simulationView from '@/components/simulation/simulation-life.vue'
-  import SAFEflow from '../../safeflow/safeFlow.js'
   const moment = require('moment')
 
   export default {
@@ -119,7 +119,7 @@
     },
     data () {
       return {
-        liveFlow: null,
+        liveSafeFlow: null,
         liveTime: 0,
         datacollection: null,
         datastatistics: null,
@@ -144,30 +144,6 @@
         sensors: [],
         analysisStart: 0,
         analysisEnd: 0,
-        compute1:
-        {
-          name: 'recorded data',
-          id: 'wasm-sc-1',
-          active: true
-        },
-        compute2:
-        {
-          name: 'Average',
-          id: 'wasm-sc-2',
-          active: false
-        },
-        compute3:
-        {
-          name: 'error data',
-          id: 'wasm-sc-3',
-          active: false
-        },
-        compute4:
-        {
-          name: 'correlations',
-          id: 'wasm-sc-4',
-          active: false
-        },
         vis1:
         {
           name: 'chart',
@@ -207,8 +183,14 @@
       }
     },
     computed: {
+      safeFlow: function () {
+        return this.$store.state.safeFlow
+      },
       system: function () {
         return this.$store.state.system
+      },
+      context: function () {
+        return this.$store.state.context
       },
       datacollection: function () {
         return {
@@ -221,33 +203,57 @@
     },
     created () {
       this.setAccess()
-      this.dataContext()
+      this.setFirstEntity()
       this.chartOptionsSet()
     },
     methods: {
       setAccess () {
-        this.liveFlow = new SAFEflow(this.system)
+        this.liveSafeFlow = new SAFEflow(this.system)
       },
-      dataContext () {
-        // make call to set start dataContext for this pubkey
+      setFirstEntity () {
+        // gather first entity profile parts
+        this.scienceContext()
+        this.deviceContext()
+        this.dataType()
+      },
+      scienceContext () {
+        // set the first science priority on start of RS
+        this.$store.commit('setScience', this.scoptions[0])
+        // let startContext = this.$store.getters.liveContext
+        // let startDataaccess = this.$store.getters.liveSystem
+        // this.liveSafeFlow.scienceEntities(startContext, startDataaccess)
+      },
+      deviceContext () {
         var localthis = this
         function callbackC (dataH) {
           localthis.devices = dataH
-          localthis.$store.commit('setContext', dataH)
-          localthis.dataType()
+          localthis.$store.commit('setDevice', dataH)
         }
-        this.computeFlag = 'context'
-        this.liveFlow.systemContext(this.computeFlag, callbackC)
+        const deviceSet = localthis.$store.getters.liveContext.device
+        // has the device context been set already?
+        if (deviceSet.length > 1) {
+          localthis.devices = deviceSet
+        } else {
+          // make call to set start dataContext for this pubkey
+          const flag = 'device'
+          this.liveSafeFlow.toolkitContext(flag, callbackC)
+        }
       },
       dataType () {
         // make call to set start dataType for the device sensors
         var localthis = this
         function callbackT (dataH) {
           localthis.sensors = dataH
-          localthis.liveFlow.dataStart(localthis.devices)
+          localthis.$store.commit('setDatatype', dataH)
         }
-        this.computeFlag = 'datatype'
-        this.liveFlow.systemContext(this.computeFlag, callbackT)
+        const datatypeSet = localthis.$store.getters.liveContext.datatype
+        // has the device context been set already?
+        if (datatypeSet.length > 1) {
+          localthis.sensors = datatypeSet
+        } else {
+          const flag = 'datatype'
+          this.liveSafeFlow.toolkitContext(flag, callbackT)
+        }
       },
       getAverages (max) {
         var newAHR = 72 // Math.floor(Math.random() * Math.floor(max))
@@ -264,170 +270,35 @@
           this.fillStats(seg)
         }
       },
-      fillData (seg) {
+      async fillData (seg) {
         var localthis = this
         this.filterDeviceActive()
         this.filterSensorActive()
-        this.filterScienceActive()
         this.filterVisActive()
 
         function callbackD (dataH) {
-          let results = dataH
-          // is there one or two datasets?
-          if (results.length === 2) {
-            // need to prepare different visualisations, data return will fit only one select option
-            for (let res of results) {
-              if (res.senItem === 'heartchain/heart/bpm') {
-                localthis.labelback = res.vueData.labels
-                localthis.heartback = res.vueData.datasets
-                localthis.colorback = res.vueData.backgroundColor
-                localthis.colorlineback = res.vueData.borderColor
-              } else if (res.senItem === 'heartchain/heart/activity/steps') {
-                localthis.activityback = res.vueData.datasets
-                localthis.colorback2 = res.vueData.backgroundColor
-                localthis.colorlineback2 = res.vueData.borderColor
-              }
-            }
-          } else {
-            if (results[0].senItem === 'heartchain/heart/bpm') {
-              localthis.activityback = []
-              localthis.labelback = results[0].vueData.labels
-              localthis.heartback = results[0].vueData.datasets
-              localthis.colorback = results[0].vueData.backgroundColor
-              localthis.colorlineback = results[0].vueData.borderColor
-            } else if (results[0].senItem === 'heartchain/heart/activity/steps') {
-              localthis.heartback = []
-              localthis.labelback = results[0].vueData.labels
-              localthis.activityback = results[0].vueData.datasets
-              localthis.colorback2 = results[0].vueData.backgroundColor
-              localthis.colorlineback2 = results[0].vueData.borderColor
-            }
-          }
-          if (dataH === 'no data') {
-            // no data to display
-            localthis.chartmessage = 'No data to display'
-            localthis.datacollection = {
-              labels: localthis.labelback,
-              datasets: [
-                {
-                  type: 'line',
-                  label: 'Beats per Minute',
-                  borderColor: '#ed7d7d',
-                  backgroundColor: '#ed7d7d',
-                  fill: false,
-                  data: localthis.heartback,
-                  yAxisID: 'bpm'
-                }, {
-                  type: 'bar',
-                  label: 'Activity Steps',
-                  // borderColor: '#ea1212',
-                  // borderWidth: .5,
-                  // backgroundColor: '#ea1212',
-                  fill: false,
-                  data: localthis.activityback,
-                  yAxisID: 'steps'
-                }
-              ]
-            }
-          } else {
-            // console.log('draw chart')
-            localthis.getAverages(70)
-            var startChartDate = moment(localthis.labelback[0])
-            localthis.liveTime = startChartDate
-            localthis.updateChartoptions(startChartDate)
-            localthis.chartmessage = 'BPM'
-            localthis.datacollection = {
-              labels: localthis.labelback,
-              datasets: [
-                {
-                  type: 'line',
-                  label: 'Beats per minute',
-                  borderColor: '#ea1212',
-                  backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                  fill: true,
-                  data: localthis.heartback,
-                  yAxisID: 'bpm'
-                }, {
-                  type: 'bar',
-                  label: 'Activity - Steps',
-                  lineThickness: 0.2,
-                  borderColor: '#020b2d',
-                  backgroundColor: '#050d2d',
-                  fill: false,
-                  data: localthis.activityback,
-                  yAxisID: 'steps'
-                }
-              ]
-            }
-          }
+          this.datacollection = dataH.dataCollection
         }
-        this.computeFlag = 'raw'
-        this.liveFlow.systemCoordinate(seg, this.activedevice, this.activesensor, this.activecompute, this.activevis, this.computeFlag, callbackD)
+        await this.liveSafeFlow.scienceEntities(seg, this.context, callbackD).then(function (entityData) {
+          console.log('wait from vue RETURNED')
+          console.log(entityData)
+          localthis.liveSafeFlow.entityGetter('wasm-sc-1').then(function (eData) {
+            console.log('data ready and back from ENTITY')
+            console.log(eData)
+            callbackD(eData)
+          })
+        })
       },
       fillStats (seg) {
         var localthis = this
         this.filterDeviceActive()
         this.filterSensorActive()
-        // this.filterScienceActive()
         this.filterVisActive()
         function callbackD (dataH) {
           let results = dataH
-          // need to prepare different visualisations, data return will fit only one select option
-          localthis.labelback = results[0].labels
-          localthis.heartback = results[0].datasets
-          localthis.colorback = results[0].backgroundColor
-          localthis.colorlineback = results[0].borderColor
-          localthis.activityback = results[1].datasets
-          if (dataH === 'no data') {
-            // no data to display
-            localthis.chartmessage = 'No data to display'
-            localthis.datastatistics = {
-              labels: localthis.labelback,
-              datasets: [
-                {
-                  label: 'Beats per Minute',
-                  borderColor: '#ed7d7d',
-                  backgroundColor: '#ed7d7d',
-                  fill: false,
-                  data: localthis.heartback,
-                  yAxisID: 'bpm'
-                }, {
-                  label: 'Activity Steps',
-                  borderColor: '#ea1212',
-                  backgroundColor: '#ea1212',
-                  fill: false,
-                  data: localthis.activityback,
-                  yAxisID: 'steps'
-                }
-              ]
-            }
-          } else {
-            localthis.chartmessage = 'BPM'
-            localthis.datastatistics = {
-              labels: localthis.labelback,
-              datasets: [
-                {
-                  label: 'Device 1',
-                  borderColor: '#ea1212',
-                  backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                  fill: true,
-                  data: localthis.heartback,
-                  yAxisID: 'bpm'
-                }, {
-                  label: 'Device 2',
-                  borderColor: '#050d2d',
-                  backgroundColor: '#050d2d',
-                  fill: false,
-                  data: localthis.activityback,
-                  yAxisID: 'steps'
-                }
-              ]
-            }
-            // console.log(localthis.datastatistics)
-          }
+          this.dataStatistics = dataH.dataCollection
         }
-        this.computeFlag = 'statistics'
-        this.liveFlow.systemCoordinate(seg, this.activedevice, this.activesensor, this.activecompute, this.activevis, this.computeFlag, callbackD)
+        this.lifeSafeFlow.scienceEntities(seg, callbackD)
       },
       selectContext (s) {
         s.active = !s.active
@@ -477,22 +348,16 @@
           }
         }
       },
-      filterScienceActive () {
-        if (this.compute1.active === true) {
-          this.activecompute = this.compute1.id
-        } else if (this.compute2.active === true) {
-          this.activecompute = this.compute2.id
-        } else if (this.compute3.active === true) {
-          this.activecompute = this.compute3.id
-        } else if (this.compute4.active === true) {
-          this.activecompute = this.compute4.id
-        }
-      },
       filterVisActive () {
         if (this.vis1.active === true) {
           this.activevis = this.vis1.id
+          this.$store.commit('setVisual', this.activevis)
         } else if (this.vis2.active === true) {
           this.activevis = this.vis2.id
+          this.$store.commit('setVisual', this.activevis)
+        } else if (this.vis3.active === true) {
+          this.activevis = this.vis3.id
+          this.$store.commit('setVisual', this.activevis)
         }
       },
       filterLearn (s) {

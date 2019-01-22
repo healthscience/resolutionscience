@@ -9,7 +9,7 @@
     <div id="keypw-feedback">
       {{ verifyfeedbackM }}
     </div>
-    <div v-if="viewPkey" id="publickey-view">
+    <div v-if="viewPkeybuttons" id="publickey-view">
       <button @click.prevent="viewPublickey" class="button is-primary">View publickey address</button>
       <button @click.prevent="viewtToken" class="button is-primary">View Token</button>
       {{ pubkeyView }}
@@ -24,6 +24,7 @@
 </template>
 
 <script>
+  import SAFEflow from '../../safeflow/safeFlow.js'
   import Passwordk from 'vue-password-strength-meter'
   // import FileReader from './LandingPage/file-reader.vue'
   // import keythereum from 'keythereum'
@@ -40,9 +41,25 @@
         default: false
       }
     },
+    created () {
+    },
+    mounted () {
+    },
+    computed: {
+      safeFlow: function () {
+        return this.$store.state.safeFlow
+      },
+      system: function () {
+        return this.$store.state.system
+      },
+      context: function () {
+        return this.$store.state.context
+      }
+    },
     data: () => ({
       keyObject: {},
       verifyfeedbackM: '',
+      viewPkeybuttons: false,
       token: {},
       fileinputSeen: true,
       pwinputSeen: false,
@@ -55,6 +72,42 @@
       warningM: ''
     }),
     methods: {
+      setAccess () {
+        var localthis = this
+        let startContext = this.$store.getters.liveContext
+        let startDataaccess = this.$store.getters.liveSystem
+        if (startDataaccess.token.length !== 0 && startContext.length !== 0) {
+          const systemSet = this.$store.getters.liveSystem
+          this.liveSafeFlow = new SAFEflow(systemSet)
+          localthis.deviceContext()
+        } else if (this.context) {
+          this.devices = this.context.device
+          this.sensors = this.context.datatype
+        } else {
+          // no token
+        }
+      },
+      deviceContext () {
+        // make call to set start deviceContext for this pubkey
+        var localthis = this
+        function callbackC (dataH) {
+          localthis.devices = dataH
+          localthis.$store.commit('setDevice', dataH)
+          localthis.dataType()
+        }
+        const deviceFlag = 'device'
+        this.liveSafeFlow.toolkitContext(deviceFlag, callbackC)
+      },
+      dataType () {
+        // make call to set start dataType for the device sensors
+        var localthis = this
+        function callbackT (dataH) {
+          localthis.sensors = dataH
+          localthis.$store.commit('setDatatype', dataH)
+        }
+        const dataTypeFlag = 'dataType'
+        this.liveSafeFlow.toolkitContext(dataTypeFlag, callbackT)
+      },
       loadTextFromFile (ev) {
         // prompt for Password
         var localthis = this
@@ -67,7 +120,8 @@
           localthis.token = tokenJSON
           localthis.$store.commit('setBoth', tokenJSON)
           localthis.verifyfeedbackM = 'Data token live'
-          localthis.viewPkey = true
+          localthis.viewPkeybuttons = true
+          localthis.setAccess()
         }
         reader.readAsText(file)
 

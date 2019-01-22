@@ -17,6 +17,9 @@
             An open source graphical user interface.
           </p>
           <br><br>
+          <div id="network-status">
+            Status: Peer Autonomous - Network: NOT CONNECTED
+          </div>
         </div>
         <div class="doc">
         </div>
@@ -70,6 +73,16 @@
       heartPlugin,
       Password,
       FileReader
+    },
+    created () {
+    },
+    computed: {
+      system: function () {
+        return this.$store.state.system
+      },
+      safeFlow: function () {
+        return this.$store.state.safeFlow
+      }
     },
     data: () => ({
       password: null,

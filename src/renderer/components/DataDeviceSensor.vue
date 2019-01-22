@@ -52,6 +52,7 @@
       deviceList
     },
     data: () => ({
+      viewPkey: false,
       firstTimetokenseen: false,
       repeatTimetokenseen: false
     }),
@@ -62,10 +63,8 @@
       checkforToken () {
         // does a token file exist?
         const path = process.cwd() + '/keystore/healthscience-token.json'
-        console.log(path)
         try {
           if (fs.existsSync(path)) {
-            console.log('file found')
             // file exists start open decrypt
             this.repeatTimetokenseen = true
           } else {
@@ -77,7 +76,6 @@
         }
       },
       firstGenerateseen (evSeen) {
-        console.log('remove generation buutton')
         this.firstTimetokenseen = evSeen
         this.repeatTimetokenseen = true
         this.viewPkey = true

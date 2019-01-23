@@ -16,6 +16,7 @@ const events = require('events')
 var ComputeComponent = function () {
   events.EventEmitter.call(this)
   this.liveCompute = new ComputeSystem()
+  this.computeStatus = false
 }
 
 /**
@@ -29,8 +30,15 @@ util.inherits(ComputeComponent, events.EventEmitter)
 * @method filterCompute
 *
 */
-ComputeComponent.prototype.filterCompute = async function () {
-  return 'none'
+ComputeComponent.prototype.filterCompute = async function (compIN) {
+  var localthis = this
+  if (compIN === 'wasm-sc-1') {
+    // raw data nothing to compute
+  } else if (compIN === 'wasm-sc-2') {
+    await this.liveCompute.computationSystem(compIN).then(function (statusB) {
+      localthis.computeStatus = statusB
+    })
+  }
 }
 
 /**

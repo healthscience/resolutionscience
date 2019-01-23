@@ -27,7 +27,7 @@ util.inherits(ComputeSystem, events.EventEmitter)
 * @method computationSystem
 *
 */
-ComputeSystem.prototype.computationSystem = function (compType, device) {
+ComputeSystem.prototype.computationSystem = async function (compType, device) {
   // what computation needed to be excuted? Form a list
   // what data is required? average hr daily, weekly, monthly, rolling 30 day etc network averages
   // list examplesaverage
@@ -145,6 +145,7 @@ ComputeSystem.prototype.averageStatistics = function (startDate, device, avgType
   let roundAverage = Math.round(averageResult)
   // where to save
   this.liveTestStorage.saveaverageData(startDate, device, avgType, numberEntries, tidyCount, roundAverage)
+  return true
 }
 
 /**

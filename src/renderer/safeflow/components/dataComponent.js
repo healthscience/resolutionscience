@@ -17,11 +17,13 @@ var DataComponent = function (DID, setIN) {
   events.EventEmitter.call(this)
   this.did = DID
   this.liveDataSystem = new DataSystem(setIN)
+  this.deviceList = DID.device
+  this.timeList = []
   this.dataRaw = []
   this.tidyData = []
   this.dataCompute = []
   this.dataType = []
-  // this.RawData()
+  this.setTimeArray()
 }
 
 /**
@@ -29,6 +31,15 @@ var DataComponent = function (DID, setIN) {
 * @method inherits
 */
 util.inherits(DataComponent, events.EventEmitter)
+
+/**
+*  keep list of timePeriods that data has been asked for
+* @method setTimeArray
+*
+*/
+DataComponent.prototype.setTimeArray = function () {
+  this.timeList.push(this.did.timeperiod)
+}
 
 /**
 *  source data from device sensor
@@ -65,7 +76,7 @@ DataComponent.prototype.setDataTypes = async function () {
 DataComponent.prototype.TidyData = async function () {
   var localthis = this
   console.log('COMPONENT data tidy CALLED')
-  await this.liveDataSystem.tidyRawData(this.dataRaw).then(function (TDback) {
+  await this.liveDataSystem.tidyRawData(this.dataRaw, this.dataType, this.timeList, this.deviceList).then(function (TDback) {
     localthis.tidyData.push(TDback)
   })
   return 'TIDY DATA READY'

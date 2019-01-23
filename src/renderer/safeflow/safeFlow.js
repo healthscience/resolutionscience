@@ -53,7 +53,7 @@ safeFlow.prototype.scienceEntities = async function (segT, inputInfo, cbIN) {
   // add a new entity via manager
   let messageEntity = ''
   await this.liveEManager.addScienceEntity(segT, inputInfo, this.settings).then(function (bk) {
-    console.log('RETURNED from entity manager')
+    console.log('SAFEFLOW----ADDentity entity manager')
     console.log(bk)
     messageEntity = bk
   })
@@ -69,7 +69,7 @@ safeFlow.prototype.scienceEntities = async function (segT, inputInfo, cbIN) {
 safeFlow.prototype.entityGetter = async function (eid) {
   let eDataB = {}
   await this.liveEManager.entityDataReturn(eid).then(function (eData) {
-    console.log('safeFLOW RETURN from entity manager')
+    console.log('SAFEFLOW----RETURN entity manager')
     eDataB = eData
   })
   return eDataB

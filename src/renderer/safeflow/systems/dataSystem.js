@@ -10,7 +10,7 @@
 * @version    $Id$
 */
 
-import TestStorageAPI from './testStorage.js'
+import TestStorageAPI from './dataprotocols/testStorage.js'
 const util = require('util')
 const events = require('events')
 
@@ -32,14 +32,14 @@ util.inherits(DataSystem, events.EventEmitter)
 *
 */
 DataSystem.prototype.getRawData = async function (InfoKB) {
-  console.log('DATASYSTEM getrawdata')
-  console.log(InfoKB)
+  // console.log('DATASYSTEM getrawdata')
+  // console.log(InfoKB)
   let localthis = this
   let dataBack = {}
   // check for number of devices, sensor/datatypes are asked for
   const deviceLiveFilter = this.extractDevices(InfoKB.device)
   // const sensorLiveFilter = this.extractSensors(InfoKB.datatype)
-  console.log(deviceLiveFilter)
+  // console.log(deviceLiveFilter)
   // form loop to make data calls
   for await (let di of deviceLiveFilter) {
     localthis.liveTestStorage.getData(InfoKB.timeperiod, di).then(function (result) {
@@ -53,25 +53,28 @@ DataSystem.prototype.getRawData = async function (InfoKB) {
 }
 
 /**
-* get rawData
-* @method getRawStatsData
+* Tidy raw data
+* @method tidyRawData
 *
 */
-DataSystem.prototype.getRawStatsData = async function (InfoDAT) {
-  // else if (flag === 'statistics') {
-  // how many sensor ie data sets are being asked for?
-  // loop over and return Statistics Data and return to callback
-  /* this.StatsForUI = []
-  for await (let divcs of device) {
-    localthis.liveData.dataStatistics(seg, divcs, sensor[0], compute, visulisation, flag, 2).then(function (vueData) {
-      localthis.StatsForUI.push(vueData)
-      // console.log(vueData)
-    })
-      .then(function (vueData) {
-        // callback(localthis.StatsForUI)
-      })
-  } */
-  // }
+DataSystem.prototype.tidyRawData = async function (dataIN, dateT, timeL, deviceL) {
+  console.log('START DATASYSTEM by dataType coding')
+  console.log(dataIN)
+  console.log(dateT)
+  console.log(timeL)
+  console.log(deviceL)
+  // one, two or more sources needing tidying???
+  // data structure in  Object indexed by startTime, object IndexbyDevice, Array[]of object -> heart_rate steps  {plus other source data}
+  // console.log(dataIN.length)
+  let cleanData = []
+  // need to import error codes from device/mobile app
+  // let errorCodes = [255]
+  for (let devI of deviceL) {
+    console.log(devI)
+    // iterate over arrays and remove both time and BMP number keep track of error Account
+    cleanData = dataIN.filter(function (item) { return item[0] !== 255 || item[0] <= 0 })
+  }
+  return cleanData
 }
 
 /**
@@ -275,6 +278,28 @@ DataSystem.prototype.dataCallprep = async function () {
 }
 
 /**
+* get rawData
+* @method getRawStatsData
+*
+*/
+DataSystem.prototype.getRawStatsData = async function (InfoDAT) {
+  // else if (flag === 'statistics') {
+  // how many sensor ie data sets are being asked for?
+  // loop over and return Statistics Data and return to callback
+  /* this.StatsForUI = []
+  for await (let divcs of device) {
+    localthis.liveData.dataStatistics(seg, divcs, sensor[0], compute, visulisation, flag, 2).then(function (vueData) {
+      localthis.StatsForUI.push(vueData)
+      // console.log(vueData)
+    })
+      .then(function (vueData) {
+        // callback(localthis.StatsForUI)
+      })
+  } */
+  // }
+}
+
+/**
 * Statistics Data
 * @method dataStatistics
 *
@@ -333,24 +358,6 @@ DataSystem.prototype.chunkUtilty = function (dataIn) {
     return resultArray
   }, [])
   return resultArrayHolder
-}
-
-/**
-* Tidy raw data
-* @method tidyRawData
-*
-*/
-DataSystem.prototype.tidyRawData = async function (dataIN) {
-  console.log('START DATASYSTM by dataType coding')
-  console.log(dataIN)
-  console.log('one, two or more sources needing tidying???')
-  // console.log(dataIN.length)
-  let cleanData = []
-  // need to import error codes from device/mobile app
-  // let errorCodes = [255]
-  // iterate over arrays and remove both time and BMP number keep track of error Account
-  // cleanData = dataIN.filter(function (item) { return item[0] !== 255 || item[0] <= 0 })
-  return cleanData
 }
 
 export default DataSystem

@@ -277,25 +277,24 @@
         this.filterVisActive()
 
         function callbackD (dataH) {
-          this.datacollection = dataH.dataCollection
+          console.log('VUE----CHARTVUE COMPONENT FINISHED')
+          console.log(dataH)
+          localthis.datacollection = dataH
         }
         await this.liveSafeFlow.scienceEntities(seg, this.context, callbackD).then(function (entityData) {
-          console.log('wait from vue RETURNED')
+          console.log('VUE---wait from vue RETURNED')
           console.log(entityData)
           localthis.liveSafeFlow.entityGetter('wasm-sc-1').then(function (eData) {
-            console.log('data ready and back from ENTITY')
-            console.log(eData)
+            console.log('VUE---COMPLETED getter')
             callbackD(eData)
           })
         })
       },
       fillStats (seg) {
-        var localthis = this
         this.filterDeviceActive()
         this.filterSensorActive()
         this.filterVisActive()
         function callbackD (dataH) {
-          let results = dataH
           this.dataStatistics = dataH.dataCollection
         }
         this.lifeSafeFlow.scienceEntities(seg, callbackD)

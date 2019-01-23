@@ -48,29 +48,29 @@ EntitiesManager.prototype.addScienceEntity = async function (segT, entID, setIN)
   this.liveSEntities[cid] = new Entities(entID, setIN)
   console.log(this.liveSEntities)
   await this.liveSEntities[cid].liveDataC.RawData(entID).then(function () {
-    console.log('set dataTypes finsihed')
-    localthis.liveSEntities[cid].liveDataC.TidyData()
-  }).then(function () {
-    console.log('rawdata finsihed')
+    console.log('EMANAGER--- rawdata finsihed')
     localthis.liveSEntities[cid].liveDataC.setDataTypes()
+  }).then(function () {
+    console.log('EMANAGER---set dataTypes finsihed')
+    localthis.liveSEntities[cid].liveDataC.TidyData()
   }).then(function () {
     // compute required
     localthis.liveSEntities[cid].liveComputeC.filterCompute()
-    console.log('tidy finsihed')
+    console.log('EMANAGER---tidy finsihed')
   }).then(function () {
     // structure require for visualisation
-    localthis.liveSEntities[cid].liveVisualC.filterVisual()
-    console.log('computation finsihed')
+    localthis.liveSEntities[cid].liveVisualC.filterVisual('chartjs', localthis.liveSEntities[cid].liveDataC.tidyData)
+    console.log('EMANAGER---computation finsihed')
   }).then(function () {
     // structure require for simulation
     localthis.liveSEntities[cid].liveSimC.filterSimulation()
-    console.log('visulations finsihed')
+    console.log('EMANAGER---visulations (chart) finsihed')
   }).then(function () {
-    console.log('simulation finsihed')
+    console.log('EMANAGER---simulation finsihed')
   }).catch(function (err) {
     console.log(err)
   })
-  return 'NEW finished'
+  return 'EMANAGER---NEW finished'
 }
 
 /**
@@ -89,7 +89,7 @@ EntitiesManager.prototype.listEntities = function () {
 */
 EntitiesManager.prototype.entityDataReturn = async function (eid) {
   console.log('CALLED ENTITYDATARESTURN')
-  return this.liveSEntities[eid].liveDataC.visualData
+  return this.liveSEntities[eid].liveVisualC.visualData
 }
 
 /**

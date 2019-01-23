@@ -28,11 +28,18 @@
               TestServer
             </div>
             <div id="data-volume">
-
             </div>
           </div>
         </li>
-        <device-list></device-list>
+        <li>
+          <header>SAFEnetwork</header>
+          <div id="safe-api">
+            <header>Peer to Peer Secure Storage</header>
+          </div>
+        </li>
+        <li>
+          <device-list></device-list>
+        </li>
       </ul>
     </div>
   </div>
@@ -85,9 +92,8 @@
 </script>
 
 <style>
-
 #devices-sensors-data {
-  margin: 1em;
+  margin: 2em;
 }
 
 #devices-sensors-data header {

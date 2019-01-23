@@ -5,7 +5,7 @@
     <!-- <section v-if="newScienceSeen" id="new-science"> -->
     <science-contribute  :contributeData="contributeData"></science-contribute>
     <!-- </section>  -->
-    <div id="science-compute-status">
+    <!-- <div id="science-compute-status">
       <ul>
         <li>
           <header class="science-start">HealthSpan Heart Simulation</header>
@@ -142,7 +142,7 @@
               WASM File ->   github ->  IPFS ->   Smart Contract ->
             </div>
             <div id="compute-analysis">
-              <!-- <a class="" href="" id="update-compute" @click.prevent="startComputeUpdate(updatecompute2)" v-bind:class="{ 'active': updatecompute2.active}">{{ updatecompute2.name }}</a>-->
+              <a class="" href="" id="update-compute" @click.prevent="startComputeUpdate(updatecompute2)" v-bind:class="{ 'active': updatecompute2.active}">{{ updatecompute2.name }}</a>
             </div>
           </div>
           <div id="vis-sim">
@@ -159,18 +159,20 @@
           </div>
         </li>
       </ul>
-    </div>
-  </div>
+    </div> -->
+    <science-list></science-list>
   </div>
 </template>
 
 <script>
 import SAFEflow from '../safeflow/safeFlow.js'
+import scienceList from '@/components/healthscience/scienceData.vue'
 import scienceContribute from '@/components/healthscience/scienceContribute.vue'
 
 export default {
   name: 'Science',
   components: {
+    scienceList,
     scienceContribute
   },
   data () {
@@ -267,7 +269,7 @@ export default {
 
 <style>
 #science {
-  margin: 1em;
+  margin: 2em;
 }
 
 .science-start{

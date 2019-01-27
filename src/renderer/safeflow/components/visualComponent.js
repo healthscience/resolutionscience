@@ -64,7 +64,9 @@ VisualComponent.prototype.filterVisual = async function (visIN, datatypeList, ti
     // prepare chart options
     // Note this will be dependent upon e.g. average statistics and changing time inputs
     // let averageStats = this.computeComponent() // pass into chart options
-    let chartOptionsSet = this.liveChartSystem.prepareChartOptions()
+    let chartOptionsSet = this.liveChartSystem.getterChartOptions()
+    console.log('VISCOMPONENT----optionsssssssssss')
+    console.log(chartOptionsSet)
     chartData.options = chartOptionsSet
     this.visualData = chartData
     console.log('VISCOMPONENT----chartdataCOMPLETE And set')

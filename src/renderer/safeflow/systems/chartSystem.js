@@ -15,6 +15,11 @@ const moment = require('moment')
 
 var ChartSystem = function () {
   events.EventEmitter.call(this)
+  this.options = {}
+  this.startAvg = 72
+  this.startRestAvg = 52
+  this.analysisStart = ''
+  this.analysisEnd = ''
 }
 
 /**
@@ -30,6 +35,7 @@ util.inherits(ChartSystem, events.EventEmitter)
 */
 ChartSystem.prototype.structureChartData = function (datatypeItem, timeList, deviceList, chartDataIN) {
   console.log('CHARTSYSTEM1---reStructure data')
+  this.options = this.prepareChartOptions()
   // console.log(datatypeItem)
   // console.log(timeList)
   // console.log(deviceList)
@@ -59,7 +65,8 @@ ChartSystem.prototype.structureChartData = function (datatypeItem, timeList, dev
         for (let dataItem of dataI[tItem][deviceI][0]) {
           // console.log('item loop')
           // console.log(dataItem)
-          datalabel.push(dataItem.timestamp)
+          var mDateString = moment(dataItem.timestamp * 1000).toDate()
+          datalabel.push(mDateString)
           if (datatypeItem === 'heartchain/heart/bpm') {
             dataheart.push(dataItem.heart_rate)
           } else if (datatypeItem === 'heartchain/heart/activity/steps') {
@@ -104,7 +111,6 @@ ChartSystem.prototype.chartColors = function (datatypeItem) {
 */
 ChartSystem.prototype.prepareVueChartJS = function (results) {
   console.log('CHARTSYSTEM2----VUEchart start prepare')
-  // console.log(results)
   // console.log(results)
   let datacollection = {}
   this.labelback = []
@@ -176,8 +182,8 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
     // prepare the Chart OBJECT FOR CHART.JS  Up to 2 line e.g. BMP or Steps or BPM + Steps
     // console.log('CHARTSYSTEM-----draw chart')
     var startChartDate = moment(this.labelback[0])
+    this.updateChartoptions(startChartDate)
     this.liveTime = startChartDate
-    // updateChartoptions(startChartDate)
     // this.chartmessage = 'BPM'
     datacollection = {
       labels: this.labelback,
@@ -187,7 +193,7 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
           label: 'Beats per minute',
           borderColor: this.colorlineback, // '#ea1212',
           backgroundColor: this.colorback, // 'rgba(255, 99, 132, 0.2)',
-          fill: true,
+          fill: false,
           data: this.heartback,
           yAxisID: 'bpm'
         }, {
@@ -204,6 +210,15 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
     }
   }
   return datacollection
+}
+
+/**
+* chartOptions Getter
+* @method getterChartOptions
+*
+*/
+ChartSystem.prototype.getterChartOptions = function () {
+  return this.options
 }
 
 /**
@@ -282,7 +297,7 @@ ChartSystem.prototype.prepareChartOptions = function (results) {
         type: 'line',
         mode: 'horizontal',
         scaleID: 'bpm',
-        value: 72,
+        value: localthis.startAvg,
         borderColor: 'cyan',
         borderWidth: 6,
         label: {
@@ -299,7 +314,7 @@ ChartSystem.prototype.prepareChartOptions = function (results) {
         type: 'line',
         mode: 'horizontal',
         scaleID: 'bpm',
-        value: 58,
+        value: localthis.startRestAvg,
         borderColor: 'pink',
         borderWidth: 6,
         label: {
@@ -326,7 +341,7 @@ ChartSystem.prototype.prepareChartOptions = function (results) {
         draggable: true,
         onClick: function (e) {
           // console.log(e.type, this.options.value)
-          localthis.analysisStart = this.options.value
+          localthis.analysisStart = options.value
           // console.log(this.analysisStart + 'any ting')
         },
         onDrag: function (event) {
@@ -349,7 +364,7 @@ ChartSystem.prototype.prepareChartOptions = function (results) {
         draggable: true,
         onClick: function (et) {
           // console.log(et.type, this)
-          localthis.analysisEnd = this.options.value
+          localthis.analysisEnd = options.value
           // console.log(this.options.value)
         },
         onDrag: function (eventt) {
@@ -378,6 +393,7 @@ ChartSystem.prototype.updateChartoptions = function (startChartDate) {
 *
 */
 ChartSystem.prototype.newDate = function (selectDay) {
+  console.log('startVERTICAL')
   var nowTime = ''
   if (selectDay === 0) {
     nowTime = moment()
@@ -390,7 +406,10 @@ ChartSystem.prototype.newDate = function (selectDay) {
   const time = moment.duration('2:0:00')
   startTime.add(time)
   // startTime = moment('12/21/2018', 'MM-DD-YYYY')
+  console.log('startVERTICAL')
+  console.log(startTime)
   this.options.annotation.annotations[2].value = startTime
+  console.log(this.options)
   // this.$set(this.options.annotation.annotations[2], 'value', startTime)
   // console.log(this.options.annotation.annotations[2])
 }

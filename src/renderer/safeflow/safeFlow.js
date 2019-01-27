@@ -51,14 +51,13 @@ safeFlow.prototype.setTestStorage = function (setIN) {
 */
 safeFlow.prototype.scienceEntities = async function (segT, inputInfo, cbIN) {
   // add a new entity via manager
-  let messageEntity = ''
+  // need to first check if this entity already formed???
+  // console.log('SAFEFLOW0----BEFOREadd')
   await this.liveEManager.addScienceEntity(segT, inputInfo, this.settings).then(function (bk) {
-    console.log('SAFEFLOW----ADDentity entity manager')
+    console.log('SAFEFLOW1----ADDESentity complete')
     console.log(bk)
-    messageEntity = bk
   })
-  // console.log(this.liveEManager.listEntities())
-  return messageEntity
+  return true
 }
 
 /**
@@ -67,12 +66,13 @@ safeFlow.prototype.scienceEntities = async function (segT, inputInfo, cbIN) {
 *
 */
 safeFlow.prototype.entityGetter = async function (eid) {
-  let eDataB = {}
+  let dataVue = {}
   await this.liveEManager.entityDataReturn(eid).then(function (eData) {
-    console.log('SAFEFLOW----RETURN entity manager')
-    eDataB = eData
+    console.log('SAFEFLOW2----RETURN entity manager')
+    console.log(eData)
+    dataVue = eData
   })
-  return eDataB
+  return dataVue
 }
 
 /**

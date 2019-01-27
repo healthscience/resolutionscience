@@ -9,7 +9,7 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import Entities from './scienceEntities.js'
+import Entity from './scienceEntities.js'
 import TimeUtilities from './systems/timeUtility.js'
 import CNRLmaster from './cnrl/cnrlMaster.js'
 const util = require('util')
@@ -34,7 +34,7 @@ util.inherits(EntitiesManager, events.EventEmitter)
 *
 */
 EntitiesManager.prototype.addScienceEntity = async function (segT, entID, setIN) {
-  console.log(entID)
+  // console.log(entID)
   const localthis = this
   const cid = entID.science.cid
   // build time profile and setup setFirstEntity
@@ -45,32 +45,30 @@ EntitiesManager.prototype.addScienceEntity = async function (segT, entID, setIN)
   // start workflow for setting up entity, compute and vis/sim etc.
   // async(immutable), KnowledgeSciptingLanguage(forth/stack), use SmartContract (need to select one to give gurantees)
   // workflow function chain ..
-  this.liveSEntities[cid] = new Entities(entID, setIN)
-  console.log(this.liveSEntities)
-  await this.liveSEntities[cid].liveDataC.RawData(entID).then(function () {
-    console.log('EMANAGER--- rawdata finsihed')
-    localthis.liveSEntities[cid].liveDataC.setDataTypes()
+  this.liveSEntities[cid] = new Entity(entID, setIN)
+  // console.log(this.liveSEntities)
+  // await this.liveSEntities[cid].liveDataC.setCNRLDataTypes().then(function () {
+  // console.log('EMANAGER---set CNRL dataTypes finsihed')
+  console.log('EMANAGER0-----beginCONTROL-FLOW')
+  await this.liveSEntities[cid].liveDataC.RawData().then(function (rawReturn) {
+    // console.log(rawReturn)
+    // console.log(localthis.liveSEntities[cid].liveDataC)
+    // console.log('EMANAGER1a-----end raw start Tidy')
   }).then(function () {
-    console.log('EMANAGER---set dataTypes finsihed')
-    localthis.liveSEntities[cid].liveDataC.TidyData()
-  }).then(function () {
-    // compute required
-    localthis.liveSEntities[cid].liveComputeC.filterCompute()
-    console.log('EMANAGER---tidy finsihed')
-  }).then(function () {
-    // structure require for visualisation
-    localthis.liveSEntities[cid].liveVisualC.filterVisual('chartjs', localthis.liveSEntities[cid].liveDataC.tidyData)
-    console.log('EMANAGER---computation finsihed')
-  }).then(function () {
-    // structure require for simulation
-    localthis.liveSEntities[cid].liveSimC.filterSimulation()
-    console.log('EMANAGER---visulations (chart) finsihed')
-  }).then(function () {
-    console.log('EMANAGER---simulation finsihed')
+    localthis.liveSEntities[cid].liveDataC.TidyData().then(function () {
+      // console.log('EMANAGER1b-----tidy complete')
+      // console.log('CONTROLFLOW___OVER')
+    }).then(function () {
+      localthis.liveSEntities[cid].liveVisualC.filterVisual('chartjs', localthis.liveSEntities[cid].liveDataC.datatypeList, localthis.liveSEntities[cid].liveDataC.timeList, localthis.liveSEntities[cid].liveDataC.deviceList, localthis.liveSEntities[cid].liveDataC.tidyData).then(function (visR) {
+        console.log(visR)
+        console.log('CONTROLFLOW___OVER')
+        return true
+        // console.log(localthis.liveSEntities)
+      })
+    })
   }).catch(function (err) {
     console.log(err)
   })
-  return 'EMANAGER---NEW finished'
 }
 
 /**
@@ -88,7 +86,8 @@ EntitiesManager.prototype.listEntities = function () {
 *
 */
 EntitiesManager.prototype.entityDataReturn = async function (eid) {
-  console.log('CALLED ENTITYDATARESTURN')
+  console.log('ENTITYMANGAER--DATARETURN----')
+  console.log(this.liveSEntities[eid].liveVisualC)
   return this.liveSEntities[eid].liveVisualC.visualData
 }
 

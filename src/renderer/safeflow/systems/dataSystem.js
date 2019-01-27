@@ -27,26 +27,58 @@ var DataSystem = function (setIN) {
 util.inherits(DataSystem, events.EventEmitter)
 
 /**
+*  return array of active devices
+* @method getLiveDevices
+*
+*/
+DataSystem.prototype.getLiveDevices = function (devicesIN) {
+  let deviceList = []
+  for (let device of devicesIN) {
+    if (device.active === true) {
+      deviceList.push(device.device_mac)
+    }
+  }
+  return deviceList
+}
+
+/**
+*  return array of active datatypes
+* @method getLiveDatatypes
+*
+*/
+DataSystem.prototype.getLiveDatatypes = function (dtIN) {
+  // console.log('start of Live datastype forming')
+  // console.log(dtIN)
+  let liveDTs = []
+  for (let dt of dtIN) {
+    if (dt.active === true) {
+      liveDTs.push(dt.compref)
+    }
+  }
+  return liveDTs
+}
+
+/**
 * get rawData
 * @method getRawData
 *
 */
-DataSystem.prototype.getRawData = async function (InfoKB) {
-  // console.log('DATASYSTEM getrawdata')
-  // console.log(InfoKB)
+DataSystem.prototype.getRawData = async function (dataLive) {
+  // console.log('DATASYSTEM0-------getrawdata')
+  // console.log(dataLive)
+  // console.log(dataLive.timePeriod)
   let localthis = this
   let dataBack = {}
   // check for number of devices, sensor/datatypes are asked for
-  const deviceLiveFilter = this.extractDevices(InfoKB.device)
-  // const sensorLiveFilter = this.extractSensors(InfoKB.datatype)
-  // console.log(deviceLiveFilter)
+  const deviceLiveFilter = dataLive.deviceList
   // form loop to make data calls
-  for await (let di of deviceLiveFilter) {
-    localthis.liveTestStorage.getData(InfoKB.timeperiod, di).then(function (result) {
-      // console.log(result)
-      // Do something with result.
+  for (let di of deviceLiveFilter) {
+    // console.log('STARTOOOOOP----')
+    // console.log(di)
+    await localthis.liveTestStorage.getData(dataLive.timePeriod, di).then(function (result) {
       dataBack[di] = result
-    }).then(function () {
+    }).catch(function (err) {
+      console.log(err)
     })
   }
   return dataBack
@@ -57,24 +89,33 @@ DataSystem.prototype.getRawData = async function (InfoKB) {
 * @method tidyRawData
 *
 */
-DataSystem.prototype.tidyRawData = async function (dataIN, dateT, timeL, deviceL) {
-  console.log('START DATASYSTEM by dataType coding')
-  console.log(dataIN)
-  console.log(dateT)
-  console.log(timeL)
-  console.log(deviceL)
+DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
+  // console.log('DATASYSTEM2T----tidyRaw')
+  // console.log(dataASK)
+  // console.log(dataRaw)
+  // build object structureReturn
+  let tidyHolder = {}
   // one, two or more sources needing tidying???
   // data structure in  Object indexed by startTime, object IndexbyDevice, Array[]of object -> heart_rate steps  {plus other source data}
-  // console.log(dataIN.length)
   let cleanData = []
   // need to import error codes from device/mobile app
   // let errorCodes = [255]
-  for (let devI of deviceL) {
-    console.log(devI)
+  for (let devI of dataASK.deviceList) {
+    // console.log(devI)
+    // console.log(dataASK.timePeriod)
+    // console.log(dataRaw[0])
+    // console.log(dataRaw[0][dataASK.timePeriod])
+    // console.log(dataRaw[0][dataASK.timePeriod][devI])
     // iterate over arrays and remove both time and BMP number keep track of error Account
-    cleanData = dataIN.filter(function (item) { return item[0] !== 255 || item[0] <= 0 })
+    // console.log(dataRaw[0][dataASK.timePeriod][devI])
+    cleanData = dataRaw[0][dataASK.timePeriod][devI].filter(function (item) { return item.heart_rate !== 255 || item.heart_rate <= 0 })
+    tidyHolder[dataASK.timePeriod] = {}
+    tidyHolder[dataASK.timePeriod][devI] = []
+    tidyHolder[dataASK.timePeriod][devI].push(cleanData)
   }
-  return cleanData
+  // console.log(cleanData)
+  // console.log(tidyHolder)
+  return tidyHolder
 }
 
 /**
@@ -155,21 +196,6 @@ DataSystem.prototype.deviceUtility = function (device) {
     deviceMacslist.push(devOb.device_mac)
   }
   return deviceMacslist
-}
-
-/**
-*  return array of active devices
-* @method extractDevices
-*
-*/
-DataSystem.prototype.extractDevices = function (devicesIN) {
-  let deviceList = []
-  for (let device of devicesIN) {
-    if (device.active === true) {
-      deviceList.push(device.device_mac)
-    }
-  }
-  return deviceList
 }
 
 /**
@@ -335,7 +361,7 @@ DataSystem.prototype.dataStatistics = async function () {
 *
 */
 DataSystem.prototype.loopUtility = function (dataIN) {
-  console.log('extract no. devices and no. dataType ie sensor data kinds')
+  // console.log('extract no. devices and no. dataType ie sensor data kinds')
   let dataLoop = []
   return dataLoop
 }

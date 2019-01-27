@@ -52,8 +52,7 @@
       liveSafeFlow: {},
       computeFlag: '',
       devices: [],
-      sensors: [],
-      deviceDetail: false
+      sensors: []
     }),
     created () {
     },

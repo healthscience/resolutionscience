@@ -17,13 +17,16 @@ var DataComponent = function (DID, setIN) {
   events.EventEmitter.call(this)
   this.did = DID
   this.liveDataSystem = new DataSystem(setIN)
-  this.deviceList = DID.device
   this.timeList = []
+  this.deviceList = []
+  this.datatypeList = []
   this.dataRaw = []
   this.tidyData = []
   this.dataCompute = []
   this.dataType = []
-  this.setTimeArray()
+  this.setTimeList()
+  this.setDevicesLive()
+  this.setDatatypesLive()
 }
 
 /**
@@ -37,8 +40,26 @@ util.inherits(DataComponent, events.EventEmitter)
 * @method setTimeArray
 *
 */
-DataComponent.prototype.setTimeArray = function () {
+DataComponent.prototype.setTimeList = function () {
   this.timeList.push(this.did.timeperiod)
+}
+
+/**
+*  set the datatype asked for
+* @method setDevicesLive
+*
+*/
+DataComponent.prototype.setDevicesLive = async function () {
+  this.deviceList = this.liveDataSystem.getLiveDevices(this.did.device)
+}
+
+/**
+*  set the datatype asked for
+* @method setDataTypesLive
+*
+*/
+DataComponent.prototype.setDatatypesLive = function () {
+  this.datatypeList = this.liveDataSystem.getLiveDatatypes(this.did.datatype)
 }
 
 /**
@@ -47,22 +68,28 @@ DataComponent.prototype.setTimeArray = function () {
 *
 */
 DataComponent.prototype.RawData = async function () {
+  console.log('DATACOMPONENT1----start rawdaata')
   var localthis = this
-  await this.liveDataSystem.getRawData(this.did).then(function (rawData) {
+  let systemBundle = {}
+  systemBundle.timePeriod = this.did.timeperiod
+  systemBundle.deviceList = this.deviceList
+  systemBundle.datatypes = this.datatypeList
+  await this.liveDataSystem.getRawData(systemBundle).then(function (rawData) {
+    // Sconsole.log('DATACOMPONENT2----finshed rawdaata')
     const rawHolder = {}
     rawHolder[localthis.did.timeperiod] = rawData
     localthis.dataRaw.push(rawHolder)
-    // tidy data
-    // this.tidyData()
+    // console.log(localthis.dataRaw)
   })
+  // return true
 }
 
 /**
 *  set DataTypes for this entity
-* @method setDataTypes
+* @method setCNRLDataTypes
 *
 */
-DataComponent.prototype.setDataTypes = async function () {
+DataComponent.prototype.setCNRLDataTypes = async function () {
   // convert  sensorLED via CNRL to dataType e.g. BPM
   this.dataType = this.did.datatype
   return 'empty'
@@ -74,12 +101,17 @@ DataComponent.prototype.setDataTypes = async function () {
 *
 */
 DataComponent.prototype.TidyData = async function () {
-  var localthis = this
-  console.log('COMPONENT data tidy CALLED')
-  await this.liveDataSystem.tidyRawData(this.dataRaw, this.dataType, this.timeList, this.deviceList).then(function (TDback) {
-    localthis.tidyData.push(TDback)
-  })
-  return 'TIDY DATA READY'
+  // console.log('DCOMPONENT1-- datatidy started')
+  // console.log(this.dataRaw)
+  // var localthis = this
+  let tidyHolder = []
+  let dBundle = {}
+  dBundle.timePeriod = this.did.timeperiod
+  dBundle.deviceList = this.deviceList
+  dBundle.datatypeList = this.datatypeList
+  tidyHolder = this.liveDataSystem.tidyRawData(dBundle, this.dataRaw)
+  this.tidyData.push(tidyHolder)
+  return true
 }
 
 export default DataComponent

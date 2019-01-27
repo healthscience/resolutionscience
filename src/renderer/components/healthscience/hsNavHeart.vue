@@ -103,7 +103,6 @@
   import LearnReport from '@/components/reports/learn-report.vue'
   import StatisticsTools from '@/components/reports/statisticstools.vue'
   import simulationView from '@/components/simulation/simulation-life.vue'
-  const moment = require('moment')
 
   export default {
     name: 'VueChartJS',
@@ -191,12 +190,6 @@
       },
       context: function () {
         return this.$store.state.context
-      },
-      datacollection: function () {
-        return {
-          labels: [],
-          datasets: []
-        }
       }
     },
     mounted () {
@@ -204,7 +197,7 @@
     created () {
       this.setAccess()
       this.setFirstEntity()
-      this.chartOptionsSet()
+      // this.chartOptionsSet()
     },
     methods: {
       setAccess () {
@@ -230,6 +223,7 @@
           localthis.$store.commit('setDevice', dataH)
         }
         const deviceSet = localthis.$store.getters.liveContext.device
+        // console.log(deviceSet)
         // has the device context been set already?
         if (deviceSet.length > 1) {
           localthis.devices = deviceSet
@@ -275,19 +269,18 @@
         this.filterDeviceActive()
         this.filterSensorActive()
         this.filterVisActive()
-
-        function callbackD (dataH) {
-          console.log('VUE----CHARTVUE COMPONENT FINISHED')
-          console.log(dataH)
-          localthis.datacollection = dataH
-        }
-        await this.liveSafeFlow.scienceEntities(seg, this.context, callbackD).then(function (entityData) {
-          console.log('VUE---wait from vue RETURNED')
+        await this.liveSafeFlow.scienceEntities(seg, this.context).then(function (entityData) {
+          console.log('VUE1---wait from vue RETURNED')
           console.log(entityData)
           localthis.liveSafeFlow.entityGetter('wasm-sc-1').then(function (eData) {
-            console.log('VUE---COMPLETED getter')
-            callbackD(eData)
+            console.log('VUE2---COMPLETED getter')
+            console.log(eData)
+            localthis.options = eData.options
+            localthis.datacollection = eData.prepared
+            console.log(localthis.datacollection)
           })
+        }).catch(function (err) {
+          console.log(err)
         })
       },
       fillStats (seg) {
@@ -412,184 +405,6 @@
         this.averageSeen = false
         this.learn.active = false
         this.activecompute = 'wasm-sc-1'
-      },
-      chartOptionsSet () {
-        var localthis = this
-        this.options = {
-          responsive: true,
-          tooltips: {
-            mode: 'index',
-            intersect: true
-          },
-          stacked: false,
-          title: {
-            display: true,
-            text: 'Device Data Charting'
-          },
-          scales: {
-            xAxes: [{
-              display: true,
-              barPercentage: 0.1,
-              type: 'time',
-              time: {
-                format: 'YYYY-MM-DD hh:mm',
-                // round: 'day'
-                tooltipFormat: 'll HH:mm'
-              },
-              position: 'bottom',
-              ticks: {
-                maxRotation: 75,
-                reverse: true
-              }
-            }],
-            yAxes: [{
-              type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-              display: true,
-              position: 'left',
-              id: 'bpm',
-              ticks: {
-                beginAtZero: true,
-                steps: 10,
-                stepValue: 5,
-                max: 180
-              },
-              scaleLabel: {
-                display: true,
-                labelString: 'Beats Per Minute Heart Rate'
-              }
-            },
-            {
-              type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-              display: true,
-              position: 'right',
-              id: 'steps',
-              // grid line settings
-              gridLines: {
-                drawOnChartArea: false // only want the grid lines for one axis to show up
-              },
-              ticks: {
-                beginAtZero: true
-              },
-              scaleLabel: {
-                display: true,
-                labelString: 'Number of Steps'
-              }
-            }]
-          },
-          annotation: {
-            events: ['click'],
-            annotations: [{
-              drawTime: 'afterDatasetsDraw',
-              type: 'line',
-              mode: 'horizontal',
-              scaleID: 'bpm',
-              value: 72,
-              borderColor: 'cyan',
-              borderWidth: 6,
-              label: {
-                enabled: true,
-                content: 'average daily heart rate'
-              },
-              draggable: true,
-              onClick: function (e) {
-                // console.log(e.type, this)
-              }
-            },
-            {
-              drawTime: 'afterDatasetsDraw',
-              type: 'line',
-              mode: 'horizontal',
-              scaleID: 'bpm',
-              value: 58,
-              borderColor: 'pink',
-              borderWidth: 6,
-              label: {
-                enabled: true,
-                content: 'average resting heart rate'
-              },
-              draggable: true,
-              onClick: function (e) {
-                // console.log(e.type, this)
-              }
-            },
-            {
-              id: 'time',
-              scaleID: 'x-axis-0',
-              type: 'line',
-              mode: 'vertical',
-              value: 0,
-              borderColor: 'blue',
-              borderWidth: 12,
-              label: {
-                enabled: true,
-                content: 'start point'
-              },
-              draggable: true,
-              onClick: function (e) {
-                // console.log(e.type, this.options.value)
-                localthis.analysisStart = this.options.value
-                // console.log(this.analysisStart + 'any ting')
-              },
-              onDrag: function (event) {
-                // console.log(event.subject.config.value)
-                localthis.analysisStart = event.subject.config.value
-              }
-            },
-            {
-              id: 'time2',
-              scaleID: 'x-axis-0',
-              type: 'line',
-              mode: 'vertical',
-              value: 0,
-              borderColor: '#7A33FF',
-              borderWidth: 12,
-              label: {
-                enabled: true,
-                content: 'end point'
-              },
-              draggable: true,
-              onClick: function (et) {
-                // console.log(et.type, this)
-                localthis.analysisEnd = this.options.value
-                // console.log(this.options.value)
-              },
-              onDrag: function (eventt) {
-                // console.log(event.subject.config.value)
-                localthis.analysisEnd = eventt.subject.config.value
-              }
-            }]
-          }
-        }
-      },
-      updateChartoptions (startChartDate) {
-        this.newDate(startChartDate) // moment('12/21/2018', 'MM-DD-YYYY')
-        this.newDateEnd(startChartDate) // moment('12/21/2018', 'MM-DD-YYYY')
-      },
-      newDate (selectDay) {
-        var nowTime = ''
-        if (selectDay === 0) {
-          nowTime = moment()
-        } else {
-          nowTime = moment(selectDay)
-          nowTime = nowTime.subtract(selectDay, 'days')
-        }
-        // console.log(nowTime)
-        var startTime = moment.utc(nowTime).startOf('day')
-        const time = moment.duration('2:0:00')
-        startTime.add(time)
-        // startTime = moment('12/21/2018', 'MM-DD-YYYY')
-        this.options.annotation.annotations[2].value = startTime
-        // this.$set(this.options.annotation.annotations[2], 'value', startTime)
-        // console.log(this.options.annotation.annotations[2])
-      },
-      newDateEnd (endTimeIN) {
-        var nowTime2 = moment(endTimeIN)
-        var startTime2 = moment.utc(nowTime2).startOf('day')
-        var time2 = moment.duration('4:0:00')
-        startTime2.add(time2)
-        this.options.annotation.annotations[3].value = startTime2
-        // this.$set(this.options.annotation.annotations[3], 'value', startTime2)
-        // console.log(startTime2)
       }
     }
   }

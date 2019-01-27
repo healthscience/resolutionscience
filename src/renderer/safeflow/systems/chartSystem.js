@@ -28,35 +28,73 @@ util.inherits(ChartSystem, events.EventEmitter)
 * @method structureData
 *
 */
-ChartSystem.prototype.structureChartData = async function (chartDataIN) {
-  console.log('CHARTSYSTEM---reStructure data for vue. ')
-  console.log(chartDataIN)
-  var localthis = this
+ChartSystem.prototype.structureChartData = function (datatypeItem, timeList, deviceList, chartDataIN) {
+  console.log('CHARTSYSTEM1---reStructure data')
+  // console.log(datatypeItem)
+  // console.log(timeList)
+  // console.log(deviceList)
+  // console.log(chartDataIN)
+  // var localthis = this
   let dataholder = {}
   let datalabel = []
   let dataheart = []
-  let dataMTypes = [1, 2]
-  let colorL = ''
   this.chartPrep = {}
   // loop through and build two sperate arrays
-  chartDataIN.forEach(function (couple) {
-    datalabel.push(couple[dataMTypes[0]])
-    dataheart.push(couple[dataMTypes[1]])
-  })
+  for (let dataI of chartDataIN) {
+    // console.log('tidybatch loop')
+    // console.log(dataI)
+    /* for (let itemsI of dataI) {
+      datalabel.push(itemsI.timestamp)
+      dataheart.push(itemsI.heart_rate)
+    } */
+    for (let tItem of timeList) {
+      // console.log('date loop')
+      // console.log(tItem)
+      // console.log(dataI[tItem])
+      for (let deviceI of deviceList) {
+        // console.log('device loop')
+        // console.log(deviceI)
+        // console.log(tItem)
+        // console.log(dataI[tItem][deviceI][0])
+        for (let dataItem of dataI[tItem][deviceI][0]) {
+          // console.log('item loop')
+          // console.log(dataItem)
+          datalabel.push(dataItem.timestamp)
+          if (datatypeItem === 'heartchain/heart/bpm') {
+            dataheart.push(dataItem.heart_rate)
+          } else if (datatypeItem === 'heartchain/heart/activity/steps') {
+            dataheart.push(dataItem.steps)
+          }
+        }
+      }
+    }
+  }
   dataholder.labels = datalabel
   dataholder.datasets = dataheart
-  if (colorL === 'heartchain/heart/activity/steps') {
-    dataholder.backgroundColor = '#203487'
-    dataholder.borderColor = '#050d2d'
-  } else if (colorL === 'heartchain/heart/bpm') {
-    dataholder.backgroundColor = '#ed7d7d'
-    dataholder.borderColor = '#ea1212'
+  return dataholder
+}
+
+/**
+* prepare chart colors
+* @method chartColors
+*
+*/
+ChartSystem.prototype.chartColors = function (datatypeItem) {
+  // console.log('CHARTSYSTEM3--setcolors')
+  // console.log(datatypeItem)
+  let colorHolder = {}
+  // LOOP over datatypeList and prepare chart colors
+  if (datatypeItem === 'heartchain/heart/activity/steps') {
+    colorHolder.datatype = 'heartchain/heart/activity/steps'
+    colorHolder.backgroundColor = '#203487'
+    colorHolder.borderColor = '#050d2d'
+  } else if (datatypeItem === 'heartchain/heart/bpm') {
+    colorHolder.datatype = 'heartchain/heart/bpm'
+    colorHolder.backgroundColor = '#ed7d7d'
+    colorHolder.borderColor = '#ea1212'
   }
-  // return 'structureREADY'
-  await this.prepareVueChartJS(dataholder).then(function (chartReady) {
-    localthis.chartPrep = chartReady
-  })
-  return this.chartPrep
+  // console.log(colorHolder)
+  return colorHolder
 }
 
 /**
@@ -64,51 +102,55 @@ ChartSystem.prototype.structureChartData = async function (chartDataIN) {
 * @method prepareVueChartJS
 *
 */
-ChartSystem.prototype.prepareVueChartJS = async function (results) {
-  console.log('CHARTSYSTEM----VUEchart start prepare')
-  console.log(results)
-  this.datacollection = {}
-  this.labelback = ''
-  this.heartback = ''
+ChartSystem.prototype.prepareVueChartJS = function (results) {
+  console.log('CHARTSYSTEM2----VUEchart start prepare')
+  // console.log(results)
+  // console.log(results)
+  let datacollection = {}
+  this.labelback = []
+  this.heartback = []
   this.colorback = ''
   this.colorlineback = ''
   this.colorback2 = ''
   this.colorlineback2 = ''
   this.activityback = ''
-  if (results.length === 2) {
+  // how many dataTypes asked for?
+  if (results.chart.length === 2) {
     // need to prepare different visualisations, data return will fit only one Chart vis option
-    for (let res of results) {
-      if (res.senItem === 'heartchain/heart/bpm') {
-        this.labelback = res.vueData.labels
-        this.heartback = res.vueData.datasets
-        this.colorback = res.vueData.backgroundColor
-        this.colorlineback = res.vueData.borderColor
-      } else if (res.senItem === 'heartchain/heart/activity/steps') {
-        this.activityback = res.vueData.datasets
-        this.colorback2 = res.vueData.backgroundColor
-        this.colorlineback2 = res.vueData.borderColor
+    for (let chD of results.chart) {
+      if (chD.color.datatype === 'heartchain/heart/bpm') {
+        this.labelback = chD.data.labels
+        this.heartback = chD.data.datasets
+        this.colorback = chD.color.backgroundColor
+        this.colorlineback = chD.color.borderColor
+      } else if (chD.color.datatype === 'heartchain/heart/activity/steps') {
+        this.labelback = chD.data.labels
+        this.activityback = chD.data.datasets
+        this.colorback2 = chD.color.backgroundColor
+        this.colorlineback2 = chD.color.borderColor
       }
     }
   } else {
-    if (results[0] === 'heartchain/heart/bpm') {
+    if (results.chart[0].color.datatype === 'heartchain/heart/bpm') {
       this.activityback = []
-      this.labelback = results[0].vueData.labels
-      this.heartback = results[0].vueData.datasets
-      this.colorback = results[0].vueData.backgroundColor
-      this.colorlineback = results[0].vueData.borderColor
-    } else if (results[0] === 'heartchain/heart/activity/steps') {
+      this.labelback = results.chart[0].data.labels
+      this.heartback = results.chart[0].data.datasets
+      this.colorback = results.chart[0].color.backgroundColor
+      this.colorlineback = results.chart[0].color.borderColor
+    } else if (results.chart[0].color.datatype === 'heartchain/heart/activity/steps') {
       this.heartback = []
-      this.labelback = results[0].vueData.labels
-      this.activityback = results[0].vueData.datasets
-      this.colorback2 = results[0].vueData.backgroundColor
-      this.colorlineback2 = results[0].vueData.borderColor
+      this.labelback = results.chart[0].data.labels
+      this.activityback = results.chart[0].data.datasets
+      this.colorback2 = results.chart[0].color.backgroundColor
+      this.colorlineback2 = results.chart[0].color.borderColor
     }
   }
+  // check for no data available
   if (results === 'no data') {
     // no data to display
     this.chartmessage = 'No data to display'
-    this.datacollection = {
-      labels: this.labelback,
+    datacollection = {
+      labels: [],
       datasets: [
         {
           type: 'line',
@@ -116,35 +158,35 @@ ChartSystem.prototype.prepareVueChartJS = async function (results) {
           borderColor: '#ed7d7d',
           backgroundColor: '#ed7d7d',
           fill: false,
-          data: this.heartback,
+          data: [],
           yAxisID: 'bpm'
         }, {
           type: 'bar',
           label: 'Activity Steps',
-          // borderColor: '#ea1212',
-          // borderWidth: .5,
-          // backgroundColor: '#ea1212',
+          borderColor: '#ea1212',
+          borderWidth: 0.5,
+          backgroundColor: '#ea1212',
           fill: false,
-          data: this.activityback,
+          data: [],
           yAxisID: 'steps'
         }
       ]
     }
   } else {
-    // console.log('draw chart')
-    // getAverages(70)
+    // prepare the Chart OBJECT FOR CHART.JS  Up to 2 line e.g. BMP or Steps or BPM + Steps
+    // console.log('CHARTSYSTEM-----draw chart')
     var startChartDate = moment(this.labelback[0])
     this.liveTime = startChartDate
     // updateChartoptions(startChartDate)
     // this.chartmessage = 'BPM'
-    this.datacollection = {
+    datacollection = {
       labels: this.labelback,
       datasets: [
         {
           type: 'line',
           label: 'Beats per minute',
-          borderColor: '#ea1212',
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: this.colorlineback, // '#ea1212',
+          backgroundColor: this.colorback, // 'rgba(255, 99, 132, 0.2)',
           fill: true,
           data: this.heartback,
           yAxisID: 'bpm'
@@ -152,18 +194,220 @@ ChartSystem.prototype.prepareVueChartJS = async function (results) {
           type: 'bar',
           label: 'Activity - Steps',
           lineThickness: 0.2,
-          borderColor: '#020b2d',
-          backgroundColor: '#050d2d',
-          fill: false,
+          borderColor: this.colorlineback2, // '#020b2d',
+          backgroundColor: this.colorback2, // '#050d2d',
+          fill: true,
           data: this.activityback,
           yAxisID: 'steps'
         }
       ]
     }
   }
-  console.log('CHARTSYSTEM----RETURN chart system')
-  console.log(this.datacollection)
-  return this.datacollection
+  return datacollection
+}
+
+/**
+* set ChartOptions chartJS
+* @method prepareChartOptions
+*
+*/
+ChartSystem.prototype.prepareChartOptions = function (results) {
+  console.log('CHARTSYSTEM4----chartOPTIONS')
+  var localthis = this
+  let options = {
+    responsive: true,
+    tooltips: {
+      mode: 'index',
+      intersect: true
+    },
+    stacked: false,
+    title: {
+      display: true,
+      text: 'Device Data Charting'
+    },
+    scales: {
+      xAxes: [{
+        display: true,
+        barPercentage: 0.1,
+        type: 'time',
+        time: {
+          format: 'YYYY-MM-DD hh:mm',
+          // round: 'day'
+          tooltipFormat: 'll HH:mm'
+        },
+        position: 'bottom',
+        ticks: {
+          maxRotation: 75,
+          reverse: true
+        }
+      }],
+      yAxes: [{
+        type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+        display: true,
+        position: 'left',
+        id: 'bpm',
+        ticks: {
+          beginAtZero: true,
+          steps: 10,
+          stepValue: 5,
+          max: 180
+        },
+        scaleLabel: {
+          display: true,
+          labelString: 'Beats Per Minute Heart Rate'
+        }
+      },
+      {
+        type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+        display: true,
+        position: 'right',
+        id: 'steps',
+        // grid line settings
+        gridLines: {
+          drawOnChartArea: false // only want the grid lines for one axis to show up
+        },
+        ticks: {
+          beginAtZero: true
+        },
+        scaleLabel: {
+          display: true,
+          labelString: 'Number of Steps'
+        }
+      }]
+    },
+    annotation: {
+      events: ['click'],
+      annotations: [{
+        drawTime: 'afterDatasetsDraw',
+        type: 'line',
+        mode: 'horizontal',
+        scaleID: 'bpm',
+        value: 72,
+        borderColor: 'cyan',
+        borderWidth: 6,
+        label: {
+          enabled: true,
+          content: 'average daily heart rate'
+        },
+        draggable: true,
+        onClick: function (e) {
+          // console.log(e.type, this)
+        }
+      },
+      {
+        drawTime: 'afterDatasetsDraw',
+        type: 'line',
+        mode: 'horizontal',
+        scaleID: 'bpm',
+        value: 58,
+        borderColor: 'pink',
+        borderWidth: 6,
+        label: {
+          enabled: true,
+          content: 'average resting heart rate'
+        },
+        draggable: true,
+        onClick: function (e) {
+          // console.log(e.type, this)
+        }
+      },
+      {
+        id: 'time',
+        scaleID: 'x-axis-0',
+        type: 'line',
+        mode: 'vertical',
+        value: 0,
+        borderColor: 'blue',
+        borderWidth: 12,
+        label: {
+          enabled: true,
+          content: 'start point'
+        },
+        draggable: true,
+        onClick: function (e) {
+          // console.log(e.type, this.options.value)
+          localthis.analysisStart = this.options.value
+          // console.log(this.analysisStart + 'any ting')
+        },
+        onDrag: function (event) {
+          // console.log(event.subject.config.value)
+          localthis.analysisStart = event.subject.config.value
+        }
+      },
+      {
+        id: 'time2',
+        scaleID: 'x-axis-0',
+        type: 'line',
+        mode: 'vertical',
+        value: 0,
+        borderColor: '#7A33FF',
+        borderWidth: 12,
+        label: {
+          enabled: true,
+          content: 'end point'
+        },
+        draggable: true,
+        onClick: function (et) {
+          // console.log(et.type, this)
+          localthis.analysisEnd = this.options.value
+          // console.log(this.options.value)
+        },
+        onDrag: function (eventt) {
+          // console.log(event.subject.config.value)
+          localthis.analysisEnd = eventt.subject.config.value
+        }
+      }]
+    }
+  }
+  return options
+}
+
+/**
+* return the data Statistics structure requested
+* @method updateChartoptions
+*
+*/
+ChartSystem.prototype.updateChartoptions = function (startChartDate) {
+  this.newDate(startChartDate) // moment('12/21/2018', 'MM-DD-YYYY')
+  this.newDateEnd(startChartDate) // moment('12/21/2018', 'MM-DD-YYYY')
+}
+
+/**
+* update the vertical start line
+* @method newDate
+*
+*/
+ChartSystem.prototype.newDate = function (selectDay) {
+  var nowTime = ''
+  if (selectDay === 0) {
+    nowTime = moment()
+  } else {
+    nowTime = moment(selectDay)
+    nowTime = nowTime.subtract(selectDay, 'days')
+  }
+  // console.log(nowTime)
+  var startTime = moment.utc(nowTime).startOf('day')
+  const time = moment.duration('2:0:00')
+  startTime.add(time)
+  // startTime = moment('12/21/2018', 'MM-DD-YYYY')
+  this.options.annotation.annotations[2].value = startTime
+  // this.$set(this.options.annotation.annotations[2], 'value', startTime)
+  // console.log(this.options.annotation.annotations[2])
+}
+
+/**
+* ser vertical end time line
+* @method newDateEnd
+*
+*/
+ChartSystem.prototype.newDateEnd = function (endTimeIN) {
+  var nowTime2 = moment(endTimeIN)
+  var startTime2 = moment.utc(nowTime2).startOf('day')
+  var time2 = moment.duration('4:0:00')
+  startTime2.add(time2)
+  this.options.annotation.annotations[3].value = startTime2
+  // this.$set(this.options.annotation.annotations[3], 'value', startTime2)
+  // console.log(startTime2)
 }
 
 /**

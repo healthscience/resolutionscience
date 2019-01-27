@@ -34,7 +34,6 @@ util.inherits(ChartSystem, events.EventEmitter)
 *
 */
 ChartSystem.prototype.structureChartData = function (datatypeItem, timeList, deviceList, chartDataIN) {
-  console.log('CHARTSYSTEM1---reStructure data')
   this.options = this.prepareChartOptions()
   // console.log(datatypeItem)
   // console.log(timeList)
@@ -110,7 +109,6 @@ ChartSystem.prototype.chartColors = function (datatypeItem) {
 *
 */
 ChartSystem.prototype.prepareVueChartJS = function (results) {
-  console.log('CHARTSYSTEM2----VUEchart start prepare')
   // console.log(results)
   let datacollection = {}
   this.labelback = []
@@ -227,7 +225,6 @@ ChartSystem.prototype.getterChartOptions = function () {
 *
 */
 ChartSystem.prototype.prepareChartOptions = function (results) {
-  console.log('CHARTSYSTEM4----chartOPTIONS')
   var localthis = this
   let options = {
     responsive: true,
@@ -393,7 +390,6 @@ ChartSystem.prototype.updateChartoptions = function (startChartDate) {
 *
 */
 ChartSystem.prototype.newDate = function (selectDay) {
-  console.log('startVERTICAL')
   var nowTime = ''
   if (selectDay === 0) {
     nowTime = moment()
@@ -406,12 +402,7 @@ ChartSystem.prototype.newDate = function (selectDay) {
   const time = moment.duration('2:0:00')
   startTime.add(time)
   // startTime = moment('12/21/2018', 'MM-DD-YYYY')
-  console.log('startVERTICAL')
-  console.log(startTime)
   this.options.annotation.annotations[2].value = startTime
-  console.log(this.options)
-  // this.$set(this.options.annotation.annotations[2], 'value', startTime)
-  // console.log(this.options.annotation.annotations[2])
 }
 
 /**
@@ -425,8 +416,6 @@ ChartSystem.prototype.newDateEnd = function (endTimeIN) {
   var time2 = moment.duration('4:0:00')
   startTime2.add(time2)
   this.options.annotation.annotations[3].value = startTime2
-  // this.$set(this.options.annotation.annotations[3], 'value', startTime2)
-  // console.log(startTime2)
 }
 
 /**

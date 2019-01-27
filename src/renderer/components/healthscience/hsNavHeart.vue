@@ -270,14 +270,10 @@
         this.filterSensorActive()
         this.filterVisActive()
         await this.liveSafeFlow.scienceEntities(seg, this.context).then(function (entityData) {
-          console.log('VUE1---wait from vue RETURNED')
-          console.log(entityData)
           localthis.liveSafeFlow.entityGetter('wasm-sc-1').then(function (eData) {
-            console.log('VUE2---COMPLETED getter')
-            console.log(eData)
             localthis.options = eData.options
             localthis.datacollection = eData.prepared
-            console.log(localthis.datacollection)
+            // console.log(localthis.datacollection)
           })
         }).catch(function (err) {
           console.log(err)
@@ -372,10 +368,20 @@
       },
       learnStartStop () {
         // pass to computations system
+        var localthis = this
         let computeSelected = this.selected
         console.log(computeSelected)
-        console.log(this.analysisStart)
-        console.log(this.analysisEnd)
+        // need to ask for start end market info, from Entity
+        this.liveSafeFlow.entityChartGetter('wasm-sc-1').then(function (eData) {
+          localthis.analysisStart = eData.liveChartSystem.analysisStart
+          localthis.analysisEnd = eData.liveChartSystem.analysisEnd
+          console.log(localthis.analysisStart)
+          console.log(localthis.analysisEnd)
+        }).catch(function (err) {
+          console.log(err)
+        })
+        // console.log(this.analysisStart)
+        // console.log(this.analysisEnd)
         let computationSMid = this.filterCompute(computeSelected)
         console.log(computationSMid)
         if (computationSMid === 'wasm-sc-3') {

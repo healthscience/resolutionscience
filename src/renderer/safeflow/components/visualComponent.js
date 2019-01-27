@@ -32,7 +32,6 @@ util.inherits(VisualComponent, events.EventEmitter)
 */
 VisualComponent.prototype.filterVisual = async function (visIN, datatypeList, timeList, deviceList, visData) {
   // build array of visualation modules and match to one asked for
-  console.log('VISCOMPONENT0-----datain')
   var localthis = this
   let structureHolder = {}
   let chartData = {}
@@ -65,12 +64,8 @@ VisualComponent.prototype.filterVisual = async function (visIN, datatypeList, ti
     // Note this will be dependent upon e.g. average statistics and changing time inputs
     // let averageStats = this.computeComponent() // pass into chart options
     let chartOptionsSet = this.liveChartSystem.getterChartOptions()
-    console.log('VISCOMPONENT----optionsssssssssss')
-    console.log(chartOptionsSet)
     chartData.options = chartOptionsSet
     this.visualData = chartData
-    console.log('VISCOMPONENT----chartdataCOMPLETE And set')
-    console.log(this.visualData)
     return true
   }
 }

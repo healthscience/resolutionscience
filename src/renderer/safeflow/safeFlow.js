@@ -54,8 +54,6 @@ safeFlow.prototype.scienceEntities = async function (segT, inputInfo, cbIN) {
   // need to first check if this entity already formed???
   // console.log('SAFEFLOW0----BEFOREadd')
   await this.liveEManager.addScienceEntity(segT, inputInfo, this.settings).then(function (bk) {
-    console.log('SAFEFLOW1----ADDESentity complete')
-    console.log(bk)
   })
   return true
 }
@@ -68,8 +66,19 @@ safeFlow.prototype.scienceEntities = async function (segT, inputInfo, cbIN) {
 safeFlow.prototype.entityGetter = async function (eid) {
   let dataVue = {}
   await this.liveEManager.entityDataReturn(eid).then(function (eData) {
-    console.log('SAFEFLOW2----RETURN entity manager')
-    console.log(eData)
+    dataVue = eData
+  })
+  return dataVue
+}
+
+/**
+* chartData getter
+* @method entityChartGetter
+*
+*/
+safeFlow.prototype.entityChartGetter = async function (eid) {
+  let dataVue = {}
+  await this.liveEManager.entityChartReturn(eid).then(function (eData) {
     dataVue = eData
   })
   return dataVue

@@ -86,9 +86,16 @@ EntitiesManager.prototype.listEntities = function () {
 *
 */
 EntitiesManager.prototype.entityDataReturn = async function (eid) {
-  console.log('ENTITYMANGAER--DATARETURN----')
-  console.log(this.liveSEntities[eid].liveVisualC)
   return this.liveSEntities[eid].liveVisualC.visualData
+}
+
+/**
+*  return chart data from an entity
+* @method entityChartReturn
+*
+*/
+EntitiesManager.prototype.entityChartReturn = async function (eid) {
+  return this.liveSEntities[eid].liveVisualC
 }
 
 /**

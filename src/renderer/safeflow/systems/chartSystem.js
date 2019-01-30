@@ -33,7 +33,7 @@ util.inherits(ChartSystem, events.EventEmitter)
 * @method structureData
 *
 */
-ChartSystem.prototype.structureChartData = function (datatypeItem, timeList, deviceList, chartDataIN) {
+ChartSystem.prototype.structureChartData = function (datatypeItem, liveDate, timeList, deviceList, chartDataIN) {
   this.options = this.prepareChartOptions()
   // console.log(datatypeItem)
   // console.log(timeList)
@@ -55,21 +55,28 @@ ChartSystem.prototype.structureChartData = function (datatypeItem, timeList, dev
     for (let tItem of timeList) {
       // console.log('date loop')
       // console.log(tItem)
-      // console.log(dataI[tItem])
-      for (let deviceI of deviceList) {
-        // console.log('device loop')
-        // console.log(deviceI)
+      // console.log(liveDate)
+      if (tItem === liveDate && dataI[liveDate]) {
+        // console.log('dateMatch')
         // console.log(tItem)
-        // console.log(dataI[tItem][deviceI][0])
-        for (let dataItem of dataI[tItem][deviceI][0]) {
-          // console.log('item loop')
-          // console.log(dataItem)
-          var mDateString = moment(dataItem.timestamp * 1000).toDate()
-          datalabel.push(mDateString)
-          if (datatypeItem === 'heartchain/heart/bpm') {
-            dataheart.push(dataItem.heart_rate)
-          } else if (datatypeItem === 'heartchain/heart/activity/steps') {
-            dataheart.push(dataItem.steps)
+        // console.log(dataI)
+        // console.log(dataI[tItem])
+        for (let deviceI of deviceList) {
+          // console.log('device loop')
+          // console.log(dataI)
+          // console.log(deviceI)
+          // console.log(tItem)
+          // console.log(dataI[tItem])
+          for (let dataItem of dataI[tItem][deviceI][0]) {
+            // console.log('item loop')
+            // console.log(dataItem)
+            var mDateString = moment(dataItem.timestamp * 1000).toDate()
+            datalabel.push(mDateString)
+            if (datatypeItem === 'heartchain/heart/bpm') {
+              dataheart.push(dataItem.heart_rate)
+            } else if (datatypeItem === 'heartchain/heart/activity/steps') {
+              dataheart.push(dataItem.steps)
+            }
           }
         }
       }

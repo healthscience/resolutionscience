@@ -35,18 +35,50 @@ util.inherits(EntitiesManager, events.EventEmitter)
 */
 EntitiesManager.prototype.addScienceEntity = async function (segT, entID, setIN) {
   // console.log(entID)
-  const localthis = this
+  // const localthis = this
   const cid = entID.science.cid
   // build time profile and setup setFirstEntity
   const timePeriod = this.liveTimeUtil.timePeriod(segT)
   entID.timeperiod = timePeriod
   const cnrlInfo = this.liveCNRL.lookupContract(entID.cnrl)
   entID.dataTypesCNRL = cnrlInfo
-  // start workflow for setting up entity, compute and vis/sim etc.
-  // async(immutable), KnowledgeSciptingLanguage(forth/stack), use SmartContract (need to select one to give gurantees)
-  // workflow function chain ..
-  this.liveSEntities[cid] = new Entity(entID, setIN)
-  // console.log(this.liveSEntities)
+  if (this.liveSEntities[cid]) {
+    console.log('entity' + cid + 'already exists')
+    // does the data exist for this day?
+    if (this.liveSEntities[cid].liveDataC[timePeriod]) {
+      // exist return
+      this.liveSEntities[cid].liveDataC.setStartDate(timePeriod)
+      this.liveSEntities[cid].liveDataC.setTimeList(timePeriod)
+      console.log('time data already ready')
+      return true
+    } else {
+      // new data call require for this date
+      console.log('need to prepare new data for this date')
+      this.liveSEntities[cid].liveDataC.setStartDate(timePeriod)
+      this.liveSEntities[cid].liveDataC.setTimeList(timePeriod)
+      await this.controlFlow(cid)
+    }
+  } else {
+    console.log('entity' + cid + 'is new')
+    // start workflow for setting up entity, compute and vis/sim etc.
+    // async(immutable), KnowledgeSciptingLanguage(forth/stack), use SmartContract (need to select one to give gurantees)
+    // workflow function chain ..
+    this.liveSEntities[cid] = new Entity(entID, setIN)
+    // console.log(this.liveSEntities)
+    // set the livestart Date for the UI
+    this.liveSEntities[cid].liveDataC.setStartDate(timePeriod)
+    this.liveSEntities[cid].liveDataC.setTimeList(timePeriod)
+    await this.controlFlow(cid)
+  }
+}
+
+/**
+*  control the adding of data to the entity
+* @method controlFlow
+*
+*/
+EntitiesManager.prototype.controlFlow = async function (cid) {
+  var localthis = this
   // await this.liveSEntities[cid].liveDataC.setCNRLDataTypes().then(function () {
   // console.log('EMANAGER---set CNRL dataTypes finsihed')
   console.log('EMANAGER0-----beginCONTROL-FLOW')
@@ -59,7 +91,7 @@ EntitiesManager.prototype.addScienceEntity = async function (segT, entID, setIN)
       // console.log('EMANAGER1b-----tidy complete')
       // console.log('CONTROLFLOW___OVER')
     }).then(function () {
-      localthis.liveSEntities[cid].liveVisualC.filterVisual('chartjs', localthis.liveSEntities[cid].liveDataC.datatypeList, localthis.liveSEntities[cid].liveDataC.timeList, localthis.liveSEntities[cid].liveDataC.deviceList, localthis.liveSEntities[cid].liveDataC.tidyData).then(function (visR) {
+      localthis.liveSEntities[cid].liveVisualC.filterVisual('chartjs', localthis.liveSEntities[cid].liveDataC.livedate, localthis.liveSEntities[cid].liveDataC.datatypeList, localthis.liveSEntities[cid].liveDataC.timeList, localthis.liveSEntities[cid].liveDataC.deviceList, localthis.liveSEntities[cid].liveDataC.tidyData).then(function (visR) {
         console.log(visR)
         console.log('CONTROLFLOW___OVER')
         return true

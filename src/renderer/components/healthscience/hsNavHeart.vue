@@ -292,7 +292,6 @@
         s.active = !s.active
       },
       selectVis (visIN) {
-        console.log(visIN)
         // visIN.active = !visIN.active
         if (visIN.id === 'vis-sc-1') {
           if (visIN.active === true) {

@@ -64,7 +64,7 @@ DataSystem.prototype.getLiveDatatypes = function (dtIN) {
 *
 */
 DataSystem.prototype.getRawData = async function (dataLive) {
-  // console.log('DATASYSTEM0-------getrawdata')
+  console.log('DATASYSTEM0-------getrawdata')
   // console.log(dataLive)
   // console.log(dataLive.timePeriod)
   let localthis = this
@@ -73,10 +73,9 @@ DataSystem.prototype.getRawData = async function (dataLive) {
   const deviceLiveFilter = dataLive.deviceList
   // form loop to make data calls
   for (let di of deviceLiveFilter) {
-    // console.log('STARTOOOOOP----')
-    // console.log(di)
-    await localthis.liveTestStorage.getData(dataLive.timePeriod, di).then(function (result) {
+    await localthis.liveTestStorage.getComputeData(dataLive.timePeriod, di).then(function (result) {
       dataBack[di] = result
+      result = []
     }).catch(function (err) {
       console.log(err)
     })
@@ -92,7 +91,6 @@ DataSystem.prototype.getRawData = async function (dataLive) {
 DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
   // console.log('DATASYSTEM2T----tidyRaw')
   // console.log(dataASK)
-  // console.log(dataRaw)
   // build object structureReturn
   let tidyHolder = {}
   // one, two or more sources needing tidying???
@@ -108,13 +106,16 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
     // console.log(dataRaw[0][dataASK.timePeriod][devI])
     // iterate over arrays and remove both time and BMP number keep track of error Account
     // console.log(dataRaw[0][dataASK.timePeriod][devI])
-    cleanData = dataRaw[0][dataASK.timePeriod][devI].filter(function (item) { return item.heart_rate !== 255 || item.heart_rate <= 0 })
-    tidyHolder[dataASK.timePeriod] = {}
-    tidyHolder[dataASK.timePeriod][devI] = []
-    tidyHolder[dataASK.timePeriod][devI].push(cleanData)
+    // loop over rawData until the start date matchtes
+    for (let dateMatch of dataRaw) {
+      if (dateMatch[dataASK.timePeriod]) {
+        cleanData = dateMatch[dataASK.timePeriod][devI].filter(function (item) { return item.heart_rate !== 255 || item.heart_rate <= 0 })
+        tidyHolder[dataASK.timePeriod] = {}
+        tidyHolder[dataASK.timePeriod][devI] = []
+        tidyHolder[dataASK.timePeriod][devI].push(cleanData)
+      }
+    }
   }
-  // console.log(cleanData)
-  // console.log(tidyHolder)
   return tidyHolder
 }
 

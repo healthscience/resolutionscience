@@ -30,7 +30,7 @@ util.inherits(VisualComponent, events.EventEmitter)
 * @method filterVisual
 *
 */
-VisualComponent.prototype.filterVisual = async function (visIN, datatypeList, timeList, deviceList, visData) {
+VisualComponent.prototype.filterVisual = async function (visIN, liveDate, datatypeList, timeList, deviceList, visData) {
   // build array of visualation modules and match to one asked for
   var localthis = this
   let structureHolder = {}
@@ -44,7 +44,7 @@ VisualComponent.prototype.filterVisual = async function (visIN, datatypeList, ti
     for (let dtItem of datatypeList) {
       // console.log('CHARTCOMP1----loop datatypes')
       // console.log(dtItem)
-      structureHolder = this.liveChartSystem.structureChartData(dtItem, timeList, deviceList, visData)
+      structureHolder = this.liveChartSystem.structureChartData(dtItem, liveDate, timeList, deviceList, visData)
       // console.log('VISUALCOMPONENT2---struectureData')
       // console.log(chartDataB)
       // prepare the colors for the charts

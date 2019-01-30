@@ -16,6 +16,7 @@ const events = require('events')
 var DataComponent = function (DID, setIN) {
   events.EventEmitter.call(this)
   this.did = DID
+  this.livedate = ''
   this.liveDataSystem = new DataSystem(setIN)
   this.timeList = []
   this.deviceList = []
@@ -24,7 +25,7 @@ var DataComponent = function (DID, setIN) {
   this.tidyData = []
   this.dataCompute = []
   this.dataType = []
-  this.setTimeList()
+  // this.setTimeList()
   this.setDevicesLive()
   this.setDatatypesLive()
 }
@@ -36,12 +37,22 @@ var DataComponent = function (DID, setIN) {
 util.inherits(DataComponent, events.EventEmitter)
 
 /**
+*  set the live date active in the UI
+* @method setStartDate
+*
+*/
+DataComponent.prototype.setStartDate = function (startDate) {
+  this.livedate = startDate
+  return true
+}
+
+/**
 *  keep list of timePeriods that data has been asked for
 * @method setTimeArray
 *
 */
-DataComponent.prototype.setTimeList = function () {
-  this.timeList.push(this.did.timeperiod)
+DataComponent.prototype.setTimeList = function (liveDate) {
+  this.timeList.push(liveDate)
 }
 
 /**
@@ -68,17 +79,17 @@ DataComponent.prototype.setDatatypesLive = function () {
 *
 */
 DataComponent.prototype.RawData = async function () {
-  console.log('DATACOMPONENT1----start rawdaata')
+  // console.log('DATACOMPONENT1----start rawdaata')
   var localthis = this
   let systemBundle = {}
-  systemBundle.timePeriod = this.did.timeperiod
+  systemBundle.timePeriod = this.livedate
   systemBundle.deviceList = this.deviceList
   systemBundle.datatypes = this.datatypeList
   await this.liveDataSystem.getRawData(systemBundle).then(function (rawData) {
-    // Sconsole.log('DATACOMPONENT2----finshed rawdaata')
     const rawHolder = {}
-    rawHolder[localthis.did.timeperiod] = rawData
+    rawHolder[localthis.livedate] = rawData
     localthis.dataRaw.push(rawHolder)
+    rawData = {}
     // console.log(localthis.dataRaw)
   })
   // return true
@@ -106,7 +117,7 @@ DataComponent.prototype.TidyData = async function () {
   // var localthis = this
   let tidyHolder = []
   let dBundle = {}
-  dBundle.timePeriod = this.did.timeperiod
+  dBundle.timePeriod = this.livedate
   dBundle.deviceList = this.deviceList
   dBundle.datatypeList = this.datatypeList
   tidyHolder = this.liveDataSystem.tidyRawData(dBundle, this.dataRaw)

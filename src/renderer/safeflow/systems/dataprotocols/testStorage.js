@@ -81,13 +81,8 @@ TestStorageAPI.prototype.getData = async function (queryTime, deviceID) {
 * @method getComputeData
 *
 */
-TestStorageAPI.prototype.getComputeData = async function (seg, device) {
-  // need source, devices, data
-  let queryTime = seg // this.timeUtility(seg)
-  let deviceID = device
-  // console.log(queryTime)
-  // console.log(device)
-  //  nosql query but headng towards a gRPC listener on stream socket
+TestStorageAPI.prototype.getComputeData = async function (queryTime, deviceID) {
+  // need source, devices, data for betwween specific time period
   let jsondata = await axios.get(this.baseAPI + '/computedata/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID)
   return jsondata.data
 }

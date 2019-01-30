@@ -8,7 +8,10 @@
         </div>
         <button id="sim-controls">Play Start Stop Pause</button>
       </div>
-      <heart-Canvas-Sim></heart-Canvas-Sim>
+    </div>
+    <div id="movement-sim" >
+      <header>Heart</header>
+      <canvas id="heart-canvas-sim" width="400px" height="200px" ></canvas>
     </div>
     <div id="movement-sim" >
       <header>Movement</header>
@@ -19,6 +22,7 @@
       <canvas id="time-canvas-sim" width="200px" height="200px" ></canvas>
     </div>
     <div id="clearFloat"></div>
+    <heart-Canvas-Sim></heart-Canvas-Sim>
   </div>
 </template>
 
@@ -37,7 +41,7 @@
     created () {
     },
     mounted () {
-      // this.simHeart()
+      this.simHeart()
       this.simMovement()
       this.startClock()
     },
@@ -58,7 +62,8 @@
         this.canvas = document.getElementById('movement-canvas-sim')
         this.ctx = this.canvas.getContext('2d')
         this.ctx.beginPath()
-        this.ctx.arc(100, 75, 50, 0, 2 * Math.PI)
+        this.ctx.rect(100, 75, 50, 5)
+        this.ctx.rect(50, 75, 50, 10)
         this.ctx.stroke()
       },
       startClock () {

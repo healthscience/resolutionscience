@@ -29,10 +29,16 @@
               </ul>
           </li>
           <li>
+            <header>Tools</header>
+              <ul>
+                <li id="tool-bar"><a class="" href="" id="tools" @click.prevent="toolsVis(t)" v-bind:class="{ 'active': tools.active}">{{tools.text}}</a></li>
+              </ul>
+          </li>
+          <li>
             <header> Science Computations - </header>
               <ul>
                 <li >
-                  <select v-model="selected">
+                  <select v-model="selectedCompute">
                   <option class="science-compute" v-for="scoption in scoptions" v-bind:value="scoption.value">
                     {{ scoption.text }}
                   </option>
@@ -65,7 +71,59 @@
           <reactive :chartData="datacollection" :options="options" :width="1200" :height="600"></reactive>
         </div>
       <div v-if="visTableview" id="table-view">
-        Table View
+        <table class="tg">
+          <tr>
+            <th class="tg-0pky"></th>
+            <th class="tg-0pky"></th>
+            <th class="tg-0pky"></th>
+            <th class="tg-0lax"></th>
+            <th class="tg-0lax"></th>
+            <th class="tg-0lax"></th>
+            <th class="tg-0lax"></th>
+            <th class="tg-0lax"></th>
+            <th class="tg-0lax"></th>
+            <th class="tg-0lax"></th>
+            <th class="tg-0lax"></th>
+            <th class="tg-0lax"></th>
+            <th class="tg-0lax"></th>
+            <th class="tg-0lax"></th>
+            <th class="tg-0lax"></th>
+          </tr>
+          <tr>
+            <td class="tg-0pky"></td>
+            <td class="tg-0pky"></td>
+            <td class="tg-0pky"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+          </tr>
+          <tr>
+            <td class="tg-0pky"></td>
+            <td class="tg-0pky"></td>
+            <td class="tg-0pky"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+            <td class="tg-0lax"></td>
+          </tr>
+        </table>
       </div>
 
       <div v-if="visSimview" id="sim-view">
@@ -122,16 +180,20 @@
         liveTime: 0,
         datacollection: null,
         datastatistics: null,
-        selected: 'A',
+        selectedCompute: 'A',
         scoptions: [
-          { text: 'Activity and HR data', value: 'A', cid: 'wasm-sc-1' },
-          { text: 'Average HR', value: 'B', cid: 'wasm-sc-2' },
-          { text: 'Resting HR Recovery', value: 'C', cid: 'wasm-sc-3' },
-          { text: 'error data', value: 'D', cid: 'wasm-sc-4' },
-          { text: 'HealthSpan', value: 'E', cid: 'wasm-sc-5' },
-          { text: 'Statistics Tools', value: 'F', cid: 'wasm-sc-6' }
+          { text: 'Activity and HR data', value: 'A', cid: 'cnrl-2356388731', wasm: 'wasm-sc-1' },
+          { text: 'Average HR', value: 'B', cid: 'cnrl-2356388732', wasm: 'wasm-sc-2' },
+          { text: 'Resting HR Recovery', value: 'C', cid: 'cnrl-2356388733', wasm: 'wasm-sc-3' },
+          { text: 'error data', value: 'D', cid: 'cnrl-2356388734', wasm: 'wasm-sc-4' },
+          { text: 'HealthSpan', value: 'E', cid: 'cnrl-2356388735', wasm: 'wasm-sc-5' }
         ],
         options: {},
+        tools:
+        {
+          active: false,
+          text: 'off'
+        },
         averageSeen: false,
         reportData: {},
         statsData: {},
@@ -171,7 +233,7 @@
         chartmessageS: 'Select time to load chart',
         activedevice: [],
         activesensor: [],
-        activecompute: 'wasm-sc-1',
+        activecompute: 'cnrl-2356388731',
         activeupdatecompute: '',
         activevis: '',
         activelearn: '',
@@ -212,9 +274,6 @@
       scienceContext () {
         // set the first science priority on start of RS
         this.$store.commit('setScience', this.scoptions[0])
-        // let startContext = this.$store.getters.liveContext
-        // let startDataaccess = this.$store.getters.liveSystem
-        // this.liveSafeFlow.scienceEntities(startContext, startDataaccess)
       },
       deviceContext () {
         var localthis = this
@@ -258,35 +317,9 @@
       setContextData (seg) {
         // get seg and then look at compute context and call appropriate
         const compContext = this.activecompute
-        if (compContext === 'wasm-sc-1') {
+        if (compContext === 'cnrl-2356388731') {
           this.fillData(seg)
-        } else if (compContext === 'wasm-sc-2') {
-          this.fillStats(seg)
         }
-      },
-      async fillData (seg) {
-        var localthis = this
-        this.filterDeviceActive()
-        this.filterSensorActive()
-        this.filterVisActive()
-        await this.liveSafeFlow.scienceEntities(seg, this.context).then(function (entityData) {
-          localthis.liveSafeFlow.entityGetter('wasm-sc-1').then(function (eData) {
-            localthis.options = eData.options
-            localthis.datacollection = eData.prepared
-            // console.log(localthis.datacollection)
-          })
-        }).catch(function (err) {
-          console.log(err)
-        })
-      },
-      fillStats (seg) {
-        this.filterDeviceActive()
-        this.filterSensorActive()
-        this.filterVisActive()
-        function callbackD (dataH) {
-          this.dataStatistics = dataH.dataCollection
-        }
-        this.lifeSafeFlow.scienceEntities(seg, callbackD)
       },
       selectContext (s) {
         s.active = !s.active
@@ -318,6 +351,14 @@
             this.visSimview = true
           }
         }
+      },
+      toolsVis (ts) {
+        this.tools.active = true
+        this.tools.text = 'on'
+        console.log('stats tools')
+        let statstoolsStart = {}
+        statstoolsStart.statsToolsSeen = true
+        this.statsData = statstoolsStart
       },
       filterDeviceActive () {
         this.activedevice = []
@@ -367,23 +408,24 @@
       },
       learnStartStop () {
         // pass to computations system
-        var localthis = this
-        let computeSelected = this.selected
+        // var localthis = this
+        let computeSelected = this.selectedCompute
         console.log(computeSelected)
         // need to ask for start end market info, from Entity
-        this.liveSafeFlow.entityChartGetter('wasm-sc-1').then(function (eData) {
+        /* this.liveSafeFlow.entityChartGetter('wasm-sc-1').then(function (eData) {
           localthis.analysisStart = eData.liveChartSystem.analysisStart
           localthis.analysisEnd = eData.liveChartSystem.analysisEnd
           console.log(localthis.analysisStart)
           console.log(localthis.analysisEnd)
         }).catch(function (err) {
           console.log(err)
-        })
+        }) */
         // console.log(this.analysisStart)
         // console.log(this.analysisEnd)
         let computationSMid = this.filterCompute(computeSelected)
         console.log(computationSMid)
-        if (computationSMid === 'wasm-sc-3') {
+        if (computationSMid === 'cnrl-2356388733') {
+          this.$store.commit('setScience', this.scoptions[2])
           let reportDataback = {}
           reportDataback.learnSummarySeen = true
           reportDataback.ridentity = 10987654321
@@ -395,21 +437,35 @@
           this.reportData = reportDataback
           // console.log(this.reportData)
           this.learn.active = false
-        } else if (computationSMid === 'wasm-sc-2') {
+        } else if (computationSMid === 'cnrl-2356388732') {
+          // need to dispay chart for this data, first check if averages need updating?
+          this.$store.commit('setScience', this.scoptions[1])
+          this.fillData(0)
           this.averageSeen = true
-        } else if (computationSMid === 'wasm-sc-6') {
-          console.log('stats tools')
-          this.learn.active = false
-          let statstoolsStart = {}
-          statstoolsStart.statsToolsSeen = true
-          this.statsData = statstoolsStart
-          console.log(this.statsData)
         }
       },
       closeAvgSummary () {
         this.averageSeen = false
         this.learn.active = false
-        this.activecompute = 'wasm-sc-1'
+        this.activecompute = 'cnrl-2356388731'
+      },
+      async fillData (seg) {
+        var localthis = this
+        this.filterDeviceActive()
+        this.filterSensorActive()
+        this.filterVisActive()
+        await this.liveSafeFlow.scienceEntities(seg, this.context).then(function (entityData) {
+          localthis.liveSafeFlow.entityGetter(localthis.activecompute).then(function (eData) {
+            console.log('VUE---return getter data')
+            console.log(eData)
+            localthis.options = eData.options
+            localthis.datacollection = eData.prepared
+            localthis.liveTime = eData.livetime
+            // console.log(localthis.datacollection)
+          })
+        }).catch(function (err) {
+          console.log(err)
+        })
       }
     }
   }
@@ -487,4 +543,11 @@
   margin-top: 10px;
   font-size: 1.4em;
 }
+
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{width:40px;font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+
 </style>

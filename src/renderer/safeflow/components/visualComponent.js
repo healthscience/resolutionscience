@@ -9,12 +9,14 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
+import TimeUtilities from '../systems/timeUtility.js'
 import ChartSystem from '../systems/chartSystem.js'
 const util = require('util')
 const events = require('events')
 
 var VisualComponent = function () {
   events.EventEmitter.call(this)
+  this.liveTimeUtil = new TimeUtilities()
   this.liveChartSystem = new ChartSystem()
   this.visualData = {}
 }
@@ -65,7 +67,10 @@ VisualComponent.prototype.filterVisual = async function (visIN, liveDate, dataty
     // let averageStats = this.computeComponent() // pass into chart options
     let chartOptionsSet = this.liveChartSystem.getterChartOptions()
     chartData.options = chartOptionsSet
-    this.visualData = chartData
+    chartData.livetime = this.liveTimeUtil.timeHTMLBuilder(liveDate)
+    const chartHolder = {}
+    chartHolder[liveDate] = chartData
+    this.visualData = chartHolder
     return true
   }
 }

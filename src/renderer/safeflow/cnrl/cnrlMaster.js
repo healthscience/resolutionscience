@@ -28,13 +28,43 @@ util.inherits(CNRLmaster, events.EventEmitter)
 *
 */
 CNRLmaster.prototype.lookupContract = function (refIN) {
+  console.log('CRNL----lookup')
+  console.log(refIN)
+  let dataCNRLbundle = {}
+  dataCNRLbundle.p = []
+  dataCNRLbundle.s = []
+  dataCNRLbundle.tidy = false
+  let dataTypePrimary = []
   let dataTypeMap = []
-  if (refIN === 'cnrl-773355992211') {
+  if (refIN === 'cnrl-2356388731') {
     // return dataType mapping arrays
-    dataTypeMap.push('device_sensor1')
-    dataTypeMap.push('device_sensor2')
+    dataTypePrimary.push({'bpm': 'datastore-teststorage'})
+    dataTypePrimary.push({'steps': 'datastore-teststorage'})
+    dataTypePrimary.push({'time': 'datastore-teststorage'})
+    dataTypeMap.push({'bpm': 'datastore-teststorage'})
+    dataTypeMap.push({'steps': 'datastore-teststorage'})
+    dataTypeMap.push({'time': 'datastore-teststorage'})
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.p.push(dataTypePrimary)
+    dataCNRLbundle.s.push(dataTypeMap)
+  } else if (refIN === 'cnrl-2356388732') {
+    dataTypePrimary.push({'average-heartrate': 'datastore-teststorage'})
+    dataTypePrimary.push({'time': 'datastore-teststorage'})
+    dataTypeMap.push({'bpm': 'datastore-teststorage'})
+    dataTypeMap.push({'steps': 'datastore-teststorage'})
+    dataCNRLbundle.tidy = false
+    dataCNRLbundle.p.push(dataTypePrimary)
+    dataCNRLbundle.s.push(dataTypeMap)
+  } else if (refIN === 'cnrl-2356388733') {
+    dataTypePrimary.push({'recovery-heartrate': 'datastore-teststorage'})
+    dataTypePrimary.push({'time': 'datastore-teststorage'})
+    dataTypeMap.push({'bpm': 'datastore-teststorage'})
+    dataTypeMap.push({'steps': 'datastore-teststorage'})
+    dataCNRLbundle.tidy = false
+    dataCNRLbundle.p.push(dataTypePrimary)
+    dataCNRLbundle.s.push(dataTypeMap)
   }
-  return dataTypeMap
+  return dataCNRLbundle
 }
 
 /**

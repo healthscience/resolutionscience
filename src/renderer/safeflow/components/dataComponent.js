@@ -17,9 +17,11 @@ var DataComponent = function (DID, setIN) {
   events.EventEmitter.call(this)
   this.did = DID
   this.livedate = ''
+  this.liveDatatype = ''
   this.liveDataSystem = new DataSystem(setIN)
   this.timeList = []
   this.deviceList = []
+  this.CNRLscience = {}
   this.datatypeList = []
   this.dataRaw = []
   this.tidyData = []
@@ -27,6 +29,7 @@ var DataComponent = function (DID, setIN) {
   this.dataType = []
   // this.setTimeList()
   this.setDevicesLive()
+  this.setCNRLmapping()
   this.setDatatypesLive()
 }
 
@@ -65,6 +68,15 @@ DataComponent.prototype.setDevicesLive = async function () {
 }
 
 /**
+*  what the CNRL datatype Mapping
+* @method setCNRLmapping
+*
+*/
+DataComponent.prototype.setCNRLmapping = function () {
+  this.CNRLscience = this.did.dataTypesCNRL
+}
+
+/**
 *  set the datatype asked for
 * @method setDataTypesLive
 *
@@ -79,31 +91,44 @@ DataComponent.prototype.setDatatypesLive = function () {
 *
 */
 DataComponent.prototype.RawData = async function () {
-  // console.log('DATACOMPONENT1----start rawdaata')
+  console.log('DATACOMPONENT1----start rawdaata')
   var localthis = this
   let systemBundle = {}
   systemBundle.timePeriod = this.livedate
+  systemBundle.dtAsked = this.CNRLscience.p[0]
   systemBundle.deviceList = this.deviceList
   systemBundle.datatypes = this.datatypeList
-  await this.liveDataSystem.getRawData(systemBundle).then(function (rawData) {
-    const rawHolder = {}
-    rawHolder[localthis.livedate] = rawData
-    localthis.dataRaw.push(rawHolder)
-    rawData = {}
-    // console.log(localthis.dataRaw)
-  })
-  // return true
-}
-
-/**
-*  set DataTypes for this entity
-* @method setCNRLDataTypes
-*
-*/
-DataComponent.prototype.setCNRLDataTypes = async function () {
-  // convert  sensorLED via CNRL to dataType e.g. BPM
-  this.dataType = this.did.datatype
-  return 'empty'
+  // console.log(systemBundle)
+  // console.log(systemBundle.dtAsked[0])
+  // need to match dataTypeAsked to right API call
+  if (systemBundle.dtAsked[0]['bpm']) {
+    await this.liveDataSystem.getRawData(systemBundle).then(function (rawData) {
+      const rawHolder = {}
+      rawHolder[localthis.livedate] = rawData
+      localthis.dataRaw.push(rawHolder)
+      rawData = {}
+      // console.log(localthis.dataRaw)
+      return true
+    })
+  } else if (systemBundle.dtAsked[0]['average-heartrate']) {
+    await this.liveDataSystem.getRawStatsData(systemBundle, 'average-heartrate').then(function (rawData) {
+      const rawHolder = {}
+      rawHolder[localthis.livedate] = rawData
+      localthis.dataRaw.push(rawHolder)
+      rawData = {}
+      // console.log(localthis.dataRaw)
+      return true
+    })
+  } else if (this.datatypes[0][0] === 'recovery-heartrate') {
+    /* await this.liveDataSystem.getHRrecovery(systemBundle).then(function (rawData) {
+      const rawHolder = {}
+      rawHolder[localthis.livedate] = rawData
+      localthis.dataRaw.push(rawHolder)
+      rawData = {}
+      // console.log(localthis.dataRaw)
+    })
+    return true */
+  }
 }
 
 /**
@@ -114,15 +139,21 @@ DataComponent.prototype.setCNRLDataTypes = async function () {
 DataComponent.prototype.TidyData = async function () {
   // console.log('DCOMPONENT1-- datatidy started')
   // console.log(this.dataRaw)
-  // var localthis = this
-  let tidyHolder = []
-  let dBundle = {}
-  dBundle.timePeriod = this.livedate
-  dBundle.deviceList = this.deviceList
-  dBundle.datatypeList = this.datatypeList
-  tidyHolder = this.liveDataSystem.tidyRawData(dBundle, this.dataRaw)
-  this.tidyData.push(tidyHolder)
-  return true
+  // const localthis = this
+  if (this.CNRLscience.tidy === true) {
+    // var localthis = this
+    let tidyHolder = []
+    let dBundle = {}
+    dBundle.timePeriod = this.livedate
+    dBundle.deviceList = this.deviceList
+    dBundle.datatypeList = this.datatypeList
+    tidyHolder = this.liveDataSystem.tidyRawData(dBundle, this.dataRaw)
+    this.tidyData.push(tidyHolder)
+    return true
+  } else {
+    this.tidyData = this.dataRaw
+    return true
+  }
 }
 
 export default DataComponent

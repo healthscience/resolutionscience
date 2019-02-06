@@ -49,7 +49,7 @@ safeFlow.prototype.setTestStorage = function (setIN) {
 * @method scienceEntities
 *
 */
-safeFlow.prototype.scienceEntities = async function (segT, inputInfo, cbIN) {
+safeFlow.prototype.scienceEntities = async function (segT, inputInfo) {
   // add a new entity via manager
   // need to first check if this entity already formed???
   // console.log('SAFEFLOW0----BEFOREadd')

@@ -22,7 +22,7 @@ var ScienceEntities = function (EID, dAccess) {
   this.seid = EID
   this.liveDataC = new DataComponent(EID, dAccess)
   this.liveDatatypeC = new DatatypeComponent()
-  this.liveComputeC = new ComputeComponent()
+  this.liveComputeC = new ComputeComponent(EID)
   this.liveVisualC = new VisualComponent()
   this.liveSimC = new SimComponent()
   // console.log('entity compoentent data')

@@ -101,4 +101,46 @@ TimeUtilities.prototype.calendarUtility = function (startDYear) {
   return calendarUtil
 }
 
+/**
+* Build an array of dates between two time points
+* @method timeArrayBuilder
+*
+*/
+TimeUtilities.prototype.timeArrayBuilder = function (liveTime, lastTime) {
+  let timeArray = []
+  let yearCommence = lastTime
+  console.log(yearCommence)
+  console.log(liveTime)
+  const monthNo = moment(yearCommence).month()
+  const currentmonthNo = monthNo + 1
+  console.log(monthNo)
+  let secondsInday = 86400
+  // let months = 'January, February, March, April, May, June, July, August, September, October, November, December'
+  let monthsNumber = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+  // need logic for leap years
+  let daysInmonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+  for (let numM of monthsNumber) {
+    if (numM >= monthNo && numM <= currentmonthNo) {
+      let longDateformat = yearCommence + (numM * daysInmonth[numM] * secondsInday)
+      let dayCount = daysInmonth[numM]
+      timeArray.push({dayCount, longDateformat})
+    }
+  }
+  console.log(timeArray)
+  return timeArray
+}
+
+/**
+* prepare HTML display string
+* @method timeHTMLBuilder
+*
+*/
+TimeUtilities.prototype.timeHTMLBuilder = function (liveTime) {
+  let stringTime = ''
+  // prepare monent human readable display
+  let buildMilltime = liveTime * 1000
+  stringTime = moment(buildMilltime).format('MMMM Do YYYY')
+  return stringTime
+}
+
 export default TimeUtilities

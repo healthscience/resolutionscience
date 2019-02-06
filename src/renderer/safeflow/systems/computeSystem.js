@@ -9,11 +9,13 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
+import TimeUtilities from './timeUtility.js'
 const util = require('util')
 const events = require('events')
 
 var ComputeSystem = function () {
   events.EventEmitter.call(this)
+  this.liveTimeUtil = new TimeUtilities()
 }
 
 /**
@@ -27,7 +29,7 @@ util.inherits(ComputeSystem, events.EventEmitter)
 * @method computationSystem
 *
 */
-ComputeSystem.prototype.computationSystem = async function (compType, device) {
+ComputeSystem.prototype.computationSystem = function (compType, liveTime) {
   // what computation needed to be excuted? Form a list
   // what data is required? average hr daily, weekly, monthly, rolling 30 day etc network averages
   // list examplesaverage
@@ -37,12 +39,33 @@ ComputeSystem.prototype.computationSystem = async function (compType, device) {
   // simulation of Human Heart
   // gRPC call to live computations and/or start if needing updated
   // hard wired example computation - average BMP steps, cover/error
-  if (compType === 'wasm-sc-2') {
+  if (compType.wasmID === 'wasm-sc-2') {
     console.log('average statistics computations')
-    this.prepareAverageStatistics(compType, device)
-  } else if (compType === '') {
-    console.log('not computation avaiable at present.')
+    let computeDates = this.updateComputeDates(compType, liveTime)
+    console.log(computeDates)
+    // this.prepareAverageStatistics(computeDates, devices)
+  } else if (compType.wasmID === 'wasm-sc-3') {
+    console.log('recovery heart rate')
+    let computeDates = this.updateComputeDates(compType, liveTime)
+    console.log(computeDates)
+    // this.prepareRecoveryHeartRate(computeDates, devices)
   }
+  return true
+}
+
+/**
+* what data needs to be tidied to update computation?
+* @method updateComputeDates
+*
+*/
+ComputeSystem.prototype.updateComputeDates = function (compType, liveTime) {
+  // compare new date to last computed date
+  let computeList = []
+  const liveDate = compType.lastComputetime
+  const lastComputeDate = compType.liveTime
+  // use time utiity to form array fo dates require
+  this.liveTimeUtil.timeArrayBuilder(liveDate, lastComputeDate)
+  return computeList
 }
 
 /**

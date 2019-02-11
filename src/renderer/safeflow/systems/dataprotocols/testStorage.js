@@ -83,9 +83,7 @@ TestStorageAPI.prototype.getData = async function (queryTime, deviceID) {
 */
 TestStorageAPI.prototype.getFirstData = async function (deviceID) {
   // device sensor raw form data
-  console.log('get FirstData')
   let jsondata = await axios.get(this.baseAPI + '/devicefirstdata/' + this.tempPubkey + '/' + this.tempToken + '/' + deviceID)
-  console.log(jsondata.data)
   return jsondata.data
 }
 /**
@@ -106,7 +104,9 @@ TestStorageAPI.prototype.getComputeData = async function (queryTime, deviceID) {
 */
 TestStorageAPI.prototype.getAverageData = async function (queryTime, deviceID, compType) {
   //  nosql query
+  // console.log('StorageAIP ----')
   let jsondata = await axios.get(this.baseAPI + '/heart24data/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID + '/' + compType)
+  // console.log(jsondata)
   return jsondata.data
 }
 

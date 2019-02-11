@@ -113,7 +113,7 @@ TimeUtilities.prototype.timeArrayBuilder = function (liveTime, lastTime) {
   console.log(liveTime)
   const monthNo = moment(yearCommence).month()
   const currentmonthNo = monthNo + 1
-  console.log(monthNo)
+  // console.log(monthNo)
   let secondsInday = 86400
   // let months = 'January, February, March, April, May, June, July, August, September, October, November, December'
   let monthsNumber = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
@@ -126,7 +126,7 @@ TimeUtilities.prototype.timeArrayBuilder = function (liveTime, lastTime) {
       timeArray.push({dayCount, longDateformat})
     }
   }
-  console.log(timeArray)
+  // console.log(timeArray)
   return timeArray
 }
 

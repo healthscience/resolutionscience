@@ -34,46 +34,45 @@ util.inherits(EntitiesManager, events.EventEmitter)
 *
 */
 EntitiesManager.prototype.addScienceEntity = async function (segT, entID, setIN) {
-  console.log(entID)
+  // console.log(entID)
   // const localthis = this
   const cid = entID.science.cid
   const wasmID = entID.science.wasm
+  const visID = entID.vis
   // build time profile and setup setFirstEntity
   const timePeriod = this.liveTimeUtil.timePeriod(segT)
   entID.timeperiod = timePeriod
   const cnrlInfo = this.liveCNRL.lookupContract(entID.science.cid)
   entID.dataTypesCNRL = cnrlInfo
-  console.log(entID.dataTypesCNRL)
+  // console.log(entID.dataTypesCNRL)
   if (this.liveSEntities[cid]) {
     console.log('entity' + cid + 'already exists')
-    // does the data exist for this day?
-    let checkDataExist = this.checkForVisualData(cid, timePeriod)
+    // does the data exist for this visualisation and time?
+    let checkDataExist = this.checkForVisualData(cid, timePeriod, visID)
     console.log(checkDataExist)
     if (checkDataExist === true) {
       // exist return
       this.liveSEntities[cid].liveDataC.setStartDate(timePeriod)
       this.liveSEntities[cid].liveDataC.setTimeList(timePeriod)
       console.log('time data already ready')
-      console.log('but has any new data arrived')
       return true
     } else {
-      // new data call require for this date
-      console.log('need to prepare new data for this date')
+      // new data call required for this visualisation and time
+      console.log('need to prepare new visualisation data')
       this.liveSEntities[cid].liveDataC.setStartDate(timePeriod)
       this.liveSEntities[cid].liveDataC.setTimeList(timePeriod)
-      await this.controlFlow(cid, timePeriod, wasmID)
+      await this.controlFlow(cid, timePeriod, wasmID, visID, cnrlInfo)
     }
   } else {
     console.log('entity' + cid + 'is new')
     // start workflow for setting up entity, compute and vis/sim etc.
     // async(immutable), KnowledgeSciptingLanguage(forth/stack), use SmartContract (need to select one to give gurantees)
-    // workflow function chain ..
     this.liveSEntities[cid] = new Entity(entID, setIN)
     // console.log(this.liveSEntities)
-    // set the livestart Date for the UI
+    // set the livestart time for the UI
     this.liveSEntities[cid].liveDataC.setStartDate(timePeriod)
     this.liveSEntities[cid].liveDataC.setTimeList(timePeriod)
-    await this.controlFlow(cid, timePeriod, wasmID)
+    await this.controlFlow(cid, timePeriod, wasmID, visID, cnrlInfo)
   }
 }
 
@@ -82,31 +81,38 @@ EntitiesManager.prototype.addScienceEntity = async function (segT, entID, setIN)
 * @method controlFlow
 *
 */
-EntitiesManager.prototype.controlFlow = async function (cid, timePeriod, wasmID) {
+EntitiesManager.prototype.controlFlow = async function (cid, timePeriod, wasmID, visID, cnrlInfo) {
   var localthis = this
   // let cnrlLive = {}
   console.log('EMANAGER0-----beginCONTROL-FLOW')
   await this.liveSEntities[cid].liveDataC.RawData().then(function (rawReturn) {
-    // console.log(rawReturn)
-    console.log(localthis.liveSEntities[cid].liveDataC)
-    // console.log('EMANAGER1a-----end raw start Tidy')
+    console.log('EMANAGER1-----raw complete')
+    // console.log(localthis.liveSEntities[cid].liveDataC)
   }).then(function () {
     localthis.liveSEntities[cid].liveDataC.TidyData().then(function () {
-      // console.log('CONTROLFLOW___COMPUTE COMPLETE')
+      console.log('EMANAGER2-----tidy complete')
     }).then(function () {
       let computeBundle = {}
-      computeBundle = localthis.establishDataStatus(cid, timePeriod)
-      computeBundle.live = wasmID
+      computeBundle.lastComputeTime = ''
+      computeBundle.live = cid
       computeBundle.wasmID = wasmID
-      console.log('computeBUndle')
-      console.log(computeBundle)
-      localthis.liveSEntities[cid].liveComputeC.filterCompute(computeBundle).then(function () {
-      // console.log('EMANAGER1b-----tidy complete')
+      console.log('3START____COMPUTTEEEE')
+      localthis.liveSEntities[cid].liveComputeC.filterCompute(computeBundle, localthis.liveSEntities[cid].liveDataC.deviceList, cnrlInfo, localthis.liveSEntities[cid].liveDataC.dataRaw).then(function (computeStatus) {
+        localthis.computeStatus = computeStatus
+        console.log('EMANAGER3-----compute complete')
       }).then(function () {
-        localthis.liveSEntities[cid].liveVisualC.filterVisual('chartjs', localthis.liveSEntities[cid].liveDataC.livedate, localthis.liveSEntities[cid].liveDataC.datatypeList, localthis.liveSEntities[cid].liveDataC.timeList, localthis.liveSEntities[cid].liveDataC.deviceList, localthis.liveSEntities[cid].liveDataC.tidyData).then(function (visR) {
-          // console.log(visR)
-          console.log('CONTROLFLOW___OVER')
-          return true
+        console.log('4START____VVVIISSSSIMM')
+        localthis.liveSEntities[cid].liveVisualC.filterVisual(visID, wasmID, localthis.liveSEntities[cid].liveDataC.livedate, localthis.liveSEntities[cid].liveDataC.datatypeList, cnrlInfo, localthis.liveSEntities[cid].liveDataC.timeList, localthis.liveSEntities[cid].liveDataC.deviceList, localthis.liveSEntities[cid].liveDataC.tidyData).then(function (visR) {
+          console.log(localthis.computeStatus)
+          console.log('5CONTROLFLOW___OVER')
+          if (localthis.computeStatus === 'uptodate') {
+            console.log('UP TO DATE')
+            return true
+          } else if (localthis.computeStatus === 'update-required') {
+            console.log('noooot UP TO DATE')
+            // need to update computation from source data
+            // localthis.controlFlow() // start flow again
+          }
           // console.log(localthis.liveSEntities)
         })
       })
@@ -117,121 +123,20 @@ EntitiesManager.prototype.controlFlow = async function (cid, timePeriod, wasmID)
 }
 
 /**
-*  establishStatus of data in entity
-* @method establishDataStatus
-*
-*/
-EntitiesManager.prototype.establishDataStatus = function (cid, timePeriod) {
-  // need to loop over
-  // const localthis = this
-  let sourceDataStatus = {}
-  sourceDataStatus = this.checkForDataPerDevice(cid, timePeriod)
-  console.log(sourceDataStatus)
-  return sourceDataStatus
-}
-
-/**
-*  check if entity already has data raw tidy visual
-* @method checkForData
-*
-*/
-EntitiesManager.prototype.checkForData = function (cid, timePeriod) {
-  // need to loop over
-  console.log('check timePeriod data?????')
-  console.log(cid)
-  console.log(this.liveSEntities[cid])
-  let entityData = this.liveSEntities[cid].liveDataC
-  console.log(entityData)
-  for (let dataI of entityData.dataRaw) {
-    console.log(dataI)
-    if (dataI[timePeriod]) {
-      console.log('check true')
-      return true
-    } else {
-      console.log('check false')
-      return false
-    }
-  }
-}
-
-/**
-*  check if entity already has data raw tidy visual
-* @method checkForDataPerDevice
-*
-*/
-EntitiesManager.prototype.checkForDataPerDevice = function (cid, timePeriod) {
-  // need to loop over
-  const localthis = this
-  console.log('check timePeriod PER DEVICE data?????')
-  let dataStatus = []
-  let deviceStatus = {}
-  let entityData = this.liveSEntities[cid].liveDataC
-  let entityDevList = this.liveSEntities[cid].liveDataC.deviceList
-  // console.log(entityData.dataRaw)
-  // console.log(entityDevList)
-  for (let dataI of entityData.dataRaw) {
-    console.log(dataI)
-    for (let device of entityDevList) {
-      console.log('length of data raw existing')
-      console.log(timePeriod)
-      console.log(device)
-      console.log(dataI)
-      if (!dataI[timePeriod]) {
-        console.log('no data for the entity')
-        // does any input source data exist?
-        let firstD = localthis.liveSEntities[cid].liveDataC.liveDataSystem.liveTestStorage.getFirstData(device)
-        deviceStatus.lastComputetime = firstD
-        deviceStatus[device] = false
-        dataStatus.push(deviceStatus)
-        deviceStatus = {}
-      } else if (dataI[timePeriod][device].length > 0) {
-        console.log('existing data')
-        deviceStatus.lastComputetime = localthis.liveSEntities[cid].liveDataC.tidyData.slice(-1)
-        deviceStatus[device] = true
-        dataStatus.push(deviceStatus)
-        deviceStatus = {}
-      }
-    }
-  }
-  return dataStatus
-}
-
-/**
-*  extract first data element from entity data
-* @method extractFirstDataElement
-*
-*/
-EntitiesManager.prototype.extractFirstDataElement = function (cid) {
-  // loop over devices and produce array of first timestamps
-  /* let deviceStarttimes = []
-  let entityData = this.liveSEntities[cid].liveDataC
-  let entityDevList = this.liveSEntities[cid].liveDataC.deviceList
-  for (let device of entityDevList) {
-    if (dataI[timePeriod][device].length > 0) {
-      console.log('existing data')
-      deviceStarttimes.push(localthis.liveSEntities[cid].liveDataC.tidyData[device].slice(1))
-      return true
-    } else {
-      console.log('no data for the entity')
-      localthis.liveSEntities[cid].liveDataC.tidyData.slice(1)
-      return false
-    }
-  } */
-}
-
-/**
 *  check if entity already has data raw tidy visual
 * @method checkForVisualData
 *
 */
-EntitiesManager.prototype.checkForVisualData = function (cid, timePeriod) {
+EntitiesManager.prototype.checkForVisualData = function (cid, timePeriod, visStyle) {
   // need to loop over TODO
   //  this only check for last prepareData, need VisualComponent to use push(object)
   let entityData = this.liveSEntities[cid].liveVisualC.visualData
   console.log(entityData)
-  console.log(timePeriod)
-  console.log(entityData[timePeriod])
-  if (entityData[timePeriod]) {
+  // console.log(timePeriod)
+  // console.log(entityData[timePeriod])
+  if (!entityData[visStyle]) {
+    return false
+  } else if (entityData[visStyle][timePeriod]) {
     return true
   } else {
     return false
@@ -252,13 +157,14 @@ EntitiesManager.prototype.listEntities = function () {
 * @method entityDataReturn
 *
 */
-EntitiesManager.prototype.entityDataReturn = async function (eid) {
+EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
   console.log('ENTITYMANAGER----retrun data')
-  console.log(eid)
+  // console.log(eid)
+  // console.log(visStyle)
   let dateLive = this.liveSEntities[eid].liveDataC.livedate
-  console.log(dateLive)
-  console.log(this.liveSEntities[eid].liveVisualC.visualData)
-  return this.liveSEntities[eid].liveVisualC.visualData[dateLive]
+  // console.log(dateLive)
+  // console.log(this.liveSEntities[eid].liveVisualC.visualData)
+  return this.liveSEntities[eid].liveVisualC.visualData[visStyle][dateLive]
 }
 
 /**

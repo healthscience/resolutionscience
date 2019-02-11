@@ -35,11 +35,6 @@ util.inherits(ChartSystem, events.EventEmitter)
 */
 ChartSystem.prototype.structureChartData = function (datatypeItem, liveDate, timeList, deviceList, chartDataIN) {
   this.options = this.prepareChartOptions()
-  // console.log(datatypeItem)
-  // console.log(timeList)
-  // console.log(deviceList)
-  // console.log(chartDataIN)
-  // var localthis = this
   let dataholder = {}
   let datalabel = []
   let dataheart = []
@@ -48,10 +43,6 @@ ChartSystem.prototype.structureChartData = function (datatypeItem, liveDate, tim
   for (let dataI of chartDataIN) {
     // console.log('tidybatch loop')
     // console.log(dataI)
-    /* for (let itemsI of dataI) {
-      datalabel.push(itemsI.timestamp)
-      dataheart.push(itemsI.heart_rate)
-    } */
     for (let tItem of timeList) {
       // console.log('date loop')
       // console.log(tItem)
@@ -72,9 +63,10 @@ ChartSystem.prototype.structureChartData = function (datatypeItem, liveDate, tim
             // console.log(dataItem)
             var mDateString = moment(dataItem.timestamp * 1000).toDate()
             datalabel.push(mDateString)
-            if (datatypeItem === 'heartchain/heart/bpm') {
+            // console.log(datatypeItem)
+            if (datatypeItem === 'bpm') {
               dataheart.push(dataItem.heart_rate)
-            } else if (datatypeItem === 'heartchain/heart/activity/steps') {
+            } else if (datatypeItem === 'steps') {
               dataheart.push(dataItem.steps)
             }
           }
@@ -84,6 +76,8 @@ ChartSystem.prototype.structureChartData = function (datatypeItem, liveDate, tim
   }
   dataholder.labels = datalabel
   dataholder.datasets = dataheart
+  // console.log('observation structure holder')
+  // console.log(dataholder)
   return dataholder
 }
 
@@ -97,12 +91,12 @@ ChartSystem.prototype.chartColors = function (datatypeItem) {
   // console.log(datatypeItem)
   let colorHolder = {}
   // LOOP over datatypeList and prepare chart colors
-  if (datatypeItem === 'heartchain/heart/activity/steps') {
-    colorHolder.datatype = 'heartchain/heart/activity/steps'
+  if (datatypeItem === 'steps') {
+    colorHolder.datatype = 'steps'
     colorHolder.backgroundColor = '#203487'
     colorHolder.borderColor = '#050d2d'
-  } else if (datatypeItem === 'heartchain/heart/bpm') {
-    colorHolder.datatype = 'heartchain/heart/bpm'
+  } else if (datatypeItem === 'bpm') {
+    colorHolder.datatype = 'bpm'
     colorHolder.backgroundColor = '#ed7d7d'
     colorHolder.borderColor = '#ea1212'
   }
@@ -116,6 +110,7 @@ ChartSystem.prototype.chartColors = function (datatypeItem) {
 *
 */
 ChartSystem.prototype.prepareVueChartJS = function (results) {
+  // console.log('PPPPrepare')
   // console.log(results)
   let datacollection = {}
   this.labelback = []
@@ -129,12 +124,12 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
   if (results.chart.length === 2) {
     // need to prepare different visualisations, data return will fit only one Chart vis option
     for (let chD of results.chart) {
-      if (chD.color.datatype === 'heartchain/heart/bpm') {
+      if (chD.color.datatype === 'bpm') {
         this.labelback = chD.data.labels
         this.heartback = chD.data.datasets
         this.colorback = chD.color.backgroundColor
         this.colorlineback = chD.color.borderColor
-      } else if (chD.color.datatype === 'heartchain/heart/activity/steps') {
+      } else if (chD.color.datatype === 'steps') {
         this.labelback = chD.data.labels
         this.activityback = chD.data.datasets
         this.colorback2 = chD.color.backgroundColor
@@ -142,13 +137,13 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
       }
     }
   } else {
-    if (results.chart[0].color.datatype === 'heartchain/heart/bpm') {
+    if (results.chart[0].color.datatype === 'bpm') {
       this.activityback = []
       this.labelback = results.chart[0].data.labels
       this.heartback = results.chart[0].data.datasets
       this.colorback = results.chart[0].color.backgroundColor
       this.colorlineback = results.chart[0].color.borderColor
-    } else if (results.chart[0].color.datatype === 'heartchain/heart/activity/steps') {
+    } else if (results.chart[0].color.datatype === 'steps') {
       this.heartback = []
       this.labelback = results.chart[0].data.labels
       this.activityback = results.chart[0].data.datasets
@@ -214,6 +209,8 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
       ]
     }
   }
+  // console.log('datacollection chart obersation')
+  // console.log(datacollection)
   return datacollection
 }
 
@@ -430,22 +427,50 @@ ChartSystem.prototype.newDateEnd = function (endTimeIN) {
 * @method structureStatisticsData
 *
 */
-ChartSystem.prototype.structureStatisticsData = function (structureAsked, dataTypes, dataIn) {
-  /* let dataholder = {}
+ChartSystem.prototype.structureStatisticsData = function (liveDate, dataType, deviceList, dataIn) {
+  this.options = this.AverageChartOptions()
+  // console.log('STRUCTURE AVERAGE CHART DATA1')
+  // console.log(dataIn)
+  let dataholder = {}
   let datalabel = []
   let dataheart = []
-  if (structureAsked === 'chartjs') {
-    // loop through and build two sperate arrays
-    dataIn.forEach(function (couple) {
-      let mString = moment(couple.timestamp * 1000).toDate() // .format('YYYY-MM-DD hh:mm')
+  // loop through and build two sperate arrays
+  for (let device of deviceList) {
+    for (let entry of dataIn[0][liveDate][device]) {
+      // console.log(entry)
+      let mString = moment(entry.timestamp * 1000).toDate() // .format('YYYY-MM-DD hh:mm')
       datalabel.push(mString)
-      dataheart.push(couple.average)
-    })
-    dataholder.labels = datalabel
-    dataholder.datasets = dataheart
-    dataholder.backgroundColor = '#ed7d7d'
+      dataheart.push(entry.average)
+    }
   }
-  return dataholder */
+  dataholder.labels = datalabel
+  dataholder.datasets = dataheart
+  // console.log('structure average data for charting')
+  // console.log(dataholder)
+  return dataholder
+}
+
+/**
+* prepare average chart colors
+* @method AvgchartColors
+*
+*/
+ChartSystem.prototype.avgchartColors = function (datatypeItem) {
+  // console.log('CHARTSYSTEM3--setcolors')
+  // console.log(datatypeItem)
+  let colorHolder = {}
+  // LOOP over datatypeList and prepare chart colors
+  if (datatypeItem === 'average-heartrate') {
+    colorHolder.datatype = 'average-heartrate'
+    colorHolder.backgroundColor = '#203487'
+    colorHolder.borderColor = '#050d2d'
+  } else if (datatypeItem === 'bpm') {
+    colorHolder.datatype = 'bpm'
+    colorHolder.backgroundColor = '#ed7d7d'
+    colorHolder.borderColor = '#ea1212'
+  }
+  // console.log(colorHolder)
+  return colorHolder
 }
 
 /**
@@ -453,61 +478,166 @@ ChartSystem.prototype.structureStatisticsData = function (structureAsked, dataTy
 * @method prepareStatsVueChartJS
 *
 */
-ChartSystem.prototype.prepareStatsVueChartJS = function (structureAsked, dataMTypes, dataIn, colorL) {
+ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
   // need to prepare different visualisations, data return will fit only one select option
-  /* var localthis = this
-  localthis.labelback = results[0].labels
-  localthis.heartback = results[0].datasets
-  localthis.colorback = results[0].backgroundColor
-  localthis.colorlineback = results[0].borderColor
-  localthis.activityback = results[1].datasets
-  if (dataH === 'no data') {
+  console.log('PREPARE STATS CHARTJS-- START')
+  // console.log(results)
+  var localthis = this
+  let datacollection = {}
+  this.labelback = []
+  this.avg = []
+  this.avg2 = []
+  this.colorback = ''
+  this.colorlineback = ''
+  this.colorback2 = ''
+  this.colorlineback2 = ''
+  // how many average dataTypes asked for?
+  // console.log(results.chart.length)
+  if (results.chart.length === 2) {
+    // need to prepare different visualisations, data return will fit only one Chart vis option
+    for (let chD of results.chart) {
+      // console.log(chD)
+      // console.log(chD.color.datatype)
+      if (chD.color.datatype === 'average-heartrate') {
+        this.labelback = chD.data.labels
+        this.avg = chD.data.datasets
+        this.colorback = chD.color.backgroundColor
+        this.colorlineback = chD.color.borderColor
+      } else if (chD.color.datatype === 'steps') {
+        this.labelback = chD.data.labels
+        this.avg2 = chD.data.datasets
+        this.colorback2 = chD.color.backgroundColor
+        this.colorlineback2 = chD.color.borderColor
+      }
+    }
+  } else {
+    if (results.chart[0].color.datatype === 'average-heartrate') {
+      this.avg = []
+      this.labelback = results.chart[0].data.labels
+      this.avg = results.chart[0].data.datasets
+      this.colorback = results.chart[0].color.backgroundColor
+      this.colorlineback = results.chart[0].color.borderColor
+    } else if (results.chart[0].color.datatype === '') {
+      this.heartback = []
+      this.labelback = results.chart[0].data.labels
+      this.avg = results.chart[0].data.datasets
+      this.colorback2 = results.chart[0].color.backgroundColor
+      this.colorlineback2 = results.chart[0].color.borderColor
+    }
+  }
+
+  if (results === 'no data') {
     // no data to display
     localthis.chartmessage = 'No data to display'
-    localthis.datastatistics = {
-      labels: localthis.labelback,
+    datacollection = {
+      labels: [],
       datasets: [
         {
-          label: 'Beats per Minute',
+          label: 'no data',
           borderColor: '#ed7d7d',
           backgroundColor: '#ed7d7d',
           fill: false,
-          data: localthis.heartback,
+          data: [],
           yAxisID: 'bpm'
         }, {
-          label: 'Activity Steps',
+          label: 'no data',
           borderColor: '#ea1212',
           backgroundColor: '#ea1212',
           fill: false,
-          data: localthis.activityback,
+          data: [],
           yAxisID: 'steps'
         }
       ]
     }
   } else {
-    localthis.chartmessage = 'BPM'
-    localthis.datastatistics = {
-      labels: localthis.labelback,
-      datasets: [
-        {
-          label: 'Device 1',
-          borderColor: '#ea1212',
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          fill: true,
-          data: localthis.heartback,
-          yAxisID: 'bpm'
-        }, {
-          label: 'Device 2',
-          borderColor: '#050d2d',
-          backgroundColor: '#050d2d',
-          fill: false,
-          data: localthis.activityback,
-          yAxisID: 'steps'
-        }
-      ]
+    // how many devices average to visualise?
+    if (deviceList.length === 2) {
+      console.log('TWO devices averages')
+      localthis.chartmessage = 'AVG BPM'
+      datacollection = {
+        labels: localthis.labelback,
+        datasets: [
+          {
+            label: 'Device 1',
+            borderColor: '#ea1212',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            fill: true,
+            data: localthis.avg,
+            yAxisID: 'bpm'
+          }, {
+            label: 'Device 2',
+            borderColor: '#050d2d',
+            backgroundColor: '#050d2d',
+            fill: false,
+            data: localthis.avg2,
+            yAxisID: 'bpm'
+          }
+        ]
+      }
+    } else if (deviceList.length === 1) {
+      // only one average device data to display
+      console.log('ONE devices averages')
+      localthis.chartmessage = 'BPM'
+      datacollection = {
+        labels: localthis.labelback,
+        datasets: [
+          {
+            label: 'Device 1',
+            borderColor: '#ea1212',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            fill: true,
+            data: localthis.avg,
+            yAxisID: 'bpm'
+          }
+        ]
+      }
     }
-    // console.log(localthis.datastatistics)
-  } */
+  }
+  // console.log('average datacollection')
+  // console.log(datacollection)
+  return datacollection
+}
+
+/**
+*
+* @method AverageChartOptions
+*
+*/
+ChartSystem.prototype.AverageChartOptions = function () {
+  // var localthis = this
+  let options = {
+    responsive: true,
+    hoverMode: 'index',
+    stacked: false,
+    title: {
+      display: true,
+      text: 'Averages Per Device'
+    },
+    scales: {
+      yAxes: [{
+        type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+        display: true,
+        position: 'left',
+        id: 'bpm',
+        ticks: {
+          beginAtZero: true
+        }
+      }, {
+        type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+        display: true,
+        position: 'right',
+        id: 'steps',
+        // grid line settings
+        gridLines: {
+          drawOnChartArea: false // only want the grid lines for one axis to show up
+        },
+        ticks: {
+          beginAtZero: true
+        }
+      }]
+    }
+  }
+  return options
 }
 
 export default ChartSystem

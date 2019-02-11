@@ -10,6 +10,7 @@
 * @version    $Id$
 */
 import DataSystem from './systems/dataSystem.js'
+import CNRLmaster from './cnrl/cnrlMaster.js'
 import EntitiesManager from './entitiesManager.js'
 const util = require('util')
 const events = require('events')
@@ -18,6 +19,7 @@ var safeFlow = function (setIN) {
   events.EventEmitter.call(this)
   this.liveEManager = new EntitiesManager()
   this.liveDataSystem = new DataSystem(setIN)
+  this.liveCNRL = new CNRLmaster()
   this.settings = setIN
 }
 
@@ -64,9 +66,9 @@ safeFlow.prototype.scienceEntities = async function (segT, inputInfo) {
 * @method entityGetter
 *
 */
-safeFlow.prototype.entityGetter = async function (eid) {
+safeFlow.prototype.entityGetter = async function (eid, visStyle) {
   let dataVue = {}
-  await this.liveEManager.entityDataReturn(eid).then(function (eData) {
+  await this.liveEManager.entityDataReturn(eid, visStyle).then(function (eData) {
     dataVue = eData
   })
   return dataVue
@@ -99,6 +101,16 @@ safeFlow.prototype.toolkitContext = async function (flag, callBK) {
     await this.liveDataSystem.getDataTypes(callBK).then(function (result) {
     })
   }
+}
+
+/**
+* call the CNRL on startup to get live science in network
+* @method cnrlScienceStart
+*
+*/
+safeFlow.prototype.cnrlScienceStart = function () {
+  let startScience = this.liveCNRL.scienceOnNetwork()
+  return startScience
 }
 
 export default safeFlow

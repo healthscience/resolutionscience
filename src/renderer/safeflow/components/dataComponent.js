@@ -25,7 +25,6 @@ var DataComponent = function (DID, setIN) {
   this.datatypeList = []
   this.dataRaw = []
   this.tidyData = []
-  this.dataCompute = []
   this.dataType = []
   // this.setTimeList()
   this.setDevicesLive()
@@ -95,13 +94,13 @@ DataComponent.prototype.RawData = async function () {
   var localthis = this
   let systemBundle = {}
   systemBundle.timePeriod = this.livedate
-  systemBundle.dtAsked = this.CNRLscience.p[0]
+  systemBundle.dtAsked = this.CNRLscience.prime
   systemBundle.deviceList = this.deviceList
   systemBundle.datatypes = this.datatypeList
   // console.log(systemBundle)
   // console.log(systemBundle.dtAsked[0])
   // need to match dataTypeAsked to right API call
-  if (systemBundle.dtAsked[0]['bpm']) {
+  if (systemBundle.dtAsked[0] === 'bpm') {
     await this.liveDataSystem.getRawData(systemBundle).then(function (rawData) {
       const rawHolder = {}
       rawHolder[localthis.livedate] = rawData
@@ -110,8 +109,9 @@ DataComponent.prototype.RawData = async function () {
       // console.log(localthis.dataRaw)
       return true
     })
-  } else if (systemBundle.dtAsked[0]['average-heartrate']) {
-    await this.liveDataSystem.getRawStatsData(systemBundle, 'average-heartrate').then(function (rawData) {
+  } else if (systemBundle.dtAsked[0] === 'average-heartrate') {
+    console.log('DATACOMPOENT1--ANY EXISTING AVERAGE QUERY')
+    await this.liveDataSystem.getRawStatsData(systemBundle, 'wasm-sc-2').then(function (rawData) {
       const rawHolder = {}
       rawHolder[localthis.livedate] = rawData
       localthis.dataRaw.push(rawHolder)

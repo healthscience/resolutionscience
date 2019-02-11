@@ -13,10 +13,10 @@ import ComputeSystem from '../systems/computeSystem.js'
 const util = require('util')
 const events = require('events')
 
-var ComputeComponent = function (EID) {
+var ComputeComponent = function (EID, setIN) {
   events.EventEmitter.call(this)
   this.EIDinfo = EID
-  this.liveCompute = new ComputeSystem()
+  this.liveCompute = new ComputeSystem(setIN)
   this.computeStatus = false
 }
 
@@ -31,14 +31,16 @@ util.inherits(ComputeComponent, events.EventEmitter)
 * @method filterCompute
 *
 */
-ComputeComponent.prototype.filterCompute = async function (compIN) {
+ComputeComponent.prototype.filterCompute = async function (compIN, deviceList, cnrlInfo, rawIN) {
   // var localthis = this
   if (compIN.wasmID === 'wasm-sc-1') {
     // raw data nothing to compute
     return true
   } else {
-    this.liveCompute.computationSystem(compIN, this.EIDinfo.timeperiod)
-    return true
+    console.log(this.EIDinfo)
+    let statusC = this.liveCompute.computationSystem(compIN, this.EIDinfo.timeperiod, deviceList, cnrlInfo, rawIN)
+    this.computeStatus = statusC
+    return this.computeStatus
   }
 }
 

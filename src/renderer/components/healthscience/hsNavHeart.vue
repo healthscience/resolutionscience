@@ -13,7 +13,7 @@
               </ul>
           </li>
           <li>
-            <header> Sensors - </header>
+            <header>DataTypes - </header>
               <ul>
                 <li id="bmp-data-sensor" v-for="sen in sensors">
 		              <a class="" href="" id="bmp-data" @click.prevent="selectContext(sen)" v-bind:class="{ 'active': sen.active}">{{ sen.device_sensorid }}</a>
@@ -66,7 +66,7 @@
                 <button id="close-report" @click.prevent="closeAvgSummary()">Finsish & Close</button>
               </div>
             </div>
-            <reactivestats :chart-data="datastatistics" :width="1200" :height="600"></reactivestats>
+            <!-- <reactivestats :chart-data="datastatistics" :width="1200" :height="600"></reactivestats> -->
           </div>
           <reactive :chartData="datacollection" :options="options" :width="1200" :height="600"></reactive>
         </div>
@@ -181,13 +181,7 @@
         datacollection: null,
         datastatistics: null,
         selectedCompute: 'A',
-        scoptions: [
-          { text: 'Activity and HR data', value: 'A', cid: 'cnrl-2356388731', wasm: 'wasm-sc-1' },
-          { text: 'Average HR', value: 'B', cid: 'cnrl-2356388732', wasm: 'wasm-sc-2' },
-          { text: 'Resting HR Recovery', value: 'C', cid: 'cnrl-2356388733', wasm: 'wasm-sc-3' },
-          { text: 'error data', value: 'D', cid: 'cnrl-2356388734', wasm: 'wasm-sc-4' },
-          { text: 'HealthSpan', value: 'E', cid: 'cnrl-2356388735', wasm: 'wasm-sc-5' }
-        ],
+        scoptions: [],
         options: {},
         tools:
         {
@@ -229,11 +223,11 @@
           id: 'learn-status',
           active: false
         },
-        chartmessage: 'Select time to load chart',
-        chartmessageS: 'Select time to load chart',
+        chartmessage: 'Select time',
+        chartmessageS: 'Select time',
         activedevice: [],
         activesensor: [],
-        activecompute: 'cnrl-2356388731',
+        activeEntity: 'cnrl-2356388731',
         activeupdatecompute: '',
         activevis: '',
         activelearn: '',
@@ -252,6 +246,9 @@
       },
       context: function () {
         return this.$store.state.context
+      },
+      science: function () {
+        return this.$store.state.science
       }
     },
     mounted () {
@@ -273,6 +270,7 @@
       },
       scienceContext () {
         // set the first science priority on start of RS
+        this.scoptions = this.$store.getters.liveScience
         this.$store.commit('setScience', this.scoptions[0])
       },
       deviceContext () {
@@ -316,7 +314,7 @@
       },
       setContextData (seg) {
         // get seg and then look at compute context and call appropriate
-        const compContext = this.activecompute
+        const compContext = this.activeEntity
         if (compContext === 'cnrl-2356388731') {
           this.fillData(seg)
         }
@@ -401,10 +399,10 @@
         // console.log(cs)
         for (let csi of this.scoptions) {
           if (csi.value === cs) {
-            this.activecompute = csi.cid
+            this.activeEntity = csi.cid
           }
         }
-        return this.activecompute
+        return this.activeEntity
       },
       learnStartStop () {
         // pass to computations system
@@ -423,7 +421,7 @@
         // console.log(this.analysisStart)
         // console.log(this.analysisEnd)
         let computationSMid = this.filterCompute(computeSelected)
-        console.log(computationSMid)
+        // console.log(computationSMid)
         if (computationSMid === 'cnrl-2356388733') {
           this.$store.commit('setScience', this.scoptions[2])
           let reportDataback = {}
@@ -447,21 +445,36 @@
       closeAvgSummary () {
         this.averageSeen = false
         this.learn.active = false
-        this.activecompute = 'cnrl-2356388731'
+        this.activeEntity = 'cnrl-2356388731'
+        this.$store.commit('setScience', this.scoptions[0])
       },
       async fillData (seg) {
         var localthis = this
         this.filterDeviceActive()
         this.filterSensorActive()
         this.filterVisActive()
+        console.log('CCCOONNNTETEEXXXX')
+        console.log(this.context)
         await this.liveSafeFlow.scienceEntities(seg, this.context).then(function (entityData) {
-          localthis.liveSafeFlow.entityGetter(localthis.activecompute).then(function (eData) {
+          localthis.liveSafeFlow.entityGetter(localthis.activeEntity, localthis.activevis).then(function (eData) {
             console.log('VUE---return getter data')
             console.log(eData)
-            localthis.options = eData.options
-            localthis.datacollection = eData.prepared
-            localthis.liveTime = eData.livetime
-            // console.log(localthis.datacollection)
+            console.log(localthis.activevis)
+            if (localthis.activevis === 'vis-sc-1') {
+              console.log('chartjs')
+              localthis.options = eData.options
+              localthis.datacollection = eData.prepared
+              localthis.liveTime = eData.livetime
+              // console.log(localthis.datacollection)
+            } else if (localthis.activevis === 'vis-sc-2') {
+              console.log('tablejs')
+              // localthis.tableHTML = eData.table
+            } else if (localthis.activevis === 'vis-sc-3') {
+              console.log('simjs')
+              // localthis.simulationHeart = eData.heart
+              // localthis.simulationMovement = eData.heart
+              // localthis.simulationTime = eData.time
+            }
           })
         }).catch(function (err) {
           console.log(err)

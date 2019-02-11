@@ -54,6 +54,9 @@
       },
       context: function () {
         return this.$store.state.context
+      },
+      science: function () {
+        return this.$store.state.science
       }
     },
     data: () => ({
@@ -94,6 +97,7 @@
           localthis.devices = dataH
           localthis.$store.commit('setDevice', dataH)
           localthis.dataType()
+          localthis.cnrlScience()
         }
         const deviceFlag = 'device'
         this.liveSafeFlow.toolkitContext(deviceFlag, callbackC)
@@ -107,6 +111,11 @@
         }
         const dataTypeFlag = 'dataType'
         this.liveSafeFlow.toolkitContext(dataTypeFlag, callbackT)
+      },
+      cnrlScience () {
+        // call the CNRL api and get network science active
+        let startScience = this.liveSafeFlow.cnrlScienceStart()
+        this.$store.commit('setCNRLscience', startScience)
       },
       loadTextFromFile (ev) {
         // prompt for Password

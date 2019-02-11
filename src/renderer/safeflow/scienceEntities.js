@@ -13,7 +13,7 @@ import DataComponent from './components/dataComponent.js'
 import DatatypeComponent from './components/datatypeComponent.js'
 import ComputeComponent from './components/computeComponent.js'
 import VisualComponent from './components/visualComponent.js'
-import SimComponent from './components/simComponent.js'
+// import SimComponent from './components/simComponent.js'
 const util = require('util')
 const events = require('events')
 
@@ -22,9 +22,9 @@ var ScienceEntities = function (EID, dAccess) {
   this.seid = EID
   this.liveDataC = new DataComponent(EID, dAccess)
   this.liveDatatypeC = new DatatypeComponent()
-  this.liveComputeC = new ComputeComponent(EID)
-  this.liveVisualC = new VisualComponent()
-  this.liveSimC = new SimComponent()
+  this.liveComputeC = new ComputeComponent(EID, dAccess)
+  this.liveVisualC = new VisualComponent(EID)
+  // this.liveSimC = new SimComponent()
   // console.log('entity compoentent data')
   // console.log(this.liveDataC)
 }
@@ -69,15 +69,6 @@ ScienceEntities.prototype.tidyDataGetter = async function () {
 */
 ScienceEntities.prototype.visualGetter = async function () {
   return this.liveVisualC.list
-}
-
-/**
-*
-* @method simGetter
-*
-*/
-ScienceEntities.prototype.simGetter = async function () {
-  return this.liveSimC.list
 }
 
 export default ScienceEntities

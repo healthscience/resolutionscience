@@ -14,13 +14,13 @@
           DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/activity/steps</a>
         </div>
         <div id="sensor-type">
-          DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992211" >heartchain/heart/bpm</a>
+          DataType <a id="" href="http://healthscience.network/heartchain/da-hc-773355992213" >heartchain/heart/bpm</a>
         </div>
       </div>
       <div id="computations">
         <header class="science-part">Computations</header>
         <div id="compute-location">
-          WASM File ->   github ->  IPFS ->   Smart Contract ->
+          {{ sci.wasm }} WASM File ->   github ->  IPFS ->   Smart Contract ->
         </div>
         <div id="compute-analysis">
           Simulation Status - Training: live  Predictions: Awaiting task
@@ -50,15 +50,7 @@
     },
     data: () => ({
       liveSafeFlow: {},
-      computeFlag: '',
-      science: [
-        { active: false, text: 'Activity and HR data', description: 'Display of source data from a devies sensors.', value: 'A', cid: 'wasm-sc-1' },
-        { active: false, text: 'Average HR', description: 'A statisticial average calculated on BMP and steps on a daily basis.', value: 'B', cid: 'wasm-sc-2' },
-        { active: false, text: 'Resting HR Recovery', description: 'The use of bayesian statistical methods to show the time it take for the heart to reach resting heart rate value after activity.', value: 'C', cid: 'wasm-sc-3' },
-        { active: false, text: 'error data', description: 'Data Error numbers and statistics', value: 'D', cid: 'wasm-sc-4' },
-        { active: false, text: 'HealthSpan', description: 'Combines all network machine learning of the scientific computations to build a simulation of a human heart', value: 'E', cid: 'wasm-sc-5' },
-        { active: false, text: 'Statistics Tools', description: 'Statistical tool for categorising self directed science', value: 'F', cid: 'wasm-sc-6' }
-      ]
+      computeFlag: ''
     }),
     created () {
     },
@@ -74,12 +66,20 @@
       },
       context: function () {
         return this.$store.state.context
+      },
+      science: function () {
+        return this.$store.state.science
       }
     },
     methods: {
       checkContext () {
         // let startContext = this.$store.getters.liveContext
         // set devices and sensor from Store
+      },
+      scienceContext () {
+        // set the first science priority on start of RS
+        this.science = this.$store.getters.liveScience
+        this.$store.commit('setScience', this.science[0])
       },
       viewScienceDetail (sciIN) {
         if (sciIN.active === true) {

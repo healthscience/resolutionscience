@@ -103,7 +103,7 @@ DataSystem.prototype.getDataTypes = async function (callbackC) {
 */
 DataSystem.prototype.getLiveDatatypes = function (dtIN) {
   console.log('start of Live datastype forming')
-  console.log(dtIN)
+  // console.log(dtIN)
   let liveDTs = []
   for (let dt of dtIN) {
     if (dt.active === true) {
@@ -218,23 +218,25 @@ DataSystem.prototype.extractSensors = function (sensorsIN) {
 * @method getRawStatsData
 *
 */
-DataSystem.prototype.getRawStatsData = async function (dataLive, dtAsked) {
+DataSystem.prototype.getRawStatsData = async function (bundleIN, dtAsked) {
   const localthis = this
   // else if (flag === 'statistics') {
   // how many sensor ie data sets are being asked for?
   // loop over and return Statistics Data and return to callback
   this.StatsForUI = {}
-  const deviceLiveFilter = dataLive.deviceList
+  const deviceLiveFilter = bundleIN.deviceList
   for (let di of deviceLiveFilter) {
-    await localthis.liveTestStorage.getAverageData(dataLive.timePeriod, di, dataLive.dtAsked).then(function (statsData) {
+    await localthis.liveTestStorage.getAverageData(bundleIN.timePeriod, di, dtAsked).then(function (statsData) {
+      console.log('returned average data')
       localthis.StatsForUI[di] = statsData
       statsData = []
-      // console.log(vueData)
+      console.log(statsData)
     }).catch(function (err) {
       console.log(err)
     })
   }
-  // }
+  console.log('before returned SATEWMTNT')
+  console.log(this.StatsForUI)
   return this.StatsForUI
 }
 

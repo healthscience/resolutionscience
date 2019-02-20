@@ -108,7 +108,7 @@ TimeUtilities.prototype.calendarUtility = function (startDYear) {
 */
 TimeUtilities.prototype.timeArrayBuilder = function (liveTime, lastTime) {
   let timeArray = []
-  let yearCommence = lastTime
+  let yearCommence = lastTime / 1000
   console.log(yearCommence)
   console.log(liveTime)
   const monthNo = moment(yearCommence).month()
@@ -126,7 +126,8 @@ TimeUtilities.prototype.timeArrayBuilder = function (liveTime, lastTime) {
       timeArray.push({dayCount, longDateformat})
     }
   }
-  // console.log(timeArray)
+  console.log('time builder array++++')
+  console.log(timeArray)
   return timeArray
 }
 

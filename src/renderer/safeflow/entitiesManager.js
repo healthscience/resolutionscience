@@ -51,10 +51,11 @@ EntitiesManager.prototype.addScienceEntity = async function (segT, entID, setIN)
     let checkDataExist = this.checkForVisualData(cid, timePeriod, visID)
     console.log(checkDataExist)
     if (checkDataExist === true) {
-      // exist return
+      // exists
+      console.log('data already ready')
       this.liveSEntities[cid].liveDataC.setStartDate(timePeriod)
       this.liveSEntities[cid].liveDataC.setTimeList(timePeriod)
-      console.log('time data already ready')
+      // need to check if compute flag for update needs acting on.
       return true
     } else {
       // new data call required for this visualisation and time
@@ -96,6 +97,7 @@ EntitiesManager.prototype.controlFlow = async function (cid, timePeriod, wasmID,
       computeBundle.lastComputeTime = ''
       computeBundle.live = cid
       computeBundle.wasmID = wasmID
+      computeBundle.status = false
       console.log('3START____COMPUTTEEEE')
       localthis.liveSEntities[cid].liveComputeC.filterCompute(computeBundle, localthis.liveSEntities[cid].liveDataC.deviceList, cnrlInfo, localthis.liveSEntities[cid].liveDataC.dataRaw).then(function (computeStatus) {
         localthis.computeStatus = computeStatus
@@ -109,9 +111,13 @@ EntitiesManager.prototype.controlFlow = async function (cid, timePeriod, wasmID,
             console.log('UP TO DATE')
             return true
           } else if (localthis.computeStatus === 'update-required') {
-            console.log('noooot UP TO DATE')
+            console.log('NOT uptodate')
+            computeBundle.status = true
+            console.log('3START_COMPUTTE2222')
+            localthis.liveSEntities[cid].liveComputeC.filterCompute(computeBundle, localthis.liveSEntities[cid].liveDataC.deviceList, cnrlInfo, localthis.liveSEntities[cid].liveDataC.dataRaw).then(function (computeStatus) {
             // need to update computation from source data
             // localthis.controlFlow() // start flow again
+            })
           }
           // console.log(localthis.liveSEntities)
         })
@@ -161,10 +167,19 @@ EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
   console.log('ENTITYMANAGER----retrun data')
   // console.log(eid)
   // console.log(visStyle)
+  console.log(this.liveSEntities[eid].liveVisualC[visStyle])
   let dateLive = this.liveSEntities[eid].liveDataC.livedate
-  // console.log(dateLive)
-  // console.log(this.liveSEntities[eid].liveVisualC.visualData)
-  return this.liveSEntities[eid].liveVisualC.visualData[visStyle][dateLive]
+  console.log(dateLive)
+  // console.log(this.liveSEntities[eid].liveVisualC.visualData[visStyle])
+  if (this.liveSEntities[eid].liveVisualC.visualData[visStyle] === undefined) {
+    console.log('no existing chart data')
+    let messageBundle = {}
+    messageBundle.chartMessage = 'computation in progress'
+    return messageBundle
+  } else {
+    console.log('existing data to chart')
+    return this.liveSEntities[eid].liveVisualC.visualData[visStyle][dateLive]
+  }
 }
 
 /**

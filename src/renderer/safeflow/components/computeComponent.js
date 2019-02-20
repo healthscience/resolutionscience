@@ -31,14 +31,14 @@ util.inherits(ComputeComponent, events.EventEmitter)
 * @method filterCompute
 *
 */
-ComputeComponent.prototype.filterCompute = async function (compIN, deviceList, cnrlInfo, rawIN) {
+ComputeComponent.prototype.filterCompute = async function (compInfo, deviceList, cnrlInfo, rawIN) {
   // var localthis = this
-  if (compIN.wasmID === 'wasm-sc-1') {
+  if (compInfo.wasmID === 'wasm-sc-1' && this.computeStatus === false) {
     // raw data nothing to compute
     return true
   } else {
     console.log(this.EIDinfo)
-    let statusC = this.liveCompute.computationSystem(compIN, this.EIDinfo.timeperiod, deviceList, cnrlInfo, rawIN)
+    let statusC = this.liveCompute.computationSystem(compInfo, this.EIDinfo.timeperiod, deviceList, cnrlInfo, rawIN)
     this.computeStatus = statusC
     return this.computeStatus
   }

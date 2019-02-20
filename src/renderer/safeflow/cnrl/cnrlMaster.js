@@ -23,15 +23,36 @@ var CNRLmaster = function () {
 util.inherits(CNRLmaster, events.EventEmitter)
 
 /**
-*  get base time from LKN
+*  the science live in the network
 * @method scienceOnNetwork
 *
 */
 CNRLmaster.prototype.scienceOnNetwork = function () {
-  let science = [{ active: false, text: 'Activity and HR data', description: 'Display of source data from a devies sensors.', value: 'A', cid: 'cnrl-2356388731', wasm: 'wasm-sc-1' }, { active: false, text: 'Average HR', description: 'A statisticial average calculated on BMP and steps on a daily basis.', value: 'B', cid: 'cnrl-2356388732', wasm: 'wasm-sc-2' }, { active: false, text: 'Resting HR Recovery', description: 'The use of bayesian statistical methods to show the time it take for the heart to reach resting heart rate value after activity.', value: 'C', cid: 'cnrl-2356388733', wasm: 'wasm-sc-3' }, { active: false, text: 'error data', description: 'Data Error numbers and statistics', value: 'D', cid: 'cnrl-2356388734', wasm: 'wasm-sc-4' }, { active: false, text: 'HealthSpan', description: 'Combines all network machine learning of the scientific computations to build a simulation of a human heart', value: 'E', cid: 'cnrl-2356388736', wasm: 'wasm-sc-5' }, { active: false, text: 'Statistics Tools', description: 'Statistical tool for categorising self directed science', value: 'F', cid: 'wasm-sc-6' }]
-  console.log(science)
+  let science = [{ active: false, text: 'Observation data', description: 'Display of source data from a devies sensors.', value: 'A', cid: 'cnrl-2356388731', wasm: 'wasm-sc-1', verified: true }, { active: false, text: 'Average HR', description: 'A statisticial average calculated on BMP and steps on a daily basis.', value: 'B', cid: 'cnrl-2356388732', wasm: 'wasm-sc-2', verified: false }, { active: false, text: 'Resting HR Recovery', description: 'The use of bayesian statistical methods to show the time it take for the heart to reach resting heart rate value after activity.', value: 'C', cid: 'cnrl-2356388733', wasm: 'wasm-sc-3' }, { active: false, text: 'error data', description: 'Data Error numbers and statistics', value: 'D', cid: 'cnrl-2356388734', wasm: 'wasm-sc-4', verified: false }, { active: false, text: 'HealthSpan', description: 'Combines all network machine learning of the scientific computations to build a simulation of a human heart', value: 'E', cid: 'cnrl-2356388736', wasm: 'wasm-sc-5', verified: false }]
   return science
 }
+
+/**
+*  info on storage data structure
+* @method storageInformation
+*
+*/
+CNRLmaster.prototype.storageInformation = function (sid) {
+  let storageInfo = {}
+  storageInfo['cnrl=229837373701'] = [{'lightLED': '/devicedata/<device>'}, {'accelerometer': '/devicedata/<device>'}, {'devices': '/contextdata/<device>'}, {'sensors': '/contexttype/<device>'}]
+  return storageInfo
+}
+
+/**
+*  list of live dataTypes in network
+* @method cnrlNetworkDatatypes
+*
+*/
+CNRLmaster.prototype.cnrlNetworkDatatypes = function () {
+  let listDataTypes = []
+  return listDataTypes
+}
+
 /**
 *  get contract info.
 * @method lookupContract
@@ -40,42 +61,52 @@ CNRLmaster.prototype.scienceOnNetwork = function () {
 CNRLmaster.prototype.lookupContract = function (refIN) {
   console.log('CRNL----lookup')
   // if contract has links, follow those to source TODO
-  console.log(refIN)
   let dataCNRLbundle = {}
   dataCNRLbundle.prime = []
+  dataCNRLbundle.resolution = []
   dataCNRLbundle.source = []
   dataCNRLbundle.input = []
   dataCNRLbundle.tidy = false
+  dataCNRLbundle.tidyList = []
+  dataCNRLbundle.tableStructure = []
+  dataCNRLbundle.mobilesource = ''
   let dataTypePrimary = []
   let dataTypeMap = []
   if (refIN === 'cnrl-2356388731') {
     // return dataType mapping arrays
-    dataTypePrimary.push({'bpm': 'datastore-teststorage'})
-    dataTypePrimary.push({'steps': 'datastore-teststorage'})
-    // dataTypePrimary.push({'time': 'datastore-teststorage'})
-    dataTypeMap.push({'bpm': 'datastore-teststorage'})
-    dataTypeMap.push({'steps': 'datastore-teststorage'})
-    // dataTypeMap.push({'time': 'datastore-teststorage'})
+    dataTypePrimary.push({'bpm': ''})
+    dataTypePrimary.push({'steps': ''})
+    // dataTypePrimary.push({'time': ''})
     dataCNRLbundle.tidy = true
-    dataCNRLbundle.prime.push('bpm', 'steps')
+    dataCNRLbundle.tidyList = [-1, 0, 255]
+    dataCNRLbundle.tableStructure = ['id', 'timestamp', 'bmp', 'etc']
+    dataCNRLbundle.mobilesource = 'cnrl-8856388711'
+    dataCNRLbundle.prime.push({'text': 'bpm', 'active': 'true'})
+    dataCNRLbundle.resolution.push({'text': '60 seconds', 'active': 'true'})
+    dataCNRLbundle.prime.push({'text': 'steps', 'active': 'true'})
     dataCNRLbundle.source.push(dataTypePrimary)
-    dataCNRLbundle.input.push(dataTypeMap)
+    dataCNRLbundle.input.push(dataTypePrimary)
   } else if (refIN === 'cnrl-2356388732') {
-    dataTypePrimary.push({'average-heartrate': 'datastore-teststorage'})
-    // dataTypePrimary.push({'time': 'datastore-teststorage'})
-    dataTypeMap.push({'bpm': 'datastore-teststorage'})
-    dataTypeMap.push({'steps': 'datastore-teststorage'})
+    dataTypePrimary.push({'average-heartrate': ''})
+    // dataTypePrimary.push({'time': ''})
+    dataTypeMap.push({'bpm': ''})
+    dataTypeMap.push({'steps': ''})
+    // dataTypeMap.push({'time': ''})
     dataCNRLbundle.tidy = false
-    dataCNRLbundle.prime.push('average-heartrate')
+    dataCNRLbundle.prime.push({'text': 'average-heartrate', 'active': 'true'})
+    dataCNRLbundle.resolution.push({'text': '1440 seconds', 'active': 'true'})
+    dataCNRLbundle.prime.push({'text': 'average-steps', 'active': 'true'})
     dataCNRLbundle.source.push(dataTypePrimary)
     dataCNRLbundle.input.push(dataTypeMap)
   } else if (refIN === 'cnrl-2356388733') {
-    dataTypePrimary.push({'recovery-heartrate': 'datastore-teststorage'})
-    // dataTypePrimary.push({'time': 'datastore-teststorage'})
-    dataTypeMap.push({'bpm': 'datastore-teststorage'})
-    dataTypeMap.push({'steps': 'datastore-teststorage'})
+    dataTypePrimary.push({'recovery-heartrate': ''})
+    // dataTypePrimary.push({'time': ''})
+    dataTypeMap.push({'bpm': ''})
+    dataTypeMap.push({'steps': ''})
+    // dataTypeMap.push({'time': ''})
     dataCNRLbundle.tidy = false
-    dataCNRLbundle.prime.push('recovery-heartrate')
+    dataCNRLbundle.prime.push({'text': 'recovery-heartrate', 'active': 'true'})
+    dataCNRLbundle.resolution.push({'text': 'xx seconds', 'active': 'true'})
     dataCNRLbundle.source.push(dataTypePrimary)
     dataCNRLbundle.input.push(dataTypeMap)
   }
@@ -87,13 +118,15 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
 * @method sensorMappingDatatype
 *
 */
-CNRLmaster.prototype.sensorMappingDatatype = function (sourceID, sensorID) {
+CNRLmaster.prototype.sensorMappingDatatype = function (sensorTypes) {
   // get detail on spec for data source
-  let dataFilter
-  if (sensorID === 'lightLED') {
-    dataFilter = ['bpm']
-  } else if (sensorID === 'accelerometer') {
-    dataFilter = ['steps']
+  let dataFilter = []
+  for (let sen of sensorTypes) {
+    if (sen.device_sensorid === 'lightLED') {
+      dataFilter.push({'text': 'bpm', 'active': 'true'})
+    } else if (sen.device_sensorid === 'accelerometer') {
+      dataFilter.push({'text': 'steps', 'active': 'true'})
+    }
   }
   return dataFilter
 }
@@ -112,6 +145,84 @@ CNRLmaster.prototype.dataMatchtypes = function (sourceID, sensorID) {
     dataFilter = [1, 5]
   }
   return dataFilter
+}
+
+/**
+*  mock up of mobile sqlite table structure CNRL info
+* @method mobileSource
+*
+*/
+CNRLmaster.prototype.mobileSource = function (refIN) {
+  console.log('CRNL----lookup for upstream structure')
+  // if contract has links, follow those to source TODO
+  let dataCNRLbundle = {}
+  dataCNRLbundle.prime = []
+  dataCNRLbundle.resolution = []
+  dataCNRLbundle.source = []
+  dataCNRLbundle.input = []
+  dataCNRLbundle.tidy = false
+  dataCNRLbundle.tidyList = []
+  dataCNRLbundle.tableStructure = []
+  dataCNRLbundle.mobilesource = ''
+  dataCNRLbundle.columncodes = []
+  let dataTypePrimary = []
+  if (refIN === 'cnrl-8856388711') {
+    // return dataType mapping arrays
+    dataTypePrimary.push({'bpm': ''})
+    dataTypePrimary.push({'steps': ''})
+    // dataTypePrimary.push({'time': ''})
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = [-1, 0, 255]
+    dataCNRLbundle.tableStructure = ['id', 'timestamp', 'bmp', 'etc']
+    dataCNRLbundle.mobilesource = 'cnrl-primary'
+    dataCNRLbundle.columncodes.push({'column': 'raw_kind', 'coding': [{'212': 'lightsleep', '202': 'deepsleep'}]})
+    dataCNRLbundle.columncodes.push({'column': 'raw_intensity', 'coding': [{'312': 'walking', '302': 'running'}]})
+    dataCNRLbundle.prime.push({ 'text': 'bpm', 'active': 'true' })
+    dataCNRLbundle.resolution.push({ 'text': '60 seconds', 'active': 'true' })
+    dataCNRLbundle.prime.push({ 'text': 'steps', 'active': 'true' })
+    dataCNRLbundle.source.push(dataTypePrimary)
+    dataCNRLbundle.input.push(dataTypePrimary)
+  }
+  return dataCNRLbundle
+}
+
+/**
+*  mock up of mobile sqlite table structure CNRL info
+* @method sensorSource
+*
+*/
+CNRLmaster.prototype.sensorSource = function (refIN) {
+  console.log('CRNL----lookup for sensor structure e..g blue toothstandards')
+  // if contract has links, follow those to source TODO
+  let dataCNRLbundle = {}
+  dataCNRLbundle.prime = []
+  dataCNRLbundle.resolution = []
+  dataCNRLbundle.source = []
+  dataCNRLbundle.input = []
+  dataCNRLbundle.tidy = false
+  dataCNRLbundle.tidyList = []
+  dataCNRLbundle.tableStructure = []
+  dataCNRLbundle.mobilesource = ''
+  dataCNRLbundle.columncodes = []
+  let dataTypePrimary = []
+  if (refIN === 'cnrl-2256388711') {
+    // return dataType mapping arrays
+    dataTypePrimary.push({'heartrate': ''})
+    dataTypePrimary.push({'movement': ''})
+    // dataTypePrimary.push({'time': ''})
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.tableStructure = []
+    dataCNRLbundle.mobilesource = 'cnrl-sensor'
+    dataCNRLbundle.columncodes.push()
+    dataCNRLbundle.columncodes.push()
+    dataCNRLbundle.prime.push()
+    dataCNRLbundle.resolution.push()
+    dataCNRLbundle.prime.push()
+    dataCNRLbundle.source.push(dataTypePrimary)
+    dataCNRLbundle.input.push(dataTypePrimary)
+  }
+  return dataCNRLbundle
 }
 
 export default CNRLmaster

@@ -91,11 +91,11 @@ ChartSystem.prototype.chartColors = function (datatypeItem) {
   // console.log(datatypeItem)
   let colorHolder = {}
   // LOOP over datatypeList and prepare chart colors
-  if (datatypeItem === 'steps') {
+  if (datatypeItem.text === 'steps') {
     colorHolder.datatype = 'steps'
     colorHolder.backgroundColor = '#203487'
     colorHolder.borderColor = '#050d2d'
-  } else if (datatypeItem === 'bpm') {
+  } else if (datatypeItem.text === 'bpm') {
     colorHolder.datatype = 'bpm'
     colorHolder.backgroundColor = '#ed7d7d'
     colorHolder.borderColor = '#ea1212'
@@ -460,11 +460,11 @@ ChartSystem.prototype.avgchartColors = function (datatypeItem) {
   // console.log(datatypeItem)
   let colorHolder = {}
   // LOOP over datatypeList and prepare chart colors
-  if (datatypeItem === 'average-heartrate') {
+  if (datatypeItem.text === 'average-heartrate') {
     colorHolder.datatype = 'average-heartrate'
     colorHolder.backgroundColor = '#203487'
     colorHolder.borderColor = '#050d2d'
-  } else if (datatypeItem === 'bpm') {
+  } else if (datatypeItem.text === 'bpm') {
     colorHolder.datatype = 'bpm'
     colorHolder.backgroundColor = '#ed7d7d'
     colorHolder.borderColor = '#ea1212'
@@ -593,8 +593,8 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
       }
     }
   }
-  // console.log('average datacollection')
-  // console.log(datacollection)
+  console.log('average datacollection')
+  console.log(datacollection)
   return datacollection
 }
 

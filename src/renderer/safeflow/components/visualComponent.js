@@ -84,7 +84,7 @@ VisualComponent.prototype.chartSystem = function (visIN, wasmIN, liveDate, datat
     for (let avgType of cnrlInfo.prime) {
       console.log('CHARTCOMP1----loop datatypes')
       // console.log(avgType)
-      structureHolder = this.liveChartSystem.structureChartData(avgType, liveDate, timeList, deviceList, visData)
+      structureHolder = this.liveChartSystem.structureChartData(avgType.text, liveDate, timeList, deviceList, visData)
       // console.log('VISUALCOMPONENT2---struectureData')
       // console.log(chartDataB)
       // prepare the colors for the charts
@@ -117,7 +117,7 @@ VisualComponent.prototype.chartSystem = function (visIN, wasmIN, liveDate, datat
     // console.log(datatypeList)
     for (let avgType of cnrlInfo.prime) {
       // call chart stats prep structure info for chart js
-      structureHolder = this.liveChartSystem.structureStatisticsData(liveDate, avgType, deviceList, visData)
+      structureHolder = this.liveChartSystem.structureStatisticsData(liveDate, avgType.text, deviceList, visData)
       let chartColorsSet = localthis.liveChartSystem.avgchartColors(avgType)
       dataTypeBucket.data = structureHolder
       dataTypeBucket.color = chartColorsSet
@@ -135,7 +135,7 @@ VisualComponent.prototype.chartSystem = function (visIN, wasmIN, liveDate, datat
     chartHolder[visIN] = {}
     chartHolder[visIN][liveDate] = chartData
     this.visualData = chartHolder
-    // console.log(this.visualData)
+    console.log(this.visualData)
   }
 }
 

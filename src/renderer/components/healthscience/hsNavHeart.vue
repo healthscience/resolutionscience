@@ -1,6 +1,7 @@
 <template>
   <section class="container">
     <h1>Human -> Body(movement - steps) + Heart</h1>
+    <div id="resolution-set">Resolution: Time {{ resolutionSet }} intervals</div>
     <div class="columns">
       <div id="heart-chart" class="column">
         <ul>
@@ -16,7 +17,7 @@
             <header>DataTypes - </header>
               <ul>
                 <li id="bmp-data-sensor" v-for="sen in sensors">
-		              <a class="" href="" id="bmp-data" @click.prevent="selectContext(sen)" v-bind:class="{ 'active': sen.active}">{{ sen.device_sensorid }}</a>
+		              <a class="" href="" id="bmp-data" @click.prevent="selectContext(sen)" v-bind:class="{ 'active': sen.active}">{{ sen.text }}</a>
                 </li>
               </ul>
           </li>
@@ -35,15 +36,15 @@
               </ul>
           </li>
           <li>
-            <header> Science Computations - </header>
+            <header>Science Computations - </header>
               <ul>
                 <li >
-                  <select v-model="selectedCompute">
-                  <option class="science-compute" v-for="scoption in scoptions" v-bind:value="scoption.value">
+                  <select v-model="selectedCompute" @change="updateSciDTs(selectedCompute)">
+                  <option class="science-compute" v-for="scoption in scoptions" v-bind:value="scoption.cid">
                     {{ scoption.text }}
                   </option>
                 </select>
-                <!--<span>Selected: {{ selected }}</span>-->
+                <!--<span>Selected: {{ selectedCompute }}</span>-->
                 </li>
               </ul>
           </li>
@@ -61,7 +62,6 @@
             <h3></h3>
             <div>
               <div id="chart-message">{{ chartmessage }}</div>
-              <div id="chart-message">{{ chartmessageS }}</div>
               <div id="close-average">
                 <button id="close-report" @click.prevent="closeAvgSummary()">Finsish & Close</button>
               </div>
@@ -181,6 +181,7 @@
         datacollection: null,
         datastatistics: null,
         selectedCompute: 'A',
+        keyC: {},
         scoptions: [],
         options: {},
         tools:
@@ -197,6 +198,9 @@
         colorlineback: '',
         devices: [],
         sensors: [],
+        resolution: [],
+        resolutionSet: '',
+        sciencedataMapping: {},
         analysisStart: 0,
         analysisEnd: 0,
         vis1:
@@ -224,7 +228,6 @@
           active: false
         },
         chartmessage: 'Select time',
-        chartmessageS: 'Select time',
         activedevice: [],
         activesensor: [],
         activeEntity: 'cnrl-2356388731',
@@ -256,7 +259,6 @@
     created () {
       this.setAccess()
       this.setFirstEntity()
-      // this.chartOptionsSet()
     },
     methods: {
       setAccess () {
@@ -267,6 +269,7 @@
         this.scienceContext()
         this.deviceContext()
         this.dataType()
+        this.resoutionType()
       },
       scienceContext () {
         // set the first science priority on start of RS
@@ -300,11 +303,15 @@
         const datatypeSet = localthis.$store.getters.liveContext.datatype
         // has the device context been set already?
         if (datatypeSet.length > 1) {
-          localthis.sensors = datatypeSet
+          localthis.sciencedataMapping[localthis.activeEntity] = datatypeSet
+          localthis.sensors = localthis.sciencedataMapping[localthis.activeEntity]
         } else {
           const flag = 'datatype'
           this.liveSafeFlow.toolkitContext(flag, callbackT)
         }
+      },
+      resoutionType () {
+        this.resolutionSet = '60 seconds'
       },
       getAverages (max) {
         var newAHR = 72 // Math.floor(Math.random() * Math.floor(max))
@@ -321,6 +328,20 @@
       },
       selectContext (s) {
         s.active = !s.active
+      },
+      updateSciDTs (sciDTin) {
+        console.log('science has changed')
+        // console.log(sciDTin)
+        // console.log(this.science)
+        // console.log(this.activeEntity)
+        this.activeEntity = sciDTin
+        // use cid to look up datatype for this scienceEntities
+        let sciDTypes = this.liveSafeFlow.cnrlLookup(sciDTin)
+        // console.log(sciDTypes)
+        this.sensors = sciDTypes.prime
+        this.resolutionSet = sciDTypes.resolution[0].text
+        this.$store.commit('setDatatype', sciDTypes.prime)
+        this.$store.commit('setResolutiontype', sciDTypes.resolution)
       },
       selectVis (visIN) {
         // visIN.active = !visIN.active
@@ -368,6 +389,7 @@
       },
       filterSensorActive () {
         this.activesensor = []
+        console.log(this.sensors)
         for (let sact of this.sensors) {
           if (sact.active === true) {
             this.activesensor.push(sact.compref)
@@ -420,7 +442,7 @@
         }) */
         // console.log(this.analysisStart)
         // console.log(this.analysisEnd)
-        let computationSMid = this.filterCompute(computeSelected)
+        let computationSMid = computeSelected // this.filterCompute(computeSelected)
         // console.log(computationSMid)
         if (computationSMid === 'cnrl-2356388733') {
           this.$store.commit('setScience', this.scoptions[2])
@@ -458,13 +480,17 @@
         await this.liveSafeFlow.scienceEntities(seg, this.context).then(function (entityData) {
           localthis.liveSafeFlow.entityGetter(localthis.activeEntity, localthis.activevis).then(function (eData) {
             console.log('VUE---return getter data')
-            console.log(eData)
+            console.log(eData.chartMessage)
             console.log(localthis.activevis)
             if (localthis.activevis === 'vis-sc-1') {
               console.log('chartjs')
-              localthis.options = eData.options
-              localthis.datacollection = eData.prepared
-              localthis.liveTime = eData.livetime
+              if (eData.chartMessage === 'computation in progress') {
+                localthis.chartmessage = eData.chartMessage
+              } else {
+                localthis.options = eData.options
+                localthis.datacollection = eData.prepared
+                localthis.liveTime = eData.livetime
+              }
               // console.log(localthis.datacollection)
             } else if (localthis.activevis === 'vis-sc-2') {
               console.log('tablejs')

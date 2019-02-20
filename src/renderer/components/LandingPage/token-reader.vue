@@ -106,6 +106,7 @@
         // make call to set start dataType for the device sensors
         var localthis = this
         function callbackT (dataH) {
+          console.log(dataH)
           localthis.sensors = dataH
           localthis.$store.commit('setDatatype', dataH)
         }

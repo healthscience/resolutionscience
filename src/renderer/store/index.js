@@ -44,6 +44,9 @@ export default new Vuex.Store({
     setDatatype: (state, inVerified) => {
       state.context.datatype = inVerified
     },
+    setResolutiontype: (state, inVerified) => {
+      state.context.resolution = inVerified
+    },
     setVisual: (state, inVerified) => {
       state.context.vis = inVerified
     },

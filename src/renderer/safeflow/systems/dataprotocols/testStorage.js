@@ -115,15 +115,15 @@ TestStorageAPI.prototype.getAverageData = async function (queryTime, deviceID, c
 * @method saveaverageData
 *
 */
-TestStorageAPI.prototype.saveaverageData = async function (startDate, device, avgType, count, tidy, average) {
-  // need source, devices, data
+TestStorageAPI.prototype.saveaverageData = async function (startDate, device, avgType, count, tidy, dataTypeIN, result) {
   console.log('saving average hr data')
   // prepare JSON object for POST
   let saveJSON = {}
   saveJSON.publickey = this.tempPubkey
   saveJSON.timestamp = startDate
   saveJSON.compref = avgType
-  saveJSON.average = average
+  saveJSON.datatype = dataTypeIN
+  saveJSON.value = result
   saveJSON.device_mac = device
   saveJSON.clean = count
   saveJSON.tidy = tidy

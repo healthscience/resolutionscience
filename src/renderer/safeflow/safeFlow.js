@@ -94,13 +94,20 @@ safeFlow.prototype.entityChartGetter = async function (eid) {
 */
 safeFlow.prototype.toolkitContext = async function (flag, callBK) {
   // first time start of device, datatype context for toolkitContext
+  const localthis = this
   if (flag === 'device') {
     await this.liveDataSystem.systemDevice(callBK).then(function (result) {
     })
   } else if (flag === 'dataType') {
-    await this.liveDataSystem.getDataTypes(callBK).then(function (result) {
+    await this.liveDataSystem.getDataTypes().then(function (result) {
+      // convert sensor names to datatypes
+      let startDatatypes = localthis.liveCNRL.sensorMappingDatatype(result)
+      // console.log(startDatatypes)
+      callBK(startDatatypes)
+      return true
     })
   }
+  return true
 }
 
 /**
@@ -111,6 +118,16 @@ safeFlow.prototype.toolkitContext = async function (flag, callBK) {
 safeFlow.prototype.cnrlScienceStart = function () {
   let startScience = this.liveCNRL.scienceOnNetwork()
   return startScience
+}
+
+/**
+* call the CNRL and return data types for this science
+* @method cnrlLookup
+*
+*/
+safeFlow.prototype.cnrlLookup = function (cid) {
+  let sciDatatypes = this.liveCNRL.lookupContract(cid)
+  return sciDatatypes
 }
 
 export default safeFlow

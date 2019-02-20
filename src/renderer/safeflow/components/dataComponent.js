@@ -16,7 +16,7 @@ const events = require('events')
 var DataComponent = function (DID, setIN) {
   events.EventEmitter.call(this)
   this.did = DID
-  this.livedate = ''
+  this.livedate = this.did.timeperiod
   this.liveDatatype = ''
   this.liveDataSystem = new DataSystem(setIN)
   this.timeList = []
@@ -100,7 +100,8 @@ DataComponent.prototype.RawData = async function () {
   // console.log(systemBundle)
   // console.log(systemBundle.dtAsked[0])
   // need to match dataTypeAsked to right API call
-  if (systemBundle.dtAsked[0] === 'bpm') {
+  console.log(systemBundle.dtAsked)
+  if (systemBundle.dtAsked[0].text === 'bpm') {
     await this.liveDataSystem.getRawData(systemBundle).then(function (rawData) {
       const rawHolder = {}
       rawHolder[localthis.livedate] = rawData
@@ -109,14 +110,14 @@ DataComponent.prototype.RawData = async function () {
       // console.log(localthis.dataRaw)
       return true
     })
-  } else if (systemBundle.dtAsked[0] === 'average-heartrate') {
+  } else if (systemBundle.dtAsked[0].text === 'average-heartrate') {
     console.log('DATACOMPOENT1--ANY EXISTING AVERAGE QUERY')
-    await this.liveDataSystem.getRawStatsData(systemBundle, 'wasm-sc-2').then(function (rawData) {
+    await this.liveDataSystem.getRawStatsData(systemBundle, 'cnrl-2356388732').then(function (rawData) {
       const rawHolder = {}
       rawHolder[localthis.livedate] = rawData
       localthis.dataRaw.push(rawHolder)
       rawData = {}
-      // console.log(localthis.dataRaw)
+      console.log(localthis.dataRaw)
       return true
     })
   } else if (this.datatypes[0][0] === 'recovery-heartrate') {

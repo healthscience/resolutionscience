@@ -87,13 +87,12 @@ DataSystem.prototype.systemDevice = async function (callbackC) {
 * @method getDataTypes
 *
 */
-DataSystem.prototype.getDataTypes = async function (callbackC) {
-  let localthis = this
+DataSystem.prototype.getDataTypes = async function () {
+  let dataTypeSensor = []
   await this.liveTestStorage.getContextType().then(function (result) {
-    // console.log(result)
-    localthis.activeDatatypes = result
-    callbackC(result)
+    dataTypeSensor = result
   })
+  return dataTypeSensor
 }
 
 /**

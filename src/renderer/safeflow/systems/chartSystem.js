@@ -429,8 +429,8 @@ ChartSystem.prototype.newDateEnd = function (endTimeIN) {
 */
 ChartSystem.prototype.structureStatisticsData = function (liveDate, dataType, deviceList, dataIn) {
   this.options = this.AverageChartOptions()
-  // console.log('STRUCTURE AVERAGE CHART DATA1')
-  // console.log(dataIn)
+  console.log('STRUCTURE AVERAGE CHART DATA1')
+  console.log(dataIn)
   let dataholder = {}
   let datalabel = []
   let dataheart = []
@@ -438,9 +438,10 @@ ChartSystem.prototype.structureStatisticsData = function (liveDate, dataType, de
   for (let device of deviceList) {
     for (let entry of dataIn[0][liveDate][device]) {
       // console.log(entry)
-      let mString = moment(entry.timestamp * 1000).toDate() // .format('YYYY-MM-DD hh:mm')
+      let millTimeprepare = entry.timestamp * 1000
+      let mString = moment(millTimeprepare).toDate() // .format('YYYY-MM-DD hh:mm')
       datalabel.push(mString)
-      dataheart.push(entry.average)
+      dataheart.push(entry.value)
     }
   }
   dataholder.labels = datalabel
@@ -481,7 +482,7 @@ ChartSystem.prototype.avgchartColors = function (datatypeItem) {
 ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
   // need to prepare different visualisations, data return will fit only one select option
   console.log('PREPARE STATS CHARTJS-- START')
-  // console.log(results)
+  console.log(results)
   var localthis = this
   let datacollection = {}
   this.labelback = []
@@ -614,6 +615,21 @@ ChartSystem.prototype.AverageChartOptions = function () {
       text: 'Averages Per Device'
     },
     scales: {
+      xAxes: [{
+        display: true,
+        barPercentage: 0.2,
+        type: 'time',
+        time: {
+          format: 'YYYY-MM-DD hh:mm',
+          // round: 'day'
+          tooltipFormat: 'll HH:mm'
+        },
+        position: 'bottom',
+        ticks: {
+          maxRotation: 75,
+          reverse: true
+        }
+      }],
       yAxes: [{
         type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
         display: true,

@@ -22,7 +22,7 @@ var ComputeSystem = function (setIN) {
   this.liveTestStorage = new TestStorageAPI(setIN)
   this.liveStatistics = new StatisticsSystem(setIN)
   this.liveRecoveryHR = new RecoveryHeartrate(setIN)
-  this.lastComputeTime = ''
+  this.lastComputeTime = {}
 }
 
 /**
@@ -36,31 +36,55 @@ util.inherits(ComputeSystem, events.EventEmitter)
 * @method computationSystem
 *
 */
-ComputeSystem.prototype.computationSystem = function (compInfo, liveTime, deviceList, cnrlInfo, rawIN) {
+ComputeSystem.prototype.computationSystem = async function (compInfo, deviceList, cnrlInfo, rawIN) {
   // match computation to approprate verified compute need LOADER to add what WASM is being used/required
+  const localthis = this
+  let stateHolder = {}
+  let timeStart = {}
+  let updateStatus = true
+  console.log('COMPUTESYSTEM1--start')
+  console.log(compInfo)
   console.log(this.lastComputeTime)
   compInfo.lastComputeTime = this.lastComputeTime
-  let updateStatus
   if (compInfo.wasmID === 'wasm-sc-2' && compInfo.status === false) {
-    console.log('average statistics computations')
+    console.log('COMPSYS2-average statistics computations')
     // look at last date compare and then flag if require further updated compute?
-    updateStatus = this.updatedComputeStatus(compInfo, rawIN, deviceList, liveTime)
-  } else if (compInfo.wasmID === 'wasm-sc-2' && compInfo.status === true) {
-    console.log('STARTUPDATE compute for this' + compInfo.wasmID)
-    let computeDates = this.updateComputeDates(compInfo, liveTime)
-    for (let dvc of deviceList) {
-      console.log(computeDates)
-      console.log(dvc)
-      this.liveStatistics.prepareAvgCompute(computeDates, dvc)
+    timeStart = await this.updatedComputeStatus(compInfo, rawIN, deviceList)
+    console.log('COMPSYS2-RETURN')
+    console.log(timeStart)
+    updateStatus = timeStart
+    if (timeStart.status === 'update-start-required') {
+      //  need to query source datatype to get start date
+      let statusTime = await this.sourceDTstartTime(deviceList)
+      console.log('start dates finished')
+      console.log(statusTime)
+      localthis.lastComputeTime = statusTime
+    } else {
+      console.log('return compute status complete')
     }
-    updateStatus = 'uptodate'
+  } else if (compInfo.wasmID === 'wasm-sc-2' && compInfo.status === true) {
+    console.log('COMPSYS3-STARTUPDATE' + compInfo.wasmID)
+    console.log(compInfo)
+    for (let dvc of deviceList) {
+      let computeDates = this.updateComputeDates(compInfo.lastComputeTime[dvc], compInfo.liveTime)
+      let computeStatus = await localthis.liveStatistics.prepareAvgCompute(computeDates, dvc)
+      console.log('COMPSYS3a--AVERAGE FINISHED')
+      updateStatus = computeStatus
+    }
   } else if (compInfo.wasmID === 'wasm-sc-3') {
-    console.log('recovery heart rate')
-    let computeDates = this.updateComputeDates(compInfo, liveTime)
-    console.log(computeDates)
+    console.log('COMPSYS4--start HRC')
+    // need to loop over per devices
+    // let computeDates = this.updateComputeDates(compInfo.lastComputeTime[dev], compInfo.liveTime)
+    // console.log(computeDates)
     // this.liveRecoveryHR.prepareRecoveryCompute()
+    // return updateStatus
   }
-  return updateStatus
+  stateHolder.status = updateStatus
+  stateHolder.timeStart = this.lastComputeTime
+  stateHolder.lastComputeTime = timeStart.lastComputeTime
+  console.log('holder status and firsttime')
+  console.log(stateHolder)
+  return stateHolder
 }
 
 /**
@@ -77,31 +101,56 @@ ComputeSystem.prototype.verifyComputeWASM = function (wasmFile) {
 * @method updatedComputeStatus
 *
 */
-ComputeSystem.prototype.updatedComputeStatus = async function (compInfo, rawIN, deviceList, liveTime) {
-  console.log('status of compute??')
-  // console.log(compInfo)
-  const localthis = this
+ComputeSystem.prototype.updatedComputeStatus = async function (compInfo, rawIN, deviceList) {
+  let statusHolder = {}
+  let updateCompStatus = ''
+  console.log(compInfo)
+  console.log(rawIN[0])
+  console.log(rawIN[0][compInfo.liveTime])
+  let liveTime = compInfo.liveTime * 1000
+  let liveLastTime = 0
+  console.log(liveTime)
   for (let dev of deviceList) {
-    // console.log('loop device--status')
-    // console.log(dev)
-    let lastComputetime = rawIN[0][liveTime][dev].slice(-1)
-    // console.log(lastComputetime)
+    let lastComputetime = rawIN[0][compInfo.liveTime][dev].slice(-1)
+    console.log(lastComputetime)
+    if (lastComputetime.length > 0) {
+      liveLastTime = lastComputetime[0].timestamp * 1000
+    }
     if (lastComputetime.length === 0) {
-      await this.checkForDataPerDevice(dev).then(function (firstDataTime) {
-        console.log('first data date----')
-        console.log(firstDataTime)
-        localthis.lastComputeTime = firstDataTime[0].lastComputeTime
-      })
-      return 'update-required'
-    } else if (lastComputetime < liveTime) {
-      // console.log('uptodate')
-      this.lastComputeTime = lastComputetime[0].timestamp
-      return 'uptodate'
+      console.log('update length === 0???')
+      updateCompStatus = 'update-start-required'
+    } else if (liveLastTime < liveTime) {
+      console.log(liveLastTime)
+      console.log('some data but more updating required')
+      this.lastComputeTime[dev] = lastComputetime[0].timestamp
+      updateCompStatus = 'update-required'
     } else {
-      // console.log('NOTuptodate')
-      return 'update-required'
+      console.log('uptodate computation')
+      updateCompStatus = 'update'
     }
   }
+  statusHolder.lastComputeTime = this.lastComputeTime
+  statusHolder.status = updateCompStatus
+  console.log(statusHolder)
+  return statusHolder
+}
+
+/**
+* query source datatype for a starting time stamp
+* @method sourceDTstartTime
+*
+*/
+ComputeSystem.prototype.sourceDTstartTime = async function (devList) {
+  let timeDevHolder = {}
+  for (let dev of devList) {
+    let dateDevice = await this.checkForDataPerDevice(dev)
+    console.log('first data date----')
+    console.log(dateDevice)
+    console.log(dateDevice[0])
+    console.log(dateDevice[0].lastComputeTime)
+    timeDevHolder[dev] = dateDevice[0].lastComputeTime
+  }
+  return timeDevHolder
 }
 
 /**
@@ -109,14 +158,13 @@ ComputeSystem.prototype.updatedComputeStatus = async function (compInfo, rawIN, 
 * @method updateComputeDates
 *
 */
-ComputeSystem.prototype.updateComputeDates = function (compInfo, liveTime) {
+ComputeSystem.prototype.updateComputeDates = function (lastCompTime, liveTime) {
   console.log('UPATE DATE----RANGE')
-  console.log(compInfo)
+  console.log(lastCompTime)
   console.log(liveTime)
-  let firstDataTime = compInfo.lastComputeTime
   let computeList = []
   const liveDate = liveTime * 1000
-  const lastComputeDate = firstDataTime * 1000
+  const lastComputeDate = lastCompTime * 1000
   // use time utiity to form array fo dates require
   computeList = this.liveTimeUtil.timeArrayBuilder(liveDate, lastComputeDate)
   console.log(computeList)
@@ -149,7 +197,8 @@ ComputeSystem.prototype.checkForData = function (cid, timePeriod) {
 *
 */
 ComputeSystem.prototype.checkForDataPerDevice = async function (device) {
-  console.log('check timePeriod PER DEVICE data?????')
+  console.log('timePeriod PER DEVICE')
+  console.log(device)
   let deviceStatus = {}
   let dataStatus = []
   // does any input source data exist?
@@ -160,10 +209,10 @@ ComputeSystem.prototype.checkForDataPerDevice = async function (device) {
     deviceStatus.lastComputeTime = firstD[0].timestamp
     deviceStatus[device] = false
     dataStatus.push(deviceStatus)
+    console.log('EXIT OF START-PerDEVICE')
   }).catch(function (err) {
     console.log(err)
   })
-  console.log('EXIT OF START-PerDEVICE')
   return dataStatus
 }
 

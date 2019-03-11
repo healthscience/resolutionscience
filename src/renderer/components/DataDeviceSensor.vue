@@ -46,10 +46,10 @@
 </template>
 
 <script>
+  import fs from 'fs'
   import TokenReader from './LandingPage/token-reader.vue'
   import FirstToken from './LandingPage/token-first.vue'
   import deviceList from './healthscience/deviceData.vue'
-  import fs from 'fs'
 
   export default {
     name: 'data-page',
@@ -61,10 +61,10 @@
     data: () => ({
       viewPkey: false,
       firstTimetokenseen: false,
-      repeatTimetokenseen: false
+      repeatTimetokenseen: true
     }),
     created () {
-      this.checkforToken()
+      // this.checkforToken()
     },
     methods: {
       checkforToken () {

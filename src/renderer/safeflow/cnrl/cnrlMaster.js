@@ -59,7 +59,7 @@ CNRLmaster.prototype.cnrlNetworkDatatypes = function () {
 *
 */
 CNRLmaster.prototype.lookupContract = function (refIN) {
-  console.log('CRNL----lookup')
+  // console.log('CRNL----lookup')
   // if contract has links, follow those to source TODO
   let dataCNRLbundle = {}
   dataCNRLbundle.prime = []
@@ -222,6 +222,28 @@ CNRLmaster.prototype.sensorSource = function (refIN) {
     dataCNRLbundle.source.push(dataTypePrimary)
     dataCNRLbundle.input.push(dataTypePrimary)
   }
+  return dataCNRLbundle
+}
+
+/**
+*  mock up of semantic / ontology describing knowledge
+* @method semanticKnowledge
+*
+*/
+CNRLmaster.prototype.semanticKnowledge = function (refIN) {
+  console.log('CRNL----lookup knowledge context')
+  // if contract has links, follow those to source TODO
+  let dataCNRLbundle = {}
+  dataCNRLbundle.prime = ['life', 'human', 'body', 'movement', 'activity', 'steps']
+  dataCNRLbundle.science = ['science', 'mathematics', 'statistics', 'mean', 'mode', 'median']
+  dataCNRLbundle.resolution = []
+  dataCNRLbundle.source = []
+  dataCNRLbundle.input = []
+  dataCNRLbundle.tidy = false
+  dataCNRLbundle.tidyList = []
+  dataCNRLbundle.tableStructure = []
+  dataCNRLbundle.mobilesource = ''
+  dataCNRLbundle.columncodes = []
   return dataCNRLbundle
 }
 

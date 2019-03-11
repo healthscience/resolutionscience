@@ -42,32 +42,29 @@ StatisticsSystem.prototype.statisticsSystem = function () {
 */
 StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, device) {
   console.log('prepare avg. compute START')
-  console.log(computeTimes)
-  console.log(device)
   let localthis = this
   // build date array for year
-  let yearArray = computeTimes // this.liveTimeUtil.calendarUtility(startDate)
-  // console.log(yearArray)
+  let yearArray = computeTimes
   this.dayCounter = 0
   // loop over all months
   for (let scMonth of yearArray) {
     let daysInmonth = scMonth.dayCount
     let accDaily = 0
-    let millsSecDay = 86400
+    let millsSecDay = 86400000
     localthis.dayCounter = scMonth.longDateformat
     while (accDaily < daysInmonth) {
-      let queryTime = localthis.dayCounter
+      let queryTime = localthis.dayCounter / 1000
       await localthis.liveTestStorage.getComputeData(queryTime, device).then(function (dataBatch) {
-        console.log('compute data RETURNED')
-        console.log(dataBatch.length)
         if (dataBatch.length > 0) {
           localthis.tidySinglearray(localthis.dayCounter, device, 'cnrl-2356388732', dataBatch)
         }
         localthis.dayCounter = localthis.dayCounter + millsSecDay
+        console.log(localthis.dayCounter)
         accDaily++
       })
     }
   }
+  return true
 }
 
 /**
@@ -81,13 +78,15 @@ StatisticsSystem.prototype.tidySinglearray = async function (startDate, device, 
   let singleArray = []
   let tidyCount = 0
   for (let sing of arrBatchobj) {
-    if (sing.heart_rate !== 255 || sing.heart_rate !== 0 || sing.heart_rate !== -1) {
-      singleArray.push(sing.heart_rate)
+    let intHR = parseInt(sing.heart_rate, 10)
+    if (intHR !== 255 && intHR > 0) {
+      singleArray.push(intHR)
     } else {
       tidyCount++
     }
   }
   await this.averageStatistics(startDate, device, avgType, singleArray, tidyCount)
+  return true
 }
 
 /**
@@ -107,9 +106,9 @@ StatisticsSystem.prototype.averageStatistics = async function (startDate, device
   let averageResult = sum / numberEntries
   let roundAverage = Math.round(averageResult)
   // where to save
-  await this.liveTestStorage.saveaverageData(startDate, device, avgType, numberEntries, tidyCount, 'average-heartrate', roundAverage).then(function () {
-    // return true
-  })
+  let saveTime = startDate / 1000
+  await this.liveTestStorage.saveaverageData(saveTime, device, avgType, numberEntries, tidyCount, 'average-heartrate', roundAverage)
+  return true
 }
 
 /**
@@ -124,41 +123,6 @@ StatisticsSystem.prototype.dataErrorAnalysis = function (dataDay) {
   let dataErrorDifference = dataExpectedBPM - actutalDataBMP
 
   return dataErrorDifference
-}
-
-/**
-* prepare average HR and steps and error statistics
-* @method prepareAverageStatistics
-*
-*/
-StatisticsSystem.prototype.prepareAverageStatistics = async function (compType, device) {
-  /* let localthis = this
-  let startDate = 0
-  // verify wasm file and read CNRL information
-  // when was the last average calculated? - query avg. data or if null the first date of data type saved
-  // get the existing average dataArray
-  await this.liveTestStorage.getAverageData(0, device, compType).then(function (avgData) {
-    // order to get last entry, extract dataExpectedBPM
-    if (avgData.length === 0) {
-      // no data, first time use. find first data entry dataExpectedBPM
-      localthis.liveTestStorage.getData(0, device, compType).then(function (deviceData) {
-        console.log('start date')
-        console.log(deviceData)
-        if (deviceData[0].dataraw === 'none') {
-          startDate = 0
-          localthis.prepareAvgCompute(startDate, compType, device)
-        } else {
-          startDate = deviceData[0].timestamp
-          localthis.prepareAvgCompute(startDate, compType, device)
-        }
-      })
-    } else {
-      // find last average compute
-      console.log('existing averages exist')
-      const lastAvgCdate = avgData.slice(-1)[0]
-      localthis.prepareAvgCompute(lastAvgCdate, compType, device)
-    }
-  }) */
 }
 
 export default StatisticsSystem

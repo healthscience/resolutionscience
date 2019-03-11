@@ -56,9 +56,10 @@ safeFlow.prototype.scienceEntities = async function (segT, inputInfo) {
   // need to first check if this entity already formed???
   // console.log('SAFEFLOW0----BEFOREadd')
   await this.liveEManager.addScienceEntity(segT, inputInfo, this.settings).then(function (bk) {
+    console.log('SAFEFLOW-new entitycomplete')
     console.log(bk)
+    return true
   })
-  return true
 }
 
 /**

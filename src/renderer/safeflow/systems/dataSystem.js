@@ -101,7 +101,7 @@ DataSystem.prototype.getDataTypes = async function () {
 *
 */
 DataSystem.prototype.getLiveDatatypes = function (dtIN) {
-  console.log('start of Live datastype forming')
+  console.log('LIVE-datatypes')
   // console.log(dtIN)
   let liveDTs = []
   for (let dt of dtIN) {
@@ -229,7 +229,7 @@ DataSystem.prototype.getRawStatsData = async function (bundleIN, dtAsked) {
       console.log('returned average data')
       localthis.StatsForUI[di] = statsData
       statsData = []
-      console.log(statsData)
+      console.log(localthis.StatsForUI)
     }).catch(function (err) {
       console.log(err)
     })
@@ -300,93 +300,4 @@ DataSystem.prototype.chunkUtilty = function (dataIn) {
   return resultArrayHolder
 }
 
-/**
-*  call the API for all the data requested
-* @method dataCallprep
-*
-*/
-DataSystem.prototype.dataCallprep = async function () {
-  /* let dataChunks = []
-  let structureReturn
-  if (startMode === 1) {
-    // first time launch prepare data and await event call from UI
-    let tempDevice = this.activeContext
-    // sensor active and matched to dataType
-    let tempSensor = localthis.activeDatatypes // ['heartchain/heart/bpm/', 'heartchain/heart/activity/steps/']
-    tempDevice.forEach(async function (iDevice) {
-      localthis.liveTestStorage.getData(seg, iDevice.device_mac).then(function (result) {
-        dataChunks = []
-        // Do something with result.
-        if (result.length > 1) {
-          let chunkData = localthis.chunkUtilty(result)
-          chunkData[0].forEach(function (couple) {
-            var mString = moment(couple.timestamp * 1000).toDate() // .format('YYYY-MM-DD hh:mm')
-            dataChunks.push([couple.heart_rate, mString, couple.compref, couple.device_id, couple.publickey, couple.steps])
-          })
-          //  loop over all (or top used visualisations)
-          tempSensor.forEach(function (iType) {
-            if (iType.compref === 'heartchain/heart/bpm') {
-              let dataMTypes = localthis.dataMatchtypes(iDevice, 'heartchain/heart/bpm')
-              //  need to pass to Tidy data before returning
-              let tidyData = localthis.tidyHeart(dataChunks)
-              // what data structure was asked for?
-              structureReturn = localthis.structureData('chartjs', dataMTypes, tidyData, iType.compref)
-              // set the Data holder
-              let tempType = iType.compref
-              let tempHolder = {}
-              tempHolder.time = seg
-              tempHolder.dataType = tempType
-              tempHolder.datalive = chunkData
-              tempHolder.visPrepared = structureReturn
-              localthis.liveData[iDevice.device_mac] = {}
-              localthis.liveData[iDevice.device_mac][tempType] = {}
-              localthis.liveData[iDevice.device_mac][tempType] = tempHolder
-            }
-          })
-        }
-      })
-    })
-  } else {
-    // first check if data is live in network already?
-    let dataVueback = []
-    // filter for back or forward one days
-    // console.log(localthis.liveData[device])
-    if (localthis.liveData[device].hasOwnProperty(sensor) && seg !== -1 && seg !== -2) {
-      // no need to call for external data reference live data
-      return localthis.liveData[device][sensor].visPrepared
-    } else {
-      // if not make fresh data call from source
-      let dataTypes = localthis.dataMatchtypes(device, sensor)
-      let startDay = localthis.liveTimeUtil.timeUtility(seg)
-      await localthis.liveTestStorage.getComputeData(startDay, device).then(function (result) {
-        // Do something with result.
-        if (result.length > 0) {
-          let chunkData = localthis.chunkUtilty(result)
-          chunkData[0].forEach(function (couple) {
-            var mString = moment(couple.timestamp * 1000).toDate()
-            dataChunks.push([couple.heart_rate, mString, couple.compref, couple.device_mac, couple.publickey, couple.steps])
-          })
-        }
-        //  what type of data is asked for?
-        if (dataChunks.length > 0) {
-          if (sensor === 'heartchain/heart/bpm') {
-            //  need to pass to Tidy data before returning
-            let tidyData = localthis.tidyHeart(dataChunks)
-            // what data structure was asked for?
-            dataVueback = localthis.structureData('chartjs', dataTypes, tidyData, sensor)
-          } else if (sensor === 'heartchain/heart/activity/steps') {
-            //  need to pass to Tidy data before returning
-            let tidyData = localthis.tidyActivity(dataChunks)
-            // what data structure was asked for?
-            dataVueback = localthis.structureData('chartjs', dataTypes, tidyData, sensor)
-          }
-        } else {
-          structureReturn = 'no data'
-          return structureReturn
-        }
-      })
-      return dataVueback
-    }
-  } */
-}
 export default DataSystem

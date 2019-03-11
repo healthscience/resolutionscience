@@ -100,7 +100,7 @@ DataComponent.prototype.RawData = async function () {
   // console.log(systemBundle)
   // console.log(systemBundle.dtAsked[0])
   // need to match dataTypeAsked to right API call
-  console.log(systemBundle.dtAsked)
+  // console.log(systemBundle.dtAsked)
   if (systemBundle.dtAsked[0].text === 'bpm') {
     await this.liveDataSystem.getRawData(systemBundle).then(function (rawData) {
       const rawHolder = {}
@@ -117,6 +117,7 @@ DataComponent.prototype.RawData = async function () {
       rawHolder[localthis.livedate] = rawData
       localthis.dataRaw.push(rawHolder)
       rawData = {}
+      console.log('raw stats data returned')
       console.log(localthis.dataRaw)
       return true
     })
@@ -130,6 +131,7 @@ DataComponent.prototype.RawData = async function () {
     })
     return true */
   }
+  return true
 }
 
 /**

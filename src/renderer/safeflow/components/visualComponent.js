@@ -34,7 +34,7 @@ util.inherits(VisualComponent, events.EventEmitter)
 
 /**
 *
-* @method filterVisual
+* @method setVisLive
 *
 */
 VisualComponent.prototype.setVisLive = function () {
@@ -48,7 +48,7 @@ VisualComponent.prototype.setVisLive = function () {
 * @method filterVisual
 *
 */
-VisualComponent.prototype.filterVisual = async function (visIN, wasmID, liveDate, datatypeList, cnrlInfo, timeList, deviceList, visData) {
+VisualComponent.prototype.filterVisual = function (visIN, wasmID, liveDate, datatypeList, cnrlInfo, timeList, deviceList, visData) {
   // build array of visualation modules and match to one asked for
   // which of three types of visualisations?
   if (visIN === 'vis-sc-1') {
@@ -61,6 +61,7 @@ VisualComponent.prototype.filterVisual = async function (visIN, wasmID, liveDate
     console.log('simulation asked for')
     // this.simSystem()
   }
+  return true
 }
 
 /**
@@ -70,7 +71,11 @@ VisualComponent.prototype.filterVisual = async function (visIN, wasmID, liveDate
 */
 VisualComponent.prototype.chartSystem = function (visIN, wasmIN, liveDate, datatypeList, cnrlInfo, timeList, deviceList, visData) {
   console.log('VISCOMP==CHARTSYTSEM START1')
-  // console.log(cnrlInfo)
+  console.log(cnrlInfo)
+  console.log(wasmIN)
+  console.log(liveDate)
+  console.log(datatypeList)
+  console.log(visIN)
   var localthis = this
   let structureHolder = {}
   let chartData = {}
@@ -110,7 +115,6 @@ VisualComponent.prototype.chartSystem = function (visIN, wasmIN, liveDate, datat
     chartHolder[visIN] = {}
     chartHolder[visIN][liveDate] = chartData
     this.visualData = chartHolder
-    return true
   } else if (wasmIN === 'wasm-sc-2') {
     console.log('average Chart Start')
     // console.log(visData)
@@ -121,8 +125,8 @@ VisualComponent.prototype.chartSystem = function (visIN, wasmIN, liveDate, datat
       let chartColorsSet = localthis.liveChartSystem.avgchartColors(avgType)
       dataTypeBucket.data = structureHolder
       dataTypeBucket.color = chartColorsSet
-      // console.log('VISUALCOMPONENT2a---avg struct colors')
-      // console.log(dataTypeBucket)
+      console.log('VISUALCOMPONENT2a---avg bucket')
+      console.log(dataTypeBucket)
       chartDataH.chart.push(dataTypeBucket)
       structureHolder = {}
       dataTypeBucket = {}
@@ -137,6 +141,7 @@ VisualComponent.prototype.chartSystem = function (visIN, wasmIN, liveDate, datat
     this.visualData = chartHolder
     console.log(this.visualData)
   }
+  return true
 }
 
 /**

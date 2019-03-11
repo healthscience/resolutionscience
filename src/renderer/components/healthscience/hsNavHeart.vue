@@ -389,7 +389,7 @@
       },
       filterSensorActive () {
         this.activesensor = []
-        console.log(this.sensors)
+        // console.log(this.sensors)
         for (let sact of this.sensors) {
           if (sact.active === true) {
             this.activesensor.push(sact.compref)
@@ -430,7 +430,7 @@
         // pass to computations system
         // var localthis = this
         let computeSelected = this.selectedCompute
-        console.log(computeSelected)
+        // console.log(computeSelected)
         // need to ask for start end market info, from Entity
         /* this.liveSafeFlow.entityChartGetter('wasm-sc-1').then(function (eData) {
           localthis.analysisStart = eData.liveChartSystem.analysisStart
@@ -475,18 +475,24 @@
         this.filterDeviceActive()
         this.filterSensorActive()
         this.filterVisActive()
-        console.log('CCCOONNNTETEEXXXX')
-        console.log(this.context)
+        // console.log('CCCOONNNTETEEXXXX')
+        // console.log(this.context)
         await this.liveSafeFlow.scienceEntities(seg, this.context).then(function (entityData) {
           localthis.liveSafeFlow.entityGetter(localthis.activeEntity, localthis.activevis).then(function (eData) {
             console.log('VUE---return getter data')
+            console.log(eData)
             console.log(eData.chartMessage)
             console.log(localthis.activevis)
             if (localthis.activevis === 'vis-sc-1') {
               console.log('chartjs')
               if (eData.chartMessage === 'computation in progress') {
+                console.log('chartjs--ongoing computation')
                 localthis.chartmessage = eData.chartMessage
+                localthis.options = eData.chartPackage.options
+                localthis.datacollection = eData.chartPackage.prepared
+                localthis.liveTime = eData.chartPackage.livetime
               } else {
+                console.log('chartjs-- uptodate finised')
                 localthis.options = eData.options
                 localthis.datacollection = eData.prepared
                 localthis.liveTime = eData.livetime

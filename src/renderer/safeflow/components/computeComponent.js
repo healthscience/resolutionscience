@@ -32,16 +32,26 @@ util.inherits(ComputeComponent, events.EventEmitter)
 *
 */
 ComputeComponent.prototype.filterCompute = async function (compInfo, deviceList, cnrlInfo, rawIN) {
+  console.log('COMPUTE-COMP1----filter start')
+  let computeStatelive = {}
   // var localthis = this
   if (compInfo.wasmID === 'wasm-sc-1' && this.computeStatus === false) {
     // raw data nothing to compute
-    return true
+    console.log('1wasmsc and false logic')
+    computeStatelive.computeState = 'observation'
   } else {
-    console.log(this.EIDinfo)
-    let statusC = this.liveCompute.computationSystem(compInfo, this.EIDinfo.timeperiod, deviceList, cnrlInfo, rawIN)
-    this.computeStatus = statusC
-    return this.computeStatus
+    console.log('2go compute system')
+    // console.log(this.EIDinfo)
+    let computeState = await this.liveCompute.computationSystem(compInfo, deviceList, cnrlInfo, rawIN)
+    console.log('COMPUTE-COMP2--return')
+    console.log(computeState)
+    computeStatelive.computeState = computeState.status
+    computeStatelive.firstTimeComp = computeState.timeStart
+    computeStatelive.lastTimeComp = computeState.lastComputeTime
   }
+  console.log('COMPUTE-COMP1----filter complete')
+  console.log(computeStatelive)
+  return computeStatelive
 }
 
 /**

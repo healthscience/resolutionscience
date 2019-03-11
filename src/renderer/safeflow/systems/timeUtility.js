@@ -108,25 +108,88 @@ TimeUtilities.prototype.calendarUtility = function (startDYear) {
 */
 TimeUtilities.prototype.timeArrayBuilder = function (liveTime, lastTime) {
   let timeArray = []
-  let yearCommence = lastTime / 1000
-  console.log(yearCommence)
+  let yearEndmnoth = 11
+  console.log(lastTime)
   console.log(liveTime)
-  const monthNo = moment(yearCommence).month()
-  const currentmonthNo = monthNo + 1
-  // console.log(monthNo)
-  let secondsInday = 86400
-  // let months = 'January, February, March, April, May, June, July, August, September, October, November, December'
-  let monthsNumber = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-  // need logic for leap years
-  let daysInmonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-  for (let numM of monthsNumber) {
-    if (numM >= monthNo && numM <= currentmonthNo) {
-      let longDateformat = yearCommence + (numM * daysInmonth[numM] * secondsInday)
-      let dayCount = daysInmonth[numM]
-      timeArray.push({dayCount, longDateformat})
+  // let shortLastTime = lastTime / 1000
+  const yearNum = moment(lastTime).year()
+  const yearNumcurrent = moment(liveTime).year()
+  // dealing with multiple years?
+  if (yearNumcurrent > yearNum) {
+    console.log('spanning two years')
+    // build array in two part, first oldest year
+    const firstmonthNo = moment(lastTime).month()
+    const firstmonthNocurrent = yearEndmnoth
+    let firstStartMonth = moment(lastTime).startOf('month')
+    let firstbaseMills = moment(firstStartMonth).valueOf() + 3600000
+    let secondsInday = 86400000
+    // let months = 'January, February, March, April, May, June, July, August, September, October, November, December'
+    let monthsNumberFirst = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    // need logic for leap years
+    let daysInmonthFirst = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    let counter = 1
+    let longDateformat
+    for (let numM of monthsNumberFirst) {
+      if (numM >= firstmonthNo && numM <= firstmonthNocurrent) {
+        console.log('start--mulit year first part------')
+        if (counter === 1) {
+          longDateformat = firstbaseMills
+        } else {
+          longDateformat = firstbaseMills + (daysInmonthFirst[numM] * secondsInday)
+        }
+        firstbaseMills = longDateformat
+        let dayCount = daysInmonthFirst[numM]
+        timeArray.push({dayCount, longDateformat})
+        counter++
+      }
+    }
+    console.log('second part of array build')
+    counter = 1
+    let SecondbaseMills = firstbaseMills
+    for (let numM of monthsNumberFirst) {
+      const SecondmonthNocurrent = moment(liveTime).month()
+      console.log(SecondmonthNocurrent)
+      if (numM >= 0 && numM <= SecondmonthNocurrent) {
+        console.log('start--2nd mulit year------')
+        if (counter === 1) {
+          longDateformat = SecondbaseMills + (31 * secondsInday)
+        } else {
+          longDateformat = SecondbaseMills + (daysInmonthFirst[numM] * secondsInday)
+        }
+        SecondbaseMills = longDateformat
+        let dayCount = daysInmonthFirst[numM]
+        timeArray.push({dayCount, longDateformat})
+        counter++
+      }
+    }
+  } else {
+    console.log('one year only')
+    const monthNo = moment(lastTime).month()
+    const monthNocurrent = moment(liveTime).month()
+    let baseStartMonth = moment(lastTime).startOf('month')
+    let baseMills = moment(baseStartMonth).valueOf() + 3600000
+    let secondsInday = 86400000
+    // let months = 'January, February, March, April, May, June, July, August, September, October, November, December'
+    let monthsNumber = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    // need logic for leap years
+    let daysInmonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    let counter = 1
+    let longDateformat
+    for (let numM of monthsNumber) {
+      if (numM >= monthNo && numM <= monthNocurrent) {
+        if (counter === 1) {
+          longDateformat = baseMills
+        } else {
+          longDateformat = baseMills + (daysInmonth[numM] * secondsInday)
+        }
+        baseMills = longDateformat
+        let dayCount = daysInmonth[numM]
+        timeArray.push({dayCount, longDateformat})
+        counter++
+      }
     }
   }
-  console.log('time builder array++++')
+  console.log('time array++++')
   console.log(timeArray)
   return timeArray
 }

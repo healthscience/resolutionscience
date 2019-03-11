@@ -109,6 +109,9 @@ let webConfig = {
     },
     extensions: ['.js', '.vue', '.json', '.css']
   },
+  node: {
+    fs: "empty"
+  },
   target: 'web'
 }
 

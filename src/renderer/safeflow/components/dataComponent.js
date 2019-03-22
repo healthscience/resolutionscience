@@ -97,10 +97,6 @@ DataComponent.prototype.RawData = async function () {
   systemBundle.dtAsked = this.CNRLscience.prime
   systemBundle.deviceList = this.deviceList
   systemBundle.datatypes = this.datatypeList
-  // console.log(systemBundle)
-  // console.log(systemBundle.dtAsked[0])
-  // need to match dataTypeAsked to right API call
-  // console.log(systemBundle.dtAsked)
   if (systemBundle.dtAsked[0].text === 'bpm') {
     await this.liveDataSystem.getRawData(systemBundle).then(function (rawData) {
       const rawHolder = {}
@@ -108,7 +104,6 @@ DataComponent.prototype.RawData = async function () {
       localthis.dataRaw.push(rawHolder)
       rawData = {}
       // console.log(localthis.dataRaw)
-      return true
     })
   } else if (systemBundle.dtAsked[0].text === 'average-heartrate') {
     console.log('DATACOMPOENT1--ANY EXISTING AVERAGE QUERY')
@@ -119,7 +114,6 @@ DataComponent.prototype.RawData = async function () {
       rawData = {}
       console.log('raw stats data returned')
       console.log(localthis.dataRaw)
-      return true
     })
   } else if (this.datatypes[0][0] === 'recovery-heartrate') {
     /* await this.liveDataSystem.getHRrecovery(systemBundle).then(function (rawData) {

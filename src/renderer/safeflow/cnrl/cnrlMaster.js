@@ -247,4 +247,28 @@ CNRLmaster.prototype.semanticKnowledge = function (refIN) {
   return dataCNRLbundle
 }
 
+/**
+*  coordinate related simulation computations
+* @method coordinateScaffolding
+*
+*/
+CNRLmaster.prototype.coordinateScaffolding = function (refIN) {
+  console.log('CRNL----coordinate simulations computations')
+  // if contract has links, follow those to source TODO
+  let scaffoldingCOORD = {}
+  return scaffoldingCOORD
+}
+
+/**
+*  geometry scaffolding
+* @method geometryScaffolding
+*
+*/
+CNRLmaster.prototype.geometryScaffolding = function (refIN) {
+  console.log('CRNL----2d 3d geometry of modecules chemistry')
+  // if contract has links, follow those to source TODO
+  let scaffoldingGEOM = {}
+  return scaffoldingGEOM
+}
+
 export default CNRLmaster

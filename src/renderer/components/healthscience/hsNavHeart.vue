@@ -32,7 +32,7 @@
           <li>
             <header>Tools</header>
               <ul>
-                <li id="tool-bar"><a class="" href="" id="tools" @click.prevent="toolsVis(t)" v-bind:class="{ 'active': tools.active}">{{tools.text}}</a></li>
+                <li id="tool-bar"><a class="" href="" id="toolbar" @click.prevent="toolsVis(t)" v-bind:class="{ 'active': toolbar.active}">{{toolbar.text}}</a></li>
               </ul>
           </li>
           <li>
@@ -54,7 +54,7 @@
             </div>
           </li>
         </ul>
-        <Statistics-Tools :statsData="statsData" ></Statistics-Tools>
+        <Statistics-Tools :statsData="statsData" @load="text = $event" @toolbarSet="toolbarStatus($event)" ></Statistics-Tools>
         <Learn-Report :reportData="reportData" ></Learn-Report>
 
         <div v-if="visChartview" id="charts-live">
@@ -180,11 +180,12 @@
         liveTime: 0,
         datacollection: null,
         datastatistics: null,
+        liveChartoptions: null,
         selectedCompute: 'A',
         keyC: {},
         scoptions: [],
         options: {},
-        tools:
+        toolbar:
         {
           active: false,
           text: 'off'
@@ -252,6 +253,9 @@
       },
       science: function () {
         return this.$store.state.science
+      },
+      tools: function () {
+        return this.$store.state.tools
       }
     },
     mounted () {
@@ -372,11 +376,13 @@
         }
       },
       toolsVis (ts) {
-        this.tools.active = true
-        this.tools.text = 'on'
-        console.log('stats tools')
+        this.toolbar.active = true
+        this.toolbar.text = 'on'
+        console.log('TOOLBAR')
         let statstoolsStart = {}
         statstoolsStart.statsToolsSeen = true
+        // statstoolsStart.tooloptions = this.options
+        statstoolsStart.liveOptions = this.liveChartoptions
         this.statsData = statstoolsStart
       },
       filterDeviceActive () {
@@ -417,32 +423,9 @@
           this.learnStartStop()
         }
       },
-      filterCompute (cs) {
-        // console.log(cs)
-        for (let csi of this.scoptions) {
-          if (csi.value === cs) {
-            this.activeEntity = csi.cid
-          }
-        }
-        return this.activeEntity
-      },
       learnStartStop () {
-        // pass to computations system
-        // var localthis = this
-        let computeSelected = this.selectedCompute
-        // console.log(computeSelected)
-        // need to ask for start end market info, from Entity
-        /* this.liveSafeFlow.entityChartGetter('wasm-sc-1').then(function (eData) {
-          localthis.analysisStart = eData.liveChartSystem.analysisStart
-          localthis.analysisEnd = eData.liveChartSystem.analysisEnd
-          console.log(localthis.analysisStart)
-          console.log(localthis.analysisEnd)
-        }).catch(function (err) {
-          console.log(err)
-        }) */
-        // console.log(this.analysisStart)
-        // console.log(this.analysisEnd)
-        let computationSMid = computeSelected // this.filterCompute(computeSelected)
+        // pass to entity component system
+        let computationSMid = this.selectedCompute
         // console.log(computationSMid)
         if (computationSMid === 'cnrl-2356388733') {
           this.$store.commit('setScience', this.scoptions[2])
@@ -462,6 +445,13 @@
           this.$store.commit('setScience', this.scoptions[1])
           this.fillData(0)
           this.averageSeen = true
+        } else if (computationSMid === 'cnrl-2356388731') {
+          // observation data
+          console.log('learn from observations')
+          console.log(this.scoptions[0])
+          this.$store.commit('setScience', this.scoptions[0])
+          this.fillData(0)
+          // this.observationsSeen = true
         }
       },
       closeAvgSummary () {
@@ -470,6 +460,10 @@
         this.activeEntity = 'cnrl-2356388731'
         this.$store.commit('setScience', this.scoptions[0])
       },
+      toolbarStatus () {
+        console.log('toolbar closed')
+        this.toolbar.text = 'off'
+      },
       async fillData (seg) {
         var localthis = this
         this.filterDeviceActive()
@@ -477,6 +471,16 @@
         this.filterVisActive()
         // console.log('CCCOONNNTETEEXXXX')
         // console.log(this.context)
+        // listening to give peer info. on computation statusTime
+        this.liveSafeFlow.liveEManager.on('computation', function (cState) {
+          console.log('computation event from manager')
+          console.log(cState)
+          if (cState === 'in-progress') {
+            localthis.chartmessage = cState
+          } else {
+            localthis.chartmessage = 'computation up-to-date'
+          }
+        })
         await this.liveSafeFlow.scienceEntities(seg, this.context).then(function (entityData) {
           localthis.liveSafeFlow.entityGetter(localthis.activeEntity, localthis.activevis).then(function (eData) {
             console.log('VUE---return getter data')
@@ -489,13 +493,18 @@
                 console.log('chartjs--ongoing computation')
                 localthis.chartmessage = eData.chartMessage
                 localthis.options = eData.chartPackage.options
+                localthis.$store.commit('setTools', localthis.options)
                 localthis.datacollection = eData.chartPackage.prepared
                 localthis.liveTime = eData.chartPackage.livetime
+                localthis.liveChartoptions = eData.liveChartOptions
               } else {
                 console.log('chartjs-- uptodate finised')
+                localthis.chartmessage = 'computation up-to-date'
                 localthis.options = eData.options
-                localthis.datacollection = eData.prepared
-                localthis.liveTime = eData.livetime
+                localthis.$store.commit('setTools', localthis.options)
+                localthis.datacollection = eData.chartPackage.prepared
+                localthis.liveTime = eData.chartPackage.livetime
+                localthis.liveChartoptions = eData.liveChartOptions
               }
               // console.log(localthis.datacollection)
             } else if (localthis.activevis === 'vis-sc-2') {

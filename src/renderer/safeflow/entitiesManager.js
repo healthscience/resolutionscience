@@ -49,14 +49,10 @@ EntitiesManager.prototype.addScienceEntity = async function (segT, entID, setIN)
     console.log('entity' + cid + 'already exists')
     // does the data exist for this visualisation and time?
     let checkDataExist = this.checkForVisualData(cid, timePeriod, visID)
-    console.log(checkDataExist)
     if (checkDataExist === true) {
-      // exists
       console.log('data already ready')
       this.liveSEntities[cid].liveDataC.setStartDate(timePeriod)
       this.liveSEntities[cid].liveDataC.setTimeList(timePeriod)
-      // need to check if compute flag for update needs acting on.
-      return true
     } else {
       // new data call required for this visualisation and time
       console.log('need to prepare new visualisation data')
@@ -70,7 +66,6 @@ EntitiesManager.prototype.addScienceEntity = async function (segT, entID, setIN)
   } else {
     console.log('entity' + cid + 'is new')
     // start workflow for setting up entity, compute and vis/sim etc.
-    // async(immutable), KnowledgeSciptingLanguage(forth/stack), use SmartContract (need to select one to give gurantees)
     this.liveSEntities[cid] = new Entity(entID, setIN)
     // console.log(this.liveSEntities)
     // set the livestart time for the UI
@@ -81,17 +76,17 @@ EntitiesManager.prototype.addScienceEntity = async function (segT, entID, setIN)
       console.log(cFlow)
     })
   }
-  // return true
+  return true
 }
 
 /**
 *  control the adding of data to the entity
+*  KnowledgeSciptingLanguage(forth/stack)to give gurantees)
 * @method controlFlow
 *
 */
 EntitiesManager.prototype.controlFlow = async function (cid, timePeriod, wasmID, visID, cnrlInfo) {
   var localthis = this
-  // let cnrlLive = {}
   console.log('EMANAGER0-----beginCONTROL-FLOW')
   await this.liveSEntities[cid].liveDataC.RawData()
   console.log('EMANAGER1-----raw complete')
@@ -122,6 +117,8 @@ EntitiesManager.prototype.controlFlow = async function (cid, timePeriod, wasmID,
       console.log('UP TO DATE')
     } else if (localthis.computeStatus.computeState.status === 'update-required' || localthis.computeStatus.computeState.status === 'update-start-required') {
       console.log('5a--NOT uptodate')
+      // emit message to inform peer that computation is progressing
+      localthis.emit('computation', 'in-progress')
       computeBundle.status = true
       computeBundle.lastComputeTime = localthis.computeStatus.lastTimeComp
       computeBundle.liveTime = localthis.liveSEntities[cid].liveDataC.livedate
@@ -188,10 +185,15 @@ EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
     let messageBundle = {}
     messageBundle.chartMessage = 'computation in progress'
     messageBundle.chartPackage = this.liveSEntities[eid].liveVisualC.visualData[visStyle][dateLive]
+    messageBundle.liveChartOptions = this.liveSEntities[eid].liveVisualC.liveChartSystem
     return messageBundle
   } else {
     console.log('existing data to chart')
-    return this.liveSEntities[eid].liveVisualC.visualData[visStyle][dateLive]
+    let messageVisBundle = {}
+    messageVisBundle.chartMessage = 'computation in progress'
+    messageVisBundle.liveChartOptions = this.liveSEntities[eid].liveVisualC.liveChartSystem
+    messageVisBundle.chartPackage = this.liveSEntities[eid].liveVisualC.visualData[visStyle][dateLive]
+    return messageVisBundle
   }
 }
 

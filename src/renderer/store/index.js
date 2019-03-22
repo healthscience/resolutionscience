@@ -10,13 +10,15 @@ export default new Vuex.Store({
     safeFlow: {},
     system: {'publickey': '', 'token': ''},
     context: {},
-    science: {}
+    science: {},
+    tools: {}
   },
   getters: {
     liveSafeFlow: state => state.safeFlow,
     liveSystem: state => state.system,
     liveContext: state => state.context,
-    liveScience: state => state.science
+    liveScience: state => state.science,
+    liveTools: state => state.tools
   },
   mutations: {
     // Mutations
@@ -52,6 +54,9 @@ export default new Vuex.Store({
     },
     setCNRLscience: (state, inVerified) => {
       state.science = inVerified
+    },
+    setTools: (state, inVerified) => {
+      state.liveTools = inVerified
     }
   },
   modules,

@@ -51,9 +51,9 @@ safeFlow.prototype.setTestStorage = function (setIN) {
 * @method scienceEntities
 *
 */
-safeFlow.prototype.scienceEntities = async function (segT, inputInfo) {
+safeFlow.prototype.scienceEntities = async function (segT, range, inputInfo) {
   // add a new entity via manager
-  await this.liveEManager.addScienceEntity(segT, inputInfo, this.settings).then(function (bk) {
+  await this.liveEManager.addScienceEntity(segT, range, inputInfo, this.settings).then(function (bk) {
     console.log('SAFEFLOW-new entitycomplete')
     console.log(bk)
     return true

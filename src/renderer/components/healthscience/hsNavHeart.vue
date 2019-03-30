@@ -2,8 +2,7 @@
   <section class="container">
     <h1>Human -> Body(movement - steps) + Heart</h1>
     <div id="resolution-set">Resolution: Time {{ resolutionSet }} intervals</div>
-    <div class="columns">
-      <div id="heart-chart" class="column">
+      <section id="heart-science-context" class="column">
         <ul>
           <li>
             <header>Device - </header>
@@ -32,7 +31,7 @@
           <li>
             <header>Tools</header>
               <ul>
-                <li id="tool-bar"><a class="" href="" id="toolbar" @click.prevent="toolsVis(t)" v-bind:class="{ 'active': toolbar.active}">{{toolbar.text}}</a></li>
+                <li id="tool-bar"><a class="" href="" id="toolbarholder" @click.prevent="toolsVis()" >{{toolbar.text}}</a></li>
               </ul>
           </li>
           <li>
@@ -50,87 +49,40 @@
           </li>
           <li>
             <div id="learn-type">
-              <button class="" href="" id="learn-button" @click.prevent="filterLearn(learn)" v-bind:class="{ 'active': learn.active}">{{ learn.name }}</button>
+              <button class="" href="" id="learn-button" @click.prevent="filterLearn(learn)">{{ learn.name }}</button>
             </div>
           </li>
         </ul>
-        <Statistics-Tools :statsData="statsData" @load="text = $event" @toolbarSet="toolbarStatus($event)" ></Statistics-Tools>
-        <Learn-Report :reportData="reportData" ></Learn-Report>
-
+      </section>
+      <section id="diy-science">
+        <div id="oracles">oracles</div>
+        <div id="tends">trends</div>
+        <div id="toolbar-tools">
+          <Toolbar-Tools :toolbarData="toolbarData" @toolbarSet="toolbarStatus()" ></Toolbar-Tools>
+        </div>
+        <div id="reports">
+          <!--<Learn-Report @load="text = $event" :reportData="reportCollection" ></Learn-Report>-->
+          <recovery-Report :recoveryData="recoveryData" @recoverySet="recoveryStatus()" ></recovery-Report>
+        </div>
         <div v-if="visChartview" id="charts-live">
           <div v-if="averageSeen" id="average-charting">
             <h3></h3>
             <div>
               <div id="chart-message">{{ chartmessage }}</div>
               <div id="close-average">
-                <button id="close-report" @click.prevent="closeAvgSummary()">Finsish & Close</button>
+                <button id="close-report" @click.prevent="closeAvgSummary()">Close</button>
               </div>
             </div>
-            <!-- <reactivestats :chart-data="datastatistics" :width="1200" :height="600"></reactivestats> -->
           </div>
           <reactive :chartData="datacollection" :options="options" :width="1200" :height="600"></reactive>
         </div>
-      <div v-if="visTableview" id="table-view">
-        <table class="tg">
-          <tr>
-            <th class="tg-0pky"></th>
-            <th class="tg-0pky"></th>
-            <th class="tg-0pky"></th>
-            <th class="tg-0lax"></th>
-            <th class="tg-0lax"></th>
-            <th class="tg-0lax"></th>
-            <th class="tg-0lax"></th>
-            <th class="tg-0lax"></th>
-            <th class="tg-0lax"></th>
-            <th class="tg-0lax"></th>
-            <th class="tg-0lax"></th>
-            <th class="tg-0lax"></th>
-            <th class="tg-0lax"></th>
-            <th class="tg-0lax"></th>
-            <th class="tg-0lax"></th>
-          </tr>
-          <tr>
-            <td class="tg-0pky"></td>
-            <td class="tg-0pky"></td>
-            <td class="tg-0pky"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-          </tr>
-          <tr>
-            <td class="tg-0pky"></td>
-            <td class="tg-0pky"></td>
-            <td class="tg-0pky"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-          </tr>
-        </table>
-      </div>
-
-      <div v-if="visSimview" id="sim-view">
+      <section v-if="visTableview" id="table-view">
+        <table-Build></table-Build>
+      </section>
+      <section v-if="visSimview" id="sim-view">
         <simulation-View></simulation-View>
-      </div>
-
-      <div id="time-context">
+      </section>
+      <section id="time-context">
         <div id="select-time">
           <button class="button is-primary" @click="setContextData(12)">- 1 Year</button>
           <button class="button is-primary" @click="setContextData(1)">- 1 month</button>
@@ -145,9 +97,8 @@
           <div id="calendar-selector">
           </div>
         </div>
-      </div>
-      </div>
-    </div>
+      </section>
+    </section>
   </section>
 </template>
 
@@ -158,8 +109,10 @@
   import BubbleChart from '@/components/charts/BubbleChart'
   import Reactive from '@/components/charts/Reactive'
   import Reactivestats from '@/components/charts/Reactivestats'
+  import ToolbarTools from '@/components/toolbar/statisticstools.vue'
   import LearnReport from '@/components/reports/learn-report.vue'
-  import StatisticsTools from '@/components/reports/statisticstools.vue'
+  import recoveryReport from '@/components/reports/recoveryReport.vue'
+  import tableBuild from '@/components/table/tableBuilder.vue'
   import simulationView from '@/components/simulation/simulation-life.vue'
 
   export default {
@@ -170,9 +123,11 @@
       BubbleChart,
       Reactive,
       Reactivestats,
+      recoveryReport,
       LearnReport,
+      tableBuild,
       simulationView,
-      StatisticsTools
+      ToolbarTools
     },
     data () {
       return {
@@ -191,8 +146,8 @@
           text: 'off'
         },
         averageSeen: false,
-        reportData: {},
-        statsData: {},
+        toolbarData: {},
+        recoveryData: {},
         labelback: [],
         heartback: [],
         colorback: '',
@@ -225,8 +180,7 @@
         learn:
         {
           name: 'learn',
-          id: 'learn-status',
-          active: false
+          id: 'learn-status'
         },
         chartmessage: 'Select time',
         activedevice: [],
@@ -327,7 +281,7 @@
         // get seg and then look at compute context and call appropriate
         const compContext = this.activeEntity
         if (compContext === 'cnrl-2356388731') {
-          this.fillData(seg)
+          this.fillData(seg, {})
         }
       },
       selectContext (s) {
@@ -375,15 +329,17 @@
           }
         }
       },
-      toolsVis (ts) {
-        this.toolbar.active = true
+      toolsVis () {
+        console.log('toolbar view')
         this.toolbar.text = 'on'
-        console.log('TOOLBAR')
-        let statstoolsStart = {}
-        statstoolsStart.statsToolsSeen = true
-        // statstoolsStart.tooloptions = this.options
-        statstoolsStart.liveOptions = this.liveChartoptions
-        this.statsData = statstoolsStart
+        /* let recoveryStart = {}
+        recoveryStart.seenStatus = true
+        this.recoveryData = recoveryStart */
+        let toolbarStart = {}
+        toolbarStart.seenStatus = true
+        toolbarStart.liveOptions = this.liveChartoptions
+        this.toolbarData = toolbarStart
+        console.log(this.toolbarData)
       },
       filterDeviceActive () {
         this.activedevice = []
@@ -415,13 +371,16 @@
         }
       },
       filterLearn (s) {
-        // console.log(s)
-        s.active = !s.active
-        if (s.active === true) {
-          this.activelearn = this.learn.id
-          // console.log(this.activelearn)
-          this.learnStartStop()
-        }
+        console.log(s)
+        // s.active = !s.active
+        this.learnStartStop()
+      },
+      timeRange () {
+        let rangeHolder = {}
+        rangeHolder.startTime = this.toolbarData.liveOptions.analysisStart
+        rangeHolder.endTime = this.toolbarData.liveOptions.analysisEnd
+        rangeHolder.active = true
+        return rangeHolder
       },
       learnStartStop () {
         // pass to entity component system
@@ -429,48 +388,40 @@
         // console.log(computationSMid)
         if (computationSMid === 'cnrl-2356388733') {
           this.$store.commit('setScience', this.scoptions[2])
-          let reportDataback = {}
-          reportDataback.learnSummarySeen = true
-          reportDataback.ridentity = 10987654321
-          reportDataback.heartmax = 153
-          reportDataback.heartmin = 52
-          reportDataback.recovertime = 3.45
-          reportDataback.similarcount = 325
-          reportDataback.recoverchange = '+.02'
-          this.reportData = reportDataback
-          // console.log(this.reportData)
-          this.learn.active = false
+          let timeRange = this.timeRange()
+          this.fillData(0, timeRange)
+          // this.learn.active = false
         } else if (computationSMid === 'cnrl-2356388732') {
           // need to dispay chart for this data, first check if averages need updating?
           this.$store.commit('setScience', this.scoptions[1])
-          this.fillData(0)
+          this.fillData(0, {})
           this.averageSeen = true
         } else if (computationSMid === 'cnrl-2356388731') {
           // observation data
           console.log('learn from observations')
           console.log(this.scoptions[0])
           this.$store.commit('setScience', this.scoptions[0])
-          this.fillData(0)
+          this.fillData(0, {})
           // this.observationsSeen = true
         }
       },
       closeAvgSummary () {
         this.averageSeen = false
-        this.learn.active = false
+        // this.learn.active = false
         this.activeEntity = 'cnrl-2356388731'
         this.$store.commit('setScience', this.scoptions[0])
       },
       toolbarStatus () {
-        console.log('toolbar closed')
         this.toolbar.text = 'off'
       },
-      async fillData (seg) {
+      recoveryStatus () {
+        this.toolbar.text = 'off'
+      },
+      async fillData (seg, range) {
         var localthis = this
         this.filterDeviceActive()
         this.filterSensorActive()
         this.filterVisActive()
-        // console.log('CCCOONNNTETEEXXXX')
-        // console.log(this.context)
         // listening to give peer info. on computation statusTime
         this.liveSafeFlow.liveEManager.on('computation', function (cState) {
           console.log('computation event from manager')
@@ -481,7 +432,7 @@
             localthis.chartmessage = 'computation up-to-date'
           }
         })
-        await this.liveSafeFlow.scienceEntities(seg, this.context).then(function (entityData) {
+        await this.liveSafeFlow.scienceEntities(seg, range, this.context).then(function (entityData) {
           localthis.liveSafeFlow.entityGetter(localthis.activeEntity, localthis.activevis).then(function (eData) {
             console.log('VUE---return getter data')
             console.log(eData)
@@ -497,6 +448,13 @@
                 localthis.datacollection = eData.chartPackage.prepared
                 localthis.liveTime = eData.chartPackage.livetime
                 localthis.liveChartoptions = eData.liveChartOptions
+              } else if (eData.chartMessage === 'vis-report') {
+                console.log('prepare report for HR recovery')
+                let recoveryStart = {}
+                recoveryStart.seenStatus = true
+                recoveryStart.hrcdata = eData.hrcReport
+                localthis.recoveryData = recoveryStart
+                console.log(localthis.reportData)
               } else {
                 console.log('chartjs-- uptodate finised')
                 localthis.chartmessage = 'computation up-to-date'

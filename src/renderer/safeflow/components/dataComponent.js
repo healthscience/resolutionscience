@@ -44,6 +44,8 @@ util.inherits(DataComponent, events.EventEmitter)
 *
 */
 DataComponent.prototype.setStartDate = function (startDate) {
+  console.log('start data COMP')
+  console.log(startDate)
   this.livedate = startDate
   return true
 }
@@ -97,6 +99,8 @@ DataComponent.prototype.RawData = async function () {
   systemBundle.dtAsked = this.CNRLscience.prime
   systemBundle.deviceList = this.deviceList
   systemBundle.datatypes = this.datatypeList
+  console.log(this.did)
+  console.log(systemBundle)
   if (systemBundle.dtAsked[0].text === 'bpm') {
     await this.liveDataSystem.getRawData(systemBundle).then(function (rawData) {
       const rawHolder = {}
@@ -115,15 +119,18 @@ DataComponent.prototype.RawData = async function () {
       console.log('raw stats data returned')
       console.log(localthis.dataRaw)
     })
-  } else if (this.datatypes[0][0] === 'recovery-heartrate') {
-    /* await this.liveDataSystem.getHRrecovery(systemBundle).then(function (rawData) {
+  } else if (systemBundle.dtAsked[0].text === 'recovery-heartrate') {
+    console.log('recovery heart rate ask')
+    await this.liveDataSystem.getHRrecovery(systemBundle).then(function (rawData) {
       const rawHolder = {}
+      console.log('RECVERY RETURNED')
+      console.log(localthis.livedate)
+      console.log(rawData)
       rawHolder[localthis.livedate] = rawData
       localthis.dataRaw.push(rawHolder)
       rawData = {}
       // console.log(localthis.dataRaw)
     })
-    return true */
   }
   return true
 }

@@ -240,33 +240,25 @@ DataSystem.prototype.getRawStatsData = async function (bundleIN, dtAsked) {
 }
 
 /**
-* Statistics Data
-* @method dataStatistics
+* get recovery heart rate data
+* @method getHRrecovery
 *
 */
-DataSystem.prototype.dataStatistics = async function () {
-  /* let localthis = this
-  // setups on initial entity query and populates other options
-  // display average statistics hardwire for now
-  // console.log('statistics data flow logic')
-  // console.log(device)
-  // any other mac address for this device?
-  let timePeriodavg = seg
-  let deviceArray = localthis.deviceUtility(device)
-  let dataAggregator = {}
-  dataAggregator.datasets = []
-  dataAggregator.labels = []
-  for (let devMac of deviceArray) {
-    await this.liveTestStorage.getAverageData(timePeriodavg, devMac, compute).then(function (statData) {
-      // prepare charting data from statistics Charting
-      let avgStsPrepared = localthis.structureStatisticsData('chartjs', '', statData)
-      dataAggregator.datasets = [...dataAggregator.datasets, ...avgStsPrepared.datasets]
-      dataAggregator.labels = [...dataAggregator.labels, ...avgStsPrepared.labels]
-      dataAggregator.backgroundColor = avgStsPrepared.backgroundColor
-      dataAggregator.lineColor = avgStsPrepared.borderColor
+DataSystem.prototype.getHRrecovery = async function (bundleIN, dtAsked) {
+  console.log('Recovery HR data ask')
+  const localthis = this
+  this.recoverHR = {}
+  const deviceLiveFilter = bundleIN.deviceList
+  for (let di of deviceLiveFilter) {
+    await localthis.liveTestStorage.getHRrecoveryData(bundleIN.timePeriod, di, dtAsked).then(function (statsData) {
+      console.log('returned recovery data')
+      localthis.recoverHR[di] = statsData
+      statsData = []
+    }).catch(function (err) {
+      console.log(err)
     })
   }
-  return dataAggregator */
+  return this.recoverHR
 }
 
 /**

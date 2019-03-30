@@ -207,4 +207,20 @@ TimeUtilities.prototype.timeHTMLBuilder = function (liveTime) {
   return stringTime
 }
 
+/**
+* take rannge object and convert moment times to miillseconds
+* @method rangeCovert
+*
+*/
+TimeUtilities.prototype.rangeCovert = function (rangeIN) {
+  let rangeMS = {}
+  let startMinute = moment(rangeIN.startTime).startOf('minute')
+  let startMS = moment(startMinute).valueOf()
+  let endMinute = moment(rangeIN.endTime).startOf('minute')
+  let endMS = moment(endMinute).valueOf()
+  rangeMS.startTime = startMS / 1000
+  rangeMS.endTime = endMS / 1000
+  return rangeMS
+}
+
 export default TimeUtilities

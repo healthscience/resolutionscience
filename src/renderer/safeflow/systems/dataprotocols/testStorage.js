@@ -134,6 +134,42 @@ TestStorageAPI.prototype.saveaverageData = async function (startDate, device, av
 }
 
 /**
+*  Get existing HR recovery data
+* @method getHRrecoveryData
+*
+*/
+TestStorageAPI.prototype.getHRrecoveryData = async function (queryTime, deviceID) {
+  //  nosql query
+  console.log('Recovery HR GET ----')
+  console.log(queryTime)
+  let jsondata = await axios.get(this.baseAPI + '/recoveryHRdata/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID + '/')
+  console.log(jsondata)
+  return jsondata.data
+}
+
+/**
+*  Insert data to peer dataStore via Axios
+* @method saveaverageData
+*
+*/
+TestStorageAPI.prototype.saveHRrecoveryData = async function (dataType, device, HRrecoveryIN) {
+  console.log('saving average hr data')
+  console.log(dataType)
+  console.log(device)
+  console.log(HRrecoveryIN)
+  HRrecoveryIN.publickey = this.tempPubkey
+  HRrecoveryIN.device_mac = device
+  HRrecoveryIN.datatype = dataType
+  // prepare JSON object for POST
+  let saveJSON = {}
+  saveJSON = HRrecoveryIN
+  await axios.post(this.baseAPI + '/recoverySave/' + this.tempPubkey + '/' + this.tempToken + '/' + device, saveJSON)
+    .then(function (response) {
+      console.log(response)
+    })
+}
+
+/**
 *  make one-off first time api call
 * @method firstToken
 *

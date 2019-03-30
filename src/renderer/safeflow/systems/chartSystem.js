@@ -41,29 +41,12 @@ ChartSystem.prototype.structureChartData = function (datatypeItem, liveDate, tim
   this.chartPrep = {}
   // loop through and build two sperate arrays
   for (let dataI of chartDataIN) {
-    // console.log('tidybatch loop')
-    // console.log(dataI)
     for (let tItem of timeList) {
-      // console.log('date loop')
-      // console.log(tItem)
-      // console.log(liveDate)
       if (tItem === liveDate && dataI[liveDate]) {
-        // console.log('dateMatch')
-        // console.log(tItem)
-        // console.log(dataI)
-        // console.log(dataI[tItem])
         for (let deviceI of deviceList) {
-          // console.log('device loop')
-          // console.log(dataI)
-          // console.log(deviceI)
-          // console.log(tItem)
-          // console.log(dataI[tItem])
           for (let dataItem of dataI[tItem][deviceI][0]) {
-            // console.log('item loop')
-            // console.log(dataItem)
             var mDateString = moment(dataItem.timestamp * 1000).toDate()
             datalabel.push(mDateString)
-            // console.log(datatypeItem)
             if (datatypeItem === 'bpm') {
               dataheart.push(dataItem.heart_rate)
             } else if (datatypeItem === 'steps') {
@@ -76,8 +59,6 @@ ChartSystem.prototype.structureChartData = function (datatypeItem, liveDate, tim
   }
   dataholder.labels = datalabel
   dataholder.datasets = dataheart
-  // console.log('observation structure holder')
-  // console.log(dataholder)
   return dataholder
 }
 
@@ -87,8 +68,6 @@ ChartSystem.prototype.structureChartData = function (datatypeItem, liveDate, tim
 *
 */
 ChartSystem.prototype.chartColors = function (datatypeItem) {
-  // console.log('CHARTSYSTEM3--setcolors')
-  // console.log(datatypeItem)
   let colorHolder = {}
   // LOOP over datatypeList and prepare chart colors
   if (datatypeItem.text === 'steps') {
@@ -110,8 +89,6 @@ ChartSystem.prototype.chartColors = function (datatypeItem) {
 *
 */
 ChartSystem.prototype.prepareVueChartJS = function (results) {
-  // console.log('PPPPrepare')
-  // console.log(results)
   let datacollection = {}
   this.labelback = []
   this.heartback = []
@@ -209,8 +186,6 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
       ]
     }
   }
-  // console.log('datacollection chart obersation')
-  // console.log(datacollection)
   return datacollection
 }
 

@@ -44,13 +44,13 @@ ComputeComponent.prototype.filterCompute = async function (compInfo, deviceList,
     // console.log(this.EIDinfo)
     let computeState = await this.liveCompute.computationSystem(compInfo, deviceList, cnrlInfo, rawIN)
     console.log('COMPUTE-COMP2--return')
-    console.log(computeState)
+    // console.log(computeState)
     computeStatelive.computeState = computeState.status
     computeStatelive.firstTimeComp = computeState.timeStart
     computeStatelive.lastTimeComp = computeState.lastComputeTime
   }
   console.log('COMPUTE-COMP1----filter complete')
-  console.log(computeStatelive)
+  // console.log(computeStatelive)
   return computeStatelive
 }
 

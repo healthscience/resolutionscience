@@ -117,8 +117,6 @@ VisualComponent.prototype.chartSystem = function (visIN, wasmIN, liveDate, datat
     this.visualData = chartHolder
   } else if (wasmIN === 'wasm-sc-2') {
     console.log('average Chart Start')
-    // console.log(visData)
-    // console.log(datatypeList)
     for (let avgType of cnrlInfo.prime) {
       // call chart stats prep structure info for chart js
       structureHolder = this.liveChartSystem.structureStatisticsData(liveDate, avgType.text, deviceList, visData)
@@ -138,6 +136,13 @@ VisualComponent.prototype.chartSystem = function (visIN, wasmIN, liveDate, datat
     const chartHolder = {}
     chartHolder[visIN] = {}
     chartHolder[visIN][liveDate] = chartData
+    this.visualData = chartHolder
+    console.log(this.visualData)
+  } else if (wasmIN === 'wasm-sc-3') {
+    console.log('HR recovery visualisation chart???')
+    const chartHolder = {}
+    chartHolder[visIN] = {}
+    chartHolder[visIN].status = 'report-component'
     this.visualData = chartHolder
     console.log(this.visualData)
   }

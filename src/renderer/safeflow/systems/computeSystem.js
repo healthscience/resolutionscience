@@ -60,7 +60,7 @@ ComputeSystem.prototype.computationSystem = async function (compInfo, deviceList
     } else {
       console.log('return compute status complete')
     }
-    stateHolder.timeStart = compInfo.lastComputetime.liveTime
+    stateHolder.timeStart = compInfo.liveTime
     stateHolder.lastComputeTime = 0
   } else if (compInfo.wasmID === 'wasm-sc-2' && compInfo.status === true) {
     console.log('COMPSYS3-STARTUPDATE' + compInfo.wasmID)

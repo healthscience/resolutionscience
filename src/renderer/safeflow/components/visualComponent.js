@@ -71,11 +71,6 @@ VisualComponent.prototype.filterVisual = function (visIN, wasmID, liveDate, data
 */
 VisualComponent.prototype.chartSystem = function (visIN, wasmIN, liveDate, datatypeList, cnrlInfo, timeList, deviceList, visData) {
   console.log('VISCOMP==CHARTSYTSEM START1')
-  console.log(cnrlInfo)
-  console.log(wasmIN)
-  console.log(liveDate)
-  console.log(datatypeList)
-  console.log(visIN)
   var localthis = this
   let structureHolder = {}
   let chartData = {}

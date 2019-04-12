@@ -509,6 +509,7 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
       labels: [],
       datasets: [
         {
+          type: 'line',
           label: 'no data',
           borderColor: '#ed7d7d',
           backgroundColor: '#ed7d7d',
@@ -516,6 +517,7 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
           data: [],
           yAxisID: 'bpm'
         }, {
+          type: 'line',
           label: 'no data',
           borderColor: '#ea1212',
           backgroundColor: '#ea1212',
@@ -534,6 +536,7 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
         labels: localthis.labelback,
         datasets: [
           {
+            type: 'line',
             label: 'Device 1',
             borderColor: '#ea1212',
             backgroundColor: 'rgba(255, 99, 132, 0.2)',
@@ -541,6 +544,7 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
             data: localthis.avg,
             yAxisID: 'bpm'
           }, {
+            type: 'line',
             label: 'Device 2',
             borderColor: '#050d2d',
             backgroundColor: '#050d2d',
@@ -558,6 +562,7 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
         labels: localthis.labelback,
         datasets: [
           {
+            type: 'line',
             label: 'Device 1',
             borderColor: '#ea1212',
             backgroundColor: 'rgba(255, 99, 132, 0.2)',

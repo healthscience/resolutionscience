@@ -48,7 +48,7 @@ RecoveryHeartrate.prototype.prepareRecoveryCompute = async function (range, devi
   let liveObservation = this.emit('liveobserve', true)
   console.log('what event message')
   console.log(liveObservation)
-  await this.assessPostHRaverage(range, device)
+  // await this.assessPostHRaverage(range, device)
   return true
 }
 

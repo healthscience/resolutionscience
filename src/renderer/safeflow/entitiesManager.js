@@ -238,6 +238,16 @@ EntitiesManager.prototype.entityChartReturn = async function (eid) {
 }
 
 /**
+*  return chart data from an entity
+* @method GetaverageCurrentDailyStatistics
+*
+*/
+EntitiesManager.prototype.GetaverageCurrentDailyStatistics = async function (eid) {
+  let averageCurrentAHR = this.liveSEntities[eid].liveComputeC.liveComputeSystem.liveStatistics.averageCurrentDailyStatistics('1', this.liveSEntities[eid].seid.device[0].device_mac, 'cnrl-2356388732', '1')
+  return averageCurrentAHR
+}
+
+/**
 *  return observation entity data
 * @method listenRHRdataEvent
 *
@@ -248,6 +258,7 @@ EntitiesManager.prototype.listenRHRdataEvent = async function () {
   // listener
   this.liveSEntities['cnrl-2356388733'].liveComputeC.liveCompute.liveRecoveryHR.on('liveobserve', function (call) {
     console.log('event from recoveryHR')
+    console.log(localthis.liveSEntities['cnrl-2356388731'].liveDataC)
     localthis.liveSEntities['cnrl-2356388733'].liveComputeC.liveCompute.liveRecoveryHR.data = localthis.liveSEntities['cnrl-2356388731'].liveDataC.tidyData[0]
     // console.log(localthis.liveSEntities['cnrl-2356388731'])
     // dataOlive = localthis.liveSEntities['cnrl-2356388731'].liveDataC.tidyData[0]

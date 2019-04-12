@@ -271,9 +271,13 @@
       resoutionType () {
         this.resolutionSet = '60 seconds'
       },
-      getAverages (max) {
-        var newAHR = 72 // Math.floor(Math.random() * Math.floor(max))
-        var newARHR = 55
+      async getAverages (eid) {
+        // update latest daily average HR
+        let currentAHR = await this.liveSafeFlow.entityCurrentAverageHR(eid)
+        console.log('averageHR current====')
+        console.log(currentAHR)
+        let newAHR = currentAHR // Math.floor(Math.random() * Math.floor(max))
+        let newARHR = 55
         this.options.annotation.annotations[0].value = newAHR
         this.options.annotation.annotations[1].value = newARHR
       },
@@ -441,13 +445,15 @@
             if (localthis.activevis === 'vis-sc-1') {
               console.log('chartjs')
               if (eData.chartMessage === 'computation in progress') {
-                console.log('chartjs--ongoing computation')
+                console.log('chartjs--ongoing computation or obseration data')
                 localthis.chartmessage = eData.chartMessage
                 localthis.options = eData.chartPackage.options
                 localthis.$store.commit('setTools', localthis.options)
                 localthis.datacollection = eData.chartPackage.prepared
                 localthis.liveTime = eData.chartPackage.livetime
                 localthis.liveChartoptions = eData.liveChartOptions
+                console.log(localthis.activeEntity)
+                localthis.getAverages(localthis.activeEntity)
               } else if (eData.chartMessage === 'vis-report') {
                 console.log('prepare report for HR recovery')
                 let recoveryStart = {}

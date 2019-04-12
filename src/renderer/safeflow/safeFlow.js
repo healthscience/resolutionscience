@@ -87,6 +87,16 @@ safeFlow.prototype.entityChartGetter = async function (eid) {
 }
 
 /**
+* get current Average
+* @method entityCurrentAverageHR
+*
+*/
+safeFlow.prototype.entityCurrentAverageHR = async function (eid) {
+  let currentAverageHR = await this.liveEManager.GetaverageCurrentDailyStatistics(eid)
+  return currentAverageHR
+}
+
+/**
 * build context for Toolkit
 * @method toolkitContext
 *

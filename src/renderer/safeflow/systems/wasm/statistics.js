@@ -112,6 +112,59 @@ StatisticsSystem.prototype.averageStatistics = async function (startDate, device
 }
 
 /**
+* statical Monthly average
+* @method averageMonthlyStatistics
+*
+*/
+StatisticsSystem.prototype.averageMonthlyStatistics = async function (startDate, device, avgType, dataArray) {
+  console.log('start MONTH average')
+  // query daily averages and chunk into monthly batches
+  await this.liveTestStorage.getAverageData(startDate, device, avgType).then(function (dataBatch) {
+    if (dataBatch.length > 0) {
+      // prepare per month batches
+    }
+  })
+  let numberEntries = dataArray.length
+  // accumulate sum the daily data
+  let sum = dataArray.reduce(add, 0)
+  function add (a, b) {
+    return a + b
+  }
+  let averageResult = sum / numberEntries
+  let roundAverage = Math.round(averageResult)
+  // where to save
+  let saveTime = startDate / 1000
+  await this.liveTestStorage.saveaverageData(saveTime, device, avgType, numberEntries, 'average-heartrate', roundAverage)
+  return true
+}
+
+/**
+* statical current history daily average
+* @method averageCurrentDailyStatistics
+*
+*/
+StatisticsSystem.prototype.averageCurrentDailyStatistics = async function (startDate, device, avgType, dataArray) {
+  console.log('start CURRENT average')
+  // query daily averages and chunk into monthly batches
+  let dataBatch = await this.liveTestStorage.getAverageData(startDate, device, avgType)
+  let numberEntries = dataBatch.length
+  // form single arrays
+  let singleAvgArray = []
+  for (let sav of dataBatch) {
+    singleAvgArray.push(sav.value)
+  }
+  // accumulate sum the daily data
+  let sum = singleAvgArray.reduce(add, 0)
+  function add (a, b) {
+    return a + b
+  }
+  let averageResult = sum / numberEntries
+  let roundAverage = Math.round(averageResult)
+  // where to save
+  return roundAverage
+}
+
+/**
 * data error analysis
 * @method dataErrorAnalysis
 *

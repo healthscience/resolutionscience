@@ -16,7 +16,7 @@ const events = require('events')
 var ComputeComponent = function (EID, setIN) {
   events.EventEmitter.call(this)
   this.EIDinfo = EID
-  this.liveCompute = new ComputeSystem(setIN)
+  this.liveComputeSystem = new ComputeSystem(setIN)
   this.computeStatus = false
 }
 
@@ -42,7 +42,7 @@ ComputeComponent.prototype.filterCompute = async function (compInfo, deviceList,
   } else {
     console.log('2go compute system')
     // console.log(this.EIDinfo)
-    let computeState = await this.liveCompute.computationSystem(compInfo, deviceList, cnrlInfo, rawIN)
+    let computeState = await this.liveComputeSystem.computationSystem(compInfo, deviceList, cnrlInfo, rawIN)
     console.log('COMPUTE-COMP2--return')
     // console.log(computeState)
     computeStatelive.computeState = computeState.status

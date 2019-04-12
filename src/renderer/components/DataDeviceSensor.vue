@@ -64,7 +64,7 @@
       repeatTimetokenseen: true
     }),
     created () {
-      // this.checkforToken()
+      this.checkforToken()
     },
     methods: {
       checkforToken () {

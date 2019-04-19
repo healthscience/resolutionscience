@@ -1,6 +1,10 @@
 <template>
   <section class="container">
-    <h1>Human -> Body(movement - steps) + Heart</h1>
+    <section id="knowledge">
+      <knowledge-Live :liveData="liveData" ></knowledge-Live>
+      <knowledge-Context :knowledgeData="knowledgeData" @knowledgeSet="knowledgeStatus" @languageSet="languageStatus"  @scienceSet="scienceStatus" ></knowledge-Context>
+    </section>
+    <!-- <h1>Human -> Body(movement - steps) + Heart</h1>
     <div id="resolution-set">Resolution: Time {{ resolutionSet }} intervals</div>
       <section id="heart-science-context" class="column">
         <ul>
@@ -43,7 +47,6 @@
                     {{ scoption.text }}
                   </option>
                 </select>
-                <!--<span>Selected: {{ selectedCompute }}</span>-->
                 </li>
               </ul>
           </li>
@@ -53,10 +56,21 @@
             </div>
           </li>
         </ul>
-      </section>
+      </section> -->
       <section id="diy-science">
         <div id="oracles">oracles</div>
         <div id="tends">trends</div>
+        <div id="visulation-select">
+            <ul>
+              <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis1)" v-bind:class="{ 'active': vis1.active}">{{ vis1.name }}</a></li>
+              <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis2)" v-bind:class="{ 'active': vis2.active}">{{ vis2.name }}</a></li>
+              <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis3)" v-bind:class="{ 'active': vis3.active}">{{ vis3.name }}</a></li>
+              <li id="tool-bar">
+                <header>Tools</header>
+                <a class="" href="" id="toolbarholder" @click.prevent="toolsSwitch()" >{{toolbar.text}}</a>
+              </li>
+            </ul>
+        </div>
         <div id="toolbar-tools">
           <Toolbar-Tools :toolbarData="toolbarData" @toolbarSet="toolbarStatus()" ></Toolbar-Tools>
         </div>
@@ -109,6 +123,8 @@
   import BubbleChart from '@/components/charts/BubbleChart'
   import Reactive from '@/components/charts/Reactive'
   import Reactivestats from '@/components/charts/Reactivestats'
+  import KnowledgeContext from '@/components/toolbar/knowledgeContext.vue'
+  import KnowledgeLive from '@/components/toolbar/knowledgeLive.vue'
   import ToolbarTools from '@/components/toolbar/statisticstools.vue'
   import LearnReport from '@/components/reports/learn-report.vue'
   import recoveryReport from '@/components/reports/recoveryReport.vue'
@@ -127,11 +143,26 @@
       LearnReport,
       tableBuild,
       simulationView,
-      ToolbarTools
+      ToolbarTools,
+      KnowledgeContext,
+      KnowledgeLive
     },
     data () {
       return {
         liveSafeFlow: null,
+        knowledgeData: {},
+        liveData:
+        {
+          devices: [],
+          sensors: [],
+          scienceLive: '',
+          language: ''
+        },
+        knowledge:
+        {
+          active: false,
+          text: 'hiden'
+        },
         liveTime: 0,
         datacollection: null,
         datastatistics: null,
@@ -213,6 +244,7 @@
       }
     },
     mounted () {
+      this.knowledgeData.seenStatus = true
     },
     created () {
       this.setAccess()
@@ -294,7 +326,6 @@
       updateSciDTs (sciDTin) {
         console.log('science has changed')
         // console.log(sciDTin)
-        // console.log(this.science)
         // console.log(this.activeEntity)
         this.activeEntity = sciDTin
         // use cid to look up datatype for this scienceEntities
@@ -414,6 +445,80 @@
         // this.learn.active = false
         this.activeEntity = 'cnrl-2356388731'
         this.$store.commit('setScience', this.scoptions[0])
+      },
+      knowledgeStatus (kIN) {
+        console.log('knowledtget set in')
+        console.log(kIN)
+        if (kIN.device_mac) {
+          console.log('device live')
+          this.liveDevice(kIN)
+        } else if (kIN.text) {
+          // datatypes
+          this.liveDataTypes(kIN)
+        }
+      },
+      languageStatus (lIN) {
+        console.log('language set in')
+        console.log(lIN)
+        this.liveData.language = lIN
+        console.log(this.liveData.language)
+      },
+      liveDevice (liveD) {
+        console.log('set live device to comp')
+        let deviceLive = []
+        if (liveD.active === true) {
+          deviceLive.push(liveD)
+        } else if (liveD.active === false) {
+          // remove device
+          this.removeLiveElement(liveD.device_mac)
+        }
+        this.liveData.devices = deviceLive
+      },
+      toolsSwitch () {
+        console.log('tools sliders overlay')
+        this.toolbar.text = 'on'
+      },
+      removeLiveElement (remove) {
+        console.log('device remove')
+        let array = this.liveData.devices
+        function arrayRemove (arr, value) {
+          return arr.filter(function (ele) {
+            return ele.device_mac !== value
+          })
+        }
+        let result = arrayRemove(array, remove)
+        console.log(result)
+        return true
+      },
+      liveDataTypes (liveDT) {
+        console.log('set live DT')
+        // let dataTypesLive = []
+        if (liveDT.active === true) {
+          console.log('true')
+          this.liveData.sensors.push(liveDT)
+        } else if (liveDT.active === false) {
+          // remove device
+          console.log('false')
+          this.removeLiveDT(liveDT.text)
+        }
+        // this.liveData.sensors.push(dataTypesLive)
+      },
+      removeLiveDT (remove) {
+        console.log('remove DT')
+        let array = this.liveData.sensors
+        function arrayRemove (arr, value) {
+          return arr.filter(function (ele) {
+            return ele.text !== value
+          })
+        }
+        let result = arrayRemove(array, remove)
+        this.liveData.sensors = result
+        return true
+      },
+      scienceStatus (sIN) {
+        console.log('science set in')
+        console.log(sIN)
+        this.liveData.scienceLive = sIN
       },
       toolbarStatus () {
         this.toolbar.text = 'off'
@@ -568,4 +673,14 @@
 .tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
 .tg .tg-0lax{text-align:left;vertical-align:top}
 
+#diy-science {
+  border: 2px solid orange;
+  margin: 2em;
+  width: 98%;
+}
+
+#visulation-select {
+    border: 1px solid green;
+    margin-left: 1em;
+}
 </style>

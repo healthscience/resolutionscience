@@ -121,6 +121,16 @@ safeFlow.prototype.toolkitContext = async function (flag, callBK) {
 
 /**
 * call the CNRL on startup to get live science in network
+* @method cnrlSemanticKnowledge
+*
+*/
+safeFlow.prototype.cnrlSemanticKnowledge = function (refIN) {
+  let startSemantics = this.liveCNRL.semanticKnowledge(refIN)
+  return startSemantics
+}
+
+/**
+* call the CNRL on startup to get live science in network
 * @method cnrlScienceStart
 *
 */

@@ -22,7 +22,7 @@
           </ul>
       </div>
       <div v-if="liveData.scienceLive.prime !== undefine" id="live-context-science" class="live-element">
-        Science - <div class="live-item">{{ liveData.scienceLive.prime[0].text || 'none' }}</div>
+        Science - <div class="live-item">{{ liveData.scienceLive.prime.text || 'none' }}</div>
       </div>
       <div v-else id="live-context-science" class="live-element">Science: not selected</div>
       <!-- <div id="context-resolution">

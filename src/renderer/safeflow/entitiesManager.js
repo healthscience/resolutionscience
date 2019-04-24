@@ -33,29 +33,11 @@ util.inherits(EntitiesManager, events.EventEmitter)
 * @method addScienceEntity
 *
 */
-EntitiesManager.prototype.addScienceEntity = async function (segT, range, entID, setIN) {
+EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
   // console.log(entID)
-  // const localthis = this
-  const cid = entID.science.cid
-  const wasmID = entID.science.wasm
-  const visID = entID.vis
-  // pass range to get converted from moment format to miillseconds (stnd for safeflow)
-  let rangeMills = this.liveTimeUtil.rangeCovert(range)
-  console.log('range times in MS time format')
-  console.log(rangeMills)
-  let timePeriod = {}
-  // build time profile  day or range from toolbar?
-  if (range.active === true) {
-    entID.timeperiod = range
-    timePeriod = rangeMills.startTime
-  } else {
-    timePeriod = this.liveTimeUtil.timePeriod(segT)
-    entID.timeperiod = timePeriod
-  }
-  // get Comp. Network Ref. Layer for science
-  const cnrlInfo = this.liveCNRL.lookupContract(entID.science.cid)
-  entID.dataTypesCNRL = cnrlInfo
-  // console.log(entID.dataTypesCNRL)
+  let cid = ''
+  let timePeriod = ''
+  let visID = ''
   if (this.liveSEntities[cid]) {
     console.log('entity' + cid + 'already exists')
     // does the data exist for this visualisation and time?
@@ -64,10 +46,10 @@ EntitiesManager.prototype.addScienceEntity = async function (segT, range, entID,
       console.log('data already ready')
       this.liveSEntities[cid].liveDataC.setStartDate(timePeriod)
       this.liveSEntities[cid].liveDataC.setTimeList(timePeriod)
-    } else if (entID.timeperiod.active === true) {
+    } else if (ecsIN.timeperiod.active === true) {
       // toolbar select timerange mode
       console.log('toolbar select time range')
-      await this.controlFlow(cid, timePeriod, rangeMills, wasmID, visID, cnrlInfo).then(function (cFlow) {
+      await this.controlFlow().then(function (cFlow) {
         console.log('CONTROLFLOW--already-COMPLETE')
         console.log(cFlow)
       })
@@ -76,7 +58,7 @@ EntitiesManager.prototype.addScienceEntity = async function (segT, range, entID,
       console.log('need to prepare new visualisation data')
       this.liveSEntities[cid].liveDataC.setStartDate(timePeriod)
       this.liveSEntities[cid].liveDataC.setTimeList(timePeriod)
-      await this.controlFlow(cid, timePeriod, rangeMills, wasmID, visID, cnrlInfo).then(function (cFlow) {
+      await this.controlFlow().then(function (cFlow) {
         console.log('CONTROLFLOW--already-COMPLETE')
         console.log(cFlow)
       })
@@ -84,7 +66,7 @@ EntitiesManager.prototype.addScienceEntity = async function (segT, range, entID,
   } else {
     console.log('entity' + cid + 'is new')
     // start workflow for setting up entity, compute and vis/sim etc.
-    this.liveSEntities[cid] = new Entity(entID, setIN)
+    this.liveSEntities[cid] = new Entity(ecsIN, setIN)
     // set listener for recoveryHR
     if (cid === 'cnrl-2356388733') {
       this.listenRHRdataEvent()
@@ -92,7 +74,7 @@ EntitiesManager.prototype.addScienceEntity = async function (segT, range, entID,
     // set the livestart time for the UI
     this.liveSEntities[cid].liveDataC.setStartDate(timePeriod)
     this.liveSEntities[cid].liveDataC.setTimeList(timePeriod)
-    await this.controlFlow(cid, timePeriod, rangeMills, wasmID, visID, cnrlInfo).then(function (cFlow) {
+    await this.controlFlow().then(function (cFlow) {
       console.log('CONTROLFLOW--new--COMPLETE')
       console.log(cFlow)
     })

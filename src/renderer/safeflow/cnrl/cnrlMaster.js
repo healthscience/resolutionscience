@@ -28,7 +28,7 @@ util.inherits(CNRLmaster, events.EventEmitter)
 *
 */
 CNRLmaster.prototype.scienceOnNetwork = function () {
-  let science = [{ active: false, text: 'Observation data', description: 'Display of source data from a devies sensors.', value: 'A', cid: 'cnrl-2356388731', wasm: 'wasm-sc-1', verified: true }, { active: false, text: 'Sum data', description: 'Add up quantities on a time basis', value: 'F', cid: 'cnrl-2356388737', wasm: 'wasm-sc-6', verified: true }, { active: false, text: 'Average', description: 'A statisticial average calculated on BMP and steps on a daily basis.', value: 'B', cid: 'cnrl-2356388732', wasm: 'wasm-sc-2', verified: false }, { active: false, text: 'Resting HR Recovery', description: 'The use of bayesian statistical methods to show the time it take for the heart to reach resting heart rate value after activity.', value: 'C', cid: 'cnrl-2356388733', wasm: 'wasm-sc-3' }]
+  let science = [{ active: false, text: 'Observation data', description: 'Display of source data from a devies sensors.', value: 'A', cid: 'cnrl-2356388731', wasm: 'wasm-sc-1', livingpaper: 'http://www.healthscience.network/observation', verified: true }, { active: false, text: 'Sum data', description: 'Add up quantities on a time basis', value: 'F', cid: 'cnrl-2356388737', wasm: 'wasm-sc-6', livingpaper: 'http://www.healthscience.network/sum', verified: true }, { active: false, text: 'Average', description: 'A statisticial average calculated on BMP and steps on a daily basis.', value: 'B', cid: 'cnrl-2356388732', wasm: 'wasm-sc-2', livingpaper: 'http://www.healthscience.network/average', verified: false }, { active: false, text: 'Resting HR Recovery', description: 'The use of bayesian statistical methods to show the time it take for the heart to reach resting heart rate value after activity.', value: 'C', cid: 'cnrl-2356388733', wasm: 'wasm-sc-3', livingpaper: 'https://docs.google.com/document/d/11JWcbBrwgLIqPc7V7GpI_WbACuIS_4h630zdT66Re3s/edit', verified: 'false' }]
   return science
   // , { active: false, text: 'error data', description: 'Data Error numbers and statistics', value: 'D', cid: 'cnrl-2356388734', wasm: 'wasm-sc-4', verified: false }, { active: false, text: 'HealthSpan', description: 'Combines all network machine learning of the scientific computations to build a simulation of a human heart', value: 'E', cid: 'cnrl-2356388736', wasm: 'wasm-sc-5', verified: false }
 }
@@ -64,7 +64,7 @@ CNRLmaster.prototype.semanticKnowledge = function (refIN) {
   // if contract has links, follow those to source TODO
   let dataCNRLbundle = {}
   if (refIN === 'cnrl-k1') {
-    dataCNRLbundle.prime = {'heart': 'movement activity steps'}
+    dataCNRLbundle.prime = {'word': ['heart', 'movement activity steps']}
     dataCNRLbundle.science = {'science': 'mathematics'}
     dataCNRLbundle.resolution = []
     dataCNRLbundle.source = []
@@ -110,6 +110,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
   console.log('CRNL----lookup')
   let dataCNRLbundle = {}
   dataCNRLbundle.type = ''
+  dataCNRLbundle.livingpaper = ''
   dataCNRLbundle.prime = {}
   dataCNRLbundle.resolution = {}
   dataCNRLbundle.source = []
@@ -123,40 +124,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
   dataCNRLbundle.subsource = ''
   dataCNRLbundle.namespace = ''
   dataCNRLbundle.index = []
-  if (refIN === 'cnrl-2356388731') {
-    dataCNRLbundle.type = 'science'
-    dataCNRLbundle.prime = {'text': 'Observations', 'active': 'false'}
-    dataCNRLbundle.tidy = false
-    dataCNRLbundle.tidyList = []
-    dataCNRLbundle.tableStructure = [{'cnrl-8856388713': 'timestamp'}, {'cnrl-8856388711': 'steps'}, {'cnrl-8856388711': 'heart_rate'}]
-    dataCNRLbundle.subsource = ''
-    dataCNRLbundle.resolution = {}
-    dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388731'
-  } else if (refIN === 'cnrl-2356388737') {
-    console.log('sum compute')
-    dataCNRLbundle.type = 'science'
-    dataCNRLbundle.prime = {'text': 'Sum per time', 'active': 'false'}
-    dataCNRLbundle.tidy = false
-    dataCNRLbundle.tidyList = []
-    dataCNRLbundle.tableStructure = [{'cnrl-8856388713': 'timestamp'}, {'cnrl-8856388711': 'steps'}, {'cnrl-8856388711': 'heart_rate'}]
-    dataCNRLbundle.subsource = ''
-    dataCNRLbundle.resolution = {}
-    dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388736'
-  } else if (refIN === 'cnrl-2356388732') {
-    dataCNRLbundle.type = 'science'
-    dataCNRLbundle.prime = {'text': 'average', 'active': 'false'}
-    dataCNRLbundle.tidy = false
-    dataCNRLbundle.resolution = {'text': '1440 seconds', 'active': 'false'}
-    dataCNRLbundle.tableStructure = [{'cnrl-8856388713': 'timestamp'}, {'cnrl-8856388711': 'steps'}, {'cnrl-8856388711': 'heart_rate'}]
-    dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388732'
-  } else if (refIN === 'cnrl-2356388733') {
-    dataCNRLbundle.type = 'science'
-    dataCNRLbundle.prime = {'text': 'recovery-heartrate', 'active': 'false'}
-    dataCNRLbundle.tidy = false
-    dataCNRLbundle.resolution = {'text': 'xx seconds', 'active': 'fase'}
-    dataCNRLbundle.tableStructure = [{'cnrl-8856388713': 'timestamp'}, {'cnrl-8856388711': 'steps'}, {'cnrl-8856388711': 'heart_rate'}]
-    dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388733'
-  } else if (refIN === 'cnrl-8856388711') {
+  if (refIN === 'cnrl-8856388711') {
     console.log('bmp contract')
     dataCNRLbundle.type = 'datatype'
     dataCNRLbundle.prime = { 'text': 'bpm', 'active': 'false' }
@@ -193,7 +161,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.namespace = 'cnrl-8856388713'
     dataCNRLbundle.index = ['cnrl-33221101']
   } else if (refIN === 'cnrl-8856388723') {
-    console.log('time contract')
+    console.log('average contract')
     dataCNRLbundle.type = 'datatype'
     dataCNRLbundle.prime = { 'text': 'average', 'active': 'false' }
     dataCNRLbundle.tidy = true
@@ -204,19 +172,81 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.resolution = { 'text': 'statistics', 'active': 'false' }
     dataCNRLbundle.namespace = ''
     dataCNRLbundle.index = []
+  } else if (refIN === 'cnrl-8856388727') {
+    console.log('recovery contract')
+    dataCNRLbundle.type = 'datatype'
+    dataCNRLbundle.prime = { 'text': 'recovery', 'active': 'false' }
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.tableStructure = []
+    dataCNRLbundle.subsource = 'cnrl-primary'
+    dataCNRLbundle.columncodes.push({})
+    dataCNRLbundle.resolution = { 'text': '', 'active': 'false' }
+    dataCNRLbundle.namespace = ''
+    dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-8856388724') {
-    console.log('time contract')
+    console.log('average heartrate contract')
     dataCNRLbundle.type = 'datatype'
     dataCNRLbundle.prime = { 'text': 'average-heartrate', 'active': 'false' }
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
     dataCNRLbundle.tableStructure = []
+    dataCNRLbundle.subsource = 'cnrl-derived'
     dataCNRLbundle.dtsource = ['cnrl-8856388711', 'cnrl-8856388723']
-    dataCNRLbundle.subsource = ''
     dataCNRLbundle.columncodes.push({})
     dataCNRLbundle.resolution = { 'text': 'statistics', 'active': 'false' }
     dataCNRLbundle.namespace = ''
     dataCNRLbundle.index = []
+  } else if (refIN === 'cnrl-8856388725') {
+    console.log('recovery heartrate contract')
+    dataCNRLbundle.type = 'datatype'
+    dataCNRLbundle.prime = { 'text': 'recovery-heartrate', 'active': 'false' }
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.tableStructure = []
+    dataCNRLbundle.subsource = 'cnrl-derived'
+    dataCNRLbundle.dtsource = ['cnrl-8856388711', 'cnrl-8856388725']
+    dataCNRLbundle.columncodes.push({})
+    dataCNRLbundle.resolution = { 'text': 'statistics', 'active': 'false' }
+    dataCNRLbundle.namespace = ''
+    dataCNRLbundle.index = []
+  } else if (refIN === 'cnrl-2356388731') {
+    dataCNRLbundle.type = 'science'
+    dataCNRLbundle.livingpaper = 'http://www.healthscience.network/observation'
+    dataCNRLbundle.prime = {'text': 'Observations', 'active': 'false'}
+    dataCNRLbundle.tidy = false
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.tableStructure = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp'}, {'cnrl': 'cnrl-8856388711', 'text': 'steps'}, {'cnrl': 'cnrl-8856388711', 'text': 'heart_rate'}]
+    dataCNRLbundle.subsource = ''
+    dataCNRLbundle.resolution = {}
+    dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388731'
+  } else if (refIN === 'cnrl-2356388737') {
+    console.log('sum compute')
+    dataCNRLbundle.type = 'science'
+    dataCNRLbundle.livingpaper = 'http://www.healthscience.network/sum'
+    dataCNRLbundle.prime = {'text': 'Sum per time', 'active': 'false'}
+    dataCNRLbundle.tidy = false
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.tableStructure = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp'}, {'cnrl': 'cnrl-8856388711', 'text': 'steps'}, {'cnrl': 'cnrl-8856388711', 'text': 'heart_rate'}]
+    dataCNRLbundle.subsource = ''
+    dataCNRLbundle.resolution = {}
+    dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388736'
+  } else if (refIN === 'cnrl-2356388732') {
+    dataCNRLbundle.type = 'science'
+    dataCNRLbundle.livingpaper = 'http://www.healthscience.network/average'
+    dataCNRLbundle.prime = {'text': 'average', 'active': 'false'}
+    dataCNRLbundle.tidy = false
+    dataCNRLbundle.resolution = {'text': '1440 seconds', 'active': 'false'}
+    dataCNRLbundle.tableStructure = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp'}, {'cnrl': 'cnrl-8856388724', 'text': 'average-heartrate'}, {'cnrl': 'cnrl-', 'text': 'average-steps'}]
+    dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388732'
+  } else if (refIN === 'cnrl-2356388733') {
+    dataCNRLbundle.type = 'science'
+    dataCNRLbundle.livingpaper = 'https://docs.google.com/document/d/11JWcbBrwgLIqPc7V7GpI_WbACuIS_4h630zdT66Re3s/edit'
+    dataCNRLbundle.prime = {'text': 'recovery-heartrate', 'active': 'false'}
+    dataCNRLbundle.tidy = false
+    dataCNRLbundle.resolution = {'text': 'xx seconds', 'active': 'fase'}
+    dataCNRLbundle.tableStructure = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': 'false'}, {'cnrl': 'cnrl-8856388724', 'text': 'recovery-heartrate', 'active': 'false'}]
+    dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388733'
   } else if (refIN === 'cnrl-33221101') {
     // CNRL implementation REST API
     console.log('REST API description')
@@ -224,12 +254,13 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.subsource = 'cnrl-773355992211'
     dataCNRLbundle.prime = { 'text': 'mongo-RESTAPI', 'active': 'false' }
     dataCNRLbundle.tidy = true
-    dataCNRLbundle.tidyList = [{'cnrl-8856388711': [-1, 0, 255]}]
-    dataCNRLbundle.apistructure = ['devicedata/<publickey>/<token>/<queryTime>/<deviceID>/', 'contextdata/<publickey>/']
-    dataCNRLbundle.tableStructure[0] = {'devicedata/<publickey>/<token>/<queryTime>/<deviceID>/': [{'cnrl': 'id'}, {'cnrl-8856388713': 'timestamp'}, {'cnrl': 'device_mac'}, {'cnrl': 'device_id'}, {'cnrl': 'user_id'}, {'cnrl': 'raw_intensity'}, {'cnrl-8856388711': 'steps'}, {'cnrl': 'raw_kind'}, {'cnrl-8856388711': 'heart_rate'}, {'cnrl': 'publickey'}, {'cnrl': 'compref'}]}
-    dataCNRLbundle.tableStructure[1] = {'contextdata/<publickey>/': [{'cnrl': 'device_mac'}, {'cnrl': 'firmware'}]}
-    dataCNRLbundle.tableStructure[2] = {'contexttype/<publickey>/': [{}]}
-    dataCNRLbundle.tableStructure[3] = {'heart24data/<publickey>/<token>/<queryTime>/<deviceID>/': [{'cnrl-8856388724': 'value'}]}
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.apistructure = ['devicedata/<publickey>/<token>/<queryTime>/<deviceID>/', 'contextdata/<publickey>/', 'contexttype/<publickey>/', 'heart24data/<publickey>/<token>/<queryTime>/<deviceID>/']
+    dataCNRLbundle.tableStructure[0] = [{'cnrl': '', 'text': '_id'}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp'}, {'cnrl': '', 'text': 'device_mac'}, {'cnrl': '', 'text': 'device_id'}, {'cnrl': '', 'text': 'user_id'}, {'cnrl': '', 'text': 'raw_intensity'}, {'cnrl': 'cnrl-8856388712', 'text': 'steps'}, {'cnrl': '', 'text': 'raw_kind'}, {'cnrl': 'cnrl-8856388711', 'text': 'heart_rate'}, {'cnrl': '', 'text': 'publickey'}, {'cnrl': '', 'text': 'compref'}]
+    dataCNRLbundle.tableStructure[1] = [{'cnrl': '', 'text': 'device_mac'}, {'cnrl': '', 'text': 'firmware'}]
+    dataCNRLbundle.tableStructure[2] = [{}]
+    dataCNRLbundle.tableStructure[3] = [{'cnrl': 'cnrl-8856388724', 'text': 'value'}]
+    dataCNRLbundle.tableStructure[3] = [{'cnrl': 'cnrl-8856388725', 'text': 'value'}]
     dataCNRLbundle.namespace = 'http://165.227.244.213:8882/'
     dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-773355992211') {
@@ -240,9 +271,9 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.prime = { 'text': 'Gadgetbridge-SQLite', 'active': 'false' }
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = [{'cnrl-8856388711': [-1, 0, 255]}]
-    dataCNRLbundle.tableStructure = [{'cnrl-8856388713': 'TIMESTAMP'}, {'cnrl': 'DEVICE_ID'}, {'cnrl': 'USER_ID'}, {'cnrl': 'RAW_INTENSITY'}, {'cnrl-8856388711': 'STEPS'}, {'cnrl': 'RAW_KIND'}, {'cnrl-8856388711': 'HEART_RATE'}]
-    dataCNRLbundle.columncodes.push({'column': 'RAW_KIND', 'coding': [{'212': 'lightsleep', '202': 'deepsleep'}]})
-    dataCNRLbundle.columncodes.push({'column': 'RAW_INTENSITY', 'coding': [{'312': 'walking', '302': 'running'}]})
+    dataCNRLbundle.tableStructure = [{'cnrl': 'cnrl-8856388713', 'text': 'TIMESTAMP', 'active': 'false'}, {'cnrl': 'cnrl', 'text': 'DEVICE_ID', 'active': 'false'}, {'cnrl': 'cnrl', 'text': 'USER_ID', 'active': 'false'}, {'cnrl': 'cnrl', 'text': 'RAW_INTENSITY', 'active': 'false'}, {'cnrl': 'cnrl-8856388711', 'text': 'STEPS', 'active': 'false'}, {'cnrl': 'cnrl', 'text': 'RAW_KIND', 'active': 'false'}, {'cnrl': 'cnrl-8856388711', 'text': 'HEART_RATE', 'active': 'false'}]
+    dataCNRLbundle.columncodes.push({'column': 'RAW_KIND', 'coding': [{'212': 'lightsleep'}, {'202': 'deepsleep'}]})
+    dataCNRLbundle.columncodes.push({'column': 'RAW_INTENSITY', 'coding': [{'312': 'walking'}, {'302': 'running'}]})
     dataCNRLbundle.resolution = {}
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-773355992211'
     dataCNRLbundle.index = []

@@ -51,13 +51,72 @@ safeFlow.prototype.setTestStorage = function (setIN) {
 * @method scienceEntities
 *
 */
-safeFlow.prototype.scienceEntities = async function (segT, range, inputInfo) {
+safeFlow.prototype.scienceEntities = async function (bundleIN) {
   // add a new entity via manager
-  await this.liveEManager.addScienceEntity(segT, range, inputInfo, this.settings).then(function (bk) {
+  // first prepare input in ECS format
+  let ecsIN = {}
+  ecsIN.cid = bundleIN.cnrl
+  ecsIN.visID = bundleIN.vis
+  // convert all the time to millisecons format
+  ecsIN.time = this.timeConversionUtility(bundleIN.time)
+  ecsIN.uibundle = bundleIN
+  await this.liveEManager.addScienceEntity(ecsIN, this.settings).then(function (bk) {
     console.log('SAFEFLOW-new entitycomplete')
     console.log(bk)
     return true
   })
+}
+
+/**
+*   convert all the time input to milliseconds
+* @method timeConversionUtility
+*
+*/
+safeFlow.prototype.timeConversionUtility = function (timeBundle) {
+  // pass range to get converted from moment format to miillseconds (stnd for safeflow)
+  let timeConversion = {}
+  let rangeMills = this.liveTimeUtil.rangeCovert(timeBundle.range)
+  console.log('range times in MS time format')
+  console.log(rangeMills)
+  let timePeriod = {}
+  // build time profile  day or range from toolbar?
+  if (timeBundle.range.active === true) {
+    timeBundle.timeperiod = timeBundle.range
+    timePeriod = rangeMills.startTime
+  } else {
+    timePeriod = this.liveTimeUtil.timePeriod(timeBundle.segT)
+    timeBundle.timeperiod = timePeriod
+  }
+  return timeConversion
+}
+
+/**
+*  filter incoming learn request
+* @method learnStartStop
+*
+*/
+safeFlow.prototype.learnStartStop = function () {
+  // pass to entity component system
+  let computationSMid = this.selectedCompute
+  // console.log(computationSMid)
+  if (computationSMid === 'cnrl-2356388733') {
+    this.$store.commit('setScience', this.scoptions[2])
+    let timeRange = this.timeRange()
+    this.fillData(0, timeRange)
+    // this.learn.active = false
+  } else if (computationSMid === 'cnrl-2356388732') {
+    // need to dispay chart for this data, first check if averages need updating?
+    this.$store.commit('setScience', this.scoptions[1])
+    this.fillData(0, {})
+    this.averageSeen = true
+  } else if (computationSMid === 'cnrl-2356388731') {
+    // observation data
+    console.log('learn from observations')
+    console.log(this.scoptions[0])
+    this.$store.commit('setScience', this.scoptions[0])
+    this.fillData(0, {})
+    // this.observationsSeen = true
+  }
 }
 
 /**

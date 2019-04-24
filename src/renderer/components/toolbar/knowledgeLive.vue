@@ -2,7 +2,7 @@
   <div id="live-view">
     <div id="live-knowledge-elements">
       <div v-if="liveData.language !== undefine" id="context-language" class="live-element">
-        Language: <div class="live-item">{{ liveData.language }}</div>
+        Language: <div class="live-item">{{ liveData.language.word }}</div>
       </div>
       <div v-else id="live-context-language" class="live-element">Please set</div>
       <div id="live-context-devices" class="live-element">
@@ -25,13 +25,19 @@
         Science - <div class="live-item">{{ liveData.scienceLive.prime.text || 'none' }}</div>
       </div>
       <div v-else id="live-context-science" class="live-element">Science: not selected</div>
-      <!-- <div id="context-resolution">
-        Resolution
+      <div id="context-resolution" class="live-element">
+        <header>Resolution:</header>
+          <div class="live-item">{{ liveData.resolutionLive }}</div>
       </div>
-      <div id="context-time">
-        Time:
-      </div> -->
-      <div id="live-learn">
+      <div id="context-time" class="live-element">
+        <header>Time:</header>
+          <ul>
+            <li v-for="ts in liveData.timeLive">
+               <div class="live-item">{{ ts }}</div>
+            </li>
+          </ul>
+      </div>
+      <div id="live-learn" class="live-element">
         <div id="live-learn-container">
           <div id="learn">
             <button class="" href="" id="learn-button" @click.prevent="filterLearn(learn)">{{ learn.name }}</button>
@@ -87,16 +93,78 @@
       },
       async filterLearn (s) {
         console.log(s)
+        const localthis = this
         // get language, device, datatypes and sci comp bundles
         // pass on to SAFEflow to pass on entity manager
         let liveBundle = {}
+        liveBundle.cnrl = this.liveData.scienceLive.cnrl
         liveBundle.language = this.liveData.language
         liveBundle.devices = this.liveData.devices
         liveBundle.datatypes = this.liveData.sensors
         liveBundle.science = this.liveData.scienceLive
+        liveBundle.time = this.liveData.timeLive
+        liveBundle.resolution = this.liveData.resolutionLive
+        liveBundle.visualisation = this.digoutfromDisplaytoolbar
         console.log(liveBundle)
-        // let entityBegin = await this.liveSafeFlow.scienceEntities()
-        // console.log(entityBegin)
+        let entityBegin = await this.liveSafeFlow.scienceEntities(liveBundle)
+        console.log(entityBegin)
+        this.learnListening()
+        let entityGetter = await this.liveSafeFlow.entityGetter(localthis.activeEntity, localthis.activevis)
+        console.log('VUE---return getter data')
+        console.log(entityGetter)
+        console.log(entityGetter.chartMessage)
+        console.log(localthis.activevis)
+        if (localthis.activevis === 'vis-sc-1') {
+          console.log('chartjs')
+          if (entityGetter.chartMessage === 'computation in progress') {
+            console.log('chartjs--ongoing computation or obseration data')
+            localthis.chartmessage = entityGetter.chartMessage
+            localthis.options = entityGetter.chartPackage.options
+            localthis.$store.commit('setTools', localthis.options)
+            localthis.datacollection = entityGetter.chartPackage.prepared
+            localthis.liveTime = entityGetter.chartPackage.livetime
+            localthis.liveChartoptions = entityGetter.liveChartOptions
+            console.log(localthis.activeEntity)
+            localthis.getAverages(localthis.activeEntity)
+          } else if (entityGetter.chartMessage === 'vis-report') {
+            console.log('prepare report for HR recovery')
+            let recoveryStart = {}
+            recoveryStart.seenStatus = true
+            recoveryStart.hrcdata = entityGetter.hrcReport
+            localthis.recoveryData = recoveryStart
+            console.log(localthis.reportData)
+          } else {
+            console.log('chartjs-- uptodate finised')
+            localthis.chartmessage = 'computation up-to-date'
+            localthis.options = entityGetter.options
+            localthis.$store.commit('setTools', localthis.options)
+            localthis.datacollection = entityGetter.chartPackage.prepared
+            localthis.liveTime = entityGetter.chartPackage.livetime
+            localthis.liveChartoptions = entityGetter.liveChartOptions
+          }
+          // console.log(localthis.datacollection)
+        } else if (localthis.activevis === 'vis-sc-2') {
+          console.log('tablejs')
+          // localthis.tableHTML = entityGetter.table
+        } else if (localthis.activevis === 'vis-sc-3') {
+          console.log('simjs')
+          // localthis.simulationHeart = entityGetter.heart
+          // localthis.simulationMovement = entityGetter.heart
+          // localthis.simulationTime = entityGetter.time
+        }
+      },
+      learnListening () {
+        var localthis = this
+        // listening to give peer info. on computation statusTime
+        this.liveSafeFlow.liveEManager.on('computation', function (cState) {
+          console.log('computation event from manager')
+          console.log(cState)
+          if (cState === 'in-progress') {
+            localthis.chartmessage = cState
+          } else {
+            localthis.chartmessage = 'computation up-to-date'
+          }
+        })
       }
     }
   }

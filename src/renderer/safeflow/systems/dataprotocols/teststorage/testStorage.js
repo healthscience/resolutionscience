@@ -9,7 +9,7 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import TimeUtilities from '../timeUtility.js'
+import TimeUtilities from '../../../systems/timeUtility.js'
 const util = require('util')
 const events = require('events')
 const axios = require('axios')
@@ -141,9 +141,7 @@ TestStorageAPI.prototype.saveaverageData = async function (startDate, device, av
 TestStorageAPI.prototype.getHRrecoveryData = async function (queryTime, deviceID) {
   //  nosql query
   console.log('Recovery HR GET ----')
-  console.log(queryTime)
   let jsondata = await axios.get(this.baseAPI + '/recoveryHRdata/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID + '/')
-  console.log(jsondata)
   return jsondata.data
 }
 
@@ -154,9 +152,6 @@ TestStorageAPI.prototype.getHRrecoveryData = async function (queryTime, deviceID
 */
 TestStorageAPI.prototype.saveHRrecoveryData = async function (dataType, device, HRrecoveryIN) {
   console.log('saving average hr data')
-  console.log(dataType)
-  console.log(device)
-  console.log(HRrecoveryIN)
   HRrecoveryIN.publickey = this.tempPubkey
   HRrecoveryIN.device_mac = device
   HRrecoveryIN.datatype = dataType
@@ -177,7 +172,6 @@ TestStorageAPI.prototype.saveHRrecoveryData = async function (dataType, device, 
 TestStorageAPI.prototype.firstToken = async function (pubkeyIN, callBackF) {
   // need source, devices, data
   console.log('first time call safeflow')
-  console.log(pubkeyIN)
   // prepare JSON object for POST
   let saveJSON = {}
   saveJSON.publickey = pubkeyIN

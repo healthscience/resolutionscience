@@ -25,35 +25,83 @@ var TimeUtilities = function (setUP) {
 util.inherits(TimeUtilities, events.EventEmitter)
 
 /**
-* Date and Time
-* @method timePeriod
+* convert all the time input to milliseconds
+* @method timeConversionUtility
 *
 */
-TimeUtilities.prototype.timePeriod = function (seg) {
+TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
+  // pass range to get converted from moment format to miillseconds (stnd for safeflow)
+  const localthis = this
+  let timeConversion = {}
+  // does a standard time types need converting or range or both?
+  for (let ti of timeBundle) {
+    console.log(ti)
+    if (ti === 'SELECT') {
+      let rangeMills = this.rangeCovert(ti)
+      console.log('range times in MS time format')
+      console.log(rangeMills)
+      timeConversion.range = rangeMills
+    } else {
+      console.log('convert seg to mills')
+      let timePeriod = {}
+      timePeriod = localthis.timePeriodBuilder(ti)
+      console.log(timePeriod)
+      timeConversion.startperiod = timePeriod
+    }
+  }
+  return timeConversion
+}
+
+/**
+* take range object and convert moment times to miillseconds
+* @method rangeCovert
+*
+*/
+TimeUtilities.prototype.rangeCovert = function (rangeIN) {
+  let rangeMS = {}
+  let startMinute = moment(rangeIN.startTime).startOf('minute')
+  let startMS = moment(startMinute).valueOf()
+  let endMinute = moment(rangeIN.endTime).startOf('minute')
+  let endMS = moment(endMinute).valueOf()
+  rangeMS.startTime = startMS / 1000
+  rangeMS.endTime = endMS / 1000
+  return rangeMS
+}
+
+/**
+* Date and Time
+* @method timePeriodBuilder
+*
+*/
+TimeUtilities.prototype.timePeriodBuilder = function (seg) {
   //  turn segment into time query profile
-  // console.log('timeUtility')
+  console.log('timeperiod builder')
+  console.log(seg)
   let startTime
-  if (this.liveStarttime && seg === -1) {
+  if (seg === 'day') {
+    // asking for one 24hr display
+    const nowTime = moment()
+    startTime = moment.utc(nowTime).startOf('day')
+  } else if (this.liveStarttime && seg === '-day') {
     // move back one day in time
     startTime = (this.liveStarttime - 86400) * 1000
-  } else if (this.liveStarttime && seg === -2) {
+  } else if (this.liveStarttime && seg === '+day') {
     // move forward day in time
     // console.log('forward one day')
     startTime = (this.liveStarttime + 86400) * 1000
-  } else if (seg === 0) {
-    // asking for one 24 display
-    const nowTime = moment()
-    startTime = moment.utc(nowTime).startOf('day')
-  } else if (seg === 12) {
+  } else if (seg === '-year') {
     // return start of year timeout
     startTime = moment().startOf('year')
+  } else if (seg === '+year') {
+    // return start of year head
+    startTime = moment().startOf('year') + 1
   } else {
     const startOfMonth = moment.utc().startOf('month')
-    //  reset the day to first of momoth adjust month for segment required
-    if (seg === 1) {
+    //  reset the day to first of month adjust month for segment required
+    if (seg === '-month') {
       startTime = startOfMonth
     } else {
-      let adSeg = seg - 1
+      let adSeg = startOfMonth - 1
       startTime = moment(startOfMonth).subtract(adSeg, 'months')
     }
   }
@@ -61,13 +109,14 @@ TimeUtilities.prototype.timePeriod = function (seg) {
   let startQuerytime = moment(startTime).valueOf()
   let timestamp = startQuerytime / 1000
   // not the last pass of the loop
-  if (seg === -1 && this.countSensors !== this.counterSensor) {
+  if (seg === '-day' && this.countSensors !== this.counterSensor) {
     this.liveStarttime = timestamp + 86400
-  } else if (seg === -2 && this.countSensors !== this.counterSensor) {
+  } else if (seg === '+day' && this.countSensors !== this.counterSensor) {
     this.liveStarttime = timestamp - 86400
   } else {
     this.liveStarttime = timestamp
   }
+  console.log(timestamp)
   return timestamp
 }
 
@@ -205,22 +254,6 @@ TimeUtilities.prototype.timeHTMLBuilder = function (liveTime) {
   let buildMilltime = liveTime * 1000
   stringTime = moment(buildMilltime).format('MMMM Do YYYY')
   return stringTime
-}
-
-/**
-* take rannge object and convert moment times to miillseconds
-* @method rangeCovert
-*
-*/
-TimeUtilities.prototype.rangeCovert = function (rangeIN) {
-  let rangeMS = {}
-  let startMinute = moment(rangeIN.startTime).startOf('minute')
-  let startMS = moment(startMinute).valueOf()
-  let endMinute = moment(rangeIN.endTime).startOf('minute')
-  let endMS = moment(endMinute).valueOf()
-  rangeMS.startTime = startMS / 1000
-  rangeMS.endTime = endMS / 1000
-  return rangeMS
 }
 
 export default TimeUtilities

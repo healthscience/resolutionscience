@@ -21,7 +21,7 @@
         <recovery-Report :recoveryData="recoveryData" @recoverySet="recoveryStatus()" ></recovery-Report>
       </div>
       <div v-if="visChartview" id="charts-live">
-        <div v-if="averageSeen" id="average-charting">
+        <!-- <div v-if="averageSeen" id="average-charting">
           <h3></h3>
           <div>
             <div id="chart-message">{{ chartmessage }}</div>
@@ -29,7 +29,7 @@
               <button id="close-report" @click.prevent="closeAvgSummary()">Close</button>
             </div>
           </div>
-        </div>
+        </div> -->
         <reactive :chartData="datacollection" :options="options" :width="1200" :height="600"></reactive>
       </div>
       <div v-if="visTableview" id="table-view">
@@ -40,13 +40,13 @@
       </div>
       <div id="time-context">
         <div id="select-time">
-          <button class="button is-primary" @click="setContextData(12)">- 1 Year</button>
-          <button class="button is-primary" @click="setContextData(1)">- 1 month</button>
-          <button class="button is-primary" @click="setContextData(-1)">Back day</button>
-          <button class="button is-now" @click="setContextData(0)">Today</button>
-          <button class="button is-future" @click="setContextData(-2)">Forward day</button>
-          <button class="button is-future" @click="setContextData(1)">+ 1 month</button>
-          <button class="button is-future" @click="setContextData(12)">+ 1 year</button>
+          <button class="button is-primary" @click="setContextData('-year')">- 1 Year</button>
+          <button class="button is-primary" @click="setContextData('-month')">- 1 month</button>
+          <button class="button is-primary" @click="setContextData('-day')">Back day</button>
+          <button class="button is-now" @click="setContextData('day')">Today</button>
+          <button class="button is-future" @click="setContextData('+day')">Forward day</button>
+          <button class="button is-future" @click="setContextData('+month')">+ 1 month</button>
+          <button class="button is-future" @click="setContextData('+year')">+ 1 year</button>
         </div>
         <div id="view-time">
           {{ liveTime }}
@@ -119,21 +119,29 @@
         },
         toolbarData: {},
         recoveryData: {},
-        datacollection: null,
         datastatistics: null,
-        liveChartoptions: null
+        liveChartoptions: null,
+        visChartview: true,
+        liveTime: '',
+        visTableview: false,
+        visSimview: false
       }
-    },
-    created () {
-      this.liveData.seenStatus = true
     },
     computed: {
       system: function () {
         return this.$store.state.system
       },
+      datacollection: function () {
+        return this.$store.state.visData
+      },
+      options: function () {
+        return this.$store.state.visOptions
+      },
       tools: function () {
         return this.$store.state.tools
       }
+    },
+    created () {
     },
     mounted () {
       this.startTools()
@@ -141,6 +149,7 @@
     methods: {
       startTools () {
         this.liveTools = this.$store.getters.liveTools
+        this.$store.commit('setVisual', ['vis-sc-1'])
       },
       selectVis (visIN) {
         // visIN.active = !visIN.active
@@ -169,6 +178,21 @@
             this.visSimview = true
           }
         }
+        // filter what visualisation is active and setToken
+        this.filterVisualisation()
+      },
+      filterVisualisation () {
+        let visLive = []
+        if (this.vis1.active === true) {
+          visLive.push(this.vis1.id)
+        }
+        if (this.vis2.active === true) {
+          visLive.push(this.vis2.id)
+        }
+        if (this.vis3.active === true) {
+          visLive.push(this.vis3.id)
+        }
+        this.$store.commit('setVisual', visLive)
       },
       toolsSwitch () {
         console.log('tools sliders overlay')
@@ -182,9 +206,6 @@
       },
       closeAvgSummary () {
         this.averageSeen = false
-        // this.learn.active = false
-        this.activeEntity = 'cnrl-2356388731'
-        this.$store.commit('setScience', this.scoptions[0])
       }
     }
   }

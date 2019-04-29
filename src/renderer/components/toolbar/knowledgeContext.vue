@@ -196,7 +196,9 @@
           active: true
         }],
         timeSelect: true,
-        livedtypes: []
+        livedtypes: [],
+        startLine: '',
+        stopLine: ''
       }
     },
     created () {
@@ -248,7 +250,7 @@
         // loop over match and display words or display human body graphic
         console.log('inplang')
         this.kwords = []
-        let lanuageCNRL = this.liveSafeFlow.cnrlSemanticKnowledge(cnrlID)
+        let lanuageCNRL = this.liveSafeFlow.cnrlLivingKnowledge(cnrlID)
         console.log(lanuageCNRL)
         let wordsPlacer = {}
         wordsPlacer.word = lanuageCNRL.prime.word
@@ -272,7 +274,7 @@
       },
       languageContext () {
         let refContext = 'human'
-        let lanuageCNRL = this.liveSafeFlow.cnrlSemanticKnowledge(refContext)
+        let lanuageCNRL = this.liveSafeFlow.cnrlLivingKnowledge(refContext)
         console.log('semanics')
         console.log(lanuageCNRL)
         this.kwords = lanuageCNRL
@@ -445,10 +447,15 @@
         // if select show slider on chart
         console.log('time set')
         console.log(tIN)
-        if (tIN === 'SELECT') {
+        let tt = {}
+        if (tIN.text === 'SELECT') {
           // display start end endPoint
+          tt.start = this.startLine
+          tt.end = this.stopLine
+          console.log(tt)
+          this.$emit('timeSet', tt)
         } else {
-          this.$emit('timeSet', tIN)
+          this.$emit('timeSet', tIN.text)
         }
       },
       livingPaper () {

@@ -16,8 +16,8 @@ const moment = require('moment')
 var ChartSystem = function () {
   events.EventEmitter.call(this)
   this.options = {}
-  this.startAvg = 72
-  this.startRestAvg = 52
+  this.startAvg = 0
+  this.startRestAvg = 0
   this.analysisStart = ''
   this.analysisEnd = ''
 }
@@ -33,32 +33,33 @@ util.inherits(ChartSystem, events.EventEmitter)
 * @method structureData
 *
 */
-ChartSystem.prototype.structureChartData = function (datatypeItem, liveDate, timeList, deviceList, chartDataIN) {
+ChartSystem.prototype.structureChartData = function (cBundle, cData) {
   this.options = this.prepareChartOptions()
   let dataholder = {}
   let datalabel = []
-  let dataheart = []
+  let datay = []
+  let liveDate = cBundle.liveTime
   this.chartPrep = {}
   // loop through and build two sperate arrays
-  for (let dataI of chartDataIN) {
-    for (let tItem of timeList) {
-      if (tItem === liveDate && dataI[liveDate]) {
-        for (let deviceI of deviceList) {
-          for (let dataItem of dataI[tItem][deviceI][0]) {
-            var mDateString = moment(dataItem.timestamp * 1000).toDate()
-            datalabel.push(mDateString)
-            if (datatypeItem === 'bpm') {
-              dataheart.push(dataItem.heart_rate)
-            } else if (datatypeItem === 'steps') {
-              dataheart.push(dataItem.steps)
-            }
+  for (let dataI of cData) {
+    // for (let tItem of cBundle.timeList) {
+    if (dataI[liveDate]) {
+      for (let devI of cBundle.deviceList) {
+        for (let datatypeData of dataI[liveDate][devI]) {
+          var mDateString = moment(datatypeData.timestamp * 1000).toDate()
+          datalabel.push(mDateString)
+          if (datatypeData.compref === 'cnrl-2356388731') {
+            datay.push(datatypeData.heart_rate)
+          } else if (datatypeData.steps) {
+            datay.push(datatypeData.steps)
           }
         }
       }
     }
+    // }
   }
   dataholder.labels = datalabel
-  dataholder.datasets = dataheart
+  dataholder.datasets = datay
   return dataholder
 }
 
@@ -68,13 +69,14 @@ ChartSystem.prototype.structureChartData = function (datatypeItem, liveDate, tim
 *
 */
 ChartSystem.prototype.chartColors = function (datatypeItem) {
+  console.log('COLOOOOR')
   let colorHolder = {}
   // LOOP over datatypeList and prepare chart colors
-  if (datatypeItem.text === 'steps') {
+  if (datatypeItem === 'cnrl-8856388712') {
     colorHolder.datatype = 'steps'
     colorHolder.backgroundColor = '#203487'
     colorHolder.borderColor = '#050d2d'
-  } else if (datatypeItem.text === 'bpm') {
+  } else if (datatypeItem === 'cnrl-8856388711') {
     colorHolder.datatype = 'bpm'
     colorHolder.backgroundColor = '#ed7d7d'
     colorHolder.borderColor = '#ea1212'
@@ -89,9 +91,10 @@ ChartSystem.prototype.chartColors = function (datatypeItem) {
 *
 */
 ChartSystem.prototype.prepareVueChartJS = function (results) {
+  console.log('CHARTJS--prepare')
   let datacollection = {}
   this.labelback = []
-  this.heartback = []
+  this.databack = []
   this.colorback = ''
   this.colorlineback = ''
   this.colorback2 = ''
@@ -101,9 +104,10 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
   if (results.chart.length === 2) {
     // need to prepare different visualisations, data return will fit only one Chart vis option
     for (let chD of results.chart) {
+      console.log(chD.color.datatype)
       if (chD.color.datatype === 'bpm') {
         this.labelback = chD.data.labels
-        this.heartback = chD.data.datasets
+        this.databack = chD.data.datasets
         this.colorback = chD.color.backgroundColor
         this.colorlineback = chD.color.borderColor
       } else if (chD.color.datatype === 'steps') {
@@ -128,6 +132,9 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
       this.colorlineback2 = results.chart[0].color.borderColor
     }
   }
+  // console.log('chartjs time array')
+  // console.log(this.labelback)
+  // console.log(this.databack)
   // check for no data available
   if (results === 'no data') {
     // no data to display
@@ -171,7 +178,7 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
           borderColor: this.colorlineback, // '#ea1212',
           backgroundColor: this.colorback, // 'rgba(255, 99, 132, 0.2)',
           fill: false,
-          data: this.heartback,
+          data: this.databack,
           yAxisID: 'bpm'
         }, {
           type: 'bar',
@@ -405,7 +412,6 @@ ChartSystem.prototype.newDateEnd = function (endTimeIN) {
 ChartSystem.prototype.structureStatisticsData = function (liveDate, dataType, deviceList, dataIn) {
   this.options = this.AverageChartOptions()
   console.log('STRUCTURE AVERAGE CHART DATA1')
-  console.log(dataIn)
   let dataholder = {}
   let datalabel = []
   let dataheart = []
@@ -457,7 +463,6 @@ ChartSystem.prototype.avgchartColors = function (datatypeItem) {
 ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
   // need to prepare different visualisations, data return will fit only one select option
   console.log('PREPARE STATS CHARTJS-- START')
-  console.log(results)
   var localthis = this
   let datacollection = {}
   this.labelback = []
@@ -574,8 +579,6 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
       }
     }
   }
-  console.log('average datacollection')
-  console.log(datacollection)
   return datacollection
 }
 

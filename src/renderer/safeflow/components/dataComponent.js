@@ -28,7 +28,7 @@ var DataComponent = function (DID, setIN) {
   this.dataType = []
   // this.setTimeList()
   this.setDevicesLive()
-  this.setCNRLmapping()
+  this.setCNRLsciencemapping()
   this.setDatatypesLive()
 }
 
@@ -44,7 +44,7 @@ util.inherits(DataComponent, events.EventEmitter)
 *
 */
 DataComponent.prototype.setStartDate = function (startDate) {
-  console.log('start data COMP')
+  console.log('start TIME')
   console.log(startDate)
   this.livedate = startDate
   return true
@@ -65,16 +65,16 @@ DataComponent.prototype.setTimeList = function (liveDate) {
 *
 */
 DataComponent.prototype.setDevicesLive = async function () {
-  this.deviceList = this.liveDataSystem.getLiveDevices(this.did.device)
+  this.deviceList = this.liveDataSystem.getLiveDevices(this.did.devices)
 }
 
 /**
 *  what the CNRL datatype Mapping
-* @method setCNRLmapping
+* @method setCNRLsciencemapping
 *
 */
-DataComponent.prototype.setCNRLmapping = function () {
-  this.CNRLscience = this.did.dataTypesCNRL
+DataComponent.prototype.setCNRLsciencemapping = function () {
+  this.CNRLscience = this.did.science
 }
 
 /**
@@ -83,7 +83,7 @@ DataComponent.prototype.setCNRLmapping = function () {
 *
 */
 DataComponent.prototype.setDatatypesLive = function () {
-  this.datatypeList = this.liveDataSystem.getLiveDatatypes(this.did.datatype)
+  this.datatypeList = this.liveDataSystem.getLiveDatatypes(this.did.datatypes)
 }
 
 /**
@@ -93,45 +93,14 @@ DataComponent.prototype.setDatatypesLive = function () {
 */
 DataComponent.prototype.RawData = async function () {
   console.log('DATACOMPONENT1----start rawdaata')
-  var localthis = this
   let systemBundle = {}
   systemBundle.timePeriod = this.livedate
-  systemBundle.dtAsked = this.CNRLscience.prime
+  systemBundle.dtAsked = this.datatypeList
   systemBundle.deviceList = this.deviceList
-  systemBundle.datatypes = this.datatypeList
-  console.log(this.did)
   console.log(systemBundle)
-  if (systemBundle.dtAsked[0].text === 'bpm') {
-    await this.liveDataSystem.getRawData(systemBundle).then(function (rawData) {
-      const rawHolder = {}
-      rawHolder[localthis.livedate] = rawData
-      localthis.dataRaw.push(rawHolder)
-      rawData = {}
-      // console.log(localthis.dataRaw)
-    })
-  } else if (systemBundle.dtAsked[0].text === 'average-heartrate') {
-    console.log('DATACOMPOENT1--ANY EXISTING AVERAGE QUERY')
-    await this.liveDataSystem.getRawStatsData(systemBundle, 'cnrl-2356388732').then(function (rawData) {
-      const rawHolder = {}
-      rawHolder[localthis.livedate] = rawData
-      localthis.dataRaw.push(rawHolder)
-      rawData = {}
-      console.log('raw stats data returned')
-      console.log(localthis.dataRaw)
-    })
-  } else if (systemBundle.dtAsked[0].text === 'recovery-heartrate') {
-    console.log('recovery heart rate ask')
-    await this.liveDataSystem.getHRrecovery(systemBundle).then(function (rawData) {
-      const rawHolder = {}
-      console.log('RECVERY RETURNED')
-      console.log(localthis.livedate)
-      console.log(rawData)
-      rawHolder[localthis.livedate] = rawData
-      localthis.dataRaw.push(rawHolder)
-      rawData = {}
-      // console.log(localthis.dataRaw)
-    })
-  }
+  this.dataRaw = await this.liveDataSystem.datatypeMapping(systemBundle)
+  console.log('rawData------')
+  console.log(this.dataRaw)
   return true
 }
 
@@ -141,23 +110,26 @@ DataComponent.prototype.RawData = async function () {
 *
 */
 DataComponent.prototype.TidyData = async function () {
-  // console.log('DCOMPONENT1-- datatidy started')
-  // console.log(this.dataRaw)
-  // const localthis = this
+  console.log('DCOMPONENT1-- datatidy started')
+  console.log(this.CNRLscience)
   if (this.CNRLscience.tidy === true) {
-    // var localthis = this
-    let tidyHolder = []
+    console.log('tidy require')
+    let tidyHolder = {}
     let dBundle = {}
     dBundle.timePeriod = this.livedate
     dBundle.deviceList = this.deviceList
     dBundle.datatypeList = this.datatypeList
     tidyHolder = this.liveDataSystem.tidyRawData(dBundle, this.dataRaw)
+    console.log('tidy back')
+    console.log(tidyHolder)
     this.tidyData.push(tidyHolder)
-    return true
   } else {
+    console.log('NOTtidy require')
     this.tidyData = this.dataRaw
-    return true
   }
+  console.log('tidy data structure')
+  console.log(this.tidyData)
+  return true
 }
 
 export default DataComponent

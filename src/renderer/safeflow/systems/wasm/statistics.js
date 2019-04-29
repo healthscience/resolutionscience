@@ -10,7 +10,7 @@
 * @version    $Id$
 */
 import TimeUtilities from '../timeUtility.js'
-import TestStorageAPI from '../dataprotocols/testStorage.js'
+import TestStorageAPI from '../dataprotocols/teststorage/testStorage.js'
 const util = require('util')
 const events = require('events')
 

@@ -11,14 +11,22 @@ export default new Vuex.Store({
     system: {'publickey': '', 'token': ''},
     context: {},
     science: {},
-    tools: {}
+    tools: {},
+    visulisation: {},
+    visData: {},
+    visOptions: {},
+    testString: ''
   },
   getters: {
     liveSafeFlow: state => state.safeFlow,
     liveSystem: state => state.system,
     liveContext: state => state.context,
     liveScience: state => state.science,
-    liveTools: state => state.tools
+    liveTools: state => state.tools,
+    liveVis: state => state.visulisation,
+    liveVisData: state => state.visData,
+    liveVisOptions: state => state.visOptions,
+    liveTeststring: state => state.testString
   },
   mutations: {
     // Mutations
@@ -50,13 +58,22 @@ export default new Vuex.Store({
       state.context.resolution = inVerified
     },
     setVisual: (state, inVerified) => {
-      state.context.vis = inVerified
+      state.visulisation = inVerified
+    },
+    setVisualData: (state, inVerified) => {
+      state.visData = inVerified
+    },
+    setVisualOptions: (state, inVerified) => {
+      state.visOptions = inVerified
     },
     setCNRLscience: (state, inVerified) => {
       state.science = inVerified
     },
     setTools: (state, inVerified) => {
       state.liveTools = inVerified
+    },
+    setTeststring: (state, inVerified) => {
+      state.testString = inVerified
     }
   },
   modules,

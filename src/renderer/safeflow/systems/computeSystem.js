@@ -10,7 +10,7 @@
 * @version    $Id$
 */
 import TimeUtilities from './timeUtility.js'
-import TestStorageAPI from './dataprotocols/testStorage.js'
+import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
 import StatisticsSystem from './wasm/statistics.js'
 import RecoveryHeartrate from './wasm/recovery-heartrate.js'
 const util = require('util')

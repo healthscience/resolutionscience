@@ -16,6 +16,7 @@
     },
     watch: {
       chartData: function () {
+        // console.log('watching for update chart data')
         this._chart.destroy()
         this.renderChart(this.chartData, this.options)
       }

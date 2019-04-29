@@ -10,14 +10,16 @@
 * @version    $Id$
 */
 
-import TestStorageAPI from './dataprotocols/testStorage.js'
+import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
 const util = require('util')
 const events = require('events')
 
 var DataSystem = function (setIN) {
   events.EventEmitter.call(this)
   this.liveTestStorage = new TestStorageAPI(setIN)
+  this.defaultStorage = 'cnrl-33221101'
   this.devicePairs = []
+  this.dataRaw = []
 }
 
 /**
@@ -102,14 +104,52 @@ DataSystem.prototype.getDataTypes = async function () {
 */
 DataSystem.prototype.getLiveDatatypes = function (dtIN) {
   console.log('LIVE-datatypes')
-  // console.log(dtIN)
   let liveDTs = []
   for (let dt of dtIN) {
     if (dt.active === true) {
-      liveDTs.push(dt.compref)
+      liveDTs.push(dt.cnrl)
     }
   }
   return liveDTs
+}
+
+/**
+*  mapping datatypes to  API source
+* @method datatypeMapping
+*
+*/
+DataSystem.prototype.datatypeMapping = async function (systemBundle) {
+  console.log('DATATYPE--mapping')
+  const localthis = this
+  //  this need datatype MAPPING UTILITY to check the data source via CNRL identify the API call that will contain the data type then inform the system to make  call to retrieve the data.  WIP, hardwired connect for now.
+  if (systemBundle.dtAsked[0] === 'cnrl-8856388711' || systemBundle.dtAsked[0] === 'cnrl-8856388712') {
+    console.log('datatype query')
+    await this.getRawData(systemBundle).then(function (rawData) {
+      const rawHolder = {}
+      rawHolder[systemBundle.timePeriod.startperiod] = rawData
+      localthis.dataRaw.push(rawHolder)
+      rawData = {}
+      // console.log(localthis.dataRaw)
+    })
+  } else if (systemBundle.dtAsked[0] === 'cnrl-8856388724') {
+    console.log('DATACOMPOENT1--ANY EXISTING AVERAGE QUERY')
+    await this.getRawStatsData(systemBundle, 'cnrl-2356388732').then(function (rawData) {
+      const rawHolder = {}
+      rawHolder[systemBundle.timePeriod.startperiod] = rawData
+      localthis.dataRaw.push(rawHolder)
+      rawData = {}
+    })
+  } else if (systemBundle.dtAsked[0] === 'cnrl-8856388725') {
+    console.log('recovery heart rate ask')
+    await this.getHRrecovery(systemBundle).then(function (rawData) {
+      const rawHolder = {}
+      rawHolder[systemBundle.timePeriod.startperiod] = rawData
+      localthis.dataRaw.push(rawHolder)
+      rawData = {}
+      // console.log(localthis.dataRaw)
+    })
+  }
+  return this.dataRaw
 }
 
 /**
@@ -117,16 +157,15 @@ DataSystem.prototype.getLiveDatatypes = function (dtIN) {
 * @method getRawData
 *
 */
-DataSystem.prototype.getRawData = async function (dataLive) {
-  console.log('DATASYSTEM0-------getrawdata')
-  // console.log(dataLive)
+DataSystem.prototype.getRawData = async function (queryIN) {
+  console.log('DATASYSTEM0---getrawdata')
   let localthis = this
   let dataBack = {}
   // check for number of devices, sensor/datatypes are asked for
-  const deviceLiveFilter = dataLive.deviceList
+  const deviceQuery = queryIN.deviceList
   // form loop to make data calls
-  for (let di of deviceLiveFilter) {
-    await localthis.liveTestStorage.getComputeData(dataLive.timePeriod, di).then(function (result) {
+  for (let di of deviceQuery) {
+    await localthis.liveTestStorage.getComputeData(queryIN.timePeriod.startperiod, di).then(function (result) {
       dataBack[di] = result
       result = []
     }).catch(function (err) {
@@ -142,34 +181,80 @@ DataSystem.prototype.getRawData = async function (dataLive) {
 *
 */
 DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
-  // console.log('DATASYSTEM2T----tidyRaw')
-  // console.log(dataASK)
+  console.log('DATASYSTEM2T----tidyRaw')
+  console.log(dataASK)
+  console.log(dataRaw)
   // build object structureReturn
-  let tidyHolder = {}
+  let tidyHolder = []
   // one, two or more sources needing tidying???
   // data structure in  Object indexed by startTime, object IndexbyDevice, Array[]of object -> heart_rate steps  {plus other source data}
   let cleanData = []
   // need to import error codes from device/mobile app
   // let errorCodes = [255]
   for (let devI of dataASK.deviceList) {
-    // console.log(devI)
-    // console.log(dataASK.timePeriod)
-    // console.log(dataRaw[0])
-    // console.log(dataRaw[0][dataASK.timePeriod])
-    // console.log(dataRaw[0][dataASK.timePeriod][devI])
-    // iterate over arrays and remove both time and BMP number keep track of error Account
-    // console.log(dataRaw[0][dataASK.timePeriod][devI])
     // loop over rawData until the start date matchtes
     for (let dateMatch of dataRaw) {
-      if (dateMatch[dataASK.timePeriod]) {
-        cleanData = dateMatch[dataASK.timePeriod][devI].filter(function (item) { return item.heart_rate !== 255 || item.heart_rate <= 0 })
-        tidyHolder[dataASK.timePeriod] = {}
-        tidyHolder[dataASK.timePeriod][devI] = []
-        tidyHolder[dataASK.timePeriod][devI].push(cleanData)
+      if (dateMatch[dataASK.timePeriod.startperiod]) {
+        console.log('tidy')
+        // console.log(dateMatch[dataASK.timePeriod.startperiod][devI])
+        cleanData = dateMatch[dataASK.timePeriod.startperiod][devI].filter(function (item) {
+          // console.log(item)
+          return item.heart_rate !== 255 || item.heart_rate <= 0
+        })
+        tidyHolder[dataASK.timePeriod.startperiod] = {}
+        tidyHolder[dataASK.timePeriod.startperiod][devI] = []
+        tidyHolder[dataASK.timePeriod.startperiod][devI] = cleanData
       }
     }
   }
+  // console.log('clearn holder')
+  // console.log(tidyHolder)
   return tidyHolder
+}
+
+/**
+* get rawData
+* @method getRawStatsData
+*
+*/
+DataSystem.prototype.getRawStatsData = async function (bundleIN, dtAsked) {
+  const localthis = this
+  // how many sensor ie data sets are being asked for?
+  // loop over and return Statistics Data and return to callback
+  this.StatsForUI = {}
+  const deviceLiveFilter = bundleIN.deviceList
+  for (let di of deviceLiveFilter) {
+    await localthis.liveTestStorage.getAverageData(bundleIN.timePeriod, di, dtAsked).then(function (statsData) {
+      // console.log('returned average data')
+      localthis.StatsForUI[di] = statsData
+      statsData = []
+    }).catch(function (err) {
+      console.log(err)
+    })
+  }
+  return this.StatsForUI
+}
+
+/**
+* get recovery heart rate data
+* @method getHRrecovery
+*
+*/
+DataSystem.prototype.getHRrecovery = async function (bundleIN, dtAsked) {
+  console.log('Recovery HR data ask')
+  const localthis = this
+  this.recoverHR = {}
+  const deviceLiveFilter = bundleIN.deviceList
+  for (let di of deviceLiveFilter) {
+    await localthis.liveTestStorage.getHRrecoveryData(bundleIN.timePeriod, di, dtAsked).then(function (statsData) {
+      // console.log('returned recovery data')
+      localthis.recoverHR[di] = statsData
+      statsData = []
+    }).catch(function (err) {
+      console.log(err)
+    })
+  }
+  return this.recoverHR
 }
 
 /**
@@ -210,55 +295,6 @@ DataSystem.prototype.extractSensors = function (sensorsIN) {
     }
   }
   return datatypeList
-}
-
-/**
-* get rawData
-* @method getRawStatsData
-*
-*/
-DataSystem.prototype.getRawStatsData = async function (bundleIN, dtAsked) {
-  const localthis = this
-  // else if (flag === 'statistics') {
-  // how many sensor ie data sets are being asked for?
-  // loop over and return Statistics Data and return to callback
-  this.StatsForUI = {}
-  const deviceLiveFilter = bundleIN.deviceList
-  for (let di of deviceLiveFilter) {
-    await localthis.liveTestStorage.getAverageData(bundleIN.timePeriod, di, dtAsked).then(function (statsData) {
-      console.log('returned average data')
-      localthis.StatsForUI[di] = statsData
-      statsData = []
-      console.log(localthis.StatsForUI)
-    }).catch(function (err) {
-      console.log(err)
-    })
-  }
-  console.log('before returned SATEWMTNT')
-  console.log(this.StatsForUI)
-  return this.StatsForUI
-}
-
-/**
-* get recovery heart rate data
-* @method getHRrecovery
-*
-*/
-DataSystem.prototype.getHRrecovery = async function (bundleIN, dtAsked) {
-  console.log('Recovery HR data ask')
-  const localthis = this
-  this.recoverHR = {}
-  const deviceLiveFilter = bundleIN.deviceList
-  for (let di of deviceLiveFilter) {
-    await localthis.liveTestStorage.getHRrecoveryData(bundleIN.timePeriod, di, dtAsked).then(function (statsData) {
-      console.log('returned recovery data')
-      localthis.recoverHR[di] = statsData
-      statsData = []
-    }).catch(function (err) {
-      console.log(err)
-    })
-  }
-  return this.recoverHR
 }
 
 /**

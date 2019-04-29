@@ -47,7 +47,6 @@
         selectedCompute: 'A',
         keyC: {},
         scoptions: [],
-        options: {},
         averageSeen: false,
         labelback: [],
         heartback: [],
@@ -214,7 +213,7 @@
       timeStatus (tIN) {
         console.log('time set in')
         console.log(tIN)
-        this.liveData.timeLive.push(tIN.text)
+        this.liveData.timeLive.push(tIN)
       },
       resolutionStatus (rIN) {
         console.log('resolution set in')

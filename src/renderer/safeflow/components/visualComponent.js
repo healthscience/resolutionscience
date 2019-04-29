@@ -10,8 +10,7 @@
 * @version    $Id$
 */
 import TimeUtilities from '../systems/timeUtility.js'
-import ChartSystem from '../systems/chartSystem.js'
-import TableSystem from '../systems/tableSystem.js'
+import VisSystem from '../systems/visSystem.js'
 const util = require('util')
 const events = require('events')
 
@@ -19,8 +18,7 @@ var VisualComponent = function (EID) {
   events.EventEmitter.call(this)
   this.EIDinfo = EID
   this.liveTimeUtil = new TimeUtilities()
-  this.liveChartSystem = new ChartSystem()
-  this.liveTableSystem = new TableSystem()
+  this.liveVisSystem = new VisSystem()
   this.visLive = ''
   this.visualData = {}
   this.setVisLive()
@@ -48,108 +46,25 @@ VisualComponent.prototype.setVisLive = function () {
 * @method filterVisual
 *
 */
-VisualComponent.prototype.filterVisual = function (visIN, wasmID, liveDate, datatypeList, cnrlInfo, timeList, deviceList, visData) {
-  // build array of visualation modules and match to one asked for
+VisualComponent.prototype.filterVisual = function (visIN, vData) {
   // which of three types of visualisations?
-  if (visIN === 'vis-sc-1') {
+  let status = false
+  console.log('VISCOMP--start')
+  console.log(visIN)
+  console.log(vData)
+  if (visIN.vid === 'vis-sc-1') {
     console.log('charts asked for')
-    this.chartSystem(visIN, wasmID, liveDate, datatypeList, cnrlInfo, timeList, deviceList, visData)
-  } else if (visIN === 'vis-sc-2') {
+    this.visualData = this.liveVisSystem.chartSystem(visIN, vData)
+  } else if (visIN.vid === 'vis-sc-2') {
     console.log('table asked for')
-    this.tableSystem()
-  } else if (visIN === 'vis-sc-3') {
+    this.visualData = this.liveVisSystem.tableSystem(visIN, vData)
+    status = true
+  } else if (visIN.vid === 'vis-sc-3') {
+    status = true
     console.log('simulation asked for')
-    // this.simSystem()
+    // this.visualData = this.liveVisSystem.simSystem()
   }
-  return true
+  return status
 }
 
-/**
-*
-* @method chartSystem
-*
-*/
-VisualComponent.prototype.chartSystem = function (visIN, wasmIN, liveDate, datatypeList, cnrlInfo, timeList, deviceList, visData) {
-  console.log('VISCOMP==CHARTSYTSEM START1')
-  var localthis = this
-  let structureHolder = {}
-  let chartData = {}
-  let chartDataH = {}
-  chartDataH.chart = []
-  let dataTypeBucket = {}
-  chartDataH.options = {}
-  chartDataH.prepared = {}
-  if (wasmIN === 'wasm-sc-1') {
-    console.log('observation data')
-    for (let avgType of cnrlInfo.prime) {
-      console.log('CHARTCOMP1----loop datatypes')
-      // console.log(avgType)
-      structureHolder = this.liveChartSystem.structureChartData(avgType.text, liveDate, timeList, deviceList, visData)
-      // console.log('VISUALCOMPONENT2---struectureData')
-      // console.log(chartDataB)
-      // prepare the colors for the charts
-      let chartColorsSet = localthis.liveChartSystem.chartColors(avgType)
-      dataTypeBucket.data = structureHolder
-      dataTypeBucket.color = chartColorsSet
-      // console.log('VISUALCOMPONENT2a---forPUSSHHING')
-      // console.log(dataTypeBucket)
-      chartDataH.chart.push(dataTypeBucket)
-      structureHolder = {}
-      dataTypeBucket = {}
-    }
-    // console.log('CHARTCOMP2----aferooop prepare')
-    // package all the info. to pass to vue
-    chartData.prepared = this.liveChartSystem.prepareVueChartJS(chartDataH)
-    // prepare chart options
-    // Note this will be dependent upon e.g. average statistics and changing time inputs
-    // let averageStats = this.computeComponent() // pass into chart options
-    let chartOptionsSet = this.liveChartSystem.getterChartOptions()
-    chartData.options = chartOptionsSet
-    chartData.livetime = this.liveTimeUtil.timeHTMLBuilder(liveDate)
-    const chartHolder = {}
-    chartHolder[visIN] = {}
-    chartHolder[visIN][liveDate] = chartData
-    this.visualData = chartHolder
-  } else if (wasmIN === 'wasm-sc-2') {
-    console.log('average Chart Start')
-    for (let avgType of cnrlInfo.prime) {
-      // call chart stats prep structure info for chart js
-      structureHolder = this.liveChartSystem.structureStatisticsData(liveDate, avgType.text, deviceList, visData)
-      let chartColorsSet = localthis.liveChartSystem.avgchartColors(avgType)
-      dataTypeBucket.data = structureHolder
-      dataTypeBucket.color = chartColorsSet
-      console.log('VISUALCOMPONENT2a---avg bucket')
-      console.log(dataTypeBucket)
-      chartDataH.chart.push(dataTypeBucket)
-      structureHolder = {}
-      dataTypeBucket = {}
-    }
-    // now prepare data format for chartjs
-    chartData.prepared = this.liveChartSystem.prepareStatsVueChartJS(deviceList, chartDataH)
-    let chartOptionsSet = this.liveChartSystem.getterChartOptions()
-    chartData.options = chartOptionsSet
-    const chartHolder = {}
-    chartHolder[visIN] = {}
-    chartHolder[visIN][liveDate] = chartData
-    this.visualData = chartHolder
-    console.log(this.visualData)
-  } else if (wasmIN === 'wasm-sc-3') {
-    console.log('HR recovery visualisation chart???')
-    const chartHolder = {}
-    chartHolder[visIN] = {}
-    chartHolder[visIN].status = 'report-component'
-    this.visualData = chartHolder
-    console.log(this.visualData)
-  }
-  return true
-}
-
-/**
-*
-* @method tableSystem
-*
-*/
-VisualComponent.prototype.tableSystem = function () {
-  console.log('VISCOMP==tablesysme START1')
-}
 export default VisualComponent

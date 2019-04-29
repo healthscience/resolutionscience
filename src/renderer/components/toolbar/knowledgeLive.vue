@@ -25,10 +25,6 @@
         Science - <div class="live-item">{{ liveData.scienceLive.prime.text || 'none' }}</div>
       </div>
       <div v-else id="live-context-science" class="live-element">Science: not selected</div>
-      <div id="context-resolution" class="live-element">
-        <header>Resolution:</header>
-          <div class="live-item">{{ liveData.resolutionLive }}</div>
-      </div>
       <div id="context-time" class="live-element">
         <header>Time:</header>
           <ul>
@@ -36,6 +32,10 @@
                <div class="live-item">{{ ts }}</div>
             </li>
           </ul>
+      </div>
+      <div id="context-resolution" class="live-element">
+        <header>Resolution:</header>
+          <div class="live-item">{{ liveData.resolutionLive }}</div>
       </div>
       <div id="live-learn" class="live-element">
         <div id="live-learn-container">
@@ -50,6 +50,8 @@
 </template>
 
 <script>
+  import SAFEflow from '../../safeflow/safeFlow.js'
+
   export default {
     name: 'knowledge-live',
     components: {
@@ -66,15 +68,20 @@
       return {
         live: {},
         liveSummary: '',
+        datacollection: null,
         learn:
         {
           name: 'learn',
           id: 'learn-status'
-        }
+        },
+        liveSafeFlow: null,
+        activeEntity: '',
+        activevis: ''
       }
     },
     created () {
       this.liveData.seenStatus = true
+      this.setAccess()
     },
     computed: {
       system: function () {
@@ -82,12 +89,18 @@
       },
       tools: function () {
         return this.$store.state.tools
+      },
+      visulisation: function () {
+        return this.$store.state.visualisation
       }
     },
     mounted () {
       this.startTools()
     },
     methods: {
+      setAccess () {
+        this.liveSafeFlow = new SAFEflow(this.system)
+      },
       startTools () {
         this.liveTools = this.$store.getters.liveTools
       },
@@ -96,6 +109,8 @@
         const localthis = this
         // get language, device, datatypes and sci comp bundles
         // pass on to SAFEflow to pass on entity manager
+        this.activeEntity = this.liveData.scienceLive.cnrl
+        this.activevis = this.$store.getters.liveVis[0]
         let liveBundle = {}
         liveBundle.cnrl = this.liveData.scienceLive.cnrl
         liveBundle.language = this.liveData.language
@@ -104,16 +119,15 @@
         liveBundle.science = this.liveData.scienceLive
         liveBundle.time = this.liveData.timeLive
         liveBundle.resolution = this.liveData.resolutionLive
-        liveBundle.visualisation = this.digoutfromDisplaytoolbar
+        liveBundle.visualisation = this.$store.getters.liveVis
+        this.saveLearnHistory(liveBundle)
         console.log(liveBundle)
         let entityBegin = await this.liveSafeFlow.scienceEntities(liveBundle)
+        console.log('entity setup/operational')
         console.log(entityBegin)
         this.learnListening()
         let entityGetter = await this.liveSafeFlow.entityGetter(localthis.activeEntity, localthis.activevis)
         console.log('VUE---return getter data')
-        console.log(entityGetter)
-        console.log(entityGetter.chartMessage)
-        console.log(localthis.activevis)
         if (localthis.activevis === 'vis-sc-1') {
           console.log('chartjs')
           if (entityGetter.chartMessage === 'computation in progress') {
@@ -124,7 +138,6 @@
             localthis.datacollection = entityGetter.chartPackage.prepared
             localthis.liveTime = entityGetter.chartPackage.livetime
             localthis.liveChartoptions = entityGetter.liveChartOptions
-            console.log(localthis.activeEntity)
             localthis.getAverages(localthis.activeEntity)
           } else if (entityGetter.chartMessage === 'vis-report') {
             console.log('prepare report for HR recovery')
@@ -132,7 +145,6 @@
             recoveryStart.seenStatus = true
             recoveryStart.hrcdata = entityGetter.hrcReport
             localthis.recoveryData = recoveryStart
-            console.log(localthis.reportData)
           } else {
             console.log('chartjs-- uptodate finised')
             localthis.chartmessage = 'computation up-to-date'
@@ -140,7 +152,10 @@
             localthis.$store.commit('setTools', localthis.options)
             localthis.datacollection = entityGetter.chartPackage.prepared
             localthis.liveTime = entityGetter.chartPackage.livetime
-            localthis.liveChartoptions = entityGetter.liveChartOptions
+            localthis.liveChartoptions = entityGetter.chartPackage.options
+            this.$store.commit('setVisualData', localthis.datacollection)
+            this.$store.commit('setVisualOptions', localthis.liveChartoptions)
+            this.$store.commit('setTeststring', 'james hi')
           }
           // console.log(localthis.datacollection)
         } else if (localthis.activevis === 'vis-sc-2') {
@@ -165,6 +180,9 @@
             localthis.chartmessage = 'computation up-to-date'
           }
         })
+      },
+      saveLearnHistory (lBundle) {
+        console.log('save temp history or keep on network save')
       }
     }
   }

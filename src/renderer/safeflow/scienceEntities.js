@@ -25,8 +25,6 @@ var ScienceEntities = function (EID, dAccess) {
   this.liveComputeC = new ComputeComponent(EID, dAccess)
   this.liveVisualC = new VisualComponent(EID)
   // this.liveSimC = new SimComponent()
-  // console.log('entity compoentent data')
-  // console.log(this.liveDataC)
 }
 
 /**

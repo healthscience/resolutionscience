@@ -23,7 +23,7 @@ var CNRLmaster = function () {
 util.inherits(CNRLmaster, events.EventEmitter)
 
 /**
-*  the science live in the network
+*  make API call to indexer of the science live on network/plus local history of peers used science
 * @method scienceOnNetwork
 *
 */
@@ -56,10 +56,10 @@ CNRLmaster.prototype.cnrlNetworkDatatypes = function () {
 
 /**
 *  mock up of semantic / ontology describing knowledge
-* @method semanticKnowledge
+* @method livingKnowledge
 *
 */
-CNRLmaster.prototype.semanticKnowledge = function (refIN) {
+CNRLmaster.prototype.livingKnowledge = function (refIN) {
   console.log('CRNL----lookup knowledge context')
   // if contract has links, follow those to source TODO
   let dataCNRLbundle = {}
@@ -214,9 +214,9 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.type = 'science'
     dataCNRLbundle.livingpaper = 'http://www.healthscience.network/observation'
     dataCNRLbundle.prime = {'text': 'Observations', 'active': 'false'}
-    dataCNRLbundle.tidy = false
+    dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
-    dataCNRLbundle.tableStructure = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp'}, {'cnrl': 'cnrl-8856388711', 'text': 'steps'}, {'cnrl': 'cnrl-8856388711', 'text': 'heart_rate'}]
+    dataCNRLbundle.tableStructure = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp'}, {'cnrl': 'cnrl-8856388712', 'text': 'steps'}, {'cnrl': 'cnrl-8856388711', 'text': 'beats per minute'}]
     dataCNRLbundle.subsource = ''
     dataCNRLbundle.resolution = {}
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388731'
@@ -260,7 +260,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.tableStructure[1] = [{'cnrl': '', 'text': 'device_mac'}, {'cnrl': '', 'text': 'firmware'}]
     dataCNRLbundle.tableStructure[2] = [{}]
     dataCNRLbundle.tableStructure[3] = [{'cnrl': 'cnrl-8856388724', 'text': 'value'}]
-    dataCNRLbundle.tableStructure[3] = [{'cnrl': 'cnrl-8856388725', 'text': 'value'}]
+    dataCNRLbundle.tableStructure[4] = [{'cnrl': 'cnrl-8856388725', 'text': 'value'}]
     dataCNRLbundle.namespace = 'http://165.227.244.213:8882/'
     dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-773355992211') {

@@ -33,6 +33,7 @@ util.inherits(VisSystem, events.EventEmitter)
 */
 VisSystem.prototype.chartSystem = function (chartBundle, dataIN) {
   console.log('VISCOMP==CHARTSYTSEM START1')
+  console.log(dataIN)
   var localthis = this
   let visIN = chartBundle.vid
   let liveDate = chartBundle.liveTime
@@ -47,7 +48,7 @@ VisSystem.prototype.chartSystem = function (chartBundle, dataIN) {
     console.log('observation data')
     for (let dtv of chartBundle.datatypeList) {
       console.log('VISC----loop datatypes')
-      structureHolder = this.liveChartSystem.structureChartData(chartBundle, dataIN)
+      structureHolder = this.liveChartSystem.structureChartData(dtv, chartBundle, dataIN)
       console.log('VISUALCOMPONENT2---struectureData')
       console.log(structureHolder)
       // prepare the colors for the charts

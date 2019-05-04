@@ -41,12 +41,14 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
   if (this.liveSEntities[cid]) {
     console.log('entity' + cid + 'already exists')
     // does the data exist for this visualisation and time?
-    let checkDataExist = this.checkForVisualData(cid, timePeriod.start, visID)
+    let checkDataExist = this.checkForVisualData(cid, timePeriod.startperiod, visID)
+    console.log('check')
+    console.log(checkDataExist)
     if (checkDataExist === true) {
       console.log('data already ready')
       this.liveSEntities[cid].liveDataC.setStartDate(timePeriod)
       this.liveSEntities[cid].liveDataC.setTimeList(timePeriod)
-    } else if (ecsIN.timeperiod.active === true) {
+    } else if (ecsIN.timeperiod === true) {
       // toolbar select timerange mode
       console.log('toolbar select time range')
       await this.controlFlow(ecsIN).then(function (cFlow) {
@@ -56,7 +58,8 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
     } else {
       // new data call required for this visualisation time
       console.log('need to prepare new visualisation data')
-      this.liveSEntities[cid].liveDataC.setStartDate(timePeriod.start)
+      console.log(timePeriod)
+      this.liveSEntities[cid].liveDataC.setStartDate(timePeriod)
       this.liveSEntities[cid].liveDataC.setTimeList(timePeriod.range)
       await this.controlFlow(ecsIN).then(function (cFlow) {
         console.log('CONTROLFLOW--already-COMPLETE')
@@ -162,6 +165,7 @@ EntitiesManager.prototype.controlFlow = async function (cflowIN) {
 EntitiesManager.prototype.checkForVisualData = function (cid, timePeriod, visStyle) {
   // need to loop over TODO
   //  this only check for last prepareData, need VisualComponent to use push(object)
+  console.log(this.liveSEntities[cid])
   let entityData = this.liveSEntities[cid].liveVisualC.visualData
   if (!entityData[visStyle]) {
     return false
@@ -188,6 +192,9 @@ EntitiesManager.prototype.listEntities = function () {
 */
 EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
   console.log('ENTITYMANAGER----retrun data')
+  console.log(eid)
+  console.log(visStyle)
+  console.log(this.liveSEntities)
   let dateLive = this.liveSEntities[eid].liveDataC.livedate
   if (this.liveSEntities[eid].liveVisualC.visualData[visStyle] === undefined) {
     console.log('no existing chart data')

@@ -82,6 +82,7 @@
         if (startDataaccess.token.length !== 0 && startContext.length !== 0) {
           const systemSet = this.$store.getters.liveSystem
           this.liveSafeFlow = new SAFEflow(systemSet)
+          localthis.$store.commit('setSafeflow', this.liveSafeFlow)
           localthis.deviceContext()
         } else if (this.context) {
           this.devices = this.context.device

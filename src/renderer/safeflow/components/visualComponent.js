@@ -9,7 +9,6 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import TimeUtilities from '../systems/timeUtility.js'
 import VisSystem from '../systems/visSystem.js'
 const util = require('util')
 const events = require('events')
@@ -17,7 +16,6 @@ const events = require('events')
 var VisualComponent = function (EID) {
   events.EventEmitter.call(this)
   this.EIDinfo = EID
-  this.liveTimeUtil = new TimeUtilities()
   this.liveVisSystem = new VisSystem()
   this.visLive = ''
   this.visualData = {}
@@ -55,6 +53,7 @@ VisualComponent.prototype.filterVisual = function (visIN, vData) {
   if (visIN.vid === 'vis-sc-1') {
     console.log('charts asked for')
     this.visualData = this.liveVisSystem.chartSystem(visIN, vData)
+    console.log(this.visualData)
   } else if (visIN.vid === 'vis-sc-2') {
     console.log('table asked for')
     this.visualData = this.liveVisSystem.tableSystem(visIN, vData)

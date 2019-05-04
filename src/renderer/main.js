@@ -11,6 +11,10 @@ if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
+if (process.env.NODE_ENV !== 'production') {
+  require('vue-devtools').install()
+}
+
 /* eslint-disable no-new */
 new Vue({
   components: { App },

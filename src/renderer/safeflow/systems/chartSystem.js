@@ -33,7 +33,7 @@ util.inherits(ChartSystem, events.EventEmitter)
 * @method structureData
 *
 */
-ChartSystem.prototype.structureChartData = function (cBundle, cData) {
+ChartSystem.prototype.structureChartData = function (datatypeIN, cBundle, cData) {
   this.options = this.prepareChartOptions()
   let dataholder = {}
   let datalabel = []
@@ -41,6 +41,8 @@ ChartSystem.prototype.structureChartData = function (cBundle, cData) {
   let liveDate = cBundle.liveTime
   this.chartPrep = {}
   // loop through and build two sperate arrays
+  console.log(datatypeIN)
+  console.log(cData)
   for (let dataI of cData) {
     // for (let tItem of cBundle.timeList) {
     if (dataI[liveDate]) {
@@ -48,9 +50,10 @@ ChartSystem.prototype.structureChartData = function (cBundle, cData) {
         for (let datatypeData of dataI[liveDate][devI]) {
           var mDateString = moment(datatypeData.timestamp * 1000).toDate()
           datalabel.push(mDateString)
-          if (datatypeData.compref === 'cnrl-2356388731') {
+          // console.log(datatypeData)
+          if (datatypeIN === 'cnrl-8856388711') {
             datay.push(datatypeData.heart_rate)
-          } else if (datatypeData.steps) {
+          } else if (datatypeIN === 'cnrl-8856388712') {
             datay.push(datatypeData.steps)
           }
         }
@@ -164,7 +167,7 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
     }
   } else {
     // prepare the Chart OBJECT FOR CHART.JS  Up to 2 line e.g. BMP or Steps or BPM + Steps
-    // console.log('CHARTSYSTEM-----draw chart')
+    console.log('CHARTSYSTEM-----draw chart')
     var startChartDate = moment(this.labelback[0])
     this.updateChartoptions(startChartDate)
     this.liveTime = startChartDate

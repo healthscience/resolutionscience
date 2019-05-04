@@ -19,7 +19,7 @@
           <header>Devices:</header>
             <ul>
               <li v-for="dev in devices">
-                <a href="" id="" @click.prevent="selectContext(dev)" v-bind:class="{ 'active': dev.active}">{{ dev.device_name }}</a>
+                <a href="" id="" @click.prevent="selectDevice(dev)" v-bind:class="{ 'active': dev.active}">{{ dev.device_name }}</a>
               </li>
             </ul>
         </div>
@@ -27,35 +27,19 @@
           <header>Live Datatypes</header>
           <ul>
             <li id="data-type-live" v-for="lts in livedtypes">
-              <a class="" href="" id="cnrl-data" @click.prevent="selectContext(sdts)" v-bind:class="{ 'active': lts.active }">{{ lts.text }}</a>
-              <!-- <a class="" href="" id="sub-data" @click.prevent="subContext(sdts)" v-bind:class="{ 'active': sdts.active}"> >>> </a>
-              <div id="sub-context-holder">
-                <ul>
-                  <li v-for="subC in subcontext">
-                    <a class="" href="" id="" @click.prevent="subContext(sen)" v-bind:class="{ 'active': subC.active}"> {{ subC }} </a>
-                  </li>
-                </ul>
-              </div> -->
+              <a class="" href="" id="cnrl-data" @click.prevent="selectDatatypes(sdts)" v-bind:class="{ 'active': false }">{{ lts.text }} {{ lts }}</a>
             </li>
           </ul>
           <header>Science Datatypes</header>
           <ul>
             <li id="data-type-live" v-for="sdts in scidtypes[0]">
-              <a class="" href="" id="bmp-data" @click.prevent="selectContext(sdts)" v-bind:class="{ 'active': sdts.active }">{{ sdts.text }}</a>
-              <!-- <a class="" href="" id="sub-data" @click.prevent="subContext(sdts)" v-bind:class="{ 'active': sdts.active}"> >>> </a>
-              <div id="sub-context-holder">
-                <ul>
-                  <li v-for="subC in subcontext">
-                    <a class="" href="" id="" @click.prevent="subContext(sen)" v-bind:class="{ 'active': subC.active}"> {{ subC }} </a>
-                  </li>
-                </ul>
-              </div> -->
+              <a class="" href="" id="bmp-data" @click.prevent="selectSciDatatypes(sdts)" v-bind:class="{ 'active':sdts.active }">{{ sdts.text }}</a>
             </li>
           </ul>
           <header>Device DataTypes - </header>
             <ul>
               <li id="data-type-live" v-for="dts in datatypes[0][0]">
-                <a class="" href="" id="bmp-data" @click.prevent="selectContext(dts)" v-bind:class="{ 'active': dts.active}">{{ dts.text }}</a>
+                <a class="" href="" id="bmp-data" @click.prevent="selectDatatypes(dts)" v-bind:class="{ 'active': dts.active}">{{ dts.text }}</a>
                 <!-- <a class="" href="" id="sub-data" @click.prevent="subContext(dts)" v-bind:class="{ 'active': dts.active}"> >>> </a>
                  <div id="sub-context-holder">
                   <ul>
@@ -88,7 +72,7 @@
               <header>Time:</header>
                 <ul>
                   <li v-for="t in timeSeg" class="context-time">
-                    <a href="" id="" @click.prevent="selectTime(t)" v-bind:class="{ 'active': t.active}">{{ t.text }}</a>
+                    <a href="" id="" @click.prevent="selectTime(t)" v-bind:class="{ 'active': t.active, 'text-danger': hasError}">{{ t.text }}</a>
                   </li>
                 </ul>
                 <div v-if="timeSelect !== undefine" id="time-select" >
@@ -112,7 +96,7 @@
 </template>
 
 <script>
-  import SAFEflow from '../../safeflow/safeFlow.js'
+  // import SAFEflow from '../../safeflow/safeFlow.js'
   const shell = require('electron').shell
 
   export default {
@@ -120,12 +104,6 @@
     components: {
     },
     props: {
-      knowledgeData: {
-        type: Object
-      },
-      inputData: {
-        type: Object
-      }
     },
     data () {
       return {
@@ -133,7 +111,7 @@
         [{
           name: 'human',
           id: 'cnrl-k1',
-          active: true
+          active: false
         },
         {
           name: 'world',
@@ -163,37 +141,12 @@
         kwords: {},
         subcontextholder: [],
         subcontext: [],
-        timeSeg:
-        [{
-          text: 'day',
-          id: 'cnrl-t1',
-          active: true
-        },
-        {
-          text: 'week',
-          id: 'cnrl-t2',
-          active: true
-        },
-        {
-          text: 'month',
-          id: 'cnrl-t3',
-          active: true
-        },
-        {
-          text: 'year',
-          id: 'cnrl-t4',
-          active: true
-        },
-        {
-          text: 'SELECT',
-          id: 'cnrl-t5',
-          active: true
-        }],
+        timeSeg: [],
         resolution:
         [{
           text: 'per minute',
           id: 'cnrl-r1',
-          active: true
+          active: false
         }],
         timeSelect: true,
         livedtypes: [],
@@ -203,34 +156,29 @@
     },
     created () {
       this.setAccess()
-      this.scienceContext()
-      this.languageContext()
-      this.deviceContext()
-      this.knowledgeData.seenStatus = true
     },
     computed: {
-      safeFlow: function () {
-        return this.$store.state.safeFlow
-      },
       system: function () {
         return this.$store.state.system
       },
-      tools: function () {
-        return this.$store.state.tools
+      safeFlow: function () {
+        return this.$store.state.safeFlow
       },
       context: function () {
         return this.$store.state.context
       }
     },
     mounted () {
-      this.startTools()
     },
     methods: {
       setAccess () {
-        this.liveSafeFlow = new SAFEflow(this.system)
-      },
-      startTools () {
-        this.liveTools = this.$store.getters.liveTools
+        this.liveSafeFlow = this.safeFlow // new SAFEflow(this.system)
+        console.log('safefow setuppping')
+        console.log(this.liveSafeFlow)
+        this.deviceContext()
+        this.scienceContext()
+        this.languageContext()
+        this.timeContext()
       },
       openKnowledge (ok) {
         ok.active = !ok.active
@@ -246,12 +194,16 @@
         // display language for
         this.displayLanugage(k.id)
       },
+      timeContext () {
+        // call the CNRL for time segment option live in SAFEnetwork
+        this.timeSeg = this.liveSafeFlow.cnrlTimeIndex('time-index')
+      },
       displayLanugage (cnrlID) {
         // loop over match and display words or display human body graphic
         console.log('inplang')
         this.kwords = []
         let lanuageCNRL = this.liveSafeFlow.cnrlLivingKnowledge(cnrlID)
-        console.log(lanuageCNRL)
+        // console.log(lanuageCNRL)
         let wordsPlacer = {}
         wordsPlacer.word = lanuageCNRL.prime.word
         // wordsPlacer.wordconnect = lanuageCNRL.prime[1].word
@@ -260,17 +212,29 @@
       selectLanguage (l) {
         console.log(l)
         l.active = !l.active
-        this.$emit('languageSet', l)
+        this.$emit('setVLanguage', l)
       },
-      selectContext (s) {
+      selectDevice (s) {
         console.log(s)
         s.active = !s.active
-        this.$emit('knowledgeSet', s)
+        this.$emit('setVDevice', s)
+      },
+      selectDatatypes (std) {
+        console.log(std)
+        std.active = !std.active
+        this.$emit('setVDatatypes', std)
+      },
+      selectSciDatatypes (std) {
+        console.log('science data types set')
+        console.log(std)
+        std.active = !std.active
+        console.log(std)
+        this.$emit('setVDatatypes', std)
       },
       selectResolution (r) {
         console.log(r)
         r.active = !r.active
-        this.$emit('resolutionSet', r.text)
+        this.$emit('setVResolution', r.text)
       },
       languageContext () {
         let refContext = 'human'
@@ -300,7 +264,6 @@
           const flag = 'device'
           this.liveSafeFlow.toolkitContext(flag, callbackC)
           console.log('device callsettings')
-          console.log(this.devices)
         }
         console.log(this.devices)
       },
@@ -400,7 +363,7 @@
         // set the first science priority on start of RS
         this.scoptions = this.$store.getters.liveScience
         console.log(this.scoptions)
-        this.$store.commit('setScience', this.scoptions[0])
+        // this.$store.commit('setScience', this.scoptions[0])
       },
       updateSciDTs (sciIN) {
         console.log('science has changed')
@@ -416,7 +379,7 @@
         // this.subcontextholder = sourceDTypes
         // console.log('mobile source CNRL')
         // console.log(sourceDTypes)
-        this.$emit('scienceSet', sciDTypesSelect)
+        this.$emit('setVScience', sciDTypesSelect)
         // this.sensors = sciDTypes.prime
         // this.resolutionSet = sciDTypes.resolution[0].text
         // this.$store.commit('setDatatype', sciDTypes.prime)
@@ -432,8 +395,6 @@
             }
           }
         }
-        console.log('common holder')
-        console.log(commonHolder)
         this.livedtypes = commonHolder
         return commonHolder
       },
@@ -444,8 +405,8 @@
         this.subcontext = this.subcontextholder.columncodes
       },
       selectTime (tIN) {
-        // if select show slider on chart
         console.log('time set')
+        tIN.active = !tIN.active
         console.log(tIN)
         let tt = {}
         if (tIN.text === 'SELECT') {
@@ -453,9 +414,9 @@
           tt.start = this.startLine
           tt.end = this.stopLine
           console.log(tt)
-          this.$emit('timeSet', tt)
+          this.$emit('setVTime', tt)
         } else {
-          this.$emit('timeSet', tIN.text)
+          this.$emit('setVTime', tIN.text)
         }
       },
       livingPaper () {

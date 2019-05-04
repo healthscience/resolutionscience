@@ -16,6 +16,7 @@ const events = require('events')
 var TimeUtilities = function (setUP) {
   events.EventEmitter.call(this)
   this.liveStarttime = ''
+  this.liveLasttime = ''
 }
 
 /**
@@ -32,9 +33,17 @@ util.inherits(TimeUtilities, events.EventEmitter)
 TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
   // pass range to get converted from moment format to miillseconds (stnd for safeflow)
   const localthis = this
+  console.log(timeBundle)
+  console.log(this.liveLasttime)
+  if (timeBundle.time.startperiod === 'relative') {
+    console.log('set time relative to last set')
+    this.liveStarttime = this.liveLasttime * 1000
+  } else {
+    this.liveStarttime = timeBundle.time.startperiod
+  }
   let timeConversion = {}
   // does a standard time types need converting or range or both?
-  for (let ti of timeBundle) {
+  for (let ti of timeBundle.time.timeseg) {
     console.log(ti)
     if (ti === 'SELECT') {
       let rangeMills = this.rangeCovert(ti)
@@ -45,7 +54,6 @@ TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
       console.log('convert seg to mills')
       let timePeriod = {}
       timePeriod = localthis.timePeriodBuilder(ti)
-      console.log(timePeriod)
       timeConversion.startperiod = timePeriod
     }
   }
@@ -80,15 +88,17 @@ TimeUtilities.prototype.timePeriodBuilder = function (seg) {
   let startTime
   if (seg === 'day') {
     // asking for one 24hr display
-    const nowTime = moment()
-    startTime = moment.utc(nowTime).startOf('day')
-  } else if (this.liveStarttime && seg === '-day') {
+    startTime = this.liveStarttime
+  } else if (seg === '-day') {
     // move back one day in time
-    startTime = (this.liveStarttime - 86400) * 1000
+    console.log('back one day')
+    console.log(this.liveStarttime)
+    console.log(seg)
+    startTime = (this.liveStarttime - 86400000)
   } else if (this.liveStarttime && seg === '+day') {
     // move forward day in time
     // console.log('forward one day')
-    startTime = (this.liveStarttime + 86400) * 1000
+    startTime = (this.liveStarttime + 86400000)
   } else if (seg === '-year') {
     // return start of year timeout
     startTime = moment().startOf('year')
@@ -109,14 +119,16 @@ TimeUtilities.prototype.timePeriodBuilder = function (seg) {
   let startQuerytime = moment(startTime).valueOf()
   let timestamp = startQuerytime / 1000
   // not the last pass of the loop
-  if (seg === '-day' && this.countSensors !== this.counterSensor) {
+  /* if (seg === '-day') {
+    console.log('back day setting')
     this.liveStarttime = timestamp + 86400
-  } else if (seg === '+day' && this.countSensors !== this.counterSensor) {
+  } else if (seg === '+day') {
     this.liveStarttime = timestamp - 86400
   } else {
+    console.log('first setting of time')
     this.liveStarttime = timestamp
-  }
-  console.log(timestamp)
+  } */
+  this.liveLasttime = timestamp
   return timestamp
 }
 

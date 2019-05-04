@@ -14,9 +14,9 @@
             </li>
           </ul>
       </div>
-      <div id="toolbar-tools">
+      <!-- <div id="toolbar-tools">
         <Toolbar-Tools :toolbarData="toolbarData" @toolbarSet="toolbarStatus()" ></Toolbar-Tools>
-      </div>
+      </div> -->
       <div id="reports">
         <recovery-Report :recoveryData="recoveryData" @recoverySet="recoveryStatus()" ></recovery-Report>
       </div>
@@ -40,13 +40,11 @@
       </div>
       <div id="time-context">
         <div id="select-time">
-          <button class="button is-primary" @click="setContextData('-year')">- 1 Year</button>
-          <button class="button is-primary" @click="setContextData('-month')">- 1 month</button>
-          <button class="button is-primary" @click="setContextData('-day')">Back day</button>
-          <button class="button is-now" @click="setContextData('day')">Today</button>
-          <button class="button is-future" @click="setContextData('+day')">Forward day</button>
-          <button class="button is-future" @click="setContextData('+month')">+ 1 month</button>
-          <button class="button is-future" @click="setContextData('+year')">+ 1 year</button>
+          <ul>
+            <li v-for="tv in timeVis" class="context-time">
+              <button class="button is-primary" @click.prevent="setTimeData(tv)">{{ tv.text }}</button>
+            </li>
+          </ul>
         </div>
         <div id="view-time">
           {{ liveTime }}
@@ -59,9 +57,10 @@
 </template>
 
 <script>
-  import LineChart from '@/components/charts/LineChart'
-  import BarChart from '@/components/charts/BarChart'
-  import BubbleChart from '@/components/charts/BubbleChart'
+  // import SAFEflow from '../../safeflow/safeFlow.js'
+  // import LineChart from '@/components/charts/LineChart'
+  // import BarChart from '@/components/charts/BarChart'
+  // import BubbleChart from '@/components/charts/BubbleChart'
   import Reactive from '@/components/charts/Reactive'
   import Reactivestats from '@/components/charts/Reactivestats'
   import ToolbarTools from '@/components/toolbar/statisticstools'
@@ -69,13 +68,14 @@
   import recoveryReport from '@/components/reports/recoveryReport'
   import tableBuild from '@/components/table/tableBuilder'
   import simulationView from '@/components/simulation/simulation-life'
+  // const moment = require('moment')
 
   export default {
-    name: 'visual-live',
+    name: 'visual-liveview',
     components: {
-      LineChart,
-      BarChart,
-      BubbleChart,
+      // LineChart,
+      // BarChart,
+      // BubbleChart,
       Reactive,
       Reactivestats,
       ToolbarTools,
@@ -85,9 +85,6 @@
       simulationView
     },
     props: {
-      liveVis: {
-        type: Object
-      },
       inputData: {
         type: Object
       }
@@ -117,6 +114,8 @@
           active: false,
           text: 'off'
         },
+        datacollection2: null,
+        options2: null,
         toolbarData: {},
         recoveryData: {},
         datastatistics: null,
@@ -124,35 +123,41 @@
         visChartview: true,
         liveTime: '',
         visTableview: false,
-        visSimview: false
+        visSimview: false,
+        timeVis: []
       }
     },
     computed: {
       system: function () {
         return this.$store.state.system
       },
-      datacollection: function () {
-        return this.$store.state.visData
+      safeFlow: function () {
+        return this.$store.state.safeFlow
+      },
+      bundle: function () {
+        return this.$store.state.bundle
       },
       options: function () {
         return this.$store.state.visOptions
       },
-      tools: function () {
-        return this.$store.state.tools
+      datacollection: function () {
+        return this.$store.state.visData
       }
     },
     created () {
+      this.setAccess()
+      this.timeNavSegments()
     },
     mounted () {
-      this.startTools()
     },
     methods: {
-      startTools () {
-        this.liveTools = this.$store.getters.liveTools
-        this.$store.commit('setVisual', ['vis-sc-1'])
+      setAccess () {
+        this.liveSafeFlow = this.safeFlow // new SAFEflow(this.system)
+      },
+      timeNavSegments () {
+        this.timeVis = this.liveSafeFlow.cnrlTimeIndex('datatime-index')
       },
       selectVis (visIN) {
-        // visIN.active = !visIN.active
         if (visIN.id === 'vis-sc-1') {
           if (visIN.active === true) {
             this.visChartview = false
@@ -192,7 +197,7 @@
         if (this.vis3.active === true) {
           visLive.push(this.vis3.id)
         }
-        this.$store.commit('setVisual', visLive)
+        // this.$store.commit('setVisual', visLive)
       },
       toolsSwitch () {
         console.log('tools sliders overlay')
@@ -206,6 +211,84 @@
       },
       closeAvgSummary () {
         this.averageSeen = false
+      },
+      setTimeData (seg) {
+        // back and forward and time
+        console.log(seg)
+        console.log('liveContractBundle')
+        // console.log(this.$store.getters.liveBundle)
+        // console.log(this.bundle)
+        /* let updateTbundle = {}
+        let timeAsk = []
+        timeAsk.push(seg.text)
+        console.log(timeAsk)
+        console.log('liveContractBundle2')
+        updateTbundle.timeseg = timeAsk
+        updateTbundle.startperiod = 'relative'
+        const nowTime = moment()
+        let realTime = moment.utc(nowTime)
+        console.log('liveContractBundle3')
+        console.log(this.bundle) */
+        // let liveBundleUpdate = {}
+        /* liveBundleUpdate.cnrl = this.bundle.cnrl
+        liveBundleUpdate.language = this.bundle.language
+        liveBundleUpdate.devices = this.bundle.devices
+        liveBundleUpdate.datatypes = this.bundle.datatypes
+        liveBundleUpdate.science = this.bundle.science
+        liveBundleUpdate.time = updateTbundle
+        liveBundleUpdate.realtime = realTime
+        liveBundleUpdate.resolution = this.bundle.resolution
+        liveBundleUpdate.visualisation = this.bundle.visualisation */
+        this.$emit('updateLearn', seg)
+        /*
+        // keep state of live bundle
+        // this.$store.dispatch('actionLiveBundle', liveBundleUpdate)
+        // this.$store.commit('setLiveBundle', liveBundleUpdate)
+        console.log('liveContractBundle4')
+        await this.liveSafeFlow.scienceEntities(liveBundleUpdate)
+        console.log('entity setup/operational')
+        // this.learnListening()
+        let entityGetter2 = await this.liveSafeFlow.entityGetter(this.activeEntity, this.activevis)
+        console.log('VUE---return getter2 data')
+        console.log(entityGetter2)
+        if (this.activevis === 'vis-sc-1') {
+          console.log('chartjs')
+          if (entityGetter2.chartMessage === 'computation in progress') {
+            console.log('chartjs--ongoing computation or obseration data')
+            this.chartmessage = entityGetter2.chartMessage
+            this.options2 = entityGetter2.chartPackage.options
+            // this.$store.commit('setTools', this.options)
+            this.datacollection2 = entityGetter2.chartPackage.prepared
+            this.liveTime = entityGetter2.chartPackage.livetime
+            this.liveChartoptions = entityGetter2.liveChartOptions
+            this.getAverages(this.activeEntity)
+          } else if (entityGetter2.chartMessage === 'vis-report') {
+            console.log('prepare report for HR recovery')
+            let recoveryStart = {}
+            recoveryStart.seenStatus = true
+            recoveryStart.hrcdata = entityGetter2.hrcReport
+            this.recoveryData = recoveryStart
+          } else {
+            console.log('chartjs-- uptodate finised')
+            this.chartmessage = 'computation up-to-date'
+            this.options2 = entityGetter2.chartPackage.options
+            this.datacollection2 = entityGetter2.chartPackage.prepared
+            console.log(this.options2)
+            console.log(this.datacollection2)
+            this.liveTime = entityGetter2.chartPackage.livetime
+            this.$store.dispatch('actionVisualOptions', this.options2)
+            this.$store.dispatch('actionVisualData', this.datacollection2)
+          }
+          // console.log(localthis.datacollection)
+        } else if (this.activevis === 'vis-sc-2') {
+          console.log('tablejs')
+          // localthis.tableHTML = entityGetter.table
+        } else if (this.activevis === 'vis-sc-3') {
+          console.log('simjs')
+          // localthis.simulationHeart = entityGetter2.heart
+          // localthis.simulationMovement = entityGetter2.heart
+          // localthis.simulationTime = entityGetter2.time
+        } */
       }
     }
   }
@@ -254,7 +337,6 @@ li {
 #learn-button {
   font-size: 1.6em;
   padding: .25em;
-
 }
 
 #learn-type {

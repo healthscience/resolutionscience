@@ -24,6 +24,7 @@ var safeFlow = function (setIN) {
   this.liveEManager = new EntitiesManager()
   this.liveDataSystem = new DataSystem(setIN)
   this.settings = setIN
+  this.peerliveContext = {}
 }
 
 /**
@@ -78,29 +79,47 @@ safeFlow.prototype.cnrlScienceStart = function () {
 * @method scienceEntities
 *
 */
-safeFlow.prototype.scienceEntities = async function (bundleIN) {
+safeFlow.prototype.scienceEntities = async function (contextIN) {
   // add a new entity via manager
   // first prepare input in ECS format
   console.log('start---scienceEntitiees')
-  console.log(bundleIN)
-  let ecsIN = {}
-  ecsIN.cid = bundleIN.cnrl
-  ecsIN.visID = bundleIN.visualisation
-  // convert all the time to millisecons format
-  ecsIN.time = this.liveTimeUtil.timeConversionUtility(bundleIN.time)
-  console.log('times returned')
-  console.log(ecsIN.time)
-  ecsIN.science = bundleIN.science
-  ecsIN.resolution = bundleIN.resolutionLive
-  ecsIN.devices = bundleIN.devices
-  ecsIN.datatypes = bundleIN.datatypes
-  ecsIN.language = bundleIN.language
-
+  console.log(contextIN)
+  let ecsIN = this.setpeerContext(contextIN)
   await this.liveEManager.addScienceEntity(ecsIN, this.settings).then(function (bk) {
     console.log('SAFEFLOW-new entitycomplete')
     console.log(bk)
     return true
   })
+}
+
+/**
+* input context from UI
+* @method peerContext
+*
+*/
+safeFlow.prototype.setpeerContext = function (bundleIN) {
+  // prepare ECS input format and hold context
+  console.log('form==peercontext')
+  console.log(bundleIN)
+  // does an existing bundle exist?
+  let ecsIN = {}
+  ecsIN.cid = bundleIN.cnrl
+  ecsIN.visID = bundleIN.visualisation
+  // convert all the time to millisecons format
+  let timeBundle = {}
+  timeBundle.time = bundleIN.time
+  timeBundle.realtime = bundleIN.realtime
+  ecsIN.time = this.liveTimeUtil.timeConversionUtility(timeBundle)
+  console.log('times returned')
+  console.log(ecsIN.time)
+  ecsIN.science = bundleIN.science
+  ecsIN.resolution = bundleIN.resolution
+  ecsIN.devices = bundleIN.devices
+  ecsIN.datatypes = bundleIN.datatypes
+  ecsIN.language = bundleIN.language
+
+  // this.peerliveContext = ecsIN
+  return ecsIN
 }
 
 /**
@@ -145,8 +164,20 @@ safeFlow.prototype.entityCurrentAverageHR = async function (eid) {
 *
 */
 safeFlow.prototype.cnrlLivingKnowledge = function (refIN) {
+  console.log('cnrl')
+  console.log(refIN)
   let startSemantics = this.liveCNRL.livingKnowledge(refIN)
   return startSemantics
+}
+
+/**
+* compute time options
+* @method cnrlTimeIndex
+*
+*/
+safeFlow.prototype.cnrlTimeIndex = function (refIN) {
+  let timeSegments = this.liveCNRL.timeContracts(refIN)
+  return timeSegments
 }
 
 /**

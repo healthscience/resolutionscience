@@ -1,14 +1,14 @@
 <template>
   <div id="live-view">
     <div id="live-knowledge-elements">
-      <div v-if="liveData.language !== undefine" id="context-language" class="live-element">
-        Language: <div class="live-item">{{ liveData.language.word }}</div>
+      <div v-if="liveData.languageLive !== undefine" id="context-language" class="live-element">
+        Language: <div class="live-item">{{ liveData.languageLive.word }}</div>
       </div>
       <div v-else id="live-context-language" class="live-element">Please set</div>
       <div id="live-context-devices" class="live-element">
         <header>Devices:</header>
           <ul>
-            <li v-for="dev in liveData.devices">
+            <li v-for="dev in liveData.devicesLive">
                <div class="live-item">{{ dev.device_name }}</div>
             </li>
           </ul>
@@ -16,8 +16,8 @@
       <div id="live-context-datatypes" class="live-element">
         <header>DataTypes - </header>
           <ul>
-            <li id="bmp-data-sensor" v-for="sen in liveData.sensors">
-              <div class="live-item">{{ sen.text }}</div>
+            <li id="bmp-data-sensor" v-for="dts in liveData.datatypesLive">
+              <div class="live-item">{{ dts.text }}</div>
             </li>
           </ul>
       </div>
@@ -51,6 +51,7 @@
 
 <script>
   import SAFEflow from '../../safeflow/safeFlow.js'
+  const moment = require('moment')
 
   export default {
     name: 'knowledge-live',
@@ -59,16 +60,10 @@
     props: {
       liveData: {
         type: Object
-      },
-      inputData: {
-        type: Object
       }
     },
     data () {
       return {
-        live: {},
-        liveSummary: '',
-        datacollection: null,
         learn:
         {
           name: 'learn',
@@ -87,57 +82,61 @@
       system: function () {
         return this.$store.state.system
       },
-      tools: function () {
-        return this.$store.state.tools
-      },
-      visulisation: function () {
-        return this.$store.state.visualisation
+      safeFlow: function () {
+        return this.$store.state.safeFlow
       }
     },
     mounted () {
-      this.startTools()
     },
     methods: {
       setAccess () {
         this.liveSafeFlow = new SAFEflow(this.system)
       },
-      startTools () {
-        this.liveTools = this.$store.getters.liveTools
-      },
-      async filterLearn (s) {
+      filterLearn (s) {
         console.log(s)
-        const localthis = this
         // get language, device, datatypes and sci comp bundles
         // pass on to SAFEflow to pass on entity manager
         this.activeEntity = this.liveData.scienceLive.cnrl
         this.activevis = this.$store.getters.liveVis[0]
+        console.log('active vis ====')
+        console.log(this.activevis)
         let liveBundle = {}
         liveBundle.cnrl = this.liveData.scienceLive.cnrl
-        liveBundle.language = this.liveData.language
-        liveBundle.devices = this.liveData.devices
-        liveBundle.datatypes = this.liveData.sensors
+        liveBundle.language = this.liveData.languageLive
+        liveBundle.devices = this.liveData.devicesLive
+        liveBundle.datatypes = this.liveData.datatypesLive
         liveBundle.science = this.liveData.scienceLive
-        liveBundle.time = this.liveData.timeLive
+        let updateTbundle = {}
+        const nowTime = moment()
+        let startPeriodTime = moment.utc(nowTime).startOf('day')
+        updateTbundle.timeseg = this.liveData.timeLive
+        updateTbundle.startperiod = startPeriodTime
+        let realTime = moment.utc(nowTime)
+        liveBundle.realtime = realTime
+        liveBundle.time = updateTbundle
         liveBundle.resolution = this.liveData.resolutionLive
-        liveBundle.visualisation = this.$store.getters.liveVis
+        liveBundle.visualisation = ['vis-sc-1']
+        this.$emit('liveLearn', liveBundle)
+        /*
+        // keep state of live bundle
+        this.$store.dispatch('actionLiveBundle', liveBundle)
         this.saveLearnHistory(liveBundle)
         console.log(liveBundle)
-        let entityBegin = await this.liveSafeFlow.scienceEntities(liveBundle)
+        await this.liveSafeFlow.scienceEntities(liveBundle)
         console.log('entity setup/operational')
-        console.log(entityBegin)
-        this.learnListening()
+        // this.learnListening()
         let entityGetter = await this.liveSafeFlow.entityGetter(localthis.activeEntity, localthis.activevis)
         console.log('VUE---return getter data')
+        console.log(entityGetter)
         if (localthis.activevis === 'vis-sc-1') {
           console.log('chartjs')
           if (entityGetter.chartMessage === 'computation in progress') {
             console.log('chartjs--ongoing computation or obseration data')
             localthis.chartmessage = entityGetter.chartMessage
             localthis.options = entityGetter.chartPackage.options
-            localthis.$store.commit('setTools', localthis.options)
             localthis.datacollection = entityGetter.chartPackage.prepared
+            // localthis.$store.commit('setTools', localthis.options)
             localthis.liveTime = entityGetter.chartPackage.livetime
-            localthis.liveChartoptions = entityGetter.liveChartOptions
             localthis.getAverages(localthis.activeEntity)
           } else if (entityGetter.chartMessage === 'vis-report') {
             console.log('prepare report for HR recovery')
@@ -148,14 +147,12 @@
           } else {
             console.log('chartjs-- uptodate finised')
             localthis.chartmessage = 'computation up-to-date'
-            localthis.options = entityGetter.options
-            localthis.$store.commit('setTools', localthis.options)
+            localthis.options = entityGetter.chartPackage.options
             localthis.datacollection = entityGetter.chartPackage.prepared
             localthis.liveTime = entityGetter.chartPackage.livetime
-            localthis.liveChartoptions = entityGetter.chartPackage.options
-            this.$store.commit('setVisualData', localthis.datacollection)
-            this.$store.commit('setVisualOptions', localthis.liveChartoptions)
-            this.$store.commit('setTeststring', 'james hi')
+            this.$store.dispatch('actionVisualOptions', localthis.options)
+            this.$store.dispatch('actionVisualData', localthis.datacollection)
+            // this.$store.commit('setTeststring', 'james hi')
           }
           // console.log(localthis.datacollection)
         } else if (localthis.activevis === 'vis-sc-2') {
@@ -179,7 +176,7 @@
           } else {
             localthis.chartmessage = 'computation up-to-date'
           }
-        })
+        }) */
       },
       saveLearnHistory (lBundle) {
         console.log('save temp history or keep on network save')

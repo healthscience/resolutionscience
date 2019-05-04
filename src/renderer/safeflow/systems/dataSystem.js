@@ -120,36 +120,34 @@ DataSystem.prototype.getLiveDatatypes = function (dtIN) {
 */
 DataSystem.prototype.datatypeMapping = async function (systemBundle) {
   console.log('DATATYPE--mapping')
-  const localthis = this
+  let rawHolder = {}
   //  this need datatype MAPPING UTILITY to check the data source via CNRL identify the API call that will contain the data type then inform the system to make  call to retrieve the data.  WIP, hardwired connect for now.
   if (systemBundle.dtAsked[0] === 'cnrl-8856388711' || systemBundle.dtAsked[0] === 'cnrl-8856388712') {
     console.log('datatype query')
-    await this.getRawData(systemBundle).then(function (rawData) {
-      const rawHolder = {}
-      rawHolder[systemBundle.timePeriod.startperiod] = rawData
-      localthis.dataRaw.push(rawHolder)
-      rawData = {}
-      // console.log(localthis.dataRaw)
+    await this.getRawData(systemBundle).then(function (sourcerawData) {
+      console.log(sourcerawData)
+      rawHolder = {}
+      rawHolder[systemBundle.startperiod] = sourcerawData
+      // localthis.dataRaw.push(rawHolder)
     })
   } else if (systemBundle.dtAsked[0] === 'cnrl-8856388724') {
     console.log('DATACOMPOENT1--ANY EXISTING AVERAGE QUERY')
-    await this.getRawStatsData(systemBundle, 'cnrl-2356388732').then(function (rawData) {
-      const rawHolder = {}
-      rawHolder[systemBundle.timePeriod.startperiod] = rawData
-      localthis.dataRaw.push(rawHolder)
-      rawData = {}
+    await this.getRawStatsData(systemBundle, 'cnrl-2356388732').then(function (sourcerawData) {
+      console.log(sourcerawData)
+      rawHolder = {}
+      rawHolder[systemBundle.timePeriod.startperiod] = sourcerawData
+      // localthis.dataRaw.push(rawHolder)
     })
   } else if (systemBundle.dtAsked[0] === 'cnrl-8856388725') {
     console.log('recovery heart rate ask')
     await this.getHRrecovery(systemBundle).then(function (rawData) {
-      const rawHolder = {}
+      rawHolder = {}
       rawHolder[systemBundle.timePeriod.startperiod] = rawData
-      localthis.dataRaw.push(rawHolder)
-      rawData = {}
+      // localthis.dataRaw.push(rawHolder)
       // console.log(localthis.dataRaw)
     })
   }
-  return this.dataRaw
+  return rawHolder
 }
 
 /**
@@ -165,7 +163,7 @@ DataSystem.prototype.getRawData = async function (queryIN) {
   const deviceQuery = queryIN.deviceList
   // form loop to make data calls
   for (let di of deviceQuery) {
-    await localthis.liveTestStorage.getComputeData(queryIN.timePeriod.startperiod, di).then(function (result) {
+    await localthis.liveTestStorage.getComputeData(queryIN.startperiod, di).then(function (result) {
       dataBack[di] = result
       result = []
     }).catch(function (err) {
@@ -184,8 +182,11 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
   console.log('DATASYSTEM2T----tidyRaw')
   console.log(dataASK)
   console.log(dataRaw)
+  let liveStarttime = dataASK.timePeriod.startperiod
+  console.log(liveStarttime)
   // build object structureReturn
-  let tidyHolder = []
+  let tidyHolder = {}
+  tidyHolder[liveStarttime] = {}
   // one, two or more sources needing tidying???
   // data structure in  Object indexed by startTime, object IndexbyDevice, Array[]of object -> heart_rate steps  {plus other source data}
   let cleanData = []
@@ -193,17 +194,16 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
   // let errorCodes = [255]
   for (let devI of dataASK.deviceList) {
     // loop over rawData until the start date matchtes
+    // tidyHoldertidyHolder[liveStarttime][devI] = []
     for (let dateMatch of dataRaw) {
-      if (dateMatch[dataASK.timePeriod.startperiod]) {
+      if (dateMatch[liveStarttime]) {
         console.log('tidy')
         // console.log(dateMatch[dataASK.timePeriod.startperiod][devI])
-        cleanData = dateMatch[dataASK.timePeriod.startperiod][devI].filter(function (item) {
+        cleanData = dateMatch[liveStarttime][devI].filter(function (item) {
           // console.log(item)
           return item.heart_rate !== 255 || item.heart_rate <= 0
         })
-        tidyHolder[dataASK.timePeriod.startperiod] = {}
-        tidyHolder[dataASK.timePeriod.startperiod][devI] = []
-        tidyHolder[dataASK.timePeriod.startperiod][devI] = cleanData
+        tidyHolder[liveStarttime][devI] = cleanData
       }
     }
   }

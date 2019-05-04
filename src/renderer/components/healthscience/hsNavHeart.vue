@@ -1,11 +1,10 @@
 <template>
   <section class="container">
     <section id="knowledge">
-      <knowledge-Live :liveData="liveData" ></knowledge-Live>
-      <knowledge-Context :knowledgeData="knowledgeData" @knowledgeSet="knowledgeStatus" @languageSet="languageStatus"  @scienceSet="scienceStatus" @timeSet="timeStatus" @resolutionSet="resolutionStatus"></knowledge-Context>
+      <knowledge-Live :liveData="liveData" @liveLearn="learnStart"></knowledge-Live>
+      <knowledge-Context @setVDevice="deviceStatus" @setVDatatypes="datatypeStatus" @setVLanguage="languageStatus"  @setVScience="scienceStatus" @setVTime="timeStatus" @setVResolution="resolutionStatus"></knowledge-Context>
     </section>
-      <hsvisual :visualData="visualData" ></hsvisual>
-    </section>
+    <hsvisual @updateLearn="learnUpdate"></hsvisual>
   </section>
 </template>
 
@@ -14,6 +13,7 @@
   import hsvisual from '@/components/healthscience/hsvisual'
   import KnowledgeContext from '@/components/toolbar/knowledgeContext'
   import KnowledgeLive from '@/components/toolbar/knowledgeLive'
+  const moment = require('moment')
 
   export default {
     name: 'VueChartJS',
@@ -25,77 +25,27 @@
     data () {
       return {
         liveSafeFlow: null,
-        knowledgeData: {},
         liveData:
         {
-          devices: [],
-          sensors: [],
+          devicesLive: [],
+          datatypesLive: [],
           scienceLive: '',
-          language: '',
+          languageLive: '',
           timeLive: [],
           resolutionLive: ''
         },
-        visualData: {
-          style: []
-        },
-        knowledge:
-        {
-          active: false,
-          text: 'hiden'
-        },
-        liveTime: 0,
-        selectedCompute: 'A',
-        keyC: {},
-        scoptions: [],
-        averageSeen: false,
-        labelback: [],
-        heartback: [],
-        colorback: '',
-        colorlineback: '',
-        devices: [],
-        sensors: [],
-        resolution: [],
-        resolutionSet: '',
-        sciencedataMapping: {},
         analysisStart: 0,
         analysisEnd: 0,
-        learn:
-        {
-          name: 'learn',
-          id: 'learn-status'
-        },
-        chartmessage: 'Select time',
-        activedevice: [],
-        activesensor: [],
-        activeEntity: 'cnrl-2356388731',
-        activeupdatecompute: '',
-        activevis: '',
-        activelearn: '',
-        computeFlag: '',
-        visChartview: true,
-        visTableview: false,
-        visSimview: false
+        activeEntity: '',
+        liveBundle: {}
       }
     },
     computed: {
-      safeFlow: function () {
-        return this.$store.state.safeFlow
-      },
       system: function () {
         return this.$store.state.system
-      },
-      context: function () {
-        return this.$store.state.context
-      },
-      science: function () {
-        return this.$store.state.science
-      },
-      tools: function () {
-        return this.$store.state.tools
       }
     },
     mounted () {
-      this.knowledgeData.seenStatus = true
     },
     created () {
       this.setAccess()
@@ -114,25 +64,6 @@
         this.options.annotation.annotations[0].value = newAHR
         this.options.annotation.annotations[1].value = newARHR
       },
-      setContextData (seg) {
-        // get seg and then look at compute context and call appropriate
-        const compContext = this.activeEntity
-        if (compContext === 'cnrl-2356388731') {
-          this.fillData(seg, {})
-        }
-      },
-      toolsVis () {
-        console.log('toolbar view')
-        this.toolbar.text = 'on'
-        /* let recoveryStart = {}
-        recoveryStart.seenStatus = true
-        this.recoveryData = recoveryStart */
-        let toolbarStart = {}
-        toolbarStart.seenStatus = true
-        toolbarStart.liveOptions = this.liveChartoptions
-        this.toolbarData = toolbarStart
-        console.log(this.toolbarData)
-      },
       timeRange () {
         let rangeHolder = {}
         rangeHolder.startTime = this.toolbarData.liveOptions.analysisStart
@@ -140,22 +71,10 @@
         rangeHolder.active = true
         return rangeHolder
       },
-      knowledgeStatus (kIN) {
-        console.log('knowledtget set in')
-        console.log(kIN)
-        if (kIN.device_mac) {
-          console.log('device live')
-          this.liveDevice(kIN)
-        } else if (kIN.text) {
-          // datatypes
-          this.liveDataTypes(kIN)
-        }
-      },
-      languageStatus (lIN) {
-        console.log('language set in')
-        console.log(lIN)
-        this.liveData.language = lIN
-        console.log(this.liveData.language)
+      deviceStatus (dIN) {
+        console.log('device set in')
+        console.log(dIN)
+        this.liveDevice(dIN)
       },
       liveDevice (liveD) {
         console.log('set live device to comp')
@@ -166,11 +85,11 @@
           // remove device
           this.removeLiveElement(liveD.device_mac)
         }
-        this.liveData.devices = deviceLive
+        this.liveData.devicesLive = deviceLive
       },
       removeLiveElement (remove) {
         console.log('device remove')
-        let array = this.liveData.devices
+        let array = this.liveData.devicesLive
         function arrayRemove (arr, value) {
           return arr.filter(function (ele) {
             return ele.device_mac !== value
@@ -180,29 +99,38 @@
         console.log(result)
         return true
       },
+      datatypeStatus (ldt) {
+        console.log('live datatypes')
+        this.liveDataTypes(ldt)
+      },
       liveDataTypes (liveDT) {
         console.log('set live DT')
-        // let dataTypesLive = []
+        console.log(liveDT)
         if (liveDT.active === true) {
           console.log('true')
-          this.liveData.sensors.push(liveDT)
+          this.liveData.datatypesLive.push(liveDT)
         } else if (liveDT.active === false) {
           // remove device
           console.log('false')
           this.removeLiveDT(liveDT.text)
         }
-        // this.liveData.sensors.push(dataTypesLive)
+      },
+      languageStatus (lIN) {
+        console.log('language set in')
+        console.log(lIN)
+        this.liveData.languageLive = lIN
+        console.log(this.liveData.languageLive)
       },
       removeLiveDT (remove) {
         console.log('remove DT')
-        let array = this.liveData.sensors
+        let array = this.liveData.datatypesLive
         function arrayRemove (arr, value) {
           return arr.filter(function (ele) {
             return ele.text !== value
           })
         }
         let result = arrayRemove(array, remove)
-        this.liveData.sensors = result
+        this.liveData.datatypesLive = result
         return true
       },
       scienceStatus (sIN) {
@@ -219,6 +147,94 @@
         console.log('resolution set in')
         console.log(rIN)
         this.liveData.resolutionLive = rIN
+      },
+      async learnStart (lBundle) {
+        console.log('start Learning')
+        console.log(lBundle)
+        this.liveBundle = lBundle
+        this.activeEntity = this.liveData.scienceLive.cnrl
+        this.activevis = this.$store.getters.liveVis[0]
+        // keep state of live bundle
+        // this.$store.dispatch('actionLiveBundle', liveBundle)
+        // this.saveLearnHistory(liveBundle)
+        await this.liveSafeFlow.scienceEntities(lBundle)
+        console.log('entity setup/operational')
+        // this.learnListening()
+        let entityGetter = await this.liveSafeFlow.entityGetter(this.activeEntity, this.activevis)
+        console.log('VUE---return getter data')
+        console.log(entityGetter)
+        if (this.activevis === 'vis-sc-1') {
+          console.log('chartjs')
+          if (entityGetter.chartMessage === 'computation in progress') {
+            console.log('chartjs--ongoing computation or obseration data')
+            this.chartmessage = entityGetter.chartMessage
+            this.options = entityGetter.chartPackage.options
+            this.datacollection = entityGetter.chartPackage.prepared
+            // localthis.$store.commit('setTools', localthis.options)
+            this.liveTime = entityGetter.chartPackage.livetime
+            this.getAverages(this.activeEntity)
+          } else if (entityGetter.chartMessage === 'vis-report') {
+            console.log('prepare report for HR recovery')
+            let recoveryStart = {}
+            recoveryStart.seenStatus = true
+            recoveryStart.hrcdata = entityGetter.hrcReport
+            this.recoveryData = recoveryStart
+          } else {
+            console.log('chartjs-- uptodate finised')
+            this.chartmessage = 'computation up-to-date'
+            this.options = entityGetter.chartPackage.options
+            this.datacollection = entityGetter.chartPackage.prepared
+            this.liveTime = entityGetter.chartPackage.livetime
+            this.$store.dispatch('actionVisualOptions', this.options)
+            this.$store.dispatch('actionVisualData', this.datacollection)
+            // this.$store.commit('setTeststring', 'james hi')
+          }
+          // console.log(localthis.datacollection)
+        } else if (this.activevis === 'vis-sc-2') {
+          console.log('tablejs')
+          // localthis.tableHTML = entityGetter.table
+        } else if (this.activevis === 'vis-sc-3') {
+          console.log('simjs')
+          // localthis.simulationHeart = entityGetter.heart
+          // localthis.simulationMovement = entityGetter.heart
+          // localthis.simulationTime = entityGetter.time
+        }
+      },
+      learnUpdate (uSeg) {
+        console.log('update bundle')
+        console.log(uSeg)
+        let updateTbundle = {}
+        let timeAsk = []
+        timeAsk.push(uSeg.text)
+        console.log(timeAsk)
+        updateTbundle.timeseg = timeAsk
+        updateTbundle.startperiod = 'relative'
+        const nowTime = moment()
+        let realTime = moment.utc(nowTime)
+        let liveBundleUpdate = {}
+        liveBundleUpdate.cnrl = this.liveBundle.cnrl
+        liveBundleUpdate.language = this.liveBundle.language
+        liveBundleUpdate.devices = this.liveBundle.devices
+        liveBundleUpdate.datatypes = this.liveBundle.datatypes
+        liveBundleUpdate.science = this.liveBundle.science
+        liveBundleUpdate.time = updateTbundle
+        liveBundleUpdate.realtime = realTime
+        liveBundleUpdate.resolution = this.liveBundle.resolution
+        liveBundleUpdate.visualisation = this.liveBundle.visualisation
+        this.learnStart(liveBundleUpdate)
+      },
+      learnListening () {
+        var localthis = this
+        // listening to give peer info. on computation statusTime
+        this.liveSafeFlow.liveEManager.on('computation', function (cState) {
+          console.log('computation event from manager')
+          console.log(cState)
+          if (cState === 'in-progress') {
+            localthis.chartmessage = cState
+          } else {
+            localthis.chartmessage = 'computation up-to-date'
+          }
+        })
       }
     }
   }

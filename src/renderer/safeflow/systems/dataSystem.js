@@ -122,30 +122,31 @@ DataSystem.prototype.datatypeMapping = async function (systemBundle) {
   console.log('DATATYPE--mapping')
   let rawHolder = {}
   //  this need datatype MAPPING UTILITY to check the data source via CNRL identify the API call that will contain the data type then inform the system to make  call to retrieve the data.  WIP, hardwired connect for now.
-  if (systemBundle.dtAsked[0] === 'cnrl-8856388711' || systemBundle.dtAsked[0] === 'cnrl-8856388712') {
-    console.log('datatype query')
-    await this.getRawData(systemBundle).then(function (sourcerawData) {
-      console.log(sourcerawData)
-      rawHolder = {}
-      rawHolder[systemBundle.startperiod] = sourcerawData
-      // localthis.dataRaw.push(rawHolder)
-    })
-  } else if (systemBundle.dtAsked[0] === 'cnrl-8856388724') {
-    console.log('DATACOMPOENT1--ANY EXISTING AVERAGE QUERY')
-    await this.getRawStatsData(systemBundle, 'cnrl-2356388732').then(function (sourcerawData) {
-      console.log(sourcerawData)
-      rawHolder = {}
-      rawHolder[systemBundle.timePeriod.startperiod] = sourcerawData
-      // localthis.dataRaw.push(rawHolder)
-    })
-  } else if (systemBundle.dtAsked[0] === 'cnrl-8856388725') {
-    console.log('recovery heart rate ask')
-    await this.getHRrecovery(systemBundle).then(function (rawData) {
-      rawHolder = {}
-      rawHolder[systemBundle.timePeriod.startperiod] = rawData
-      // localthis.dataRaw.push(rawHolder)
-      // console.log(localthis.dataRaw)
-    })
+  // first is the data from the PAST or FUTURE ie simulated?
+  if (systemBundle.startperiod === 'simulateData') {
+    console.log('SIMULTATED__DATA__REQUIRED')
+  } else {
+    if (systemBundle.dtAsked[0] === 'cnrl-8856388711' || systemBundle.dtAsked[0] === 'cnrl-8856388712') {
+      console.log('datatype query')
+      await this.getRawData(systemBundle).then(function (sourcerawData) {
+        rawHolder = {}
+        rawHolder[systemBundle.startperiod] = sourcerawData
+        // localthis.dataRaw.push(rawHolder)
+      })
+    } else if (systemBundle.dtAsked[0] === 'cnrl-8856388724') {
+      console.log('DATACOMPOENT1--ANY EXISTING AVERAGE QUERY')
+      await this.getRawStatsData(systemBundle, 'cnrl-2356388732').then(function (sourcerawData) {
+        rawHolder = {}
+        rawHolder[systemBundle.timePeriod.startperiod] = sourcerawData
+        // localthis.dataRaw.push(rawHolder)
+      })
+    } else if (systemBundle.dtAsked[0] === 'cnrl-8856388725') {
+      console.log('recovery heart rate ask')
+      await this.getHRrecovery(systemBundle).then(function (rawData) {
+        rawHolder = {}
+        rawHolder[systemBundle.timePeriod.startperiod] = rawData
+      })
+    }
   }
   return rawHolder
 }
@@ -180,10 +181,7 @@ DataSystem.prototype.getRawData = async function (queryIN) {
 */
 DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
   console.log('DATASYSTEM2T----tidyRaw')
-  console.log(dataASK)
-  console.log(dataRaw)
   let liveStarttime = dataASK.timePeriod.startperiod
-  console.log(liveStarttime)
   // build object structureReturn
   let tidyHolder = {}
   tidyHolder[liveStarttime] = {}

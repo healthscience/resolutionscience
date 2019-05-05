@@ -4,7 +4,7 @@
       <knowledge-Live :liveData="liveData" @liveLearn="learnStart"></knowledge-Live>
       <knowledge-Context @setVDevice="deviceStatus" @setVDatatypes="datatypeStatus" @setVLanguage="languageStatus"  @setVScience="scienceStatus" @setVTime="timeStatus" @setVResolution="resolutionStatus"></knowledge-Context>
     </section>
-    <hsvisual @updateLearn="learnUpdate"></hsvisual>
+    <hsvisual :datacollection="liveDataCollection" :options="liveOptions" @updateLearn="learnUpdate"></hsvisual>
   </section>
 </template>
 
@@ -34,6 +34,8 @@
           timeLive: [],
           resolutionLive: ''
         },
+        liveDataCollection: {},
+        liveOptions: {},
         analysisStart: 0,
         analysisEnd: 0,
         activeEntity: '',
@@ -141,12 +143,31 @@
       timeStatus (tIN) {
         console.log('time set in')
         console.log(tIN)
-        this.liveData.timeLive.push(tIN)
+        if (tIN.active === true) {
+          console.log('true')
+          this.liveData.timeLive.push(tIN.text)
+        } else if (tIN.active === false) {
+          // remove device
+          console.log('false')
+          this.removeLiveTime(tIN)
+        }
+      },
+      removeLiveTime (trIN) {
+        console.log('remove time')
+        let removeTimeArr = this.liveData.timeLive.filter(item => item !== trIN.text)
+        this.liveData.timeLive = removeTimeArr
       },
       resolutionStatus (rIN) {
         console.log('resolution set in')
         console.log(rIN)
-        this.liveData.resolutionLive = rIN
+        if (rIN.active === true) {
+          console.log('true')
+          this.liveData.resolutionLive = rIN.text
+        } else if (rIN.active === false) {
+          // remove device
+          console.log('false')
+          this.liveData.resolutionLive = ''
+        }
       },
       async learnStart (lBundle) {
         console.log('start Learning')
@@ -154,9 +175,6 @@
         this.liveBundle = lBundle
         this.activeEntity = this.liveData.scienceLive.cnrl
         this.activevis = this.$store.getters.liveVis[0]
-        // keep state of live bundle
-        // this.$store.dispatch('actionLiveBundle', liveBundle)
-        // this.saveLearnHistory(liveBundle)
         await this.liveSafeFlow.scienceEntities(lBundle)
         console.log('entity setup/operational')
         // this.learnListening()
@@ -182,14 +200,12 @@
           } else {
             console.log('chartjs-- uptodate finised')
             this.chartmessage = 'computation up-to-date'
-            this.options = entityGetter.chartPackage.options
-            this.datacollection = entityGetter.chartPackage.prepared
+            this.options2 = entityGetter.chartPackage.options
+            this.datacollection2 = entityGetter.chartPackage.prepared
             this.liveTime = entityGetter.chartPackage.livetime
-            this.$store.dispatch('actionVisualOptions', this.options)
-            this.$store.dispatch('actionVisualData', this.datacollection)
-            // this.$store.commit('setTeststring', 'james hi')
+            this.liveOptions = this.options2
+            this.liveDataCollection = this.datacollection2
           }
-          // console.log(localthis.datacollection)
         } else if (this.activevis === 'vis-sc-2') {
           console.log('tablejs')
           // localthis.tableHTML = entityGetter.table

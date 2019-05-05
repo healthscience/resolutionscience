@@ -93,16 +93,15 @@ DataComponent.prototype.setDatatypesLive = function () {
 */
 DataComponent.prototype.RawData = async function () {
   console.log('DATACOMPONENT1----start rawdaata')
-  console.log(this.livedate)
+  // console.log(this.livedate)
   let systemBundle = {}
   systemBundle.startperiod = this.livedate.startperiod
   systemBundle.dtAsked = this.datatypeList
   systemBundle.deviceList = this.deviceList
-  console.log(systemBundle)
   let dataRback = await this.liveDataSystem.datatypeMapping(systemBundle)
   this.dataRaw.push(dataRback)
-  console.log('rawData------')
-  console.log(this.dataRaw)
+  // console.log('rawData------')
+  // console.log(this.dataRaw)
   return true
 }
 
@@ -121,15 +120,11 @@ DataComponent.prototype.TidyData = async function () {
     dBundle.deviceList = this.deviceList
     dBundle.datatypeList = this.datatypeList
     tidyHolder = this.liveDataSystem.tidyRawData(dBundle, this.dataRaw)
-    console.log('tidy back')
-    console.log(tidyHolder)
     this.tidyData.push(tidyHolder)
   } else {
     console.log('NOTtidy require')
     this.tidyData = this.dataRaw
   }
-  console.log('tidy data structure')
-  console.log(this.tidyData)
   return true
 }
 

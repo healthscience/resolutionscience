@@ -41,8 +41,6 @@ ChartSystem.prototype.structureChartData = function (datatypeIN, cBundle, cData)
   let liveDate = cBundle.liveTime
   this.chartPrep = {}
   // loop through and build two sperate arrays
-  console.log(datatypeIN)
-  console.log(cData)
   for (let dataI of cData) {
     // for (let tItem of cBundle.timeList) {
     if (dataI[liveDate]) {

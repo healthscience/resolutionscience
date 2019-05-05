@@ -17,6 +17,7 @@ var TimeUtilities = function (setUP) {
   events.EventEmitter.call(this)
   this.liveStarttime = ''
   this.liveLasttime = ''
+  this.realtime = ''
 }
 
 /**
@@ -35,6 +36,7 @@ TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
   const localthis = this
   console.log(timeBundle)
   console.log(this.liveLasttime)
+  this.realtime = timeBundle.realtime
   if (timeBundle.time.startperiod === 'relative') {
     console.log('set time relative to last set')
     this.liveStarttime = this.liveLasttime * 1000
@@ -57,6 +59,7 @@ TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
       timeConversion.startperiod = timePeriod
     }
   }
+  console.log(timeConversion)
   return timeConversion
 }
 
@@ -84,21 +87,38 @@ TimeUtilities.prototype.rangeCovert = function (rangeIN) {
 TimeUtilities.prototype.timePeriodBuilder = function (seg) {
   //  turn segment into time query profile
   console.log('timeperiod builder')
-  console.log(seg)
+  // console.log(seg)
   let startTime
+  let timestamp
   if (seg === 'day') {
     // asking for one 24hr display
     startTime = this.liveStarttime
   } else if (seg === '-day') {
     // move back one day in time
     console.log('back one day')
-    console.log(this.liveStarttime)
-    console.log(seg)
+    // console.log(this.liveStarttime)
+    // console.log(seg)
     startTime = (this.liveStarttime - 86400000)
   } else if (this.liveStarttime && seg === '+day') {
     // move forward day in time
-    // console.log('forward one day')
     startTime = (this.liveStarttime + 86400000)
+    // console.log('simulated required')
+    // console.log(this.liveStarttime)
+    // console.log(this.realtime)
+    let msRealtime = moment(this.realtime).valueOf()
+    console.log(msRealtime)
+    if (this.liveStarttime > msRealtime) {
+      // pass on to simulated data
+      console.log('future time')
+      startTime = 'simulateData'
+      // let simTime = startTime
+      // this.simulateData(simTime)
+    } else {
+      console.log('PPAST time')
+      // console.log('forward one day')
+      startTime = (this.liveStarttime + 86400000)
+      // but if this time if further ahead then real time then simulated data required
+    }
   } else if (seg === '-year') {
     // return start of year timeout
     startTime = moment().startOf('year')
@@ -116,18 +136,12 @@ TimeUtilities.prototype.timePeriodBuilder = function (seg) {
     }
   }
   //  get the micro time for start of month date and pass to query
-  let startQuerytime = moment(startTime).valueOf()
-  let timestamp = startQuerytime / 1000
-  // not the last pass of the loop
-  /* if (seg === '-day') {
-    console.log('back day setting')
-    this.liveStarttime = timestamp + 86400
-  } else if (seg === '+day') {
-    this.liveStarttime = timestamp - 86400
+  if (startTime !== 'simulateData') {
+    let startQuerytime = moment(startTime).valueOf()
+    timestamp = startQuerytime / 1000
   } else {
-    console.log('first setting of time')
-    this.liveStarttime = timestamp
-  } */
+    timestamp = 'simulateData'
+  }
   this.liveLasttime = timestamp
   return timestamp
 }
@@ -141,10 +155,10 @@ TimeUtilities.prototype.calendarUtility = function (startDYear) {
   // segment the year months days in months
   let startY = moment().startOf('year').valueOf()
   let yearCommence = startY / 1000
-  console.log(yearCommence)
+  // console.log(yearCommence)
   const monthNo = moment(startY).month()
   const currentmonthNo = monthNo + 1
-  console.log(monthNo)
+  // console.log(monthNo)
   let secondsInday = 86400
   let calendarUtil = []
   // let months = 'January, February, March, April, May, June, July, August, September, October, November, December'
@@ -158,7 +172,7 @@ TimeUtilities.prototype.calendarUtility = function (startDYear) {
       calendarUtil.push({dayCount, longDateformat})
     }
   }
-  console.log(calendarUtil)
+  // console.log(calendarUtil)
   return calendarUtil
 }
 
@@ -170,14 +184,14 @@ TimeUtilities.prototype.calendarUtility = function (startDYear) {
 TimeUtilities.prototype.timeArrayBuilder = function (liveTime, lastTime) {
   let timeArray = []
   let yearEndmnoth = 11
-  console.log(lastTime)
-  console.log(liveTime)
+  // console.log(lastTime)
+  // console.log(liveTime)
   // let shortLastTime = lastTime / 1000
   const yearNum = moment(lastTime).year()
   const yearNumcurrent = moment(liveTime).year()
   // dealing with multiple years?
   if (yearNumcurrent > yearNum) {
-    console.log('spanning two years')
+    // console.log('spanning two years')
     // build array in two part, first oldest year
     const firstmonthNo = moment(lastTime).month()
     const firstmonthNocurrent = yearEndmnoth
@@ -209,7 +223,7 @@ TimeUtilities.prototype.timeArrayBuilder = function (liveTime, lastTime) {
     let SecondbaseMills = firstbaseMills
     for (let numM of monthsNumberFirst) {
       const SecondmonthNocurrent = moment(liveTime).month()
-      console.log(SecondmonthNocurrent)
+      // console.log(SecondmonthNocurrent)
       if (numM >= 0 && numM <= SecondmonthNocurrent) {
         console.log('start--2nd mulit year------')
         if (counter === 1) {

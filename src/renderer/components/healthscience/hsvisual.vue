@@ -85,7 +85,10 @@
       simulationView
     },
     props: {
-      inputData: {
+      datacollection: {
+        type: Object
+      },
+      options: {
         type: Object
       }
     },
@@ -133,15 +136,6 @@
       },
       safeFlow: function () {
         return this.$store.state.safeFlow
-      },
-      bundle: function () {
-        return this.$store.state.bundle
-      },
-      options: function () {
-        return this.$store.state.visOptions
-      },
-      datacollection: function () {
-        return this.$store.state.visData
       }
     },
     created () {

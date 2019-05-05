@@ -27,7 +27,7 @@
           <header>Live Datatypes</header>
           <ul>
             <li id="data-type-live" v-for="lts in livedtypes">
-              <a class="" href="" id="cnrl-data" @click.prevent="selectDatatypes(sdts)" v-bind:class="{ 'active': false }">{{ lts.text }} {{ lts }}</a>
+              <a class="" href="" id="cnrl-data" @click.prevent="selectDatatypes(sdts)" v-bind:class="{ 'active': false }">{{ lts.text }}</a>
             </li>
           </ul>
           <header>Science Datatypes</header>
@@ -234,7 +234,7 @@
       selectResolution (r) {
         console.log(r)
         r.active = !r.active
-        this.$emit('setVResolution', r.text)
+        this.$emit('setVResolution', r)
       },
       languageContext () {
         let refContext = 'human'
@@ -416,7 +416,7 @@
           console.log(tt)
           this.$emit('setVTime', tt)
         } else {
-          this.$emit('setVTime', tIN.text)
+          this.$emit('setVTime', tIN)
         }
       },
       livingPaper () {

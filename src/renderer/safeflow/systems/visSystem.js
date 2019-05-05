@@ -49,14 +49,10 @@ VisSystem.prototype.chartSystem = function (chartBundle, dataIN) {
     for (let dtv of chartBundle.datatypeList) {
       console.log('VISC----loop datatypes')
       structureHolder = this.liveChartSystem.structureChartData(dtv, chartBundle, dataIN)
-      console.log('VISUALCOMPONENT2---struectureData')
-      console.log(structureHolder)
       // prepare the colors for the charts
       let chartColorsSet = localthis.liveChartSystem.chartColors(dtv)
       dataTypeBucket.data = structureHolder
       dataTypeBucket.color = chartColorsSet
-      // console.log('VISUALCOMPONENT2a---forPUSSHHING')
-      // console.log(dataTypeBucket)
       chartDataH.chart.push(dataTypeBucket)
       structureHolder = {}
       dataTypeBucket = {}

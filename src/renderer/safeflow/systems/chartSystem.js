@@ -30,7 +30,7 @@ util.inherits(ChartSystem, events.EventEmitter)
 
 /**
 * return the data structure requested
-* @method structureData
+* @method structureChartData
 *
 */
 ChartSystem.prototype.structureChartData = function (datatypeIN, cBundle, cData) {
@@ -48,10 +48,11 @@ ChartSystem.prototype.structureChartData = function (datatypeIN, cBundle, cData)
         for (let datatypeData of dataI[liveDate][devI]) {
           var mDateString = moment(datatypeData.timestamp * 1000).toDate()
           datalabel.push(mDateString)
-          // console.log(datatypeData)
-          if (datatypeIN === 'cnrl-8856388711') {
+          console.log(datatypeData)
+          console.log(datatypeIN)
+          if (datatypeIN.cnrl === 'cnrl-8856388711') {
             datay.push(datatypeData.heart_rate)
-          } else if (datatypeIN === 'cnrl-8856388712') {
+          } else if (datatypeIN.cnrl === 'cnrl-8856388712') {
             datay.push(datatypeData.steps)
           }
         }
@@ -61,6 +62,8 @@ ChartSystem.prototype.structureChartData = function (datatypeIN, cBundle, cData)
   }
   dataholder.labels = datalabel
   dataholder.datasets = datay
+  console.log('chartholder')
+  console.log(dataholder)
   return dataholder
 }
 
@@ -73,11 +76,11 @@ ChartSystem.prototype.chartColors = function (datatypeItem) {
   console.log('COLOOOOR')
   let colorHolder = {}
   // LOOP over datatypeList and prepare chart colors
-  if (datatypeItem === 'cnrl-8856388712') {
+  if (datatypeItem.cnrl === 'cnrl-8856388712') {
     colorHolder.datatype = 'steps'
     colorHolder.backgroundColor = '#203487'
     colorHolder.borderColor = '#050d2d'
-  } else if (datatypeItem === 'cnrl-8856388711') {
+  } else if (datatypeItem.cnrl === 'cnrl-8856388711') {
     colorHolder.datatype = 'bpm'
     colorHolder.backgroundColor = '#ed7d7d'
     colorHolder.borderColor = '#ea1212'
@@ -93,6 +96,7 @@ ChartSystem.prototype.chartColors = function (datatypeItem) {
 */
 ChartSystem.prototype.prepareVueChartJS = function (results) {
   console.log('CHARTJS--prepare')
+  console.log(results)
   let datacollection = {}
   this.labelback = []
   this.databack = []
@@ -119,14 +123,17 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
       }
     }
   } else {
+    console.log('one data set to chart')
+    console.log(results.chart[0].color.datatype)
+    console.log(results.chart[0].data.datasets)
     if (results.chart[0].color.datatype === 'bpm') {
       this.activityback = []
       this.labelback = results.chart[0].data.labels
-      this.heartback = results.chart[0].data.datasets
+      this.databack = results.chart[0].data.datasets
       this.colorback = results.chart[0].color.backgroundColor
       this.colorlineback = results.chart[0].color.borderColor
     } else if (results.chart[0].color.datatype === 'steps') {
-      this.heartback = []
+      this.databack = []
       this.labelback = results.chart[0].data.labels
       this.activityback = results.chart[0].data.datasets
       this.colorback2 = results.chart[0].color.backgroundColor
@@ -195,6 +202,8 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
       ]
     }
   }
+  console.log('prepared datacollection')
+  console.log(datacollection)
   return datacollection
 }
 
@@ -411,20 +420,23 @@ ChartSystem.prototype.newDateEnd = function (endTimeIN) {
 * @method structureStatisticsData
 *
 */
-ChartSystem.prototype.structureStatisticsData = function (liveDate, dataType, deviceList, dataIN) {
+ChartSystem.prototype.structureStatisticsData = function (dataIN) {
   this.options = this.AverageChartOptions()
   console.log('STRUCTURE AVERAGE CHART DATA1')
+  // console.log(dataIN)
   let dataholder = {}
   let datalabel = []
-  let dataheart = []
+  let dataC = []
   // loop through and build two sperate arrays
-  // console.log(entry)
-  let millTimeprepare = dataIN.timestamp * 1000
-  let mString = moment(millTimeprepare).toDate() // .format('YYYY-MM-DD hh:mm')
-  datalabel.push(mString)
-  dataheart.push(dataIN.value)
+  for (let dc of dataIN) {
+    // console.log(entry)
+    let millTimeprepare = dc.timestamp * 1000
+    let mString = moment(millTimeprepare).toDate() // .format('YYYY-MM-DD hh:mm')
+    datalabel.push(mString)
+    dataC.push(dc.value)
+  }
   dataholder.labels = datalabel
-  dataholder.datasets = dataheart
+  dataholder.datasets = dataC
   console.log('structure average data for charting')
   console.log(dataholder)
   return dataholder
@@ -439,11 +451,11 @@ ChartSystem.prototype.avgchartColors = function (datatypeItem) {
   console.log('CHARTSYSTEM3--setcolors')
   let colorHolder = {}
   // LOOP over datatypeList and prepare chart colors
-  if (datatypeItem === 'cnrl-8856388724') {
+  if (datatypeItem.cnrl === 'cnrl-8856388724') {
     colorHolder.datatype = 'cnrl-8856388724'
     colorHolder.backgroundColor = '#203487'
     colorHolder.borderColor = '#050d2d'
-  } else if (datatypeItem === 'cnrl-8856388322') {
+  } else if (datatypeItem.cnrl === 'cnrl-8856388322') {
     colorHolder.datatype = 'cnrl-8856388322'
     colorHolder.backgroundColor = '#ed7d7d'
     colorHolder.borderColor = '#ea1212'

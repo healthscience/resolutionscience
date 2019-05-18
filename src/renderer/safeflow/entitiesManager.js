@@ -64,6 +64,7 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
       this.liveSEntities[cid].liveDataC.setStartTime(timeBundle.startperiod)
       this.liveSEntities[cid].liveDataC.setTimeList(timeBundle.startperiod)
       this.liveSEntities[cid].liveDataC.setTimeSegments(timeBundle.timeseg)
+      this.liveSEntities[cid].liveDataC.setDatatypesLive(ecsIN.datatypes)
       await this.controlFlow(ecsIN).then(function (cFlow) {
         console.log('CONTROLFLOW--already-COMPLETE')
         // console.log(cFlow)
@@ -209,32 +210,45 @@ EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
   console.log('ENTITYMANAGER----retrun data')
   console.log(eid)
   console.log(visStyle)
-  console.log(this.liveSEntities)
   console.log(this.liveSEntities[eid].liveVisualC)
-  let dateLive = this.liveSEntities[eid].liveDataC.livedate
-  if (this.liveSEntities[eid].liveVisualC.visualData[visStyle] === undefined) {
-    console.log('no existing chart data')
-    let messageBundle = {}
-    messageBundle.chartMessage = 'computation in progress'
-    // messageBundle.chartPackage = this.liveSEntities[eid].liveVisualC.visualData[visStyle][dateLive]
-    // messageBundle.liveChartOptions = this.liveSEntities[eid].liveVisualC.liveVisSystem.liveChartSystem
-    return messageBundle
-  } else if (this.liveSEntities[eid].liveVisualC.visualData[visStyle].status === 'report-component') {
-    console.log('HR learn report instead of chart')
-    let messageVisBundle = {}
-    messageVisBundle.chartMessage = 'vis-report'
-    messageVisBundle.liveChartOptions = {}
-    messageVisBundle.chartPackage = {}
-    messageVisBundle.hrcReport = this.liveSEntities[eid].liveDataC.dataRaw
-    return messageVisBundle
-  } else {
-    console.log('existing data to chart')
-    let messageVisBundle = {}
-    messageVisBundle.chartMessage = 'existing'
-    messageVisBundle.liveChartOptions = this.liveSEntities[eid].liveVisualC.liveVisSystem.liveChartSystem
-    messageVisBundle.chartPackage = this.liveSEntities[eid].liveVisualC.visualData[visStyle][dateLive]
-    return messageVisBundle
+  let GroupVisBundle = []
+  let messageVisBundle = {}
+  let timeLive = this.liveSEntities[eid].liveDataC.livedate
+  // loop over visualisation available and pick out match
+  for (let lvc of this.liveSEntities[eid].liveVisualC.visualData) {
+    console.log('visLOOP to match')
+    console.log(lvc)
+    if (lvc[visStyle] === undefined) {
+      console.log('no existing chart data')
+      messageVisBundle = {}
+      messageVisBundle.chartMessage = 'computation in progress/ Nothing to chart'
+      GroupVisBundle.push(messageVisBundle)
+    } else if (lvc[visStyle].status === 'report-component') {
+      console.log('HR learn report instead of chart')
+      messageVisBundle = {}
+      messageVisBundle.chartMessage = 'vis-report'
+      messageVisBundle.liveChartOptions = {}
+      messageVisBundle.chartPackage = {}
+      messageVisBundle.hrcReport = this.liveSEntities[eid].liveDataC.dataRaw
+      GroupVisBundle.push(messageVisBundle)
+    } else if (lvc['vis-sc-1']) {
+      console.log('existing data to chart')
+      console.log(timeLive)
+      console.log(lvc)
+      // for (let vi of lvc[visStyle][timeLive]) {
+      console.log('chart day item')
+      // console.log(vi)
+      if (lvc[visStyle][timeLive].day) {
+        messageVisBundle = {}
+        messageVisBundle.chartMessage = 'Chart'
+        messageVisBundle.liveChartOptions = lvc[visStyle][timeLive].day.options
+        messageVisBundle.chartPackage = lvc[visStyle][timeLive].day.prepared
+        GroupVisBundle.push(messageVisBundle)
+      }
+      // }
+    }
   }
+  return GroupVisBundle
 }
 
 /**

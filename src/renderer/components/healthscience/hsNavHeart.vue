@@ -201,11 +201,13 @@
           } else {
             console.log('chartjs-- uptodate finised')
             this.chartmessage = 'computation up-to-date'
-            this.options2 = entityGetter.chartPackage.options
-            this.datacollection2 = entityGetter.chartPackage.prepared
-            this.liveTime = entityGetter.chartPackage.livetime
-            this.startLine = entityGetter.liveChartOptions.analysisStart
-            console.log(this.startLine)
+            this.options2 = entityGetter[0].liveChartOptions
+            this.datacollection2 = entityGetter[0].chartPackage
+            console.log(this.options2)
+            console.log(this.datacollection2)
+            // this.liveTime = entityGetter.chartPackage.livetime
+            // this.startLine = entityGetter.liveChartOptions.analysisStart
+            // console.log(this.startLine)
             // this.liveAnnotations = this.options2.annotation
             // console.log(this.liveAnnotations)
             // this.options2.annotation = {}

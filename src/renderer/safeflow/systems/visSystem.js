@@ -37,8 +37,9 @@ VisSystem.prototype.chartSystem = function (chartBundle, dataIN) {
   console.log(dataIN)
   var localthis = this
   let visIN = chartBundle.vid
-  let liveDate = chartBundle.liveTime
+  let liveTime = chartBundle.liveTime
   let structureHolder = {}
+  let chartGroupHolder = []
   let chartData = {}
   let chartDataH = {}
   chartDataH.chart = []
@@ -66,35 +67,44 @@ VisSystem.prototype.chartSystem = function (chartBundle, dataIN) {
     // chartData.livetime = this.liveTimeUtil.timeHTMLBuilder(liveDate)
     const chartHolder = {}
     chartHolder[visIN] = {}
-    chartHolder[visIN][liveDate] = chartData
-    this.visualData = chartHolder
+    chartHolder[visIN][liveTime] = {}
+    chartHolder[visIN][liveTime]['day'] = chartData
+    chartGroupHolder.push(chartHolder)
+    this.visualData = chartGroupHolder
   } else if (chartBundle.cnrl === 'cnrl-2356388732') {
     console.log('average Chart vis start')
     // could be more than one visualisation required,  devices, datatypes, timeseg or computation or event resolutions
     for (let dType of chartBundle.datatypeList) {
       for (let device of chartBundle.deviceList) {
-        for (let entry of dataIN[0][liveDate][device][dType.cnrl]) {
+        console.log('loop bud')
+        for (let entry of dataIN[0][liveTime][device][dType]) {
           // pass on to appropriate structure, day, week, in context of resolution etc.
           console.log('data structure for time segs')
           console.log(entry)
-          structureHolder = this.liveChartSystem.structureStatisticsData(liveDate, device, dType.cnrl, entry)
-          let chartColorsSet = localthis.liveChartSystem.avgchartColors(dType)
-          dataTypeBucket.data = structureHolder
-          dataTypeBucket.color = chartColorsSet
-          chartDataH.chart.push(dataTypeBucket)
-          structureHolder = {}
-          dataTypeBucket = {}
+          if (entry.day) {
+            structureHolder = this.liveChartSystem.structureStatisticsData(entry.day)
+            let chartColorsSet = localthis.liveChartSystem.avgchartColors(dType)
+            dataTypeBucket.data = structureHolder
+            dataTypeBucket.color = chartColorsSet
+            chartDataH.chart.push(dataTypeBucket)
+            // now prepare data format for chartjs
+            chartData.prepared = this.liveChartSystem.prepareStatsVueChartJS(chartBundle.deviceList, chartDataH)
+            let chartOptionsSet = this.liveChartSystem.getterChartOptions()
+            chartData.options = chartOptionsSet
+            const chartHolder = {}
+            chartHolder[visIN] = {}
+            chartHolder[visIN][liveTime] = {}
+            chartHolder[visIN][liveTime]['day'] = chartData
+            chartGroupHolder.push(chartHolder)
+            structureHolder = {}
+            dataTypeBucket = {}
+          }
         }
       }
     }
-    // now prepare data format for chartjs
-    chartData.prepared = this.liveChartSystem.prepareStatsVueChartJS(chartBundle.deviceList, chartDataH)
-    let chartOptionsSet = this.liveChartSystem.getterChartOptions()
-    chartData.options = chartOptionsSet
-    const chartHolder = {}
-    chartHolder[visIN] = {}
-    chartHolder[visIN][liveDate] = chartData
-    this.visualData = chartHolder
+    this.visualData = chartGroupHolder
+    console.log('chart GROUP data holder')
+    console.log(this.visualData)
   } else if (chartBundle.cnrl === 'cnrl-2356388733') {
     console.log('HR recovery chart???')
     const chartHolder = {}

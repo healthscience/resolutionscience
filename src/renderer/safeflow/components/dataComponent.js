@@ -30,7 +30,7 @@ var DataComponent = function (DID, setIN) {
   this.setStartTime(this.did.time.startperiod)
   this.setDevicesLive()
   this.setCNRLsciencemapping()
-  this.setDatatypesLive()
+  this.setDatatypesLive(this.did.datatypes)
   this.setTimeSegments(this.did.time.timeseg)
 }
 
@@ -93,8 +93,8 @@ DataComponent.prototype.setCNRLsciencemapping = function () {
 * @method setDataTypesLive
 *
 */
-DataComponent.prototype.setDatatypesLive = function () {
-  this.datatypeList = this.liveDataSystem.getLiveDatatypes(this.did.datatypes)
+DataComponent.prototype.setDatatypesLive = function (dtIN) {
+  this.datatypeList = dtIN
 }
 
 /**

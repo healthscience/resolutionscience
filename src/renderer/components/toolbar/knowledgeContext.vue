@@ -32,7 +32,7 @@
           </ul>
           <header>Science Datatypes</header>
           <ul>
-            <li id="data-type-live" v-for="sdts in scidtypes[0]">
+            <li id="data-type-live" v-for="sdts in scidtypes">
               <a class="" href="" id="bmp-data" @click.prevent="selectSciDatatypes(sdts)" v-bind:class="{ 'active':sdts.active }">{{ sdts.text }}</a>
             </li>
           </ul>
@@ -150,8 +150,8 @@
         }],
         timeSelect: true,
         livedtypes: [],
-        startLine: '',
-        stopLine: ''
+        startLine: '1',
+        stopLine: '2'
       }
     },
     created () {
@@ -172,9 +172,7 @@
     },
     methods: {
       setAccess () {
-        this.liveSafeFlow = this.safeFlow // new SAFEflow(this.system)
-        console.log('safefow setuppping')
-        console.log(this.liveSafeFlow)
+        this.liveSafeFlow = this.safeFlow
         this.deviceContext()
         this.scienceContext()
         this.languageContext()
@@ -189,7 +187,7 @@
         }
       },
       selectKnowledge (k) {
-        console.log(k)
+        // console.log(k)
         k.active = !k.active
         // display language for
         this.displayLanugage(k.id)
@@ -200,7 +198,7 @@
       },
       displayLanugage (cnrlID) {
         // loop over match and display words or display human body graphic
-        console.log('inplang')
+        // console.log('inplang')
         this.kwords = []
         let lanuageCNRL = this.liveSafeFlow.cnrlLivingKnowledge(cnrlID)
         // console.log(lanuageCNRL)
@@ -210,46 +208,45 @@
         this.kwords = wordsPlacer
       },
       selectLanguage (l) {
-        console.log(l)
+        // console.log(l)
         l.active = !l.active
         this.$emit('setVLanguage', l)
       },
       selectDevice (s) {
-        console.log(s)
+        // console.log(s)
         s.active = !s.active
         this.$emit('setVDevice', s)
       },
       selectDatatypes (std) {
-        console.log(std)
+        // console.log(std)
         std.active = !std.active
         this.$emit('setVDatatypes', std)
       },
       selectSciDatatypes (std) {
-        console.log('science data types set')
-        console.log(std)
+        // console.log('science data types set')
+        // console.log(std)
         std.active = !std.active
-        console.log(std)
         this.$emit('setVDatatypes', std)
       },
       selectResolution (r) {
-        console.log(r)
+        // console.log(r)
         r.active = !r.active
         this.$emit('setVResolution', r)
       },
       languageContext () {
         let refContext = 'human'
         let lanuageCNRL = this.liveSafeFlow.cnrlLivingKnowledge(refContext)
-        console.log('semanics')
-        console.log(lanuageCNRL)
+        // console.log('semanics')
+        // console.log(lanuageCNRL)
         this.kwords = lanuageCNRL
       },
       deviceContext () {
         var localthis = this
         function callbackC (dataH) {
           localthis.devices = dataH
-          console.log('start deviceslist')
+          // console.log('start deviceslist')
           localthis.devices[0].cnrl = 'cnrl-33221101'
-          console.log(localthis.devices)
+          // console.log(localthis.devices)
           localthis.$store.commit('setDevice', dataH)
           localthis.dataType()
         }
@@ -257,19 +254,19 @@
         // has the device context been set already?
         if (deviceSet.length > 1) {
           localthis.devices = deviceSet
-          console.log('device settings')
-          console.log(this.devices)
+          // console.log('device settings')
+          // console.log(this.devices)
         } else {
           // make call to set start dataContext for this pubkey
           const flag = 'device'
           this.liveSafeFlow.toolkitContext(flag, callbackC)
-          console.log('device callsettings')
+          // console.log('device callsettings')
         }
-        console.log(this.devices)
+        // console.log(this.devices)
       },
       dataType () {
         // make call to set start dataType for the device sensors
-        console.log('start data type')
+        // console.log('start data type')
         const localthis = this
         let sciDTHolder = []
         let devDTHolder = []
@@ -286,7 +283,7 @@
             // this.subcontextholder.push(sourceDTypes.prime)
           } */
         }
-        localthis.scidtypes = sciDTHolder
+        // localthis.scidtypes = sciDTHolder
         // extract CNRL ids for science
         for (let cnrli of localthis.scidtypes) {
           for (let cnlist of cnrli) {
@@ -325,7 +322,7 @@
             localthis.datatypes.push(devDTypes.prime)
           } */
         }
-        console.log('device DTs')
+        // console.log('device DTs')
         this.datatypes = devDTHolder
         for (let cnrldi of this.datatypes) {
           for (let cnd of cnrldi) {
@@ -336,9 +333,9 @@
         }
         // take the two start points and see what is in common
         this.compareDataTypes(cnrlIDholderSci, cnrlIDholderDev)
-        console.log('datatype GROUP')
-        console.log(localthis.scidtypes)
-        console.log(this.datatypes)
+        // console.log('datatype GROUP')
+        // console.log(localthis.scidtypes)
+        // console.log(this.datatypes)
         // console.log(this.subcontextholder)
         /* function callbackT (dataH) {
           localthis.sensors = dataH
@@ -362,17 +359,17 @@
       scienceContext () {
         // set the first science priority on start of RS
         this.scoptions = this.$store.getters.liveScience
-        console.log(this.scoptions)
-        // this.$store.commit('setScience', this.scoptions[0])
+        // console.log(this.scoptions)
       },
       updateSciDTs (sciIN) {
-        console.log('science has changed')
+        // console.log('science has changed')
         this.activeEntity = sciIN
         // use cid to look up datatype for this scienceEntities
         let sciDTypesSelect = this.liveSafeFlow.cnrlLookup(sciIN)
         sciDTypesSelect.cnrl = sciIN
-        console.log('science contract')
-        console.log(sciDTypesSelect)
+        this.scidtypes = sciDTypesSelect.tableStructure
+        // console.log('science contract')
+        // console.log(sciDTypesSelect)
         this.liveScience.livingpaper = sciDTypesSelect.livingpaper
         // trace back to source dataTypes (ie does have mobile source?)
         // let sourceDTypes = this.liveSafeFlow.liveCNRL.subSource(sciDTypes.subsource)
@@ -399,21 +396,21 @@
         return commonHolder
       },
       subContext () {
-        console.log('sub data types')
-        console.log(this.subcontextHolder)
-        console.log(this.subcontextHolder.columncodes)
+        // console.log('sub data types')
+        // console.log(this.subcontextHolder)
+        // console.log(this.subcontextHolder.columncodes)
         this.subcontext = this.subcontextholder.columncodes
       },
       selectTime (tIN) {
-        console.log('time set')
+        // console.log('time set')
         tIN.active = !tIN.active
-        console.log(tIN)
+        // console.log(tIN)
         let tt = {}
         if (tIN.text === 'SELECT') {
           // display start end endPoint
           tt.start = this.startLine
           tt.end = this.stopLine
-          console.log(tt)
+          // console.log(tt)
           this.$emit('setVTime', tt)
         } else {
           this.$emit('setVTime', tIN)

@@ -33,34 +33,99 @@ util.inherits(TimeUtilities, events.EventEmitter)
 */
 TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
   // pass range to get converted from moment format to miillseconds (stnd for safeflow)
-  const localthis = this
   console.log(timeBundle)
   console.log(this.liveLasttime)
+  let timeConversion = {}
+  this.liveStarttime = timeBundle.time.startperiod
   this.realtime = timeBundle.realtime
-  if (timeBundle.time.startperiod === 'relative') {
-    console.log('set time relative to last set')
-    this.liveStarttime = this.liveLasttime * 1000
+  console.log('time changes from UI')
+  timeConversion = this.updateUItime(timeBundle.time.timevis)
+  // split for compute segments or UI visualisation choices
+  /* if (timeBundle.timeseg.length > 0) {
+    console.log('prepare compute segmentations')
+    timeConversion = this.computeTimeSegments(timeBundle.timeseg)
   } else {
-    this.liveStarttime = timeBundle.time.startperiod
-  }
+    console.log('time changes from UI')
+    timeConversion = this.updateUItime(timeBundle.timesvis)
+  } */
+  timeConversion.timeseg = timeBundle.time.timeseg
+  let realTimems = moment(timeBundle.realtime).valueOf()
+  timeConversion.realtime = Math.round(realTimems / 1000)
+  return timeConversion
+}
+
+/**
+* time segmentation for compute
+* @method computeTimeSegments
+*
+*/
+TimeUtilities.prototype.computeTimeSegments = function (tSegs) {
   let timeConversion = {}
   // does a standard time types need converting or range or both?
-  for (let ti of timeBundle.time.timeseg) {
+  for (let ti of tSegs) {
+    if (ti === 'SELECT') {
+      let rangeMills = this.rangeCovert(ti)
+      console.log('range times in MS time format')
+      // console.log(rangeMills)
+      timeConversion.range = rangeMills
+    } else {
+      console.log('convert seg to mills')
+      let timePeriod = {}
+      timePeriod = this.timeSegBuilder(ti)
+      timeConversion.startperiod = timePeriod
+    }
+  }
+  return timeConversion
+}
+
+/**
+* take range object and convert moment times to miillseconds
+* @method updateUItime
+*
+*/
+TimeUtilities.prototype.updateUItime = function (timeUI) {
+  console.log('time for UI converstion update')
+  console.log(timeUI)
+  let timeMills = {}
+  // does a standard time types need converting or range or both?
+  for (let ti of timeUI) {
     console.log(ti)
     if (ti === 'SELECT') {
       let rangeMills = this.rangeCovert(ti)
       console.log('range times in MS time format')
       console.log(rangeMills)
-      timeConversion.range = rangeMills
+      timeMills.range = rangeMills
     } else {
       console.log('convert seg to mills')
       let timePeriod = {}
-      timePeriod = localthis.timePeriodBuilder(ti)
-      timeConversion.startperiod = timePeriod
+      timePeriod = this.timeConvert(ti)
+      timeMills.startperiod = timePeriod
     }
   }
-  console.log(timeConversion)
-  return timeConversion
+  return timeMills
+}
+
+/**
+* build time arrays for computations
+* @method timeSegBuilder
+*
+*/
+TimeUtilities.prototype.timeSegBuilder = function (segIN) {
+  console.log('build time array ms format')
+  let startTime = 0
+  let endTime = 0
+  // when to start this?
+  for (let sg of segIN) {
+    if (sg === 'day') {
+      this.timeArrayBuilder(startTime, endTime)
+    } else if (sg === 'week') {
+
+    } else if (sg === 'month') {
+
+    } else if (sg === 'year') {
+
+    }
+  }
 }
 
 /**
@@ -81,61 +146,66 @@ TimeUtilities.prototype.rangeCovert = function (rangeIN) {
 
 /**
 * Date and Time
-* @method timePeriodBuilder
+* @method timeConvert
 *
 */
-TimeUtilities.prototype.timePeriodBuilder = function (seg) {
+TimeUtilities.prototype.timeConvert = function (uT) {
   //  turn segment into time query profile
   console.log('timeperiod builder')
-  // console.log(seg)
+  console.log(uT)
   let startTime
   let timestamp
-  if (seg === 'day') {
+  if (uT === 'day') {
     // asking for one 24hr display
     startTime = this.liveStarttime
-  } else if (seg === '-day') {
+    console.log('day in moment format')
+    console.log(startTime)
+  } else if (uT === '-day') {
     // move back one day in time
     console.log('back one day')
-    // console.log(this.liveStarttime)
-    // console.log(seg)
+    console.log(this.liveStarttime)
+    console.log(uT)
+    if (this.liveStarttime === 'relative') {
+      this.liveStarttime = this.liveLasttime * 1000
+    }
+    console.log(this.liveStarttime)
     startTime = (this.liveStarttime - 86400000)
-  } else if (this.liveStarttime && seg === '+day') {
+  } else if (uT === '+day') {
     // move forward day in time
+    if (this.liveStarttime === 'relative') {
+      this.liveStarttime = this.liveLasttime * 1000
+    }
+    console.log(this.liveStarttime)
     startTime = (this.liveStarttime + 86400000)
-    // console.log('simulated required')
-    // console.log(this.liveStarttime)
     // console.log(this.realtime)
     let msRealtime = moment(this.realtime).valueOf()
-    console.log(msRealtime)
-    if (this.liveStarttime > msRealtime) {
+    if (startTime > msRealtime) {
       // pass on to simulated data
       console.log('future time')
       startTime = 'simulateData'
       // let simTime = startTime
       // this.simulateData(simTime)
     } else {
-      console.log('PPAST time')
+      console.log('PAST time')
       // console.log('forward one day')
-      startTime = (this.liveStarttime + 86400000)
-      // but if this time if further ahead then real time then simulated data required
     }
-  } else if (seg === '-year') {
+  } else if (uT === '-year') {
     // return start of year timeout
     startTime = moment().startOf('year')
-  } else if (seg === '+year') {
+  } else if (uT === '+year') {
     // return start of year head
     startTime = moment().startOf('year') + 1
   } else {
     const startOfMonth = moment.utc().startOf('month')
     //  reset the day to first of month adjust month for segment required
-    if (seg === '-month') {
+    if (uT === '-month') {
       startTime = startOfMonth
     } else {
       let adSeg = startOfMonth - 1
       startTime = moment(startOfMonth).subtract(adSeg, 'months')
     }
   }
-  //  get the micro time for start of month date and pass to query
+  //  get the micro time for start of time for query
   if (startTime !== 'simulateData') {
     let startQuerytime = moment(startTime).valueOf()
     timestamp = startQuerytime / 1000
@@ -143,6 +213,8 @@ TimeUtilities.prototype.timePeriodBuilder = function (seg) {
     timestamp = 'simulateData'
   }
   this.liveLasttime = timestamp
+  console.log('ui converted time ms')
+  console.log(timestamp)
   return timestamp
 }
 
@@ -151,7 +223,7 @@ TimeUtilities.prototype.timePeriodBuilder = function (seg) {
 * @method calendarUtility
 *
 */
-TimeUtilities.prototype.calendarUtility = function (startDYear) {
+TimeUtilities.prototype.calendarUtility = function () {
   // segment the year months days in months
   let startY = moment().startOf('year').valueOf()
   let yearCommence = startY / 1000
@@ -177,15 +249,16 @@ TimeUtilities.prototype.calendarUtility = function (startDYear) {
 }
 
 /**
-* Build an array of dates between two time points
-* @method timeArrayBuilder
+* Build an array of dates between two time points PER DAY
+* @method timeDayArrayBuilder
 *
 */
-TimeUtilities.prototype.timeArrayBuilder = function (liveTime, lastTime) {
+TimeUtilities.prototype.timeDayArrayBuilder = function (liveTime, lastTime) {
   let timeArray = []
   let yearEndmnoth = 11
-  // console.log(lastTime)
-  // console.log(liveTime)
+  console.log('time DAILY builder array')
+  console.log(lastTime)
+  console.log(liveTime)
   // let shortLastTime = lastTime / 1000
   const yearNum = moment(lastTime).year()
   const yearNumcurrent = moment(liveTime).year()
@@ -267,6 +340,17 @@ TimeUtilities.prototype.timeArrayBuilder = function (liveTime, lastTime) {
   console.log('time array++++')
   console.log(timeArray)
   return timeArray
+}
+
+/**
+* Build an array of dates between two time points PER WEEK
+* @method timeWeekArrayBuilder
+*
+*/
+TimeUtilities.prototype.timeWeekArrayBuilder = function (liveTime, lastTime) {
+  let timeWArray = []
+  // set first week
+  return timeWArray
 }
 
 /**

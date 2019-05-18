@@ -110,6 +110,8 @@ safeFlow.prototype.setpeerContext = function (bundleIN) {
   timeBundle.time = bundleIN.time
   timeBundle.realtime = bundleIN.realtime
   ecsIN.time = this.liveTimeUtil.timeConversionUtility(timeBundle)
+  console.log('converted time returned')
+  console.log(ecsIN.time)
   ecsIN.science = bundleIN.science
   ecsIN.resolution = bundleIN.resolution
   ecsIN.devices = bundleIN.devices

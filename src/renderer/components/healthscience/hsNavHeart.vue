@@ -1,10 +1,10 @@
 <template>
-  <section class="container">
+  <section class="container"> line: {{ startLine }}
     <section id="knowledge">
       <knowledge-Live :liveData="liveData" @liveLearn="learnStart"></knowledge-Live>
       <knowledge-Context @setVDevice="deviceStatus" @setVDatatypes="datatypeStatus" @setVLanguage="languageStatus"  @setVScience="scienceStatus" @setVTime="timeStatus" @setVResolution="resolutionStatus"></knowledge-Context>
     </section>
-    <hsvisual :datacollection="liveDataCollection" :options="liveOptions" @updateLearn="learnUpdate"></hsvisual>
+    <hsvisual :datacollection="liveDataCollection" :options="liveOptions" @updateLearn="learnUpdate" @toolsStatus="toolsSwitch"></hsvisual>
   </section>
 </template>
 
@@ -36,8 +36,10 @@
         },
         liveDataCollection: {},
         liveOptions: {},
+        liveAnnotations: {},
         analysisStart: 0,
         analysisEnd: 0,
+        startLine: '',
         activeEntity: '',
         liveBundle: {}
       }
@@ -185,12 +187,11 @@
           console.log('chartjs')
           if (entityGetter.chartMessage === 'computation in progress') {
             console.log('chartjs--ongoing computation or obseration data')
-            this.chartmessage = entityGetter.chartMessage
-            this.options = entityGetter.chartPackage.options
-            this.datacollection = entityGetter.chartPackage.prepared
-            // localthis.$store.commit('setTools', localthis.options)
-            this.liveTime = entityGetter.chartPackage.livetime
-            this.getAverages(this.activeEntity)
+            // this.chartmessage = entityGetter.chartMessage
+            // this.options = entityGetter.chartPackage.options
+            // this.datacollection = entityGetter.chartPackage.prepared
+            // this.liveTime = entityGetter.chartPackage.livetime
+            // this.getAverages(this.activeEntity)
           } else if (entityGetter.chartMessage === 'vis-report') {
             console.log('prepare report for HR recovery')
             let recoveryStart = {}
@@ -203,8 +204,15 @@
             this.options2 = entityGetter.chartPackage.options
             this.datacollection2 = entityGetter.chartPackage.prepared
             this.liveTime = entityGetter.chartPackage.livetime
+            this.startLine = entityGetter.liveChartOptions.analysisStart
+            console.log(this.startLine)
+            // this.liveAnnotations = this.options2.annotation
+            // console.log(this.liveAnnotations)
+            // this.options2.annotation = {}
+            // console.log(this.options2)
             this.liveOptions = this.options2
             this.liveDataCollection = this.datacollection2
+            // this.getAverages(this.activeEntity)
           }
         } else if (this.activevis === 'vis-sc-2') {
           console.log('tablejs')
@@ -223,8 +231,9 @@
         let timeAsk = []
         timeAsk.push(uSeg.text)
         console.log(timeAsk)
-        updateTbundle.timeseg = timeAsk
+        updateTbundle.timevis = timeAsk
         updateTbundle.startperiod = 'relative'
+        updateTbundle.timeseg = []
         const nowTime = moment()
         let realTime = moment.utc(nowTime)
         let liveBundleUpdate = {}
@@ -251,6 +260,22 @@
             localthis.chartmessage = 'computation up-to-date'
           }
         })
+      },
+      toolsSwitch (tss) {
+        console.log('tools switch')
+        console.log(tss)
+        if (tss === true) {
+          console.log(this.liveAnnotations)
+          let updateCopyTemp = this.liveDataCollection
+          this.liveDataCollection = {}
+          let updateOptions = this.liveOptions
+          updateOptions.annotation = this.liveAnnotations
+          this.liveOptions = updateOptions
+          console.log(this.liveOptions)
+          this.liveDataCollection = updateCopyTemp
+        } else if (tss === false) {
+          this.liveOptions.annotation = {}
+        }
       }
     }
   }

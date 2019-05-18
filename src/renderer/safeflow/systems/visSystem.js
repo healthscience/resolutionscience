@@ -33,6 +33,7 @@ util.inherits(VisSystem, events.EventEmitter)
 */
 VisSystem.prototype.chartSystem = function (chartBundle, dataIN) {
   console.log('VISCOMP==CHARTSYTSEM START1')
+  console.log(chartBundle)
   console.log(dataIN)
   var localthis = this
   let visIN = chartBundle.vid
@@ -68,15 +69,23 @@ VisSystem.prototype.chartSystem = function (chartBundle, dataIN) {
     chartHolder[visIN][liveDate] = chartData
     this.visualData = chartHolder
   } else if (chartBundle.cnrl === 'cnrl-2356388732') {
+    console.log('average Chart vis start')
+    // could be more than one visualisation required,  devices, datatypes, timeseg or computation or event resolutions
     for (let dType of chartBundle.datatypeList) {
-      // call chart stats prep structure info for chart js
-      structureHolder = this.liveChartSystem.structureStatisticsData(liveDate, dType.text, chartBundle.deviceList, dataIN)
-      let chartColorsSet = localthis.liveChartSystem.avgchartColors(dType)
-      dataTypeBucket.data = structureHolder
-      dataTypeBucket.color = chartColorsSet
-      chartDataH.chart.push(dataTypeBucket)
-      structureHolder = {}
-      dataTypeBucket = {}
+      for (let device of chartBundle.deviceList) {
+        for (let entry of dataIN[0][liveDate][device][dType.cnrl]) {
+          // pass on to appropriate structure, day, week, in context of resolution etc.
+          console.log('data structure for time segs')
+          console.log(entry)
+          structureHolder = this.liveChartSystem.structureStatisticsData(liveDate, device, dType.cnrl, entry)
+          let chartColorsSet = localthis.liveChartSystem.avgchartColors(dType)
+          dataTypeBucket.data = structureHolder
+          dataTypeBucket.color = chartColorsSet
+          chartDataH.chart.push(dataTypeBucket)
+          structureHolder = {}
+          dataTypeBucket = {}
+        }
+      }
     }
     // now prepare data format for chartjs
     chartData.prepared = this.liveChartSystem.prepareStatsVueChartJS(chartBundle.deviceList, chartDataH)

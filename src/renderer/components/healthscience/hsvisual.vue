@@ -10,13 +10,10 @@
             <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis3)" v-bind:class="{ 'active': vis3.active}">{{ vis3.name }}</a></li>
             <li id="tool-bar">
               <header>Tools</header>
-              <a class="" href="" id="toolbarholder" @click.prevent="toolsSwitch()" >{{toolbar.text}}</a>
+              <a class="" href="" id="toolbarholder" @click.prevent="toolsSwitch(toolbar)" v-bind:class="{ 'active': toolbar.active}">{{ toolbar.text }}</a>
             </li>
           </ul>
       </div>
-      <!-- <div id="toolbar-tools">
-        <Toolbar-Tools :toolbarData="toolbarData" @toolbarSet="toolbarStatus()" ></Toolbar-Tools>
-      </div> -->
       <div id="reports">
         <recovery-Report :recoveryData="recoveryData" @recoverySet="recoveryStatus()" ></recovery-Report>
       </div>
@@ -191,14 +188,22 @@
         if (this.vis3.active === true) {
           visLive.push(this.vis3.id)
         }
-        // this.$store.commit('setVisual', visLive)
       },
-      toolsSwitch () {
+      toolsSwitch (ts) {
         console.log('tools sliders overlay')
-        this.toolbar.text = 'on'
-      },
-      toolbarStatus () {
-        this.toolbar.text = 'off'
+        console.log(ts)
+        ts.active = !ts.active
+        if (ts.active === true) {
+          this.toolbar.text = 'on'
+          console.log('ON')
+          // need to add annotation to chart OPTIONS
+          this.$emit('toolsStatus', true)
+        } else {
+          this.toolbar.text = 'off'
+          console.log('Offf')
+          // remove the annotation from the chart OPTIONS
+          this.$emit('toolsStatus', false)
+        }
       },
       recoveryStatus () {
         this.toolbar.text = 'off'
@@ -210,79 +215,7 @@
         // back and forward and time
         console.log(seg)
         console.log('liveContractBundle')
-        // console.log(this.$store.getters.liveBundle)
-        // console.log(this.bundle)
-        /* let updateTbundle = {}
-        let timeAsk = []
-        timeAsk.push(seg.text)
-        console.log(timeAsk)
-        console.log('liveContractBundle2')
-        updateTbundle.timeseg = timeAsk
-        updateTbundle.startperiod = 'relative'
-        const nowTime = moment()
-        let realTime = moment.utc(nowTime)
-        console.log('liveContractBundle3')
-        console.log(this.bundle) */
-        // let liveBundleUpdate = {}
-        /* liveBundleUpdate.cnrl = this.bundle.cnrl
-        liveBundleUpdate.language = this.bundle.language
-        liveBundleUpdate.devices = this.bundle.devices
-        liveBundleUpdate.datatypes = this.bundle.datatypes
-        liveBundleUpdate.science = this.bundle.science
-        liveBundleUpdate.time = updateTbundle
-        liveBundleUpdate.realtime = realTime
-        liveBundleUpdate.resolution = this.bundle.resolution
-        liveBundleUpdate.visualisation = this.bundle.visualisation */
         this.$emit('updateLearn', seg)
-        /*
-        // keep state of live bundle
-        // this.$store.dispatch('actionLiveBundle', liveBundleUpdate)
-        // this.$store.commit('setLiveBundle', liveBundleUpdate)
-        console.log('liveContractBundle4')
-        await this.liveSafeFlow.scienceEntities(liveBundleUpdate)
-        console.log('entity setup/operational')
-        // this.learnListening()
-        let entityGetter2 = await this.liveSafeFlow.entityGetter(this.activeEntity, this.activevis)
-        console.log('VUE---return getter2 data')
-        console.log(entityGetter2)
-        if (this.activevis === 'vis-sc-1') {
-          console.log('chartjs')
-          if (entityGetter2.chartMessage === 'computation in progress') {
-            console.log('chartjs--ongoing computation or obseration data')
-            this.chartmessage = entityGetter2.chartMessage
-            this.options2 = entityGetter2.chartPackage.options
-            // this.$store.commit('setTools', this.options)
-            this.datacollection2 = entityGetter2.chartPackage.prepared
-            this.liveTime = entityGetter2.chartPackage.livetime
-            this.liveChartoptions = entityGetter2.liveChartOptions
-            this.getAverages(this.activeEntity)
-          } else if (entityGetter2.chartMessage === 'vis-report') {
-            console.log('prepare report for HR recovery')
-            let recoveryStart = {}
-            recoveryStart.seenStatus = true
-            recoveryStart.hrcdata = entityGetter2.hrcReport
-            this.recoveryData = recoveryStart
-          } else {
-            console.log('chartjs-- uptodate finised')
-            this.chartmessage = 'computation up-to-date'
-            this.options2 = entityGetter2.chartPackage.options
-            this.datacollection2 = entityGetter2.chartPackage.prepared
-            console.log(this.options2)
-            console.log(this.datacollection2)
-            this.liveTime = entityGetter2.chartPackage.livetime
-            this.$store.dispatch('actionVisualOptions', this.options2)
-            this.$store.dispatch('actionVisualData', this.datacollection2)
-          }
-          // console.log(localthis.datacollection)
-        } else if (this.activevis === 'vis-sc-2') {
-          console.log('tablejs')
-          // localthis.tableHTML = entityGetter.table
-        } else if (this.activevis === 'vis-sc-3') {
-          console.log('simjs')
-          // localthis.simulationHeart = entityGetter2.heart
-          // localthis.simulationMovement = entityGetter2.heart
-          // localthis.simulationTime = entityGetter2.time
-        } */
       }
     }
   }

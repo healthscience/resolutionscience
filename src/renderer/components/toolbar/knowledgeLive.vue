@@ -100,83 +100,24 @@
         this.activevis = this.$store.getters.liveVis[0]
         console.log('active vis ====')
         console.log(this.activevis)
+        const nowTime = moment()
+        let realTime = moment.utc(nowTime)
+        let startPeriodTime = moment.utc(nowTime).startOf('day')
+        let updateTbundle = {}
+        updateTbundle.timeseg = this.liveData.timeLive
+        updateTbundle.startperiod = startPeriodTime
+        updateTbundle.timevis = ['day']
         let liveBundle = {}
         liveBundle.cnrl = this.liveData.scienceLive.cnrl
         liveBundle.language = this.liveData.languageLive
         liveBundle.devices = this.liveData.devicesLive
         liveBundle.datatypes = this.liveData.datatypesLive
         liveBundle.science = this.liveData.scienceLive
-        let updateTbundle = {}
-        const nowTime = moment()
-        let startPeriodTime = moment.utc(nowTime).startOf('day')
-        updateTbundle.timeseg = this.liveData.timeLive
-        updateTbundle.startperiod = startPeriodTime
-        let realTime = moment.utc(nowTime)
         liveBundle.realtime = realTime
         liveBundle.time = updateTbundle
         liveBundle.resolution = this.liveData.resolutionLive
         liveBundle.visualisation = ['vis-sc-1']
         this.$emit('liveLearn', liveBundle)
-        /*
-        // keep state of live bundle
-        this.$store.dispatch('actionLiveBundle', liveBundle)
-        this.saveLearnHistory(liveBundle)
-        console.log(liveBundle)
-        await this.liveSafeFlow.scienceEntities(liveBundle)
-        console.log('entity setup/operational')
-        // this.learnListening()
-        let entityGetter = await this.liveSafeFlow.entityGetter(localthis.activeEntity, localthis.activevis)
-        console.log('VUE---return getter data')
-        console.log(entityGetter)
-        if (localthis.activevis === 'vis-sc-1') {
-          console.log('chartjs')
-          if (entityGetter.chartMessage === 'computation in progress') {
-            console.log('chartjs--ongoing computation or obseration data')
-            localthis.chartmessage = entityGetter.chartMessage
-            localthis.options = entityGetter.chartPackage.options
-            localthis.datacollection = entityGetter.chartPackage.prepared
-            // localthis.$store.commit('setTools', localthis.options)
-            localthis.liveTime = entityGetter.chartPackage.livetime
-            localthis.getAverages(localthis.activeEntity)
-          } else if (entityGetter.chartMessage === 'vis-report') {
-            console.log('prepare report for HR recovery')
-            let recoveryStart = {}
-            recoveryStart.seenStatus = true
-            recoveryStart.hrcdata = entityGetter.hrcReport
-            localthis.recoveryData = recoveryStart
-          } else {
-            console.log('chartjs-- uptodate finised')
-            localthis.chartmessage = 'computation up-to-date'
-            localthis.options = entityGetter.chartPackage.options
-            localthis.datacollection = entityGetter.chartPackage.prepared
-            localthis.liveTime = entityGetter.chartPackage.livetime
-            this.$store.dispatch('actionVisualOptions', localthis.options)
-            this.$store.dispatch('actionVisualData', localthis.datacollection)
-            // this.$store.commit('setTeststring', 'james hi')
-          }
-          // console.log(localthis.datacollection)
-        } else if (localthis.activevis === 'vis-sc-2') {
-          console.log('tablejs')
-          // localthis.tableHTML = entityGetter.table
-        } else if (localthis.activevis === 'vis-sc-3') {
-          console.log('simjs')
-          // localthis.simulationHeart = entityGetter.heart
-          // localthis.simulationMovement = entityGetter.heart
-          // localthis.simulationTime = entityGetter.time
-        }
-      },
-      learnListening () {
-        var localthis = this
-        // listening to give peer info. on computation statusTime
-        this.liveSafeFlow.liveEManager.on('computation', function (cState) {
-          console.log('computation event from manager')
-          console.log(cState)
-          if (cState === 'in-progress') {
-            localthis.chartmessage = cState
-          } else {
-            localthis.chartmessage = 'computation up-to-date'
-          }
-        }) */
       },
       saveLearnHistory (lBundle) {
         console.log('save temp history or keep on network save')

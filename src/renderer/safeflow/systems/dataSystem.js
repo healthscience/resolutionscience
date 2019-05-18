@@ -120,34 +120,36 @@ DataSystem.prototype.getLiveDatatypes = function (dtIN) {
 */
 DataSystem.prototype.datatypeMapping = async function (systemBundle) {
   console.log('DATATYPE--mapping')
+  console.log(systemBundle)
   let rawHolder = {}
   //  this need datatype MAPPING UTILITY to check the data source via CNRL identify the API call that will contain the data type then inform the system to make  call to retrieve the data.  WIP, hardwired connect for now.
   // first is the data from the PAST or FUTURE ie simulated?
   if (systemBundle.startperiod === 'simulateData') {
     console.log('SIMULTATED__DATA__REQUIRED')
   } else {
-    if (systemBundle.dtAsked[0] === 'cnrl-8856388711' || systemBundle.dtAsked[0] === 'cnrl-8856388712') {
-      console.log('datatype query')
+    if (systemBundle.scienceAsked.cnrl === 'cnrl-2356388731') {
+      console.log('OBSERVATION QU')
       await this.getRawData(systemBundle).then(function (sourcerawData) {
         rawHolder = {}
         rawHolder[systemBundle.startperiod] = sourcerawData
         // localthis.dataRaw.push(rawHolder)
       })
-    } else if (systemBundle.dtAsked[0] === 'cnrl-8856388724') {
-      console.log('DATACOMPOENT1--ANY EXISTING AVERAGE QUERY')
-      await this.getRawStatsData(systemBundle, 'cnrl-2356388732').then(function (sourcerawData) {
+    } else if (systemBundle.scienceAsked.cnrl === 'cnrl-2356388732') {
+      console.log('AVERAGE QUERY')
+      await this.getRawAverageData(systemBundle).then(function (sourcerawData) {
         rawHolder = {}
-        rawHolder[systemBundle.timePeriod.startperiod] = sourcerawData
-        // localthis.dataRaw.push(rawHolder)
+        rawHolder[systemBundle.startperiod] = sourcerawData
       })
-    } else if (systemBundle.dtAsked[0] === 'cnrl-8856388725') {
+    } else if (systemBundle.CNRLscience === 'cnrl-2356388733') {
       console.log('recovery heart rate ask')
       await this.getHRrecovery(systemBundle).then(function (rawData) {
         rawHolder = {}
-        rawHolder[systemBundle.timePeriod.startperiod] = rawData
+        rawHolder[systemBundle.startperiod] = rawData
       })
     }
   }
+  console.log('rawHolder')
+  console.log(rawHolder)
   return rawHolder
 }
 
@@ -164,7 +166,9 @@ DataSystem.prototype.getRawData = async function (queryIN) {
   const deviceQuery = queryIN.deviceList
   // form loop to make data calls
   for (let di of deviceQuery) {
+    // observation has fixed input but technically should loop over this on basis of timeSegs
     await localthis.liveTestStorage.getComputeData(queryIN.startperiod, di).then(function (result) {
+      console.log(result)
       dataBack[di] = result
       result = []
     }).catch(function (err) {
@@ -181,7 +185,8 @@ DataSystem.prototype.getRawData = async function (queryIN) {
 */
 DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
   console.log('DATASYSTEM2T----tidyRaw')
-  let liveStarttime = dataASK.timePeriod.startperiod
+  console.log(dataASK)
+  let liveStarttime = dataASK.timePeriod
   // build object structureReturn
   let tidyHolder = {}
   tidyHolder[liveStarttime] = {}
@@ -211,26 +216,43 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
 }
 
 /**
-* get rawData
-* @method getRawStatsData
+* get raw ie source average data for a data type
+* @method getRawAverageData
 *
 */
-DataSystem.prototype.getRawStatsData = async function (bundleIN, dtAsked) {
+DataSystem.prototype.getRawAverageData = async function (bundleIN) {
+  console.log('average get')
+  console.log(bundleIN)
   const localthis = this
   // how many sensor ie data sets are being asked for?
   // loop over and return Statistics Data and return to callback
-  this.StatsForUI = {}
-  const deviceLiveFilter = bundleIN.deviceList
-  for (let di of deviceLiveFilter) {
-    await localthis.liveTestStorage.getAverageData(bundleIN.timePeriod, di, dtAsked).then(function (statsData) {
-      // console.log('returned average data')
-      localthis.StatsForUI[di] = statsData
-      statsData = []
-    }).catch(function (err) {
-      console.log(err)
-    })
+  let averageData = {}
+  let averageArray = []
+  let averageHolder = {}
+  for (let di of bundleIN.deviceList) {
+    console.log('start of device loop')
+    // console.log(di)
+    // also need to loop for datatype and map to storage API function that matches
+    for (let dtl of bundleIN.dtAsked) {
+      // console.log(dtl)
+      // loop over datatypes
+      for (let tsg of bundleIN.timeseg) {
+        // console.log(tsg)
+        // loop over time segments
+        await localthis.liveTestStorage.getAverageData(bundleIN.startperiod, di, bundleIN.scienceAsked.cnrl, dtl, tsg).then(function (statsData) {
+          averageHolder = {}
+          averageHolder[tsg] = statsData
+          averageArray.push(averageHolder)
+          averageData[di] = {}
+          averageData[di][dtl] = {}
+          averageData[di][dtl] = averageArray
+        }).catch(function (err) {
+          console.log(err)
+        })
+      }
+    }
   }
-  return this.StatsForUI
+  return averageData
 }
 
 /**

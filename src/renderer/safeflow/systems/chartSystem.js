@@ -167,6 +167,7 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
     // prepare the Chart OBJECT FOR CHART.JS  Up to 2 line e.g. BMP or Steps or BPM + Steps
     console.log('CHARTSYSTEM-----draw chart')
     var startChartDate = moment(this.labelback[0])
+    console.log(startChartDate)
     this.updateChartoptions(startChartDate)
     this.liveTime = startChartDate
     // this.chartmessage = 'BPM'
@@ -329,7 +330,7 @@ ChartSystem.prototype.prepareChartOptions = function (results) {
           // console.log(this.analysisStart + 'any ting')
         },
         onDrag: function (event) {
-          // console.log(event.subject.config.value)
+          console.log(event.subject.config.value)
           localthis.analysisStart = event.subject.config.value
         }
       },
@@ -410,26 +411,22 @@ ChartSystem.prototype.newDateEnd = function (endTimeIN) {
 * @method structureStatisticsData
 *
 */
-ChartSystem.prototype.structureStatisticsData = function (liveDate, dataType, deviceList, dataIn) {
+ChartSystem.prototype.structureStatisticsData = function (liveDate, dataType, deviceList, dataIN) {
   this.options = this.AverageChartOptions()
   console.log('STRUCTURE AVERAGE CHART DATA1')
   let dataholder = {}
   let datalabel = []
   let dataheart = []
   // loop through and build two sperate arrays
-  for (let device of deviceList) {
-    for (let entry of dataIn[0][liveDate][device]) {
-      // console.log(entry)
-      let millTimeprepare = entry.timestamp * 1000
-      let mString = moment(millTimeprepare).toDate() // .format('YYYY-MM-DD hh:mm')
-      datalabel.push(mString)
-      dataheart.push(entry.value)
-    }
-  }
+  // console.log(entry)
+  let millTimeprepare = dataIN.timestamp * 1000
+  let mString = moment(millTimeprepare).toDate() // .format('YYYY-MM-DD hh:mm')
+  datalabel.push(mString)
+  dataheart.push(dataIN.value)
   dataholder.labels = datalabel
   dataholder.datasets = dataheart
-  // console.log('structure average data for charting')
-  // console.log(dataholder)
+  console.log('structure average data for charting')
+  console.log(dataholder)
   return dataholder
 }
 
@@ -439,16 +436,15 @@ ChartSystem.prototype.structureStatisticsData = function (liveDate, dataType, de
 *
 */
 ChartSystem.prototype.avgchartColors = function (datatypeItem) {
-  // console.log('CHARTSYSTEM3--setcolors')
-  // console.log(datatypeItem)
+  console.log('CHARTSYSTEM3--setcolors')
   let colorHolder = {}
   // LOOP over datatypeList and prepare chart colors
-  if (datatypeItem.text === 'average-heartrate') {
-    colorHolder.datatype = 'average-heartrate'
+  if (datatypeItem === 'cnrl-8856388724') {
+    colorHolder.datatype = 'cnrl-8856388724'
     colorHolder.backgroundColor = '#203487'
     colorHolder.borderColor = '#050d2d'
-  } else if (datatypeItem.text === 'bpm') {
-    colorHolder.datatype = 'bpm'
+  } else if (datatypeItem === 'cnrl-8856388322') {
+    colorHolder.datatype = 'cnrl-8856388322'
     colorHolder.backgroundColor = '#ed7d7d'
     colorHolder.borderColor = '#ea1212'
   }
@@ -480,7 +476,7 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
     for (let chD of results.chart) {
       // console.log(chD)
       // console.log(chD.color.datatype)
-      if (chD.color.datatype === 'average-heartrate') {
+      if (chD.color.datatype === 'cnrl-8856388724') {
         this.labelback = chD.data.labels
         this.avg = chD.data.datasets
         this.colorback = chD.color.backgroundColor
@@ -493,7 +489,9 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
       }
     }
   } else {
-    if (results.chart[0].color.datatype === 'average-heartrate') {
+    console.log('one')
+    console.log(results.chart[0].color)
+    if (results.chart[0].color.datatype === 'cnrl-8856388724') {
       this.avg = []
       this.labelback = results.chart[0].data.labels
       this.avg = results.chart[0].data.datasets
@@ -501,6 +499,8 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
       this.colorlineback = results.chart[0].color.borderColor
     } else if (results.chart[0].color.datatype === '') {
       this.heartback = []
+      console.log('labels')
+      console.log(results.chart[0].data.labels)
       this.labelback = results.chart[0].data.labels
       this.avg = results.chart[0].data.datasets
       this.colorback2 = results.chart[0].color.backgroundColor
@@ -580,6 +580,8 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
       }
     }
   }
+  // console.log('avg--chart')
+  // console.log(datacollection)
   return datacollection
 }
 

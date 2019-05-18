@@ -26,10 +26,12 @@ var DataComponent = function (DID, setIN) {
   this.dataRaw = []
   this.tidyData = []
   this.dataType = []
-  // this.setTimeList()
+  this.timeSegs = []
+  this.setStartTime(this.did.time.startperiod)
   this.setDevicesLive()
   this.setCNRLsciencemapping()
   this.setDatatypesLive()
+  this.setTimeSegments(this.did.time.timeseg)
 }
 
 /**
@@ -40,10 +42,10 @@ util.inherits(DataComponent, events.EventEmitter)
 
 /**
 *  set the live date active in the UI
-* @method setStartDate
+* @method setStartTime
 *
 */
-DataComponent.prototype.setStartDate = function (startDate) {
+DataComponent.prototype.setStartTime = function (startDate) {
   console.log('start TIME')
   console.log(startDate)
   this.livedate = startDate
@@ -57,6 +59,15 @@ DataComponent.prototype.setStartDate = function (startDate) {
 */
 DataComponent.prototype.setTimeList = function (liveDate) {
   this.timeList.push(liveDate)
+}
+
+/**
+*  keep list of timePeriods that data has been asked for
+* @method setTimeSegments
+*
+*/
+DataComponent.prototype.setTimeSegments = function (liveTimeSegs) {
+  this.timeSegs = liveTimeSegs
 }
 
 /**
@@ -95,13 +106,15 @@ DataComponent.prototype.RawData = async function () {
   console.log('DATACOMPONENT1----start rawdaata')
   // console.log(this.livedate)
   let systemBundle = {}
-  systemBundle.startperiod = this.livedate.startperiod
+  systemBundle.startperiod = this.livedate
+  systemBundle.scienceAsked = this.CNRLscience
   systemBundle.dtAsked = this.datatypeList
   systemBundle.deviceList = this.deviceList
+  systemBundle.timeseg = this.timeSegs
   let dataRback = await this.liveDataSystem.datatypeMapping(systemBundle)
   this.dataRaw.push(dataRback)
-  // console.log('rawData------')
-  // console.log(this.dataRaw)
+  console.log('rawData------')
+  console.log(this.dataRaw)
   return true
 }
 

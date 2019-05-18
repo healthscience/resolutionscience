@@ -31,35 +31,34 @@ util.inherits(ComputeComponent, events.EventEmitter)
 * @method filterCompute
 *
 */
-ComputeComponent.prototype.filterCompute = async function (compInfo, deviceList, cnrlInfo, rawIN) {
+ComputeComponent.prototype.filterCompute = async function (compInfo, rawIN) {
   console.log('COMPUTE-COMP1----filter start')
+  console.log(this.EIDinfo)
+  console.log(compInfo)
   let computeStatelive = {}
   // var localthis = this
-  if (compInfo.wasmID === 'wasm-sc-1' && this.computeStatus === false) {
+  if (compInfo.cid === 'cnrl-2356388731' && this.computeStatus === false) {
     // raw data nothing to compute
-    console.log('1wasmsc and false logic')
+    console.log('observation mode and false logic')
     computeStatelive.computeState = 'observation'
   } else {
-    console.log('2go compute system')
-    // console.log(this.EIDinfo)
-    let computeState = await this.liveComputeSystem.computationSystem(compInfo, deviceList, cnrlInfo, rawIN)
-    console.log('COMPUTE-COMP2--return')
-    // console.log(computeState)
-    computeStatelive.computeState = computeState.status
-    computeStatelive.firstTimeComp = computeState.timeStart
-    computeStatelive.lastTimeComp = computeState.lastComputeTime
+    console.log('PASSto--computesystem')
+    let systemBundle = {}
+    systemBundle.cid = compInfo.cid
+    systemBundle.status = compInfo.status
+    systemBundle.computeStatus = compInfo.computeStatus
+    systemBundle.startperiod = compInfo.liveTime
+    systemBundle.realtime = compInfo.realtime
+    systemBundle.timeseg = compInfo.timeseg
+    systemBundle.dtAsked = this.EIDinfo.datatypes
+    systemBundle.deviceList = this.EIDinfo.devices
+    systemBundle.lastComputeTime = compInfo.lastComputeTime
+    let computeState = await this.liveComputeSystem.computationSystem(systemBundle, rawIN)
+    computeStatelive = computeState
   }
-  console.log('COMPUTE-COMP1----filter complete')
-  // console.log(computeStatelive)
+  console.log('2COMPUTE-COMP---return')
+  console.log(computeStatelive)
   return computeStatelive
-}
-
-/**
-*
-* @method startCompute
-*
-*/
-ComputeComponent.prototype.startCompute = async function () {
 }
 
 export default ComputeComponent

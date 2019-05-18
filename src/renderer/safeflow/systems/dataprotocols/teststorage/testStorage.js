@@ -102,11 +102,11 @@ TestStorageAPI.prototype.getComputeData = async function (queryTime, deviceID) {
 * @method getAverageData
 *
 */
-TestStorageAPI.prototype.getAverageData = async function (queryTime, deviceID, compType) {
+TestStorageAPI.prototype.getAverageData = async function (queryTime, deviceID, compType, datatype, timeseg) {
   //  nosql query
   // console.log('StorageAIP ----')
-  let jsondata = await axios.get(this.baseAPI + '/heart24data/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID + '/' + compType)
-  // console.log(jsondata)
+  let jsondata = await axios.get(this.baseAPI + '/average/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID + '/' + compType + '/' + datatype + '/' + timeseg)
+  console.log(jsondata)
   return jsondata.data
 }
 
@@ -115,19 +115,10 @@ TestStorageAPI.prototype.getAverageData = async function (queryTime, deviceID, c
 * @method saveaverageData
 *
 */
-TestStorageAPI.prototype.saveaverageData = async function (startDate, device, avgType, count, tidy, dataTypeIN, result) {
+TestStorageAPI.prototype.saveaverageData = async function (jsonIN) {
   console.log('saving average hr data')
-  // prepare JSON object for POST
-  let saveJSON = {}
-  saveJSON.publickey = this.tempPubkey
-  saveJSON.timestamp = startDate
-  saveJSON.compref = avgType
-  saveJSON.datatype = dataTypeIN
-  saveJSON.value = result
-  saveJSON.device_mac = device
-  saveJSON.clean = count
-  saveJSON.tidy = tidy
-  await axios.post(this.baseAPI + '/averageSave/' + this.tempPubkey + '/' + this.tempToken + '/' + device, saveJSON)
+  jsonIN.publickey = this.tempPubkey
+  await axios.post(this.baseAPI + '/averageSave/' + this.tempPubkey + '/' + this.tempToken + '/' + jsonIN.device, jsonIN)
     .then(function (response) {
       console.log(response)
     })
@@ -147,7 +138,7 @@ TestStorageAPI.prototype.getHRrecoveryData = async function (queryTime, deviceID
 
 /**
 *  Insert data to peer dataStore via Axios
-* @method saveaverageData
+* @method saveHRrecoveryData
 *
 */
 TestStorageAPI.prototype.saveHRrecoveryData = async function (dataType, device, HRrecoveryIN) {

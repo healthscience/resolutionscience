@@ -36,31 +36,34 @@ util.inherits(EntitiesManager, events.EventEmitter)
 EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
   console.log(ecsIN)
   let cid = ecsIN.cid
-  let timePeriod = ecsIN.time // starting time ms
+  let timeBundle = ecsIN.time // starting time ms
   let visID = ecsIN.visID[0]
   if (this.liveSEntities[cid]) {
     console.log('entity' + cid + 'already exists')
     // does the data exist for this visualisation and time?
-    let checkDataExist = this.checkForVisualData(cid, timePeriod.startperiod, visID)
+    let checkDataExist = this.checkForVisualData(cid, timeBundle.startperiod, visID)
     // console.log('check')
     // console.log(checkDataExist)
     if (checkDataExist === true) {
       console.log('data already ready')
-      this.liveSEntities[cid].liveDataC.setStartDate(timePeriod)
-      this.liveSEntities[cid].liveDataC.setTimeList(timePeriod)
-    } else if (ecsIN.timeperiod === true) {
+      this.liveSEntities[cid].liveDataC.setStartTime(timeBundle.startperiod)
+      this.liveSEntities[cid].liveDataC.setTimeList(timeBundle.startperiod)
+      this.liveSEntities[cid].liveDataC.setTimeSegments(timeBundle.timeseg)
+    } else {
+    /* else if (ecsIN.timeperiod === true) {
       // toolbar select timerange mode
       console.log('toolbar select time range')
       await this.controlFlow(ecsIN).then(function (cFlow) {
         console.log('CONTROLFLOW--already-COMPLETE')
         // console.log(cFlow)
       })
-    } else {
+    } */
       // new data call required for this visualisation time
       console.log('need to prepare new visualisation data')
       // console.log(timePeriod)
-      this.liveSEntities[cid].liveDataC.setStartDate(timePeriod)
-      this.liveSEntities[cid].liveDataC.setTimeList(timePeriod.range)
+      this.liveSEntities[cid].liveDataC.setStartTime(timeBundle.startperiod)
+      this.liveSEntities[cid].liveDataC.setTimeList(timeBundle.startperiod)
+      this.liveSEntities[cid].liveDataC.setTimeSegments(timeBundle.timeseg)
       await this.controlFlow(ecsIN).then(function (cFlow) {
         console.log('CONTROLFLOW--already-COMPLETE')
         // console.log(cFlow)
@@ -74,9 +77,7 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
     if (cid === 'cnrl-2356388733') {
       this.listenRHRdataEvent()
     }
-    // set the livestart time for the UI
-    this.liveSEntities[cid].liveDataC.setStartDate(timePeriod)
-    this.liveSEntities[cid].liveDataC.setTimeList(timePeriod.range)
+    // default input set on setting up of component
     await this.controlFlow(ecsIN).then(function (cFlow) {
       console.log('CONTROLFLOW--new--COMPLETE')
       // console.log(cFlow)
@@ -93,13 +94,13 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
 */
 EntitiesManager.prototype.controlFlow = async function (cflowIN) {
   var localthis = this
-  // console.log(cflowIN)
+  console.log('controlflow start')
+  console.log(cflowIN)
   let cid = cflowIN.cid
   // let timePeriod = cflowIN.time
   let range = cflowIN.time.range
   let wasmID = cflowIN.wasm
   let visID = cflowIN.visID[0]
-  let cnrlInfo = cflowIN.science
   console.log('EMANAGER0-----beginCONTROL-FLOW')
   await this.liveSEntities[cid].liveDataC.RawData()
   console.log('EMANAGER1-----raw complete')
@@ -109,52 +110,66 @@ EntitiesManager.prototype.controlFlow = async function (cflowIN) {
   console.log('EMANAGER3---START')
   let computeBundle = {}
   computeBundle.lastComputeTime = ''
-  computeBundle.live = cid
+  computeBundle.cid = cid
   computeBundle.wasmID = wasmID
   computeBundle.status = false
-  computeBundle.liveTime = localthis.liveSEntities[cid].liveDataC.livedate.startperiod
+  computeBundle.liveTime = localthis.liveSEntities[cid].liveDataC.livedate
+  computeBundle.realtime = cflowIN.time.realtime
   computeBundle.rangeTime = range
-  let computeStatus = await localthis.liveSEntities[cid].liveComputeC.filterCompute(computeBundle, localthis.liveSEntities[cid].liveDataC.deviceList, cnrlInfo, localthis.liveSEntities[cid].liveDataC.dataRaw)
+  computeBundle.timeseg = cflowIN.time.timeseg
+  this.computeStatus = await localthis.liveSEntities[cid].liveComputeC.filterCompute(computeBundle, localthis.liveSEntities[cid].liveDataC.dataRaw)
   console.log('EMANAGER3--complete')
-  localthis.computeStatus = computeStatus
-  // console.log(localthis.computeStatus)
   console.log('EMANAGE4--START-VIS')
   let visBundle = {}
   visBundle.vid = visID
   visBundle.cnrl = cid
+  visBundle.computeStatus = this.computeStatus.computeState
   visBundle.deviceList = localthis.liveSEntities[cid].liveDataC.deviceList
   visBundle.datatypeList = localthis.liveSEntities[cid].liveDataC.datatypeList
-  console.log('feed into vissss')
-  visBundle.liveTime = localthis.liveSEntities[cid].liveDataC.livedate.startperiod
-  visBundle.timeList = localthis.liveSEntities[cid].liveDataC.livedate.startperiod
+  visBundle.liveTime = localthis.liveSEntities[cid].liveDataC.livedate
+  visBundle.timeList = localthis.liveSEntities[cid].liveDataC.livedate
   let visStatus = localthis.liveSEntities[cid].liveVisualC.filterVisual(visBundle, localthis.liveSEntities[cid].liveDataC.tidyData)
   console.log('visCompenent--FINISHED')
   console.log('5CONTROLFLOW___OVER(firstpass)')
-  // console.log(localthis.computeStatus)
-  // console.log(localthis.computeStatus.computeState.status)
+  console.log(visStatus)
+  console.log(localthis.computeStatus)
   if (visStatus === true) {
-    console.log('52ndSTARTFLOW----')
-    if (localthis.computeStatus.computeState.status === 'uptodate') {
-      console.log('UP TO DATE')
-    } else if (localthis.computeStatus.computeState.status === 'update-required' || localthis.computeStatus.computeState.status === 'update-start-required') {
-      console.log('5a--NOT uptodate')
-      // emit message to inform peer that computation is progressing
-      localthis.emit('computation', 'in-progress')
-      computeBundle.status = true
-      computeBundle.lastComputeTime = localthis.computeStatus.lastTimeComp
-      computeBundle.liveTime = localthis.liveSEntities[cid].liveDataC.livedate
-      console.log('5b--START_COMPUTEagain')
-      await localthis.liveSEntities[cid].liveComputeC.filterCompute(computeBundle, localthis.liveSEntities[cid].liveDataC.deviceList, cnrlInfo, localthis.liveSEntities[cid].liveDataC.dataRaw)
-      console.log('SECOND COMPUTE FITER RETURN')
-      console.log('EMANAGER5c-----asked for the rawdata now compute updated')
-      await this.liveSEntities[cid].liveDataC.RawData()
-      let visStatus = localthis.liveSEntities[cid].liveVisualC.filterVisual(visID, wasmID, localthis.liveSEntities[cid].liveDataC.livedate, localthis.liveSEntities[cid].liveDataC.datatypeList, cnrlInfo, localthis.liveSEntities[cid].liveDataC.timeList, localthis.liveSEntities[cid].liveDataC.deviceList, localthis.liveSEntities[cid].liveDataC.tidyData)
-      console.log(visStatus)
-      console.log('5dVISOVER2___OVER(2ndpass)')
-    }
+    console.log('5a--2ndSTARTFLOW----')
+    // emit message to inform peer that computation is progressing
+    localthis.emit('computation', 'in-progress')
+    computeBundle.status = true
+    computeBundle.computeStatus = this.computeStatus
+    computeBundle.liveTime = localthis.liveSEntities[cid].liveDataC.livedate
+    console.log('5b--START_COMPUTEagain')
+    await localthis.liveSEntities[cid].liveComputeC.filterCompute(computeBundle, localthis.liveSEntities[cid].liveDataC.dataRaw)
+    console.log('5c---asked for the rawdata of results')
+    await this.liveSEntities[cid].liveDataC.RawData()
+    let visBundle2 = {}
+    visBundle2.vid = visID
+    visBundle2.cnrl = cid
+    visBundle2.deviceList = localthis.liveSEntities[cid].liveDataC.deviceList
+    visBundle2.datatypeList = localthis.liveSEntities[cid].liveDataC.datatypeList
+    visBundle2.liveTime = localthis.liveSEntities[cid].liveDataC.livedate
+    visBundle2.timeList = localthis.liveSEntities[cid].liveDataC.livedate
+    visBundle2.computeStatus = 'go'
+    let liveUpdatedCompData = this.latestData(localthis.liveSEntities[cid].liveDataC.tidyData)
+    let visStatus = localthis.liveSEntities[cid].liveVisualC.filterVisual(visBundle2, liveUpdatedCompData)
+    console.log(visStatus)
+    console.log('5dVISOVER2___OVER(2ndpass)')
   }
   console.log('6CONTROLFLOW___OVER(2ndpass)')
   return true
+}
+
+/**
+*  extract the lastest ie most uptodate data in entity
+* @method latestData
+*
+*/
+EntitiesManager.prototype.latestData = function (dataIn) {
+  console.log('lastest Data tidy')
+  let lastArray = dataIn.slice(-1)
+  return lastArray
 }
 
 /**
@@ -192,16 +207,17 @@ EntitiesManager.prototype.listEntities = function () {
 */
 EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
   console.log('ENTITYMANAGER----retrun data')
-  // console.log(eid)
-  // console.log(visStyle)
-  // console.log(this.liveSEntities)
+  console.log(eid)
+  console.log(visStyle)
+  console.log(this.liveSEntities)
+  console.log(this.liveSEntities[eid].liveVisualC)
   let dateLive = this.liveSEntities[eid].liveDataC.livedate
   if (this.liveSEntities[eid].liveVisualC.visualData[visStyle] === undefined) {
     console.log('no existing chart data')
     let messageBundle = {}
     messageBundle.chartMessage = 'computation in progress'
-    messageBundle.chartPackage = this.liveSEntities[eid].liveVisualC.visualData[visStyle][dateLive.startperiod]
-    messageBundle.liveChartOptions = this.liveSEntities[eid].liveVisualC.liveChartSystem
+    // messageBundle.chartPackage = this.liveSEntities[eid].liveVisualC.visualData[visStyle][dateLive]
+    // messageBundle.liveChartOptions = this.liveSEntities[eid].liveVisualC.liveVisSystem.liveChartSystem
     return messageBundle
   } else if (this.liveSEntities[eid].liveVisualC.visualData[visStyle].status === 'report-component') {
     console.log('HR learn report instead of chart')
@@ -215,8 +231,8 @@ EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
     console.log('existing data to chart')
     let messageVisBundle = {}
     messageVisBundle.chartMessage = 'existing'
-    messageVisBundle.liveChartOptions = this.liveSEntities[eid].liveVisualC.liveChartSystem
-    messageVisBundle.chartPackage = this.liveSEntities[eid].liveVisualC.visualData[visStyle][dateLive.startperiod]
+    messageVisBundle.liveChartOptions = this.liveSEntities[eid].liveVisualC.liveVisSystem.liveChartSystem
+    messageVisBundle.chartPackage = this.liveSEntities[eid].liveVisualC.visualData[visStyle][dateLive]
     return messageVisBundle
   }
 }

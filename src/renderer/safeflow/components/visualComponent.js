@@ -52,8 +52,11 @@ VisualComponent.prototype.filterVisual = function (visIN, vData) {
   console.log(vData)
   if (visIN.vid === 'vis-sc-1') {
     console.log('charts asked for')
-    this.visualData = this.liveVisSystem.chartSystem(visIN, vData)
-    console.log(this.visualData)
+    if (visIN.computeStatus === 'go' || visIN.computeStatus === 'observation') {
+      this.visualData = this.liveVisSystem.chartSystem(visIN, vData)
+      console.log(this.visualData)
+    }
+    status = true
   } else if (visIN.vid === 'vis-sc-2') {
     console.log('table asked for')
     this.visualData = this.liveVisSystem.tableSystem(visIN, vData)

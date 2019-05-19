@@ -44,18 +44,30 @@
           </div>
         </div>
       </div>
+      <div id="history-learn" class="live-element">
+        <div id="history-learn-container">
+          <div id="history">
+            <a href="" id="history-button" @click.prevent="viewHistory(hist)" v-bind:class="{ 'active': hist.active}">{{ hist.name }}</a>
+          </div>
+        </div>
+      </div>
       <div id="learn-close"></div>
+    </div>
+    <div id="history" v-if="hist.active">
+      <history-List :historyData="historyData" @recoverySet="recoveryStatus()" ></history-List>
     </div>
   </div>
 </template>
 
 <script>
   import SAFEflow from '../../safeflow/safeFlow.js'
+  import historyList from '@/components/toolbar/historyList.vue'
   const moment = require('moment')
 
   export default {
     name: 'knowledge-live',
     components: {
+      historyList
     },
     props: {
       liveData: {
@@ -71,7 +83,14 @@
         },
         liveSafeFlow: null,
         activeEntity: '',
-        activevis: ''
+        activevis: '',
+        hist:
+        {
+          name: 'View history',
+          id: 'learn-history',
+          active: false
+        },
+        historyData: []
       }
     },
     created () {
@@ -117,10 +136,21 @@
         liveBundle.time = updateTbundle
         liveBundle.resolution = this.liveData.resolutionLive
         liveBundle.visualisation = ['vis-sc-1']
+        this.saveLearnHistory(liveBundle)
         this.$emit('liveLearn', liveBundle)
       },
       saveLearnHistory (lBundle) {
         console.log('save temp history or keep on network save')
+        // save to network  save to LOCAL storage(encrpted???)
+        this.historyData.push(lBundle)
+      },
+      viewHistory (hist) {
+        hist.active = !hist.active
+        if (hist.active === true) {
+          hist.name = 'Close history'
+        } else {
+          hist.name = 'View history'
+        }
       }
     }
   }
@@ -148,5 +178,10 @@
   font-size: 1.6em;
   padding: .25em;
 
+}
+
+#history {
+  border: 2px solid purple;
+  margin-top: 2em;
 }
 </style>

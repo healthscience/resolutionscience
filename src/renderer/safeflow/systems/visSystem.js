@@ -18,6 +18,7 @@ var VisSystem = function () {
   events.EventEmitter.call(this)
   this.liveChartSystem = new ChartSystem()
   this.liveTableSystem = new TableSystem()
+  this.visSystemData = []
 }
 
 /**
@@ -70,20 +71,22 @@ VisSystem.prototype.chartSystem = function (chartBundle, dataIN) {
     chartHolder[visIN][liveTime] = {}
     chartHolder[visIN][liveTime]['day'] = chartData
     chartGroupHolder.push(chartHolder)
-    this.visualData = chartGroupHolder
+    this.visSystemData = chartGroupHolder
   } else if (chartBundle.cnrl === 'cnrl-2356388732') {
     console.log('average Chart vis start')
     // could be more than one visualisation required,  devices, datatypes, timeseg or computation or event resolutions
     for (let dType of chartBundle.datatypeList) {
       for (let device of chartBundle.deviceList) {
         console.log('loop bud')
-        for (let entry of dataIN[0][liveTime][device][dType]) {
+        for (let entry of dataIN[0][liveTime][device][dType.cnrl]) {
           // pass on to appropriate structure, day, week, in context of resolution etc.
           console.log('data structure for time segs')
-          console.log(entry)
+          // console.log(entry)
           if (entry.day) {
             structureHolder = this.liveChartSystem.structureStatisticsData(entry.day)
             let chartColorsSet = localthis.liveChartSystem.avgchartColors(dType)
+            // console.log('average colours')
+            // console.log(chartColorsSet)
             dataTypeBucket.data = structureHolder
             dataTypeBucket.color = chartColorsSet
             chartDataH.chart.push(dataTypeBucket)
@@ -102,20 +105,20 @@ VisSystem.prototype.chartSystem = function (chartBundle, dataIN) {
         }
       }
     }
-    this.visualData = chartGroupHolder
+    this.visSystemData = chartGroupHolder
     console.log('chart GROUP data holder')
-    console.log(this.visualData)
+    console.log(this.visSystemData)
   } else if (chartBundle.cnrl === 'cnrl-2356388733') {
     console.log('HR recovery chart???')
     const chartHolder = {}
     chartHolder[visIN] = {}
     chartHolder[visIN].status = 'report-component'
-    this.visualData = chartHolder
+    this.visSystemData = chartHolder
   } else if (chartBundle.cnrl === 'cnrl-2356388737') {
     // summation of datatypes
     console.log('SUM chart')
   }
-  return this.visualData
+  return this.visSystemData
 }
 
 /**

@@ -24,7 +24,6 @@ var SimSystem = function () {
 */
 util.inherits(SimSystem, events.EventEmitter)
 
-
 /**
 * return the data structure requested
 * @method structureData2D

@@ -49,6 +49,7 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
       this.liveSEntities[cid].liveDataC.setStartTime(timeBundle.startperiod)
       this.liveSEntities[cid].liveDataC.setTimeList(timeBundle.startperiod)
       this.liveSEntities[cid].liveDataC.setTimeSegments(timeBundle.timeseg)
+      this.liveSEntities[cid].liveDataC.setDatatypesLive(ecsIN.datatypes)
     } else {
     /* else if (ecsIN.timeperiod === true) {
       // toolbar select timerange mode

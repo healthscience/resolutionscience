@@ -48,8 +48,8 @@ ChartSystem.prototype.structureChartData = function (datatypeIN, cBundle, cData)
         for (let datatypeData of dataI[liveDate][devI]) {
           var mDateString = moment(datatypeData.timestamp * 1000).toDate()
           datalabel.push(mDateString)
-          console.log(datatypeData)
-          console.log(datatypeIN)
+          // console.log(datatypeData)
+          // console.log(datatypeIN)
           if (datatypeIN.cnrl === 'cnrl-8856388711') {
             datay.push(datatypeData.heart_rate)
           } else if (datatypeIN.cnrl === 'cnrl-8856388712') {
@@ -493,7 +493,7 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
         this.avg = chD.data.datasets
         this.colorback = chD.color.backgroundColor
         this.colorlineback = chD.color.borderColor
-      } else if (chD.color.datatype === 'steps') {
+      } else if (chD.color.datatype === 'cnrl-8856388322') {
         this.labelback = chD.data.labels
         this.avg2 = chD.data.datasets
         this.colorback2 = chD.color.backgroundColor
@@ -509,10 +509,10 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
       this.avg = results.chart[0].data.datasets
       this.colorback = results.chart[0].color.backgroundColor
       this.colorlineback = results.chart[0].color.borderColor
-    } else if (results.chart[0].color.datatype === '') {
+    } else if (results.chart[0].color.datatype === 'cnrl-8856388322') {
       this.heartback = []
       console.log('labels')
-      console.log(results.chart[0].data.labels)
+      // console.log(results.chart[0].data.labels)
       this.labelback = results.chart[0].data.labels
       this.avg = results.chart[0].data.datasets
       this.colorback2 = results.chart[0].color.backgroundColor

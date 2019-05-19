@@ -148,8 +148,8 @@ DataSystem.prototype.datatypeMapping = async function (systemBundle) {
       })
     }
   }
-  console.log('rawHolder')
-  console.log(rawHolder)
+  // console.log('rawHolder')
+  // console.log(rawHolder)
   return rawHolder
 }
 
@@ -168,7 +168,6 @@ DataSystem.prototype.getRawData = async function (queryIN) {
   for (let di of deviceQuery) {
     // observation has fixed input but technically should loop over this on basis of timeSegs
     await localthis.liveTestStorage.getComputeData(queryIN.startperiod, di).then(function (result) {
-      console.log(result)
       dataBack[di] = result
       result = []
     }).catch(function (err) {
@@ -185,7 +184,6 @@ DataSystem.prototype.getRawData = async function (queryIN) {
 */
 DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
   console.log('DATASYSTEM2T----tidyRaw')
-  console.log(dataASK)
   let liveStarttime = dataASK.timePeriod
   // build object structureReturn
   let tidyHolder = {}
@@ -200,7 +198,6 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
     // tidyHoldertidyHolder[liveStarttime][devI] = []
     for (let dateMatch of dataRaw) {
       if (dateMatch[liveStarttime]) {
-        console.log('tidy')
         // console.log(dateMatch[dataASK.timePeriod.startperiod][devI])
         cleanData = dateMatch[liveStarttime][devI].filter(function (item) {
           // console.log(item)
@@ -222,7 +219,7 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
 */
 DataSystem.prototype.getRawAverageData = async function (bundleIN) {
   console.log('average get')
-  console.log(bundleIN)
+  // console.log(bundleIN)
   const localthis = this
   // how many sensor ie data sets are being asked for?
   // loop over and return Statistics Data and return to callback
@@ -230,8 +227,6 @@ DataSystem.prototype.getRawAverageData = async function (bundleIN) {
   let averageArray = []
   let averageHolder = {}
   for (let di of bundleIN.deviceList) {
-    console.log('start of device loop')
-    // console.log(di)
     // also need to loop for datatype and map to storage API function that matches
     for (let dtl of bundleIN.dtAsked) {
       // console.log(dtl)
@@ -239,13 +234,13 @@ DataSystem.prototype.getRawAverageData = async function (bundleIN) {
       for (let tsg of bundleIN.timeseg) {
         // console.log(tsg)
         // loop over time segments
-        await localthis.liveTestStorage.getAverageData(bundleIN.startperiod, di, bundleIN.scienceAsked.cnrl, dtl, tsg).then(function (statsData) {
+        await localthis.liveTestStorage.getAverageData(bundleIN.startperiod, di, bundleIN.scienceAsked.cnrl, dtl.cnrl, tsg).then(function (statsData) {
           averageHolder = {}
           averageHolder[tsg] = statsData
           averageArray.push(averageHolder)
           averageData[di] = {}
-          averageData[di][dtl] = {}
-          averageData[di][dtl] = averageArray
+          averageData[di][dtl.cnrl] = {}
+          averageData[di][dtl.cnrl] = averageArray
         }).catch(function (err) {
           console.log(err)
         })

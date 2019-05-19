@@ -46,8 +46,6 @@ util.inherits(DataComponent, events.EventEmitter)
 *
 */
 DataComponent.prototype.setStartTime = function (startDate) {
-  console.log('start TIME')
-  console.log(startDate)
   this.livedate = startDate
   return true
 }
@@ -114,7 +112,7 @@ DataComponent.prototype.RawData = async function () {
   let dataRback = await this.liveDataSystem.datatypeMapping(systemBundle)
   this.dataRaw.push(dataRback)
   console.log('rawData------')
-  console.log(this.dataRaw)
+  // console.log(this.dataRaw)
   return true
 }
 

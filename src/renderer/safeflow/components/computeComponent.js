@@ -56,8 +56,8 @@ ComputeComponent.prototype.filterCompute = async function (compInfo, rawIN) {
     let computeState = await this.liveComputeSystem.computationSystem(systemBundle, rawIN)
     computeStatelive = computeState
   }
-  console.log('2COMPUTE-COMP---return')
-  console.log(computeStatelive)
+  // console.log('2COMPUTE-COMP---return')
+  // console.log(computeStatelive)
   return computeStatelive
 }
 

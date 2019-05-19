@@ -63,25 +63,18 @@ AverageSystem.prototype.averageSystem = async function (compInfo, rawIN) {
 */
 AverageSystem.prototype.computeControlFlow = async function (compInfo, rawIN) {
   console.log('AVGcomputeCONTROLFLOW---start')
-  console.log(compInfo)
+  // console.log(compInfo)
   let cFlowStatus = {}
   let computeStatusLive = {}
   computeStatusLive = compInfo.computeStatus
   // what time segments have been asked for?
   let segAsk = this.convertSeg(compInfo.timeseg)
-  console.log(segAsk)
   // given devices, datatypes, segments and type of average, statistcs, rolling, autoregression, ML
   for (let dvc of compInfo.deviceList) {
     // need to loop for datatype and time seg
-    console.log('device loop')
     for (let dtl of compInfo.dtAsked) {
-      console.log('datatype loop')
       // check status of compute?  uptodate, needs updating or first time compute?
       for (let checkComp of computeStatusLive[compInfo.startperiod][dvc.device_mac][dtl.cnrl]) {
-        console.log('compFlow 1 -- times')
-        console.log(checkComp)
-        console.log(checkComp.timeseg)
-        console.log(checkComp.lastComputeTime)
         // what is status of compute?
         if (checkComp.status === 'update-required' && checkComp.timeseg === 'day') {
           let computeDates = this.updateAverageDates(checkComp.lastComputeTime, compInfo.startperiod)
@@ -114,7 +107,6 @@ AverageSystem.prototype.assessAvgStatus = async function (compInfo, rawIN) {
   console.log('assess Average')
   let timeStart = await this.updatedAverageStatus(compInfo, rawIN)
   console.log('COMPSYS2-RETURN')
-  console.log(timeStart)
   return timeStart
 }
 

@@ -254,11 +254,16 @@ TimeUtilities.prototype.calendarUtility = function () {
 *
 */
 TimeUtilities.prototype.timeDayArrayBuilder = function (liveTime, lastTime) {
+  let TimeHolder = {}
   let timeArray = []
   let yearEndmnoth = 11
   console.log('time DAILY builder array')
   console.log(lastTime)
   console.log(liveTime)
+  const monthNo = moment(lastTime).month()
+  const monthNocurrent = moment(liveTime).month()
+  let dayIncurrentMonth = moment(liveTime).date()
+  console.log(dayIncurrentMonth)
   // let shortLastTime = lastTime / 1000
   const yearNum = moment(lastTime).year()
   const yearNumcurrent = moment(liveTime).year()
@@ -312,8 +317,6 @@ TimeUtilities.prototype.timeDayArrayBuilder = function (liveTime, lastTime) {
     }
   } else {
     console.log('one year only')
-    const monthNo = moment(lastTime).month()
-    const monthNocurrent = moment(liveTime).month()
     let baseStartMonth = moment(lastTime).startOf('month')
     let baseMills = moment(baseStartMonth).valueOf() + 3600000
     let secondsInday = 86400000
@@ -339,7 +342,57 @@ TimeUtilities.prototype.timeDayArrayBuilder = function (liveTime, lastTime) {
   }
   console.log('time array++++')
   console.log(timeArray)
-  return timeArray
+  TimeHolder.calendar = timeArray
+  TimeHolder.uptoDateTime = lastTime
+  TimeHolder.currentday = dayIncurrentMonth
+  let lastMonthStartTime = timeArray.slice(-1).pop()
+  TimeHolder.currentML = lastMonthStartTime.longDateformat
+  let calendarList = this.longDataArray(TimeHolder)
+  console.log(calendarList)
+  return calendarList
+}
+
+/**
+* Build an array of dates between two time points PER WEEK
+* @method longDataArray
+*
+*/
+TimeUtilities.prototype.longDataArray = function (calInfo) {
+  // build date array for year
+  console.log(calInfo)
+  let calendarTimeList = []
+  let yearArray = calInfo.calendar
+  this.dayCounter = 0
+  // loop over all months
+  for (let scMonth of yearArray) {
+    console.log('month time info')
+    console.log(scMonth)
+    let daysInmonth = scMonth.dayCount
+    let accDaily = 0
+    let millsSecDay = 86400000
+    this.dayCounter = scMonth.longDateformat
+    console.log(this.dayCounter)
+    console.log(calInfo.currentML)
+    if (calInfo.currentML === this.dayCounter) {
+      // last month, stop at current live days
+      while (accDaily < (calInfo.currentday - 2)) {
+        this.dayCounter = this.dayCounter + millsSecDay
+        accDaily++
+        if (this.dayCounter > calInfo.uptoDateTime) {
+          calendarTimeList.push(this.dayCounter)
+        }
+      }
+    } else {
+      while (accDaily < daysInmonth) {
+        this.dayCounter = this.dayCounter + millsSecDay
+        accDaily++
+        calendarTimeList.push(this.dayCounter)
+      }
+    }
+  }
+  console.log('list of array query times ')
+  console.log(calendarTimeList)
+  return calendarTimeList
 }
 
 /**

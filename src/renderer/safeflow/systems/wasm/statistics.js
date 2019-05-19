@@ -43,44 +43,29 @@ StatisticsSystem.prototype.statisticsSystem = function () {
 StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, device, datatype, tseg, compRef) {
   console.log('prepare avg. compute START')
   let localthis = this
-  // build date array for year
-  let yearArray = computeTimes
-  this.dayCounter = 0
-  // loop over all months
-  for (let scMonth of yearArray) {
-    let daysInmonth = scMonth.dayCount
-    let accDaily = 0
-    let millsSecDay = 86400000
-    localthis.dayCounter = scMonth.longDateformat
-    while (accDaily < daysInmonth) {
-      let queryTime = localthis.dayCounter / 1000
-      // The datatype asked should be MAPPED to storage API via source Datatypes that make up e.g. average-bpm
-      // CNRL should be consulted to find which function calls the API for the source data
-      let dataBatch = await localthis.liveTestStorage.getComputeData(queryTime, device.device_mac, datatype)
-      // console.log(dataBatch)
-      if (dataBatch.length > 0) {
-        let singleArray = localthis.tidySinglearray(dataBatch)
-        let saveReady = this.averageStatistics(singleArray.tidyarray)
-        console.log('batch for avg. storage')
-        console.log(singleArray)
-        console.log(saveReady)
-        // prepare JSON object for POST
-        let saveJSON = {}
-        saveJSON.publickey = ''
-        saveJSON.timestamp = queryTime
-        saveJSON.compref = compRef
-        saveJSON.datatype = datatype.cnrl
-        saveJSON.value = saveReady.average
-        saveJSON.device_mac = device.device_mac
-        saveJSON.clean = saveReady.count
-        saveJSON.tidy = singleArray.tidycount
-        saveJSON.timeseg = tseg
-        console.log('average preSAVE')
-        console.log(saveJSON)
-        this.liveTestStorage.saveaverageData(saveJSON)
-      }
-      localthis.dayCounter = localthis.dayCounter + millsSecDay
-      accDaily++
+  for (let qt of computeTimes) {
+    let queryTime = qt / 1000
+    // The datatype asked should be MAPPED to storage API via source Datatypes that make up e.g. average-bpm
+    // CNRL should be consulted to find which function calls the API for the source data
+    let dataBatch = await localthis.liveTestStorage.getComputeData(queryTime, device.device_mac, datatype)
+    // console.log(dataBatch)
+    if (dataBatch.length > 0) {
+      let singleArray = localthis.tidySinglearray(dataBatch, datatype)
+      let saveReady = this.averageStatistics(singleArray.tidyarray)
+      // prepare JSON object for POST
+      let saveJSON = {}
+      saveJSON.publickey = ''
+      saveJSON.timestamp = queryTime
+      saveJSON.compref = compRef
+      saveJSON.datatype = datatype.cnrl
+      saveJSON.value = saveReady.average
+      saveJSON.device_mac = device.device_mac
+      saveJSON.clean = saveReady.count
+      saveJSON.tidy = singleArray.tidycount
+      saveJSON.timeseg = tseg
+      // console.log('average preSAVE')
+      // console.log(saveJSON)
+      this.liveTestStorage.saveaverageData(saveJSON)
     }
   }
   return true
@@ -91,23 +76,54 @@ StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, dev
 * @method tidySinglearray
 *
 */
-StatisticsSystem.prototype.tidySinglearray = function (arrBatchobj) {
+StatisticsSystem.prototype.tidySinglearray = function (arrBatchobj, dtIN) {
   // statistical avg. smart contract/crypt ID ref & verfied wasm/network/trubit assume done
   console.log('start tidyAVG')
+  // console.log(arrBatchobj)
+  // console.log(dtIN)
+  let sourceDT = this.extractDT(dtIN.cnrl)
   let tidyHolder = {}
+  let intData
   let singleArray = []
   let tidyCount = 0
   for (let sing of arrBatchobj) {
-    let intHR = parseInt(sing.heart_rate, 10)
-    if (intHR !== 255 && intHR > 0) {
-      singleArray.push(intHR)
-    } else {
-      tidyCount++
+    if (sourceDT === 'cnrl-8856388711') {
+      intData = parseInt(sing.heart_rate, 10)
+      if (intData !== 255 && intData > 0) {
+        singleArray.push(intData)
+      } else {
+        tidyCount++
+      }
+    } else if (sourceDT === 'cnrl-8856388712') {
+      intData = parseInt(sing.steps, 10)
+      if (intData > 0) {
+        singleArray.push(intData)
+      } else {
+        tidyCount++
+      }
     }
   }
   tidyHolder.tidycount = tidyCount
   tidyHolder.tidyarray = singleArray
+  // console.log('TidyHOlder')
+  // console.log(tidyHolder)
   return tidyHolder
+}
+
+/**
+* This should be part of dataSYSTEM temp
+* @method extractDT
+*
+*/
+StatisticsSystem.prototype.extractDT = function (dtPrim) {
+  console.log('map prime datatype to source DataTypes')
+  let sourceDT = ''
+  if (dtPrim === 'cnrl-8856388724') {
+    sourceDT = 'cnrl-8856388711'
+  } else if (dtPrim === 'cnrl-8856388322') {
+    sourceDT = 'cnrl-8856388712'
+  }
+  return sourceDT
 }
 
 /**

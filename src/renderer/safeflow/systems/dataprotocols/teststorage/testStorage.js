@@ -118,7 +118,7 @@ TestStorageAPI.prototype.getAverageData = async function (queryTime, deviceID, c
 TestStorageAPI.prototype.saveaverageData = async function (jsonIN) {
   console.log('saving average hr data')
   jsonIN.publickey = this.tempPubkey
-  await axios.post(this.baseAPI + '/averageSave/' + this.tempPubkey + '/' + this.tempToken + '/' + jsonIN.device, jsonIN)
+  await axios.post(this.baseAPI + '/averageSave/' + this.tempPubkey + '/' + this.tempToken + '/' + jsonIN.device_mac, jsonIN)
     .then(function (response) {
       console.log(response)
     })

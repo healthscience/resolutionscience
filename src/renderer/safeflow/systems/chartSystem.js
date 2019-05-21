@@ -459,6 +459,14 @@ ChartSystem.prototype.avgchartColors = function (datatypeItem) {
     colorHolder.datatype = 'cnrl-8856388322'
     colorHolder.backgroundColor = '#ed7d7d'
     colorHolder.borderColor = '#ea1212'
+  } else if (datatypeItem.cnrl === 'cnrl-8856388924') {
+    colorHolder.datatype = 'cnrl-8856388924'
+    colorHolder.backgroundColor = '#203487'
+    colorHolder.borderColor = '#050d2d'
+  } else if (datatypeItem.cnrl === 'cnrl-8856389322') {
+    colorHolder.datatype = 'cnrl-8856389322'
+    colorHolder.backgroundColor = '#ed7d7d'
+    colorHolder.borderColor = '#ea1212'
   }
   // console.log(colorHolder)
   return colorHolder
@@ -550,6 +558,139 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
     if (deviceList.length === 2) {
       console.log('TWO devices averages')
       localthis.chartmessage = 'AVG BPM'
+      datacollection = {
+        labels: localthis.labelback,
+        datasets: [
+          {
+            type: 'line',
+            label: 'Device 1',
+            borderColor: '#ea1212',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            fill: true,
+            data: localthis.avg,
+            yAxisID: 'bpm'
+          }, {
+            type: 'line',
+            label: 'Device 2',
+            borderColor: '#050d2d',
+            backgroundColor: '#050d2d',
+            fill: false,
+            data: localthis.avg2,
+            yAxisID: 'bpm'
+          }
+        ]
+      }
+    } else if (deviceList.length === 1) {
+      // only one average device data to display
+      console.log('ONE devices averages')
+      localthis.chartmessage = 'BPM'
+      datacollection = {
+        labels: localthis.labelback,
+        datasets: [
+          {
+            type: 'line',
+            label: 'Device 1',
+            borderColor: '#ea1212',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            fill: true,
+            data: localthis.avg,
+            yAxisID: 'bpm'
+          }
+        ]
+      }
+    }
+  }
+  // console.log('avg--chart')
+  // console.log(datacollection)
+  return datacollection
+}
+
+/**
+* prepare DataCollection for vuechart.js
+* @method prepareSumVueChartJS
+*
+*/
+ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
+  // need to prepare different visualisations, data return will fit only one select option
+  console.log('PREPARE STATS CHARTJS-- START')
+  var localthis = this
+  let datacollection = {}
+  this.labelback = []
+  this.avg = []
+  this.avg2 = []
+  this.colorback = ''
+  this.colorlineback = ''
+  this.colorback2 = ''
+  this.colorlineback2 = ''
+  // how many average dataTypes asked for?
+  // console.log(results.chart.length)
+  if (results.chart.length === 2) {
+    // need to prepare different visualisations, data return will fit only one Chart vis option
+    for (let chD of results.chart) {
+      // console.log(chD)
+      // console.log(chD.color.datatype)
+      if (chD.color.datatype === 'cnrl-8856388924') {
+        this.labelback = chD.data.labels
+        this.avg = chD.data.datasets
+        this.colorback = chD.color.backgroundColor
+        this.colorlineback = chD.color.borderColor
+      } else if (chD.color.datatype === 'cnrl-8856389322') {
+        this.labelback = chD.data.labels
+        this.avg2 = chD.data.datasets
+        this.colorback2 = chD.color.backgroundColor
+        this.colorlineback2 = chD.color.borderColor
+      }
+    }
+  } else {
+    console.log('one')
+    console.log(results.chart[0].color)
+    if (results.chart[0].color.datatype === 'cnrl-8856388924') {
+      this.avg = []
+      this.labelback = results.chart[0].data.labels
+      this.avg = results.chart[0].data.datasets
+      this.colorback = results.chart[0].color.backgroundColor
+      this.colorlineback = results.chart[0].color.borderColor
+    } else if (results.chart[0].color.datatype === 'cnrl-8856389322') {
+      this.heartback = []
+      console.log('labels')
+      // console.log(results.chart[0].data.labels)
+      this.labelback = results.chart[0].data.labels
+      this.avg = results.chart[0].data.datasets
+      this.colorback2 = results.chart[0].color.backgroundColor
+      this.colorlineback2 = results.chart[0].color.borderColor
+    }
+  }
+
+  if (results === 'no data') {
+    // no data to display
+    localthis.chartmessage = 'No data to display'
+    datacollection = {
+      labels: [],
+      datasets: [
+        {
+          type: 'line',
+          label: 'no data',
+          borderColor: '#ed7d7d',
+          backgroundColor: '#ed7d7d',
+          fill: false,
+          data: [],
+          yAxisID: 'bpm'
+        }, {
+          type: 'line',
+          label: 'no data',
+          borderColor: '#ea1212',
+          backgroundColor: '#ea1212',
+          fill: false,
+          data: [],
+          yAxisID: 'steps'
+        }
+      ]
+    }
+  } else {
+    // how many devices average to visualise?
+    if (deviceList.length === 2) {
+      console.log('TWO devices averages')
+      localthis.chartmessage = 'SUM BPM'
       datacollection = {
         labels: localthis.labelback,
         datasets: [

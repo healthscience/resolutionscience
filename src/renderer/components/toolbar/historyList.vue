@@ -1,41 +1,41 @@
 <template>
-  <div id="history-view">HISTORY {{ historyData }}
-  <!-- <ul>
-    <li id="data-type-live" v-for="lhist">
+  <div id="history-view">HISTORY
+  <ul>
+    <li id="data-type-history" v-for="lh in historyData">
       <div id="live-knowledge-elements">
         <div id="context-language" class="live-element">
-          Language: <div class="live-item">{{ }}</div>
+          Language: <div class="live-item">{{ lh.language.word }}</div>
         </div>
         <div id="live-context-devices" class="live-element">
           <header>Devices:</header>
             <ul>
-              <li v-for="dev in ">
-                 <div class="live-item">{{ }}</div>
+              <li v-for="dev in lh.devices">
+                 <div class="live-item">{{ dev.device_name }}</div>
               </li>
             </ul>
         </div>
         <div id="live-context-datatypes" class="live-element">
           <header>DataTypes - </header>
             <ul>
-              <li id="bmp-data-sensor" v-for="dts in ">
-                <div class="live-item">{{ }}</div>
+              <li id="bmp-data-sensor" v-for="dts in lh.datatypes">
+                <div class="live-item">{{ dts.text }}</div>
               </li>
             </ul>
         </div>
-        <div id="live-context-science" class="live-element">
-          Science - <div class="live-item">{{  || 'none' }}</div>
+        <div id="history-context-science" class="live-element">
+          Science - <div class="live-item">{{ lh.science.prime.text }}</div>
         </div>
         <div id="context-time" class="live-element">
           <header>Time:</header>
             <ul>
-              <li v-for="ts in ">
-                 <div class="live-item">{{  }}</div>
+              <li v-for="ts in lh.time">
+                 <div class="live-item">{{ ts }}</div>
               </li>
             </ul>
         </div>
         <div id="context-resolution" class="live-element">
           <header>Resolution:</header>
-            <div class="live-item">{{  }}</div>
+            <div class="live-item">{{ lh.resolution }}</div>
         </div>
         <div id="open-on-start" class="live-element">
           <div id="start-learn-container">
@@ -47,7 +47,7 @@
         <div id="learn-close"></div>
       </div>
     </li>
-  </ul> -->
+  </ul>
   </div>
 </template>
 
@@ -117,5 +117,9 @@
 #history {
   border: 2px solid purple;
   margin-top: 2em;
+}
+
+#data-type-history {
+  margin:1em;
 }
 </style>

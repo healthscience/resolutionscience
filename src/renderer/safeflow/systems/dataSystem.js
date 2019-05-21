@@ -134,6 +134,12 @@ DataSystem.prototype.datatypeMapping = async function (systemBundle) {
         rawHolder[systemBundle.startperiod] = sourcerawData
         // localthis.dataRaw.push(rawHolder)
       })
+    } else if (systemBundle.scienceAsked.cnrl === 'cnrl-2356388737') {
+      console.log('SUM QUERY')
+      await this.getRawSumData(systemBundle).then(function (sourcerawData) {
+        rawHolder = {}
+        rawHolder[systemBundle.startperiod] = sourcerawData
+      })
     } else if (systemBundle.scienceAsked.cnrl === 'cnrl-2356388732') {
       console.log('AVERAGE QUERY')
       await this.getRawAverageData(systemBundle).then(function (sourcerawData) {
@@ -210,6 +216,44 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
   // console.log('clearn holder')
   // console.log(tidyHolder)
   return tidyHolder
+}
+
+/**
+* get raw ie source average data for a data type
+* @method getRawSumData
+*
+*/
+DataSystem.prototype.getRawSumData = async function (bundleIN) {
+  console.log('sum get')
+  // console.log(bundleIN)
+  const localthis = this
+  // how many sensor ie data sets are being asked for?
+  // loop over and return Statistics Data and return to callback
+  let averageData = {}
+  let averageArray = []
+  let averageHolder = {}
+  for (let di of bundleIN.deviceList) {
+    // also need to loop for datatype and map to storage API function that matches
+    for (let dtl of bundleIN.dtAsked) {
+      // console.log(dtl)
+      // loop over datatypes
+      for (let tsg of bundleIN.timeseg) {
+        // console.log(tsg)
+        // loop over time segments
+        await localthis.liveTestStorage.getSumData(bundleIN.startperiod, di, bundleIN.scienceAsked.cnrl, dtl.cnrl, tsg).then(function (statsData) {
+          averageHolder = {}
+          averageHolder[tsg] = statsData
+          averageArray.push(averageHolder)
+          averageData[di] = {}
+          averageData[di][dtl.cnrl] = {}
+          averageData[di][dtl.cnrl] = averageArray
+        }).catch(function (err) {
+          console.log(err)
+        })
+      }
+    }
+  }
+  return averageData
 }
 
 /**

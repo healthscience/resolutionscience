@@ -17,7 +17,7 @@ const axios = require('axios')
 var TestStorageAPI = function (setUP) {
   events.EventEmitter.call(this)
   this.liveTimeUtil = new TimeUtilities()
-  this.baseAPI = 'http://165.227.244.213:8882'
+  this.baseAPI = 'http://165.227.244.213:8881'
   this.liveData = {}
   this.datacollection = []
   this.tempPubkey = setUP.publickey
@@ -98,6 +98,19 @@ TestStorageAPI.prototype.getComputeData = async function (queryTime, deviceID) {
 }
 
 /**
+*  Get existing Sum data
+* @method getSumData
+*
+*/
+TestStorageAPI.prototype.getSumData = async function (queryTime, deviceID, compType, datatype, timeseg) {
+  //  nosql query
+  // console.log('StorageAIP ----')
+  let jsondata = await axios.get(this.baseAPI + '/sum/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID + '/' + compType + '/' + datatype + '/' + timeseg)
+  console.log(jsondata)
+  return jsondata.data
+}
+
+/**
 *  Get existing Average data
 * @method getAverageData
 *
@@ -106,7 +119,7 @@ TestStorageAPI.prototype.getAverageData = async function (queryTime, deviceID, c
   //  nosql query
   // console.log('StorageAIP ----')
   let jsondata = await axios.get(this.baseAPI + '/average/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID + '/' + compType + '/' + datatype + '/' + timeseg)
-  console.log(jsondata)
+  // console.log(jsondata)
   return jsondata.data
 }
 
@@ -119,6 +132,20 @@ TestStorageAPI.prototype.saveaverageData = async function (jsonIN) {
   console.log('saving average hr data')
   jsonIN.publickey = this.tempPubkey
   await axios.post(this.baseAPI + '/averageSave/' + this.tempPubkey + '/' + this.tempToken + '/' + jsonIN.device_mac, jsonIN)
+    .then(function (response) {
+      console.log(response)
+    })
+}
+
+/**
+*  Insert data SUM data
+* @method savesumData
+*
+*/
+TestStorageAPI.prototype.savesumData = async function (jsonIN) {
+  console.log('saving average hr data')
+  jsonIN.publickey = this.tempPubkey
+  await axios.post(this.baseAPI + '/sumSave/' + this.tempPubkey + '/' + this.tempToken + '/' + jsonIN.device_mac, jsonIN)
     .then(function (response) {
       console.log(response)
     })

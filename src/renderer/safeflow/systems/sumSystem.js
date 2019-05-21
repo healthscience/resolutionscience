@@ -1,9 +1,9 @@
 'use strict'
 /**
-*  averageSystem
+*  sumSystem
 *
 *
-* @class averageSystem
+* @class sumSystem
 * @package    safeFlow
 * @copyright  Copyright (c) 2019 James Littlejohn
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
@@ -11,12 +11,12 @@
 */
 import TimeUtilities from './timeUtility.js'
 import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
-import StatisticsSystem from './wasm/average-statistics.js'
+import StatisticsSystem from './wasm/sum-statistics.js'
 
 const util = require('util')
 const events = require('events')
 
-var AverageSystem = function (setIN) {
+var SumSystem = function (setIN) {
   events.EventEmitter.call(this)
   this.liveTimeUtil = new TimeUtilities()
   this.liveTestStorage = new TestStorageAPI(setIN)
@@ -28,28 +28,28 @@ var AverageSystem = function (setIN) {
 * inherits core emitter class within this class
 * @method inherits
 */
-util.inherits(AverageSystem, events.EventEmitter)
+util.inherits(SumSystem, events.EventEmitter)
 
 /**
 * verify the computation file
 * @method verifyComputeWASM
 *
 */
-AverageSystem.prototype.verifyComputeWASM = function (wasmFile) {
+SumSystem.prototype.verifyComputeWASM = function (wasmFile) {
   // check the hash verifes to hash aggred in CNRL contract
 }
 
 /**
 *  average compute system assess inputs and control compute
-* @method averageSystem
+* @method sumSystem
 *
 */
-AverageSystem.prototype.averageSystem = async function (compInfo, rawIN) {
-  console.log('averageSYSTEM')
+SumSystem.prototype.sumSystem = async function (compInfo, rawIN) {
+  console.log('SumSystem')
   let updateStatus = {}
   if (compInfo.status === false) {
     console.log('AVGSYS2-averageAssess')
-    updateStatus = this.assessAvgStatus(compInfo, rawIN)
+    updateStatus = this.assessSumStatus(compInfo, rawIN)
   } else if (compInfo.status === true) {
     console.log('AVGSYS3-' + compInfo.cid)
     updateStatus = await this.computeControlFlow(compInfo, rawIN)
@@ -61,8 +61,8 @@ AverageSystem.prototype.averageSystem = async function (compInfo, rawIN) {
 * @method computeControlFlow
 *
 */
-AverageSystem.prototype.computeControlFlow = async function (compInfo, rawIN) {
-  console.log('AVGcomputeCONTROLFLOW---start')
+SumSystem.prototype.computeControlFlow = async function (compInfo, rawIN) {
+  console.log('SUMcomputeCONTROLFLOW---start')
   // console.log(compInfo)
   let cFlowStatus = {}
   let computeStatusLive = {}
@@ -77,9 +77,9 @@ AverageSystem.prototype.computeControlFlow = async function (compInfo, rawIN) {
       for (let checkComp of computeStatusLive[compInfo.startperiod][dvc.device_mac][dtl.cnrl]) {
         // what is status of compute?
         if (checkComp.status === 'update-required' && checkComp.timeseg === 'day') {
-          let computeDates = this.updateAverageDates(checkComp.lastComputeTime, compInfo.startperiod)
-          let computeStatus = await this.liveStatistics.prepareAvgCompute(computeDates, dvc, dtl, checkComp.timeseg, compInfo.cid)
-          console.log('COMPSYS3a--AVERAGE FINISHED')
+          let computeDates = this.updateDates(checkComp.lastComputeTime, compInfo.startperiod)
+          let computeStatus = await this.liveStatistics.prepareSumCompute(computeDates, dvc, dtl, checkComp.timeseg, compInfo.cid)
+          console.log('COMPSYS3a--sum FINISHED')
           cFlowStatus = computeStatus
         } else {
           // for each time segment week, month, year use existing daily averageSave
@@ -100,12 +100,12 @@ AverageSystem.prototype.computeControlFlow = async function (compInfo, rawIN) {
 
 /**
 * asses the status of the avg compute
-* @method assessAvgStatus
+* @method assessSumStatus
 *
 */
-AverageSystem.prototype.assessAvgStatus = async function (compInfo, rawIN) {
+SumSystem.prototype.assessSumStatus = async function (compInfo, rawIN) {
   console.log('assess Average')
-  let timeStart = await this.updatedAverageStatus(compInfo, rawIN)
+  let timeStart = await this.updatedSumStatus(compInfo, rawIN)
   console.log('COMPSYS2-RETURN')
   return timeStart
 }
@@ -115,7 +115,7 @@ AverageSystem.prototype.assessAvgStatus = async function (compInfo, rawIN) {
 * @method convertSeg
 *
 */
-AverageSystem.prototype.convertSeg = function (tSeg) {
+SumSystem.prototype.convertSeg = function (tSeg) {
   console.log('segments assess=====start')
   let segMStime = {}
   for (let ts of tSeg) {
@@ -131,11 +131,11 @@ AverageSystem.prototype.convertSeg = function (tSeg) {
 
 /**
 * does this data ask need updating? Y N
-* @method updatedAverageStatus
+* @method updatedSumStatus
 *
 */
-AverageSystem.prototype.updatedAverageStatus = async function (compInfo, rawIN) {
-  console.log('average status=====')
+SumSystem.prototype.updatedSumStatus = async function (compInfo, rawIN) {
+  console.log('sum status=====')
   let statusHolder = {}
   let lastComputetime = ''
   let liveTime = compInfo.startperiod
@@ -184,7 +184,7 @@ AverageSystem.prototype.updatedAverageStatus = async function (compInfo, rawIN) 
 * @method categoriseStatusperTimeseg
 *
 */
-AverageSystem.prototype.categoriseStatusperTimeseg = async function (compInfo, statusIN, dev, timeSeg) {
+SumSystem.prototype.categoriseStatusperTimeseg = async function (compInfo, statusIN, dev, timeSeg) {
   console.log('cat status logic')
   let catHolder = {}
   let realTime = compInfo.realtime
@@ -214,7 +214,7 @@ AverageSystem.prototype.categoriseStatusperTimeseg = async function (compInfo, s
 * @method sourceDTstartTime
 *
 */
-AverageSystem.prototype.sourceDTstartTime = async function (devIN) {
+SumSystem.prototype.sourceDTstartTime = async function (devIN) {
   let timeDevHolder = ''
   let dateDevice = await this.checkForDataPerDevice(devIN.device_mac)
   console.log('first data date----')
@@ -229,7 +229,7 @@ AverageSystem.prototype.sourceDTstartTime = async function (devIN) {
 * @method updateAverageDates
 *
 */
-AverageSystem.prototype.updateAverageDates = function (lastCompTime, liveTime) {
+SumSystem.prototype.updateDates = function (lastCompTime, liveTime) {
   console.log('AVG DATE----RANGE')
   console.log(lastCompTime)
   console.log(liveTime)
@@ -248,7 +248,7 @@ AverageSystem.prototype.updateAverageDates = function (lastCompTime, liveTime) {
 * @method checkForDataPerDevice
 *
 */
-AverageSystem.prototype.checkForDataPerDevice = async function (device) {
+SumSystem.prototype.checkForDataPerDevice = async function (device) {
   console.log('timePeriod PER DEVICE')
   let deviceStatus = {}
   let dataStatus = []
@@ -266,4 +266,4 @@ AverageSystem.prototype.checkForDataPerDevice = async function (device) {
   return dataStatus
 }
 
-export default AverageSystem
+export default SumSystem

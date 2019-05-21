@@ -117,6 +117,40 @@ VisSystem.prototype.chartSystem = function (chartBundle, dataIN) {
   } else if (chartBundle.cnrl === 'cnrl-2356388737') {
     // summation of datatypes
     console.log('SUM chart')
+    // could be more than one visualisation required,  devices, datatypes, timeseg or computation or event resolutions
+    for (let dType of chartBundle.datatypeList) {
+      for (let device of chartBundle.deviceList) {
+        console.log('loop bud')
+        for (let entry of dataIN[0][liveTime][device][dType.cnrl]) {
+          // pass on to appropriate structure, day, week, in context of resolution etc.
+          console.log('data structure for time segs')
+          // console.log(entry)
+          if (entry.day) {
+            structureHolder = this.liveChartSystem.structureStatisticsData(entry.day)
+            let chartColorsSet = localthis.liveChartSystem.avgchartColors(dType)
+            // console.log('average colours')
+            // console.log(chartColorsSet)
+            dataTypeBucket.data = structureHolder
+            dataTypeBucket.color = chartColorsSet
+            chartDataH.chart.push(dataTypeBucket)
+            // now prepare data format for chartjs
+            chartData.prepared = this.liveChartSystem.prepareSumVueChartJS(chartBundle.deviceList, chartDataH)
+            let chartOptionsSet = this.liveChartSystem.getterChartOptions()
+            chartData.options = chartOptionsSet
+            const chartHolder = {}
+            chartHolder[visIN] = {}
+            chartHolder[visIN][liveTime] = {}
+            chartHolder[visIN][liveTime]['day'] = chartData
+            chartGroupHolder.push(chartHolder)
+            structureHolder = {}
+            dataTypeBucket = {}
+          }
+        }
+      }
+    }
+    this.visSystemData = chartGroupHolder
+    console.log('chart GROUP data holder')
+    console.log(this.visSystemData)
   }
   return this.visSystemData
 }

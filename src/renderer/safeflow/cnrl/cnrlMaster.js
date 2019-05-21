@@ -299,6 +299,32 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.resolution = { 'text': 'statistics', 'active': false }
     dataCNRLbundle.namespace = ''
     dataCNRLbundle.index = []
+  } else if (refIN === 'cnrl-8856388924') {
+    console.log('sum heartrate contract')
+    dataCNRLbundle.type = 'datatype'
+    dataCNRLbundle.prime = { 'text': 'sum-heartrate', 'active': false }
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.tableStructure = []
+    dataCNRLbundle.subsource = 'cnrl-derived'
+    dataCNRLbundle.dtsource = ['cnrl-8856388711', 'cnrl-8856388723']
+    dataCNRLbundle.columncodes.push({})
+    dataCNRLbundle.resolution = { 'text': 'statistics', 'active': false }
+    dataCNRLbundle.namespace = ''
+    dataCNRLbundle.index = []
+  } else if (refIN === 'cnrl-8856389322') {
+    console.log('sum steps contract')
+    dataCNRLbundle.type = 'datatype'
+    dataCNRLbundle.prime = { 'text': 'sum-steps', 'active': false }
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.tableStructure = []
+    dataCNRLbundle.subsource = 'cnrl-derived'
+    dataCNRLbundle.dtsource = ['cnrl-8856388712', 'cnrl-8856388723']
+    dataCNRLbundle.columncodes.push({})
+    dataCNRLbundle.resolution = { 'text': 'statistics', 'active': false }
+    dataCNRLbundle.namespace = ''
+    dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-8856388725') {
     console.log('recovery heartrate contract')
     dataCNRLbundle.type = 'datatype'
@@ -331,7 +357,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.prime = {'text': 'Sum per time', 'active': false}
     dataCNRLbundle.tidy = false
     dataCNRLbundle.tidyList = []
-    dataCNRLbundle.tableStructure = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856388211', 'text': 'sum-steps', 'active': false}, {'cnrl': 'cnrl-8856288711', 'text': 'sum-bpm', 'active': false}]
+    dataCNRLbundle.tableStructure = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856389322', 'text': 'sum-steps', 'active': false}, {'cnrl': 'cnrl-8856388924', 'text': 'sum-heartrate', 'active': false}]
     dataCNRLbundle.subsource = ''
     dataCNRLbundle.resolution = {}
     dataCNRLbundle.wasmhash = '2356388737'

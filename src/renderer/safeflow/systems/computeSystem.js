@@ -9,6 +9,7 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
+import SumSystem from './sumSystem.js'
 import AverageSystem from './averageSystem.js'
 import RecoveryHeartrate from './wasm/recovery-heartrate.js'
 const util = require('util')
@@ -16,6 +17,7 @@ const events = require('events')
 
 var ComputeSystem = function (setIN) {
   events.EventEmitter.call(this)
+  this.liveSum = new SumSystem(setIN)
   this.liveAverage = new AverageSystem(setIN)
   this.liveRecoveryHR = new RecoveryHeartrate(setIN)
   this.lastComputeTime = {}
@@ -43,7 +45,7 @@ ComputeSystem.prototype.computationSystem = async function (compInfo, rawIN) {
   } else if (compInfo.cid === 'cnrl-2356388733') {
     computeStatus = await this.recoverySystem(compInfo, rawIN)
   } else if (compInfo.cid === 'cnrl-2356388737') {
-    computeStatus = await this.sumSystem(compInfo, rawIN)
+    computeStatus = await this.liveSum.sumSystem(compInfo, rawIN)
   }
   // console.log('COMPSYSTM===status')
   // console.log(computeStatus)

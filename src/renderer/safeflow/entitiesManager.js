@@ -244,6 +244,7 @@ EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
         messageVisBundle.chartMessage = 'Chart'
         messageVisBundle.liveChartOptions = lvc[visStyle][timeLive].day.options
         messageVisBundle.chartPackage = lvc[visStyle][timeLive].day.prepared
+        messageVisBundle.selectTimeStart = this.liveSEntities[eid].liveVisualC.liveVisSystem.liveChartSystem
         GroupVisBundle.push(messageVisBundle)
       }
       // }

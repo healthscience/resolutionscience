@@ -179,6 +179,16 @@ safeFlow.prototype.cnrlTimeIndex = function (refIN) {
 }
 
 /**
+* experiment index query
+* @method cnrlExperimentIndex
+*
+*/
+safeFlow.prototype.cnrlExperimentIndex = function () {
+  let index = this.liveCNRL.indexExperiments()
+  return index
+}
+
+/**
 * call the CNRL and return data types for this science
 * @method cnrlLookup
 *

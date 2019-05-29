@@ -76,8 +76,8 @@
                   </li>
                 </ul>
                 <div v-if="timeSelect !== undefine" id="time-select" >
-                  <div id="start-point" class="context-time">Start: {{ startLine }}</div>
-                  <div id="end-point" class="context-time">End: {{ stopLine }}</div>
+                  <div id="start-point" class="context-time">Start: {{ kContext.analysisStart }}</div>
+                  <div id="end-point" class="context-time">End: {{ kContext.analysisEnd }}</div>
                 </div>
             </div>
             <div id="context-resolution">
@@ -104,6 +104,9 @@
     components: {
     },
     props: {
+      kContext: {
+        type: Object
+      }
     },
     data () {
       return {
@@ -408,8 +411,10 @@
         let tt = {}
         if (tIN.text === 'SELECT') {
           // display start end endPoint
-          tt.start = this.startLine
-          tt.end = this.stopLine
+          tt.active = tIN.active
+          tt.text = tIN.text
+          tt.start = this.kContext.analysisStart
+          tt.end = this.kContext.analysisEnd
           // console.log(tt)
           this.$emit('setVTime', tt)
         } else {

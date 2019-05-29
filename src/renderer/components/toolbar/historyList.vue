@@ -40,7 +40,25 @@
         <div id="open-on-start" class="live-element">
           <div id="start-learn-container">
             <div id="start-status">
-              Start ON/OFF
+              <header>View on Start</header>
+              ON/OFF
+            </div>
+          </div>
+        </div>
+        <div id="publish-dapp" class="live-element">
+          <div id="dapp-publish-container">
+            <div id="dapp-status">
+              <header>Publish Dapp</header>
+              Y / N
+            </div>
+          </div>
+        </div>
+        <div id="select-kbox" class="live-element">
+          <div id="select-kbox-container">
+            <div id="select-status">
+              <header>Select</header>
+              <input type="checkbox" v-bind:id="lh.cnrl" v-bind:value="lh.bid" v-model="kboxSelect" @change="makeKLive($event)">
+              <label for="k-select">{{ kboxSelect }} {{ lh.bid }} </label>
             </div>
           </div>
         </div>
@@ -53,7 +71,7 @@
 
 <script>
   export default {
-    name: 'knowledge-live',
+    name: 'knowledge-history',
     components: {
     },
     props: {
@@ -63,6 +81,7 @@
     },
     data () {
       return {
+        kboxSelect: []
       }
     },
     created () {
@@ -85,6 +104,12 @@
         } else {
           hist.name = 'View history'
         }
+      },
+      makeKLive (status) {
+        console.log('make this knowledge bundle live')
+        console.log(status.target.value)
+        console.log(status.target.id)
+        // loop over arry of bundles and match bid number and make active
       }
     }
   }
@@ -112,11 +137,6 @@
   font-size: 1.6em;
   padding: .25em;
 
-}
-
-#history {
-  border: 2px solid purple;
-  margin-top: 2em;
 }
 
 #data-type-history {

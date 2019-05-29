@@ -151,7 +151,10 @@ VisSystem.prototype.chartSystem = function (chartBundle, dataIN) {
     this.visSystemData = chartGroupHolder
     console.log('chart GROUP data holder')
     console.log(this.visSystemData)
+    console.log(this.liveChartSystem)
   }
+  console.log('liveCHARTsytem object')
+  console.log(this.liveChartSystem)
   return this.visSystemData
 }
 

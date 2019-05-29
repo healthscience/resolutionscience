@@ -1,8 +1,8 @@
 <template>
-  <section class="container"> line: {{ startLine }}
+  <section class="container">
     <section id="knowledge">
-      <knowledge-Live :liveData="liveData" @liveLearn="learnStart"></knowledge-Live>
-      <knowledge-Context @setVDevice="deviceStatus" @setVDatatypes="datatypeStatus" @setVLanguage="languageStatus"  @setVScience="scienceStatus" @setVTime="timeStatus" @setVResolution="resolutionStatus"></knowledge-Context>
+      <knowledge-Live :liveData="liveData" @liveLearn="learnStart" :liveExper="liveExper" @liveExperiments="experimentsStart"></knowledge-Live>
+      <knowledge-Context :kContext="kContext" @setVDevice="deviceStatus" @setVDatatypes="datatypeStatus" @setVLanguage="languageStatus"  @setVScience="scienceStatus" @setVTime="timeStatus" @setVResolution="resolutionStatus"></knowledge-Context>
     </section>
     <hsvisual :datacollection="liveDataCollection" :options="liveOptions" @updateLearn="learnUpdate" @toolsStatus="toolsSwitch"></hsvisual>
   </section>
@@ -34,20 +34,28 @@
           timeLive: [],
           resolutionLive: ''
         },
+        kContext: 'timeS',
+        /* kContext: {
+          startLine: 's',
+          endLine: 'e'
+        }, */
         liveDataCollection: {},
         liveOptions: {},
         liveAnnotations: {},
-        analysisStart: 0,
-        analysisEnd: 0,
+        liveSelectTime: 'ppp',
+        liveanalysisStart: 'select',
+        liveanalysisEnd: 'select',
         startLine: '',
         activeEntity: '',
-        liveBundle: {}
+        liveBundle: {},
+        liveExper: []
       }
     },
     computed: {
       system: function () {
         return this.$store.state.system
       }
+      // liveSelectTime: 'll'
     },
     mounted () {
     },
@@ -156,6 +164,7 @@
       },
       removeLiveTime (trIN) {
         console.log('remove time')
+        console.log(trIN)
         let removeTimeArr = this.liveData.timeLive.filter(item => item !== trIN.text)
         this.liveData.timeLive = removeTimeArr
       },
@@ -200,18 +209,22 @@
             this.recoveryData = recoveryStart
           } else {
             console.log('chartjs-- uptodate finised')
+            console.log(entityGetter)
             this.chartmessage = 'computation up-to-date'
             this.options2 = entityGetter[0].liveChartOptions
             this.datacollection2 = entityGetter[0].chartPackage
-            console.log(this.options2)
-            console.log(this.datacollection2)
-            // this.liveTime = entityGetter.chartPackage.livetime
-            // this.startLine = entityGetter.liveChartOptions.analysisStart
-            // console.log(this.startLine)
-            // this.liveAnnotations = this.options2.annotation
-            // console.log(this.liveAnnotations)
-            // this.options2.annotation = {}
-            // console.log(this.options2)
+            this.liveanalysisStart = entityGetter[0].selectTimeStart
+            console.log('startline time')
+            this.liveSelectTime = this.liveanalysisStart
+            console.log(this.liveSelectTime)
+            // let selectTholder = {}
+            this.kContext = this.liveanalysisStart
+            // selectTholder.endLine = this.liveanalysisStart.analysisEnd
+            // console.log('updatedKcontext')
+            // console.log(selectTholder)
+            // this.kContext = selectTholder
+            console.log(this.kContext)
+            console.log(this.liveanalysisStart)
             this.liveOptions = this.options2
             this.liveDataCollection = this.datacollection2
             // this.getAverages(this.activeEntity)
@@ -224,6 +237,15 @@
           // localthis.simulationHeart = entityGetter.heart
           // localthis.simulationMovement = entityGetter.heart
           // localthis.simulationTime = entityGetter.time
+        }
+      },
+      async experimentsStart () {
+        console.log('get experiments')
+        this.liveExper = []
+        let experimentList = this.liveSafeFlow.cnrlExperimentIndex()
+        for (let exl of experimentList) {
+          let expCNRL = this.liveSafeFlow.cnrlLookup(exl)
+          this.liveExper.push(expCNRL)
         }
       },
       learnUpdate (uSeg) {

@@ -105,7 +105,7 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
   this.colorback2 = ''
   this.colorlineback2 = ''
   this.activityback = ''
-  // how many dataTypes asked for?
+  // how man y dataTypes asked for?
   if (results.chart.length === 2) {
     // need to prepare different visualisations, data return will fit only one Chart vis option
     for (let chD of results.chart) {
@@ -339,7 +339,7 @@ ChartSystem.prototype.prepareChartOptions = function (results) {
           // console.log(this.analysisStart + 'any ting')
         },
         onDrag: function (event) {
-          console.log(event.subject.config.value)
+          // console.log(event.subject.config.value)
           localthis.analysisStart = event.subject.config.value
         }
       },

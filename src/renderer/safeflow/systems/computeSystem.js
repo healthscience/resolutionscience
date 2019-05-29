@@ -47,8 +47,8 @@ ComputeSystem.prototype.computationSystem = async function (compInfo, rawIN) {
   } else if (compInfo.cid === 'cnrl-2356388737') {
     computeStatus = await this.liveSum.sumSystem(compInfo, rawIN)
   }
-  // console.log('COMPSYSTM===status')
-  // console.log(computeStatus)
+  console.log('COMPSYSTM===status')
+  console.log(computeStatus)
   return computeStatus
 }
 

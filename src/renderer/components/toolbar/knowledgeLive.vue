@@ -46,12 +46,22 @@
       </div>
       <div id="history-learn" class="live-element">
         <div id="history-learn-container">
-          <div id="history">
+          <div id="history-view">
             <a href="" id="history-button" @click.prevent="viewHistory(hist)" v-bind:class="{ 'active': hist.active}">{{ hist.name }}</a>
           </div>
         </div>
       </div>
+      <div id="experiment-learn" class="live-element">
+        <div id="experiment-learn-container">
+          <div id="experiment-view">
+            <a href="" id="experiment-button" @click.prevent="viewExperiment(exper)" v-bind:class="{ 'active': exper.active}">{{ exper.name }}</a>
+          </div>
+        </div>
+      </div>
       <div id="learn-close"></div>
+    </div>
+    <div id="experiments" v-if="exper.active">
+      <experiment-List :experimentData="liveExper" ></experiment-List>
     </div>
     <div id="history" v-if="hist.active">
       <history-List :historyData="historyData" @recoverySet="recoveryStatus()" ></history-List>
@@ -60,19 +70,21 @@
 </template>
 
 <script>
-  import SAFEflow from '../../safeflow/safeFlow.js'
+  import experimentList from '@/components/toolbar/experimentList.vue'
   import historyList from '@/components/toolbar/historyList.vue'
   const moment = require('moment')
 
   export default {
     name: 'knowledge-live',
     components: {
+      experimentList,
       historyList
     },
     props: {
       liveData: {
         type: Object
-      }
+      },
+      liveExper: []
     },
     data () {
       return {
@@ -90,7 +102,15 @@
           id: 'learn-history',
           active: false
         },
-        historyData: []
+        historyData: [],
+        exper:
+        {
+          name: 'View experiments',
+          id: 'learn-experiments',
+          active: false
+        },
+        experimentData: ['Sleep better', 'Cale : I am an evolutionary algorithm learning all the time'],
+        bundleid: 0
       }
     },
     created () {
@@ -109,7 +129,7 @@
     },
     methods: {
       setAccess () {
-        this.liveSafeFlow = new SAFEflow(this.system)
+        // this.liveSafeFlow = new SAFEflow(this.system)
       },
       filterLearn (s) {
         console.log(s)
@@ -136,12 +156,14 @@
         liveBundle.time = updateTbundle
         liveBundle.resolution = this.liveData.resolutionLive
         liveBundle.visualisation = ['vis-sc-1']
+        liveBundle.bid = this.bundleid
         this.saveLearnHistory(liveBundle)
         this.$emit('liveLearn', liveBundle)
       },
       saveLearnHistory (lBundle) {
         console.log('save temp history or keep on network save')
         // save to network  save to LOCAL storage(encrpted???)
+        this.bundleid++
         this.historyData.push(lBundle)
       },
       viewHistory (hist) {
@@ -150,6 +172,16 @@
           hist.name = 'Close history'
         } else {
           hist.name = 'View history'
+        }
+      },
+      viewExperiment (exper) {
+        exper.active = !exper.active
+        // query CNRL to get live EXPERIMENTS
+        this.$emit('liveExperiments')
+        if (exper.active === true) {
+          exper.name = 'Close experiment'
+        } else {
+          exper.name = 'View experiments'
         }
       }
     }
@@ -184,4 +216,10 @@
   border: 2px solid purple;
   margin-top: 2em;
 }
+
+#experiments {
+  border: 2px solid orange;
+  margin-top: 2em;
+}
+
 </style>

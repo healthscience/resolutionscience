@@ -48,10 +48,10 @@ SumSystem.prototype.sumSystem = async function (compInfo, rawIN) {
   console.log('SumSystem')
   let updateStatus = {}
   if (compInfo.status === false) {
-    console.log('AVGSYS2-averageAssess')
+    console.log('SUMSYS2-averageAssess')
     updateStatus = this.assessSumStatus(compInfo, rawIN)
   } else if (compInfo.status === true) {
-    console.log('AVGSYS3-' + compInfo.cid)
+    console.log('SUMSYS3-' + compInfo.cid)
     updateStatus = await this.computeControlFlow(compInfo, rawIN)
   }
   return updateStatus
@@ -136,6 +136,8 @@ SumSystem.prototype.convertSeg = function (tSeg) {
 */
 SumSystem.prototype.updatedSumStatus = async function (compInfo, rawIN) {
   console.log('sum status=====')
+  console.log(compInfo)
+  console.log(rawIN)
   let statusHolder = {}
   let lastComputetime = ''
   let liveTime = compInfo.startperiod
@@ -186,6 +188,7 @@ SumSystem.prototype.updatedSumStatus = async function (compInfo, rawIN) {
 */
 SumSystem.prototype.categoriseStatusperTimeseg = async function (compInfo, statusIN, dev, timeSeg) {
   console.log('cat status logic')
+  console.log(timeSeg)
   let catHolder = {}
   let realTime = compInfo.realtime
   let updateCompStatus = ''
@@ -230,7 +233,7 @@ SumSystem.prototype.sourceDTstartTime = async function (devIN) {
 *
 */
 SumSystem.prototype.updateDates = function (lastCompTime, liveTime) {
-  console.log('AVG DATE----RANGE')
+  console.log('SUM DATE----RANGE')
   console.log(lastCompTime)
   console.log(liveTime)
   let computeList = []

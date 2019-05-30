@@ -64,7 +64,7 @@
       <experiment-List :experimentData="liveExper" ></experiment-List>
     </div>
     <div id="history" v-if="hist.active">
-      <history-List :historyData="historyData" @recoverySet="recoveryStatus()" ></history-List>
+      <history-List :historyData="historyData" @setLiveBundle="makeLiveKnowledge"></history-List>
     </div>
   </div>
 </template>
@@ -83,8 +83,7 @@
     props: {
       liveData: {
         type: Object
-      },
-      liveExper: []
+      }
     },
     data () {
       return {
@@ -109,13 +108,11 @@
           id: 'learn-experiments',
           active: false
         },
-        experimentData: ['Sleep better', 'Cale : I am an evolutionary algorithm learning all the time'],
+        experimentData: [],
         bundleid: 0
       }
     },
     created () {
-      this.liveData.seenStatus = true
-      this.setAccess()
     },
     computed: {
       system: function () {
@@ -128,11 +125,7 @@
     mounted () {
     },
     methods: {
-      setAccess () {
-        // this.liveSafeFlow = new SAFEflow(this.system)
-      },
       filterLearn (s) {
-        console.log(s)
         // get language, device, datatypes and sci comp bundles
         // pass on to SAFEflow to pass on entity manager
         this.activeEntity = this.liveData.scienceLive.cnrl
@@ -183,6 +176,11 @@
         } else {
           exper.name = 'View experiments'
         }
+      },
+      makeLiveKnowledge (lBund) {
+        console.log('make live')
+        console.log(lBund)
+        this.$emit('liveLearn', lBund)
       }
     }
   }

@@ -64,9 +64,6 @@
               <li>
                 Living Paper: <a href="" @click.prevent="livingPaper()">{{ liveScience.livingpaper }}</a>
               </li>
-              <li>
-                Experiment status: n=1
-              </li>
             </ul>
             <div id="context-time">
               <header>Time:</header>

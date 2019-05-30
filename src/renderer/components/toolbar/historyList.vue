@@ -105,11 +105,22 @@
           hist.name = 'View history'
         }
       },
-      makeKLive (status) {
+      async makeKLive (status) {
         console.log('make this knowledge bundle live')
-        console.log(status.target.value)
-        console.log(status.target.id)
+        console.log(status.target)
         // loop over arry of bundles and match bid number and make active
+        for (let ukb of this.historyData) {
+          console.log('status of history selected')
+          console.log(status.target.value)
+          console.log(ukb.bid)
+          let makeInt = parseInt(status.target.value)
+          if (ukb.bid === makeInt) {
+            console.log('match')
+            console.log(this.historyData[ukb.bid])
+            this.$emit('setLiveBundle', this.historyData[ukb.bid])
+            // return true
+          }
+        }
       }
     }
   }

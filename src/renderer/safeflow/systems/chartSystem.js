@@ -443,11 +443,38 @@ ChartSystem.prototype.structureStatisticsData = function (dataIN) {
 }
 
 /**
-* prepare average chart colors
-* @method AvgchartColors
+* return the data Sum structure requested
+* @method structureumData
 *
 */
-ChartSystem.prototype.avgchartColors = function (datatypeItem) {
+ChartSystem.prototype.structureSumData = function (dataIN) {
+  this.options = this.SumChartOptions()
+  console.log('STRUCTURE SUM CHART DATA1')
+  // console.log(dataIN)
+  let dataholder = {}
+  let datalabel = []
+  let dataC = []
+  // loop through and build two sperate arrays
+  for (let dc of dataIN) {
+    // console.log(entry)
+    let millTimeprepare = dc.timestamp * 1000
+    let mString = moment(millTimeprepare).toDate() // .format('YYYY-MM-DD hh:mm')
+    datalabel.push(mString)
+    dataC.push(dc.value)
+  }
+  dataholder.labels = datalabel
+  dataholder.datasets = dataC
+  console.log('structure SUM data for charting')
+  console.log(dataholder)
+  return dataholder
+}
+
+/**
+* prepare average chart colors
+* @method StatschartColors
+*
+*/
+ChartSystem.prototype.StatschartColors = function (datatypeItem) {
   console.log('CHARTSYSTEM3--setcolors')
   let colorHolder = {}
   // LOOP over datatypeList and prepare chart colors
@@ -612,7 +639,7 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
 */
 ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
   // need to prepare different visualisations, data return will fit only one select option
-  console.log('PREPARE STATS CHARTJS-- START')
+  console.log('PREPARE SUM CHARTJS-- START')
   var localthis = this
   let datacollection = {}
   this.labelback = []
@@ -689,7 +716,7 @@ ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
   } else {
     // how many devices average to visualise?
     if (deviceList.length === 2) {
-      console.log('TWO devices averages')
+      console.log('TWO devices sums')
       localthis.chartmessage = 'SUM BPM'
       datacollection = {
         labels: localthis.labelback,
@@ -715,8 +742,8 @@ ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
       }
     } else if (deviceList.length === 1) {
       // only one average device data to display
-      console.log('ONE devices averages')
-      localthis.chartmessage = 'BPM'
+      console.log('ONE devices sum')
+      localthis.chartmessage = 'SUM-'
       datacollection = {
         labels: localthis.labelback,
         datasets: [
@@ -775,7 +802,14 @@ ChartSystem.prototype.AverageChartOptions = function () {
         position: 'left',
         id: 'bpm',
         ticks: {
-          beginAtZero: true
+          beginAtZero: true,
+          steps: 10,
+          stepValue: 5,
+          max: 180
+        },
+        scaleLabel: {
+          display: true,
+          labelString: 'Average BPM'
         }
       }, {
         type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
@@ -787,7 +821,77 @@ ChartSystem.prototype.AverageChartOptions = function () {
           drawOnChartArea: false // only want the grid lines for one axis to show up
         },
         ticks: {
-          beginAtZero: true
+          beginAtZero: true,
+          steps: 10,
+          stepValue: 5,
+          max: 180
+        }
+      }]
+    }
+  }
+  return options
+}
+
+/**
+*
+* @method SumChartOptions
+*
+*/
+ChartSystem.prototype.SumChartOptions = function () {
+  // var localthis = this
+  let options = {
+    responsive: true,
+    hoverMode: 'index',
+    stacked: false,
+    title: {
+      display: true,
+      text: 'Sum Per Device'
+    },
+    scales: {
+      xAxes: [{
+        display: true,
+        barPercentage: 0.2,
+        type: 'time',
+        time: {
+          format: 'YYYY-MM-DD hh:mm',
+          // round: 'day'
+          tooltipFormat: 'll HH:mm'
+        },
+        position: 'bottom',
+        ticks: {
+          maxRotation: 75,
+          reverse: true
+        }
+      }],
+      yAxes: [{
+        type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+        display: true,
+        position: 'left',
+        id: 'bpm',
+        ticks: {
+          beginAtZero: true,
+          steps: 10,
+          stepValue: 5,
+          max: 100000
+        },
+        scaleLabel: {
+          display: true,
+          labelString: 'Sum BPM'
+        }
+      }, {
+        type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+        display: true,
+        position: 'right',
+        id: 'steps',
+        // grid line settings
+        gridLines: {
+          drawOnChartArea: false // only want the grid lines for one axis to show up
+        },
+        ticks: {
+          beginAtZero: true,
+          steps: 10,
+          stepValue: 5,
+          max: 100000
         }
       }]
     }

@@ -34,7 +34,7 @@
           timeLive: [],
           resolutionLive: ''
         },
-        kContext: 'timeS',
+        kContext: {},
         /* kContext: {
           startLine: 's',
           endLine: 'e'
@@ -217,14 +217,7 @@
             console.log('startline time')
             this.liveSelectTime = this.liveanalysisStart
             console.log(this.liveSelectTime)
-            // let selectTholder = {}
             this.kContext = this.liveanalysisStart
-            // selectTholder.endLine = this.liveanalysisStart.analysisEnd
-            // console.log('updatedKcontext')
-            // console.log(selectTholder)
-            // this.kContext = selectTholder
-            console.log(this.kContext)
-            console.log(this.liveanalysisStart)
             this.liveOptions = this.options2
             this.liveDataCollection = this.datacollection2
             // this.getAverages(this.activeEntity)

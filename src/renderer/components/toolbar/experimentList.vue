@@ -47,7 +47,7 @@
     },
     props: {
       experimentData: {
-        type: Object
+        type: Array
       }
     },
     data () {

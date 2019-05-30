@@ -84,7 +84,7 @@ VisSystem.prototype.chartSystem = function (chartBundle, dataIN) {
           // console.log(entry)
           if (entry.day) {
             structureHolder = this.liveChartSystem.structureStatisticsData(entry.day)
-            let chartColorsSet = localthis.liveChartSystem.avgchartColors(dType)
+            let chartColorsSet = localthis.liveChartSystem.StatschartColors(dType)
             // console.log('average colours')
             // console.log(chartColorsSet)
             dataTypeBucket.data = structureHolder
@@ -126,8 +126,8 @@ VisSystem.prototype.chartSystem = function (chartBundle, dataIN) {
           console.log('data structure for time segs')
           // console.log(entry)
           if (entry.day) {
-            structureHolder = this.liveChartSystem.structureStatisticsData(entry.day)
-            let chartColorsSet = localthis.liveChartSystem.avgchartColors(dType)
+            structureHolder = this.liveChartSystem.structureSumData(entry.day)
+            let chartColorsSet = localthis.liveChartSystem.StatschartColors(dType)
             // console.log('average colours')
             // console.log(chartColorsSet)
             dataTypeBucket.data = structureHolder

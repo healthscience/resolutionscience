@@ -93,7 +93,7 @@
 </template>
 
 <script>
-  // import SAFEflow from '../../safeflow/safeFlow.js'
+  import { kBus } from '../../main.js'
   const shell = require('electron').shell
 
   export default {
@@ -156,6 +156,10 @@
     },
     created () {
       this.setAccess()
+      kBus.$on('closeKnowledge', (cData) => {
+        console.log('emit kbus')
+        this.openKnowledge(this.ok)
+      })
     },
     computed: {
       system: function () {
@@ -420,6 +424,9 @@
       },
       livingPaper () {
         shell.openExternal(this.liveScience.livingpaper)
+      },
+      listenkBus () {
+        console.log(kBus)
       }
     }
   }

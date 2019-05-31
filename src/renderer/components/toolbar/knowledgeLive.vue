@@ -72,6 +72,7 @@
 <script>
   import experimentList from '@/components/toolbar/experimentList.vue'
   import historyList from '@/components/toolbar/historyList.vue'
+  import { kBus } from '../../main.js'
   const moment = require('moment')
 
   export default {
@@ -152,6 +153,9 @@
         liveBundle.bid = this.bundleid
         this.saveLearnHistory(liveBundle)
         this.$emit('liveLearn', liveBundle)
+        // close the knowledge
+        kBus.$emit('closeKnowledge')
+        this.liveData.datatypesLive = []
       },
       saveLearnHistory (lBundle) {
         console.log('save temp history or keep on network save')
@@ -181,6 +185,9 @@
         console.log('make live')
         console.log(lBund)
         this.$emit('liveLearn', lBund)
+      },
+      listenKbus () {
+        console.log(kBus)
       }
     }
   }

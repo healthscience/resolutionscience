@@ -9,13 +9,13 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import SimSystem from '../systems/simSystem.js'
+import SimSystem2 from '../systems/simSystem.js'
 const util = require('util')
 const events = require('events')
 
 var SimSystem = function () {
   events.EventEmitter.call(this)
-  this.liveSimSystem = new SimSystem()
+  this.liveSimSystem = new SimSystem2()
 }
 
 /**

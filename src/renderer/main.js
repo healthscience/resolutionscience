@@ -15,6 +15,8 @@ Vue.config.productionTip = false
   require('vue-devtools').install()
 } */
 
+export const kBus = new Vue()
+
 /* eslint-disable no-new */
 new Vue({
   components: { App },

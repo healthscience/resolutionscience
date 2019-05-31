@@ -184,6 +184,7 @@
       makeLiveKnowledge (lBund) {
         console.log('make live')
         console.log(lBund)
+        this.liveData.scienceLive.cnrl = lBund.cnrl
         this.$emit('liveLearn', lBund)
       },
       listenKbus () {

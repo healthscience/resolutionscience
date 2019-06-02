@@ -1,7 +1,7 @@
 <template>
   <section class="container">
     <section id="knowledge">
-      <knowledge-Live :liveData="liveData" @liveLearn="learnStart" :liveExper="liveExper" @liveExperiments="experimentsStart"></knowledge-Live>
+      <knowledge-Live :liveData="liveData" @liveLearn="learnStart" :NexperimentData="liveExper" @liveExperiments="experimentsStart"></knowledge-Live>
       <knowledge-Context :kContext="kContext" @setVDevice="deviceStatus" @setVDatatypes="datatypeStatus" @setVLanguage="languageStatus"  @setVScience="scienceStatus" @setVTime="timeStatus" @setVResolution="resolutionStatus"></knowledge-Context>
     </section>
     <hsvisual :datacollection="liveDataCollection" :options="liveOptions" @updateLearn="learnUpdate" @toolsStatus="toolsSwitch"></hsvisual>
@@ -13,6 +13,7 @@
   import hsvisual from '@/components/healthscience/hsvisual'
   import KnowledgeContext from '@/components/toolbar/knowledgeContext'
   import KnowledgeLive from '@/components/toolbar/knowledgeLive'
+  import { sBus } from '../../main.js'
   const moment = require('moment')
 
   export default {
@@ -61,6 +62,10 @@
     },
     created () {
       this.setAccess()
+      sBus.$on('saveLBundle', (cData) => {
+        console.log('emit sbus')
+        this.saveStartBundle(cData)
+      })
     },
     methods: {
       setAccess () {
@@ -232,12 +237,13 @@
           // localthis.simulationTime = entityGetter.time
         }
       },
-      async experimentsStart () {
+      experimentsStart () {
         console.log('get experiments')
         this.liveExper = []
         let experimentList = this.liveSafeFlow.cnrlExperimentIndex()
         for (let exl of experimentList) {
           let expCNRL = this.liveSafeFlow.cnrlLookup(exl)
+          console.log(expCNRL)
           this.liveExper.push(expCNRL)
         }
       },
@@ -293,6 +299,10 @@
         } else if (tss === false) {
           this.liveOptions.annotation = {}
         }
+      },
+      saveStartBundle (bund) {
+        console.log(' go and save via safeFLOW')
+        this.liveSafeFlow.startSettings('save', bund)
       }
     }
   }

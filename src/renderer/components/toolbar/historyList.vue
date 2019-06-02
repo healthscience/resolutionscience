@@ -41,7 +41,7 @@
           <div id="start-learn-container">
             <div id="start-status">
               <header>View on Start</header>
-              ON/OFF
+              <a href="" id="start-save" v-bind:id="lh.bid" @click.prevent="startStatus(lh.startStatus, $event)" v-bind:class="{ 'active': lh.startStatus.active}">{{ lh.startStatus.name }}</a>
             </div>
           </div>
         </div>
@@ -70,13 +70,15 @@
 </template>
 
 <script>
+  import { sBus } from '../../main.js'
+
   export default {
     name: 'knowledge-history',
     components: {
     },
     props: {
       historyData: {
-        type: Object
+        type: Array
       }
     },
     data () {
@@ -85,6 +87,7 @@
       }
     },
     created () {
+      this.startKup()
     },
     computed: {
       system: function () {
@@ -92,11 +95,19 @@
       },
       safeFlow: function () {
         return this.$store.state.safeFlow
+      },
+      startK: function () {
+        return this.$store.state.startBundles
       }
     },
     mounted () {
     },
     methods: {
+      startKup () {
+        console.log('start settings KKKK')
+        console.log(this.startK)
+        this.historyData = this.startK
+      },
       viewHistory (hist) {
         hist.active = !hist.active
         if (hist.active === true) {
@@ -119,6 +130,27 @@
             console.log(this.historyData[ukb.bid])
             this.$emit('setLiveBundle', this.historyData[ukb.bid])
             // return true
+          }
+        }
+      },
+      startStatus (lss, se) {
+        // change start status and save or delete settings
+        console.log('save start status')
+        // match to correct bundle and save
+        for (let ukb of this.historyData) {
+          console.log('status start selected')
+          let startInt = parseInt(se.target.id)
+          console.log(ukb.bid)
+          console.log(startInt)
+          if (ukb.bid === startInt) {
+            console.log('match')
+            lss.active = true
+            lss.name = 'yes'
+            console.log(this.historyData[ukb.bid])
+            // save to peers storage account
+            console.log('start saving')
+            console.log(sBus)
+            sBus.$emit('saveLBundle', this.historyData[ukb.bid])
           }
         }
       }

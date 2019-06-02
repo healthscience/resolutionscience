@@ -18,7 +18,7 @@
         <div id="context-devices" class="context-box">
           <header>Devices:</header>
             <ul>
-              <li v-for="dev in devices">
+              <li v-for="dev in devices"> {{ dev[0] }}
                 <a href="" id="" @click.prevent="selectDevice(dev)" v-bind:class="{ 'active': dev.active}">{{ dev.device_name }}</a>
               </li>
             </ul>
@@ -247,21 +247,27 @@
       deviceContext () {
         var localthis = this
         function callbackC (dataH) {
+          // console.log('fresh update---')
+          // console.log(dataH)
           localthis.devices = dataH
           // console.log('start deviceslist')
+          // setting dataType Smartcontract CNRL id  (needs to be extract and mapp to storageAPI)
           localthis.devices[0].cnrl = 'cnrl-33221101'
           // console.log(localthis.devices)
           localthis.$store.commit('setDevice', dataH)
           localthis.dataType()
         }
         const deviceSet = localthis.$store.getters.liveContext.device
-        // has the device context been set already?
-        if (deviceSet.length > 1) {
-          localthis.devices = deviceSet
-          // console.log('device settings')
-          // console.log(this.devices)
+        // console.log('device context')
+        // console.log(deviceSet)
+        // has the device context been set already?  Assume no for NOW
+        if (deviceSet.length > 678) {
+          this.devices = deviceSet
+          console.log('device settings')
+          console.log(this.devices)
         } else {
           // make call to set start dataContext for this pubkey
+          console.log('fresh call for devcie info')
           const flag = 'device'
           this.liveSafeFlow.toolkitContext(flag, callbackC)
           // console.log('device callsettings')

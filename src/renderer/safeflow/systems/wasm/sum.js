@@ -18,6 +18,7 @@ var SumSystem = function (setIN) {
   events.EventEmitter.call(this)
   this.liveTimeUtil = new TimeUtilities()
   this.liveTestStorage = new TestStorageAPI(setIN)
+  this.dayCounter
 }
 
 /**
@@ -85,6 +86,7 @@ SumSystem.prototype.tidySinglearray = async function (startDate, device, avgType
       tidyCount++
     }
   }
+  console.log(tidyCount)
   // await this.averageStatistics(startDate, device, avgType, singleArray, tidyCount)
   return true
 }

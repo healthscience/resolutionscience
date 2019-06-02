@@ -61,7 +61,7 @@
       <div id="learn-close"></div>
     </div>
     <div id="experiments" v-if="exper.active">
-      <experiment-List :experimentData="liveExper" ></experiment-List>
+      <experiment-List :experimentData="NexperimentData" ></experiment-List>
     </div>
     <div id="history" v-if="hist.active">
       <history-List :historyData="historyData" @setLiveBundle="makeLiveKnowledge"></history-List>
@@ -84,7 +84,8 @@
     props: {
       liveData: {
         type: Object
-      }
+      },
+      NexperimentData: []
     },
     data () {
       return {
@@ -142,6 +143,7 @@
         updateTbundle.timevis = ['day']
         let liveBundle = {}
         liveBundle.cnrl = this.liveData.scienceLive.cnrl
+        liveBundle.startStatus = {'active': false, 'name': 'no'}
         liveBundle.language = this.liveData.languageLive
         liveBundle.devices = this.liveData.devicesLive
         liveBundle.datatypes = this.liveData.datatypesLive

@@ -44,6 +44,29 @@ DataSystem.prototype.getLiveDevices = function (devicesIN) {
 }
 
 /**
+* save the inital start settings set
+* @method saveStartStatus
+*
+*/
+DataSystem.prototype.saveStartStatus = async function (bundle) {
+  // make query to network for context data per devices
+  let startStatusresult = await this.liveTestStorage.saveStartSettings(bundle)
+  // console.log(startStatusresult)
+  return startStatusresult
+}
+
+/**
+* get the inital context for data required
+* @method getStartStatus
+*
+*/
+DataSystem.prototype.getStartStatus = async function () {
+  // make query to network for context data per devices
+  let startStatusresult = await this.liveTestStorage.getStartSettings()
+  // console.log(startStatusresult)
+  return startStatusresult
+}
+/**
 * get the inital context for data required
 * @method systemDevice
 *

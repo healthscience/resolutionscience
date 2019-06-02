@@ -65,6 +65,22 @@ safeFlow.prototype.toolkitContext = async function (flag, callBK) {
 }
 
 /**
+* save or get start Status data
+* @method startSettings
+*
+*/
+safeFlow.prototype.startSettings = async function (flag, bundle) {
+  // first time start of device, datatype context for toolkitContext
+  let startStatusData = []
+  if (flag === 'save') {
+    startStatusData = await this.liveDataSystem.saveStartStatus(bundle)
+  } else if (flag === 'retreive') {
+    startStatusData = await this.liveDataSystem.getStartStatus()
+  }
+  return startStatusData
+}
+
+/**
 * call the CNRL index service/peer history log for active science
 * @method cnrlScienceStart
 *

@@ -18,7 +18,8 @@ export default new Vuex.Store({
     testString: '',
     time: '',
     datatypes: [],
-    bundle: {}
+    bundle: {},
+    startBundles: []
   },
   getters: {
     liveSafeFlow: state => state.safeFlow,
@@ -32,7 +33,8 @@ export default new Vuex.Store({
     liveTeststring: state => state.testString,
     liveTime: state => state.time,
     liveDatatypes: state => state.datatypes,
-    liveBundle: state => state.bundle
+    liveBundle: state => state.bundle,
+    startBundlesList: state => state.startBundles
   },
   mutations: {
     // Mutations
@@ -88,12 +90,17 @@ export default new Vuex.Store({
       state.bundle = Vue.set(state, 'bundle', inVerified)
       console.log(state.bundle)
     },
-    updateLiveBTime: (state, inVerifed) => {
+    updateLiveBTime: (state, inVerified) => {
       console.log('update time')
-      console.log(inVerifed)
+      console.log(inVerified)
       console.log(state.bundle.time.timeseg)
       // state.bundle.time.timeseg = inVerifed.timeseg
       // state.bundle.time.startperiod = inVerifed.startperiod
+    },
+    setStartKBundles: (state, inVerified) => {
+      console.log('muit for KB')
+      console.log(inVerified)
+      state.startBundles = inVerified
     }
   },
   actions: {
@@ -105,6 +112,11 @@ export default new Vuex.Store({
     },
     actionLiveBundle: (context, update) => {
       context.commit('setLiveBundle', update)
+    },
+    actionStartKBundles: (context, update) => {
+      console.log('action kb')
+      console.log(update)
+      context.commit('setStartKBundles', update)
     }
   },
   modules,

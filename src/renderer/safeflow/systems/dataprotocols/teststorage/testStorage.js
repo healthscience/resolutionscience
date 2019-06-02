@@ -124,6 +124,33 @@ TestStorageAPI.prototype.getAverageData = async function (queryTime, deviceID, c
 }
 
 /**
+*  Get start settings
+* @method getStartSettings
+*
+*/
+TestStorageAPI.prototype.getStartSettings = async function () {
+  //  nosql query
+  // console.log('StorageAIP ----')
+  let jsondata = await axios.get(this.baseAPI + '/startStatus/' + this.tempPubkey + '/' + this.tempToken + '/')
+  // console.log(jsondata)
+  return jsondata.data
+}
+
+/**
+*  Insert start status settings
+* @method saveStartSettings
+*
+*/
+TestStorageAPI.prototype.saveStartSettings = async function (jsonIN) {
+  console.log('saving start status settings')
+  jsonIN.publickey = this.tempPubkey
+  await axios.post(this.baseAPI + '/startStatusSave/' + this.tempPubkey + '/' + this.tempToken + '/' + jsonIN.device_mac, jsonIN)
+    .then(function (response) {
+      console.log(response)
+    })
+}
+
+/**
 *  Insert data to peer dataStore via Axios
 * @method saveaverageData
 *

@@ -26,8 +26,7 @@
 <script>
   import SAFEflow from '../../safeflow/safeFlow.js'
   import Passwordk from 'vue-password-strength-meter'
-  // import FileReader from './LandingPage/file-reader.vue'
-  // import keythereum from 'keythereum'
+  // import { sBus } from '../../main.js'
 
   export default {
     name: 'unlockkey-page',
@@ -91,6 +90,13 @@
           // no token
         }
       },
+      async startKSetting () {
+        console.log('start settings')
+        let startKset = await this.liveSafeFlow.startSettings('retreive')
+        console.log(startKset)
+        // set via store and then pick up in historyData
+        this.$store.dispatch('actionStartKBundles', startKset)
+      },
       deviceContext () {
         // make call to set start deviceContext for this pubkey
         var localthis = this
@@ -99,6 +105,7 @@
           localthis.$store.commit('setDevice', dataH)
           localthis.dataType()
           localthis.cnrlScience()
+          localthis.startKSetting()
         }
         const deviceFlag = 'device'
         this.liveSafeFlow.toolkitContext(deviceFlag, callbackC)

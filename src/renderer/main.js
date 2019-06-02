@@ -16,6 +16,7 @@ Vue.config.productionTip = false
 } */
 
 export const kBus = new Vue()
+export const sBus = new Vue()
 
 /* eslint-disable no-new */
 new Vue({

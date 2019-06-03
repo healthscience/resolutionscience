@@ -98,6 +98,9 @@
       },
       startK: function () {
         return this.$store.state.startBundles
+      },
+      bundleCounter: function () {
+        return this.$store.state.bundleCounter
       }
     },
     mounted () {
@@ -106,7 +109,11 @@
       startKup () {
         console.log('start settings KKKK')
         console.log(this.startK)
-        this.historyData = this.startK
+        if (this.startK.length > 0) {
+          this.$store.dispatch('actionSortSKB')
+          console.log('post sort')
+          this.historyData = this.$store.getters.startBundlesList
+        }
       },
       viewHistory (hist) {
         hist.active = !hist.active
@@ -118,12 +125,8 @@
       },
       async makeKLive (status) {
         console.log('make this knowledge bundle live')
-        console.log(status.target)
         // loop over arry of bundles and match bid number and make active
         for (let ukb of this.historyData) {
-          console.log('status of history selected')
-          console.log(status.target.value)
-          console.log(ukb.bid)
           let makeInt = parseInt(status.target.value)
           if (ukb.bid === makeInt) {
             console.log('match')
@@ -136,21 +139,12 @@
       startStatus (lss, se) {
         // change start status and save or delete settings
         console.log('save start status')
-        // match to correct bundle and save
-        for (let ukb of this.historyData) {
-          console.log('status start selected')
-          let startInt = parseInt(se.target.id)
-          console.log(ukb.bid)
-          console.log(startInt)
-          if (ukb.bid === startInt) {
-            console.log('match')
-            lss.active = true
-            lss.name = 'yes'
-            console.log(this.historyData[ukb.bid])
-            // save to peers storage account
-            console.log('start saving')
-            console.log(sBus)
-            sBus.$emit('saveLBundle', this.historyData[ukb.bid])
+        let startInt = parseInt(se.target.id)
+        this.$store.dispatch('actionUpdateBundleItem', startInt)
+        let updateBundle = this.$store.getters.startBundlesList
+        for (let iB of updateBundle) {
+          if (iB.bid === startInt) {
+            sBus.$emit('saveLBundle', iB)
           }
         }
       }

@@ -170,7 +170,7 @@ TestStorageAPI.prototype.saveaverageData = async function (jsonIN) {
 *
 */
 TestStorageAPI.prototype.savesumData = async function (jsonIN) {
-  console.log('saving average hr data')
+  console.log('saving sum hr data')
   jsonIN.publickey = this.tempPubkey
   await axios.post(this.baseAPI + '/sumSave/' + this.tempPubkey + '/' + this.tempToken + '/' + jsonIN.device_mac, jsonIN)
     .then(function (response) {

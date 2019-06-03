@@ -61,7 +61,7 @@
       <div id="learn-close"></div>
     </div>
     <div id="experiments" v-if="exper.active">
-      <experiment-List :experimentData="NexperimentData" ></experiment-List>
+      <experiment-List :experimentData="KLexperimentData" ></experiment-List>
     </div>
     <div id="history" v-if="hist.active">
       <history-List :historyData="historyData" @setLiveBundle="makeLiveKnowledge"></history-List>
@@ -85,7 +85,7 @@
       liveData: {
         type: Object
       },
-      NexperimentData: []
+      KLexperimentData: []
     },
     data () {
       return {
@@ -103,7 +103,7 @@
           id: 'learn-history',
           active: false
         },
-        historyData: [],
+        historyData: this.$store.getters.startBundlesList,
         exper:
         {
           name: 'View experiments',
@@ -122,6 +122,9 @@
       },
       safeFlow: function () {
         return this.$store.state.safeFlow
+      },
+      bundleCounter: function () {
+        return this.$store.state.bundleCounter
       }
     },
     mounted () {
@@ -152,7 +155,7 @@
         liveBundle.time = updateTbundle
         liveBundle.resolution = this.liveData.resolutionLive
         liveBundle.visualisation = ['vis-sc-1']
-        liveBundle.bid = this.bundleid
+        liveBundle.bid = this.$store.getters.liveBundleCounter
         this.saveLearnHistory(liveBundle)
         this.$emit('liveLearn', liveBundle)
         // close the knowledge
@@ -160,10 +163,12 @@
         this.liveData.datatypesLive = []
       },
       saveLearnHistory (lBundle) {
-        console.log('save temp history or keep on network save')
+        console.log('save history or keep on network save')
         // save to network  save to LOCAL storage(encrpted???)
-        this.bundleid++
+        console.log(this.bundleCounter)
+        this.$store.commit('setBCounter', this.bundleCounter)
         this.historyData.push(lBundle)
+        console.log(this.historyData)
       },
       viewHistory (hist) {
         hist.active = !hist.active
@@ -186,6 +191,9 @@
       makeLiveKnowledge (lBund) {
         console.log('make live')
         console.log(lBund)
+        console.log(lBund.cnrl)
+        console.log(this.liveData.scienceLive)
+        this.liveData.scienceLive = {}
         this.liveData.scienceLive.cnrl = lBund.cnrl
         this.$emit('liveLearn', lBund)
       },

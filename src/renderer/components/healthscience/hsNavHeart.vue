@@ -1,7 +1,7 @@
 <template>
   <section class="container">
     <section id="knowledge">
-      <knowledge-Live :liveData="liveData" @liveLearn="learnStart" :NexperimentData="liveExper" @liveExperiments="experimentsStart"></knowledge-Live>
+      <knowledge-Live :liveData="liveData" @liveLearn="learnStart" :KLexperimentData="liveExper" @liveExperiments="experimentsStart"></knowledge-Live>
       <knowledge-Context :kContext="kContext" @setVDevice="deviceStatus" @setVDatatypes="datatypeStatus" @setVLanguage="languageStatus"  @setVScience="scienceStatus" @setVTime="timeStatus" @setVResolution="resolutionStatus"></knowledge-Context>
     </section>
     <hsvisual :datacollection="liveDataCollection" :options="liveOptions" @updateLearn="learnUpdate" @toolsStatus="toolsSwitch"></hsvisual>

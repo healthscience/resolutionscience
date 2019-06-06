@@ -73,13 +73,17 @@
       },
       async getAverages (eid) {
         // update latest daily average HR
+        let AvgDailyHolder = {}
         let currentAHR = await this.liveSafeFlow.entityCurrentAverageHR(eid)
         console.log('averageHR current====')
         console.log(currentAHR)
-        let newAHR = currentAHR // Math.floor(Math.random() * Math.floor(max))
         let newARHR = 55
-        this.options.annotation.annotations[0].value = newAHR
-        this.options.annotation.annotations[1].value = newARHR
+        AvgDailyHolder.avgdhr = currentAHR
+        AvgDailyHolder.avgdrhr = newARHR
+        console.log(this.liveOptions)
+        // this.liveOptions.annotation.annotations[0].value = newAHR
+        // this.liveOptions.annotation.annotations[1].value = newARHR
+        return AvgDailyHolder
       },
       timeRange () {
         let rangeHolder = {}
@@ -205,7 +209,6 @@
             // this.options = entityGetter.chartPackage.options
             // this.datacollection = entityGetter.chartPackage.prepared
             // this.liveTime = entityGetter.chartPackage.livetime
-            // this.getAverages(this.activeEntity)
           } else if (entityGetter.chartMessage === 'vis-report') {
             console.log('prepare report for HR recovery')
             let recoveryStart = {}
@@ -219,13 +222,13 @@
             this.options2 = entityGetter[0].liveChartOptions
             this.datacollection2 = entityGetter[0].chartPackage
             this.liveanalysisStart = entityGetter[0].selectTimeStart
-            console.log('startline time')
             this.liveSelectTime = this.liveanalysisStart
-            console.log(this.liveSelectTime)
+            let AvgDstart = await this.getAverages(this.activeEntity)
+            this.options2.annotation.annotations[0].value = AvgDstart.avgdhr
+            this.options2.annotation.annotations[1].value = AvgDstart.avgdrhr
             this.kContext = this.liveanalysisStart
             this.liveOptions = this.options2
             this.liveDataCollection = this.datacollection2
-            // this.getAverages(this.activeEntity)
           }
         } else if (this.activevis === 'vis-sc-2') {
           console.log('tablejs')

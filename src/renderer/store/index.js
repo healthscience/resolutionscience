@@ -70,7 +70,6 @@ export default new Vuex.Store({
     setVisualData: (state, inVerified) => {
       // state.visData = { ...state.visData, inVerified }
       state.visData = Vue.set(state, 'visData', inVerified)
-      console.log(state.visData)
     },
     setVisualOptions: (state, inVerified) => {
       // state.visOptions = { ...state.visOptions, inVerified }
@@ -90,7 +89,6 @@ export default new Vuex.Store({
     },
     setLiveBundle: (state, inVerified) => {
       state.bundle = Vue.set(state, 'bundle', inVerified)
-      console.log(state.bundle)
     },
     updateLiveBTime: (state, inVerified) => {
       console.log('update time')
@@ -100,47 +98,29 @@ export default new Vuex.Store({
       // state.bundle.time.startperiod = inVerifed.startperiod
     },
     setStartKBundles: (state, inVerified) => {
-      console.log('muit for KB')
-      console.log(inVerified)
       state.startBundles = inVerified
     },
     setBCounter: (state, inVerified) => {
-      console.log('add one to bundle counter')
-      console.log(state.bundleCounter)
-      console.log(inVerified)
       if (inVerified) {
-        console.log('exist bid in store')
         state.bundleCounter = inVerified + 1
       } else {
-        console.log('normal addd')
         state.bundleCounter++
       }
-      console.log('bundle state counter END')
-      console.log(state.bundleCounter)
     },
     setSortBCounter: (state, inVerified) => {
-      console.log('add one to bundle counter')
       let currentBList = state.startBundles
       currentBList.sort(function (a, b) {
         return a.bid - b.bid
       })
       let lastBID = currentBList.slice(-1)
-      console.log('slice of existing bids')
-      console.log(lastBID)
       state.bundleCounter = lastBID[0].bid + 1
-      console.log('post first create k klist hjostyr')
-      console.log(state.bundleCounter)
     },
     setStartStatusUpdate: (state, inVerified) => {
-      console.log('update a bundle item')
       let lss = {}
       lss.active = true
       lss.name = 'yes'
       for (let ukb of state.startBundles) {
-        console.log(ukb.bid)
-        console.log(inVerified)
         if (ukb.bid === inVerified) {
-          console.log('match')
           ukb.startStatus = lss
         }
       }
@@ -157,8 +137,6 @@ export default new Vuex.Store({
       context.commit('setLiveBundle', update)
     },
     actionStartKBundles: (context, update) => {
-      console.log('action kb')
-      console.log(update)
       context.commit('setStartKBundles', update)
     },
     actionSortSKB: (context, update) => {

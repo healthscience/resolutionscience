@@ -162,10 +162,11 @@ StatisticsSystem.prototype.averageMonthlyStatistics = function () {
 * @method averageCurrentDailyStatistics
 *
 */
-StatisticsSystem.prototype.averageCurrentDailyStatistics = async function (startDate, device, avgType, dataArray) {
+StatisticsSystem.prototype.averageCurrentDailyStatistics = async function (startDate, device, compType, datatype, timeseg) {
   console.log('start CURRENT average')
   // query daily averages and chunk into monthly batches
-  let dataBatch = await this.liveTestStorage.getAverageData(startDate, device, avgType)
+  let dataBatch = await this.liveTestStorage.getAverageData(startDate, device, compType, datatype, timeseg)
+  console.log(dataBatch)
   let numberEntries = dataBatch.length
   // form single arrays
   let singleAvgArray = []

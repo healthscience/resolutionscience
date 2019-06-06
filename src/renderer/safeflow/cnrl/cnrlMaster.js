@@ -28,7 +28,7 @@ util.inherits(CNRLmaster, events.EventEmitter)
 *
 */
 CNRLmaster.prototype.scienceOnNetwork = function () {
-  let science = [{ active: false, text: 'Observation data', description: 'Display of source data from a devies sensors.', value: 'A', cid: 'cnrl-2356388731', wasm: 'wasm-sc-1', livingpaper: 'http://www.healthscience.network/observation', verified: true }, { active: false, text: 'Sum data', description: 'Add up quantities on a time basis', value: 'F', cid: 'cnrl-2356388737', wasm: 'wasm-sc-6', livingpaper: 'http://www.healthscience.network/sum', verified: true }, { active: false, text: 'Average', description: 'A statisticial average calculated on BMP and steps on a daily basis.', value: 'B', cid: 'cnrl-2356388732', wasm: 'wasm-sc-2', livingpaper: 'http://www.healthscience.network/average', verified: false }, { active: false, text: 'Resting HR Recovery', description: 'The use of bayesian statistical methods to show the time it take for the heart to reach resting heart rate value after activity.', value: 'C', cid: 'cnrl-2356388733', wasm: 'wasm-sc-3', livingpaper: 'https://docs.google.com/document/d/11JWcbBrwgLIqPc7V7GpI_WbACuIS_4h630zdT66Re3s/edit', verified: false }]
+  let science = [{ active: false, text: 'Observation data', description: 'Display of source data from a devies sensors.', value: 'A', cid: 'cnrl-2356388731', wasm: 'wasm-sc-1', livingpaper: 'http://www.healthscience.network/observation', verified: true }, { active: false, text: 'Sum data', description: 'Add up quantities on a time basis', value: 'F', cid: 'cnrl-2356388737', wasm: 'wasm-sc-6', livingpaper: 'http://www.healthscience.network/sum', verified: true }, { active: false, text: 'Average', description: 'A statisticial average calculated on BMP and steps on a daily basis.', value: 'B', cid: 'cnrl-2356388732', wasm: 'wasm-sc-2', livingpaper: 'http://www.healthscience.network/average', verified: false }, { active: false, text: 'Resting HR Recovery', description: 'The use of bayesian statistical methods to show the time it take for the heart to reach resting heart rate value after activity.', value: 'C', cid: 'cnrl-2356388733', wasm: 'wasm-sc-3', livingpaper: 'https://docs.google.com/document/d/11JWcbBrwgLIqPc7V7GpI_WbACuIS_4h630zdT66Re3s/edit', verified: false }, { active: false, text: 'Correlation', description: 'A statisticial way to compare how to variables are connected.', value: 'G', cid: 'cnrl-2356383848', wasm: 'wasm-sc-7', livingpaper: 'http://www.healthscience.network/correlation', verified: false }]
   return science
   // , { active: false, text: 'error data', description: 'Data Error numbers and statistics', value: 'D', cid: 'cnrl-2356388734', wasm: 'wasm-sc-4', verified: false }, { active: false, text: 'HealthSpan', description: 'Combines all network machine learning of the scientific computations to build a simulation of a human heart', value: 'E', cid: 'cnrl-2356388736', wasm: 'wasm-sc-5', verified: false }
 }
@@ -60,7 +60,6 @@ CNRLmaster.prototype.cnrlNetworkDatatypes = function () {
 *
 */
 CNRLmaster.prototype.livingKnowledge = function (refIN) {
-  console.log('CRNL----lookup knowledge context')
   // if contract has links, follow those to source TODO
   let dataCNRLbundle = {}
   if (refIN === 'cnrl-k1') {
@@ -76,7 +75,7 @@ CNRLmaster.prototype.livingKnowledge = function (refIN) {
     dataCNRLbundle.columncodes = []
     dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-k2') {
-    dataCNRLbundle.prime = {'Pollution': 'Particle size'}
+    dataCNRLbundle.prime = {'word': ['Pollution', 'Particle size']}
     dataCNRLbundle.science = {'science': 'mathematics'}
     dataCNRLbundle.resolution = []
     dataCNRLbundle.source = []
@@ -403,6 +402,19 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.resolution = { 'text': 'statistics', 'active': false }
     dataCNRLbundle.namespace = ''
     dataCNRLbundle.index = []
+  } else if (refIN === 'cnrl-8856388748') {
+    console.log('p-value contract')
+    dataCNRLbundle.type = 'datatype'
+    dataCNRLbundle.prime = { 'text': 'p-value', 'active': false }
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.tableStructure = []
+    dataCNRLbundle.subsource = 'cnrl-derived'
+    dataCNRLbundle.dtsource = []
+    dataCNRLbundle.columncodes.push({})
+    dataCNRLbundle.resolution = { 'text': 'statistics', 'active': false }
+    dataCNRLbundle.namespace = ''
+    dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-2356388731') {
     dataCNRLbundle.type = 'science'
     dataCNRLbundle.livingpaper = 'http://www.healthscience.network/observation'
@@ -436,6 +448,16 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.wasmhash = '2356388732'
     dataCNRLbundle.wasmfile = 'safe://wasm/cnrl-2356388732'
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388732'
+  } else if (refIN === 'cnrl-2356383848') {
+    dataCNRLbundle.type = 'science'
+    dataCNRLbundle.livingpaper = ''
+    dataCNRLbundle.prime = {'text': 'correlation', 'active': false}
+    dataCNRLbundle.tidy = false
+    dataCNRLbundle.resolution = {'text': 'xx seconds', 'active': 'fase'}
+    dataCNRLbundle.tableStructure = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856388748', 'text': 'p-value', 'active': false}]
+    dataCNRLbundle.wasmhash = '2356388733'
+    dataCNRLbundle.wasmfile = 'safe://wasm/cnrl-2356383848'
+    dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356383848'
   } else if (refIN === 'cnrl-2356388733') {
     dataCNRLbundle.type = 'science'
     dataCNRLbundle.livingpaper = 'https://docs.google.com/document/d/11JWcbBrwgLIqPc7V7GpI_WbACuIS_4h630zdT66Re3s/edit'
@@ -481,7 +503,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     console.log('Experiment 1')
     dataCNRLbundle.type = 'experiment'
     dataCNRLbundle.subsource = 'cnrl-primary'
-    dataCNRLbundle.prime = { 'text': 'Better sleep link to activity?', 'active': false }
+    dataCNRLbundle.prime = { 'text': 'When do I sleep the best?', 'active': false }
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
     dataCNRLbundle.tableStructure = []

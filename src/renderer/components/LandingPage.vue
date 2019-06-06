@@ -4,7 +4,7 @@
     <main>
       <div class="left-side">
         <span class="title">
-          Welcome to the Resolution Science Graphical User Interface
+          Welcome to the Resolution Science Graphical User Interface v0.02f
         </span>
         <!-- <system-information></system-information>-->
       </div>

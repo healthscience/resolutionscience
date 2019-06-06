@@ -17,7 +17,7 @@ const axios = require('axios')
 var TestStorageAPI = function (setUP) {
   events.EventEmitter.call(this)
   this.liveTimeUtil = new TimeUtilities()
-  this.baseAPI = 'http://165.227.244.213:8881'
+  this.baseAPI = 'http://165.227.244.213:8882'
   this.liveData = {}
   this.datacollection = []
   this.tempPubkey = setUP.publickey

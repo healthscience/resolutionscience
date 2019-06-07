@@ -273,7 +273,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.namespace = ''
     dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-8356388727') {
-    console.log('recovery contract')
+    console.log('sleep contract')
     dataCNRLbundle.type = 'datatype'
     dataCNRLbundle.prime = { 'text': 'sleep', 'active': false }
     dataCNRLbundle.tidy = true
@@ -421,8 +421,8 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.prime = {'text': 'Observations', 'active': false}
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
-    dataCNRLbundle.tableStructure = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856388712', 'text': 'steps', 'active': false}, {'cnrl': 'cnrl-8856388711', 'text': 'beats per minute', 'active': false}, {'cnrl': 'cnrl-8356388727', 'text': 'Sleep', 'active': false}]
-    dataCNRLbundle.subsource = ''
+    dataCNRLbundle.tableStructure = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856388712', 'text': 'steps', 'active': false}, {'cnrl': 'cnrl-8856388711', 'text': 'beats per minute', 'active': false}]
+    dataCNRLbundle.subsource = [{'cnrl': 'cnrl-8356388727', 'text': 'Sleep', 'active': false}]
     dataCNRLbundle.resolution = {}
     dataCNRLbundle.wasmhash = 'none'
     dataCNRLbundle.wasmfile = 'none'

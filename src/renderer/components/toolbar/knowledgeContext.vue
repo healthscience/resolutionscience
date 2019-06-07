@@ -183,9 +183,9 @@
     methods: {
       setAccess () {
         this.liveSafeFlow = this.safeFlow
-        this.deviceContext()
-        this.scienceContext()
         this.languageContext()
+        this.scienceContext()
+        this.deviceContext()
         this.timeContext()
       },
       openKnowledge (ok) {
@@ -220,28 +220,30 @@
       selectLanguage (l) {
         // console.log(l)
         l.active = !l.active
-        this.$emit('setVLanguage', l)
+        kBus.$emit('setVLanguage', l)
+        // this.$emit('setVLanguage', l)
       },
       selectDevice (s) {
         // console.log(s)
         s.active = !s.active
-        this.$emit('setVDevice', s)
+        kBus.$emit('setVDevice', s)
       },
       selectDatatypes (std) {
-        // console.log(std)
+        console.log('datatype selected')
+        console.log(std)
         std.active = !std.active
-        this.$emit('setVDatatypes', std)
+        kBus.$emit('setVDatatypes', std)
       },
       selectSciDatatypes (std) {
         // console.log('science data types set')
         // console.log(std)
         std.active = !std.active
-        this.$emit('setVDatatypes', std)
+        kBus.$emit('setVDatatypes', std)
       },
       selectResolution (r) {
         // console.log(r)
         r.active = !r.active
-        this.$emit('setVResolution', r)
+        kBus.$emit('setVResolution', r)
       },
       languageContext () {
         let refContext = 'human'
@@ -354,19 +356,11 @@
         let sciDTypesSelect = this.liveSafeFlow.cnrlLookup(sciIN)
         sciDTypesSelect.cnrl = sciIN
         this.scidtypes = sciDTypesSelect.tableStructure
+        this.cdtypes = sciDTypesSelect.subsource
         console.log('science contract')
         console.log(sciDTypesSelect)
         this.liveScience.livingpaper = sciDTypesSelect.livingpaper
-        // trace back to source dataTypes (ie does have mobile source?)
-        // let sourceDTypes = this.liveSafeFlow.liveCNRL.subSource(sciDTypes.subsource)
-        // this.subcontextholder = sourceDTypes
-        // console.log('mobile source CNRL')
-        // console.log(sourceDTypes)
-        this.$emit('setVScience', sciDTypesSelect)
-        // this.sensors = sciDTypes.prime
-        // this.resolutionSet = sciDTypes.resolution[0].text
-        // this.$store.commit('setDatatype', sciDTypes.prime)
-        // this.$store.commit('setResolutiontype', sciDTypes.resolution)
+        kBus.$emit('setVScience', sciDTypesSelect)
       },
       compareDataTypes (sciArr, devArr) {
         // compare two array datatypes and return common to setBoth
@@ -383,7 +377,9 @@
       },
       selectCatTD (cIN) {
         console.log('categorisation of data type')
+        cIN.active = !cIN.active
         console.log(cIN)
+        kBus.$emit('setVDataCategory', cIN)
       },
       subContext () {
         // console.log('sub data types')
@@ -403,9 +399,9 @@
           tt.start = this.kContext.analysisStart
           tt.end = this.kContext.analysisEnd
           // console.log(tt)
-          this.$emit('setVTime', tt)
+          kBus.$emit('setVTime', tt)
         } else {
-          this.$emit('setVTime', tIN)
+          kBus.$emit('setVTime', tIN)
         }
       },
       livingPaper () {

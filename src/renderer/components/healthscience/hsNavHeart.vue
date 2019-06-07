@@ -2,7 +2,7 @@
   <section class="container">
     <section id="knowledge">
       <knowledge-Live :liveData="liveData" @liveLearn="learnStart" :KLexperimentData="liveExper" @liveExperiments="experimentsStart"></knowledge-Live>
-      <knowledge-Context :kContext="kContext" @setVDevice="deviceStatus" @setVDatatypes="datatypeStatus" @setVLanguage="languageStatus"  @setVScience="scienceStatus" @setVTime="timeStatus" @setVResolution="resolutionStatus"></knowledge-Context>
+      <knowledge-Context :kContext="kContext"></knowledge-Context>
     </section>
     <hsvisual :datacollection="liveDataCollection" :options="liveOptions" @updateLearn="learnUpdate" @toolsStatus="toolsSwitch"></hsvisual>
   </section>
@@ -30,8 +30,9 @@
         {
           devicesLive: [],
           datatypesLive: [],
-          scienceLive: '',
-          languageLive: '',
+          categoryLive: [],
+          scienceLive: {},
+          languageLive: {},
           timeLive: [],
           resolutionLive: ''
         },
@@ -91,103 +92,6 @@
         rangeHolder.endTime = this.toolbarData.liveOptions.analysisEnd
         rangeHolder.active = true
         return rangeHolder
-      },
-      deviceStatus (dIN) {
-        console.log('device set in')
-        console.log(dIN)
-        this.liveDevice(dIN)
-      },
-      liveDevice (liveD) {
-        console.log('set live device to comp')
-        let deviceLive = []
-        if (liveD.active === true) {
-          deviceLive.push(liveD)
-        } else if (liveD.active === false) {
-          // remove device
-          this.removeLiveElement(liveD.device_mac)
-        }
-        this.liveData.devicesLive = deviceLive
-      },
-      removeLiveElement (remove) {
-        console.log('device remove')
-        let array = this.liveData.devicesLive
-        function arrayRemove (arr, value) {
-          return arr.filter(function (ele) {
-            return ele.device_mac !== value
-          })
-        }
-        let result = arrayRemove(array, remove)
-        console.log(result)
-        return true
-      },
-      datatypeStatus (ldt) {
-        console.log('live datatypes')
-        this.liveDataTypes(ldt)
-      },
-      liveDataTypes (liveDT) {
-        console.log('set live DT')
-        console.log(liveDT)
-        if (liveDT.active === true) {
-          console.log('true')
-          this.liveData.datatypesLive.push(liveDT)
-        } else if (liveDT.active === false) {
-          // remove device
-          console.log('false')
-          this.removeLiveDT(liveDT.text)
-        }
-      },
-      languageStatus (lIN) {
-        console.log('language set in')
-        console.log(lIN)
-        this.liveData.languageLive = lIN
-        console.log(this.liveData.languageLive)
-      },
-      removeLiveDT (remove) {
-        console.log('remove DT')
-        let array = this.liveData.datatypesLive
-        function arrayRemove (arr, value) {
-          return arr.filter(function (ele) {
-            return ele.text !== value
-          })
-        }
-        let result = arrayRemove(array, remove)
-        this.liveData.datatypesLive = result
-        return true
-      },
-      scienceStatus (sIN) {
-        console.log('science set in')
-        console.log(sIN)
-        this.liveData.scienceLive = sIN
-      },
-      timeStatus (tIN) {
-        console.log('time set in')
-        console.log(tIN)
-        if (tIN.active === true) {
-          console.log('true')
-          this.liveData.timeLive.push(tIN.text)
-        } else if (tIN.active === false) {
-          // remove device
-          console.log('false')
-          this.removeLiveTime(tIN)
-        }
-      },
-      removeLiveTime (trIN) {
-        console.log('remove time')
-        console.log(trIN)
-        let removeTimeArr = this.liveData.timeLive.filter(item => item !== trIN.text)
-        this.liveData.timeLive = removeTimeArr
-      },
-      resolutionStatus (rIN) {
-        console.log('resolution set in')
-        console.log(rIN)
-        if (rIN.active === true) {
-          console.log('true')
-          this.liveData.resolutionLive = rIN.text
-        } else if (rIN.active === false) {
-          // remove device
-          console.log('false')
-          this.liveData.resolutionLive = ''
-        }
       },
       async learnStart (lBundle) {
         console.log('start Learning')

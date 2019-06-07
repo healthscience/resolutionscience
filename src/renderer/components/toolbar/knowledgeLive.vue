@@ -1,10 +1,9 @@
 <template>
-  <div id="live-view">
+<div id="live-view">
     <div id="live-knowledge-elements">
-      <div v-if="liveData.languageLive !== undefine" id="context-language" class="live-element">
+      <div id="context-language" class="live-element">
         Language: <div class="live-item">{{ liveData.languageLive.word }}</div>
       </div>
-      <div v-else id="live-context-language" class="live-element">Please set</div>
       <div id="live-context-devices" class="live-element">
         <header>Devices:</header>
           <ul>
@@ -19,12 +18,21 @@
             <li id="bmp-data-sensor" v-for="dts in liveData.datatypesLive">
               <div class="live-item">{{ dts.text }}</div>
             </li>
+            <li>
+              <header>Category</header>
+                <div id="live-context-category" class="live-element">
+                  <ul>
+                    <li id="cat-items" v-for="catL in liveData.categoryLive">
+                      <div class="live-item">{{ catL.text }}</div>
+                    </li>
+                  </ul>
+                </div>
+            </li>
           </ul>
       </div>
-      <div v-if="liveData.scienceLive.prime !== undefine" id="live-context-science" class="live-element">
-        Science - <div class="live-item">{{ liveData.scienceLive.prime.text || 'none' }}</div>
+      <div id="live-context-science" class="live-element">
+        Science - <div class="live-item">{{ liveData.scienceLive.prime.text }}</div>
       </div>
-      <div v-else id="live-context-science" class="live-element">Science: not selected</div>
       <div id="context-time" class="live-element">
         <header>Time:</header>
           <ul>
@@ -115,6 +123,41 @@
       }
     },
     created () {
+      kBus.$on('setVLanguage', (ckData) => {
+        console.log('select knowlect INNNINIIN')
+        console.log(ckData)
+        this.languageStatus(ckData)
+      })
+      kBus.$on('setVDevice', (ckData) => {
+        console.log('select knowlect INNNINIIN')
+        console.log(ckData)
+        this.deviceStatus(ckData)
+      })
+      kBus.$on('setVDatatypes', (ckData) => {
+        console.log('select knowlect INNNINIIN')
+        console.log(ckData)
+        this.datatypeStatus(ckData)
+      })
+      kBus.$on('setVScience', (ckData) => {
+        console.log('select knowlect INNNINIIN')
+        console.log(ckData)
+        this.scienceStatus(ckData)
+      })
+      kBus.$on('setVTime', (ckData) => {
+        console.log('select knowlect INNNINIIN')
+        console.log(ckData)
+        this.timeStatus(ckData)
+      })
+      kBus.$on('setVResolution', (ckData) => {
+        console.log('select knowlect INNNINIIN')
+        console.log(ckData)
+        this.resolutionStatus(ckData)
+      })
+      kBus.$on('setVDataCategory', (ckData) => {
+        console.log('select knowlect INNNINIIN')
+        console.log(ckData)
+        this.categoryStatus(ckData)
+      })
     },
     computed: {
       system: function () {
@@ -128,6 +171,9 @@
       }
     },
     mounted () {
+      let sciStartEmpty = {}
+      sciStartEmpty.prime = {'text': 'empty'}
+      this.liveData.scienceLive = sciStartEmpty
     },
     methods: {
       filterLearn (s) {
@@ -197,8 +243,115 @@
         this.liveData.scienceLive.cnrl = lBund.cnrl
         this.$emit('liveLearn', lBund)
       },
-      listenKbus () {
-        console.log(kBus)
+      languageStatus (lIN) {
+        console.log('language set in')
+        console.log(lIN)
+        this.liveData.languageLive = lIN
+        console.log(this.liveData.languageLive)
+      },
+      deviceStatus (dIN) {
+        console.log('device set in')
+        console.log(dIN)
+        this.liveDevice(dIN)
+      },
+      liveDevice (liveD) {
+        console.log('set live device to comp')
+        let deviceLive = []
+        if (liveD.active === true) {
+          deviceLive.push(liveD)
+        } else if (liveD.active === false) {
+          // remove device
+          this.removeLiveElement(liveD.device_mac)
+        }
+        this.liveData.devicesLive = deviceLive
+      },
+      datatypeStatus (ldt) {
+        console.log('live datatypes')
+        this.liveDataTypes(ldt)
+      },
+      liveDataTypes (liveDT) {
+        console.log('set live DT')
+        console.log(liveDT)
+        if (liveDT.active === true) {
+          console.log('true')
+          this.liveData.datatypesLive.push(liveDT)
+        } else if (liveDT.active === false) {
+          // remove device
+          console.log('false')
+          this.removeLiveDT(liveDT.text)
+        }
+      },
+      removeLiveDT (remove) {
+        console.log('remove DT')
+        let array = this.liveData.datatypesLive
+        function arrayRemove (arr, value) {
+          return arr.filter(function (ele) {
+            return ele.text !== value
+          })
+        }
+        let result = arrayRemove(array, remove)
+        this.liveData.datatypesLive = result
+        return true
+      },
+      scienceStatus (sIN) {
+        console.log('science set in')
+        console.log(sIN)
+        this.liveData.scienceLive = sIN
+      },
+      timeStatus (tIN) {
+        console.log('time set in')
+        console.log(tIN)
+        if (tIN.active === true) {
+          console.log('true')
+          this.liveData.timeLive.push(tIN.text)
+        } else if (tIN.active === false) {
+          // remove device
+          console.log('false')
+          this.removeLiveTime(tIN)
+        }
+      },
+      removeLiveTime (trIN) {
+        console.log('remove time')
+        console.log(trIN)
+        let removeTimeArr = this.liveData.timeLive.filter(item => item !== trIN.text)
+        this.liveData.timeLive = removeTimeArr
+      },
+      resolutionStatus (rIN) {
+        console.log('resolution set in')
+        console.log(rIN)
+        if (rIN.active === true) {
+          console.log('true')
+          this.liveData.resolutionLive = rIN.text
+        } else if (rIN.active === false) {
+          // remove device
+          console.log('false')
+          this.liveData.resolutionLive = ''
+        }
+      },
+      categoryStatus (catIN) {
+        console.log('set catorgy live')
+        console.log(catIN)
+        // this.liveData.categoryLive = catIN
+        if (catIN.active === true) {
+          console.log('true')
+          this.liveData.categoryLive.push(catIN)
+        } else if (catIN.active === false) {
+          // remove device
+          console.log('false')
+          this.removeLiveCat(catIN.text)
+        }
+      },
+      removeLiveCat (remove) {
+        console.log('remove DT')
+        let array = this.liveData.categoryLive
+        function arrayRemove (arr, value) {
+          return arr.filter(function (ele) {
+            return ele.text !== value
+          })
+        }
+        let result = arrayRemove(array, remove)
+        this.liveData.categoryLive = result
+        return true
       }
     }
   }
@@ -236,6 +389,11 @@
 #experiments {
   border: 2px solid orange;
   margin-top: 2em;
+}
+
+#live-context-datatypes li {
+  display: block;
+  border: 2px solid pink;
 }
 
 </style>

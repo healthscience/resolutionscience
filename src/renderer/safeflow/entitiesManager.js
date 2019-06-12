@@ -230,6 +230,7 @@ EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
       messageVisBundle.chartMessage = 'vis-report'
       messageVisBundle.liveChartOptions = {}
       messageVisBundle.chartPackage = {}
+      messageVisBundle.displayTime = timeLive
       messageVisBundle.hrcReport = this.liveSEntities[eid].liveDataC.dataRaw
       GroupVisBundle.push(messageVisBundle)
     } else if (lvc['vis-sc-1']) {
@@ -244,6 +245,7 @@ EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
         messageVisBundle.chartMessage = 'Chart'
         messageVisBundle.liveChartOptions = lvc[visStyle][timeLive].day.options
         messageVisBundle.chartPackage = lvc[visStyle][timeLive].day.prepared
+        messageVisBundle.displayTime = timeLive
         messageVisBundle.selectTimeStart = this.liveSEntities[eid].liveVisualC.liveVisSystem.liveChartSystem
         GroupVisBundle.push(messageVisBundle)
       }

@@ -4,7 +4,7 @@
       <knowledge-Live :liveData="liveData" @liveLearn="learnStart" :KLexperimentData="liveExper" @liveExperiments="experimentsStart"></knowledge-Live>
       <knowledge-Context :kContext="kContext"></knowledge-Context>
     </section>
-    <hsvisual :datacollection="liveDataCollection" :options="liveOptions" @updateLearn="learnUpdate" @toolsStatus="toolsSwitch"></hsvisual>
+    <hsvisual :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" @updateLearn="learnUpdate" @toolsStatus="toolsSwitch"></hsvisual>
   </section>
 </template>
 
@@ -50,7 +50,8 @@
         startLine: '',
         activeEntity: '',
         liveBundle: {},
-        liveExper: []
+        liveExper: [],
+        liveTimeV: 'time'
       }
     },
     computed: {
@@ -125,6 +126,7 @@
             this.chartmessage = 'computation up-to-date'
             this.options2 = entityGetter[0].liveChartOptions
             this.datacollection2 = entityGetter[0].chartPackage
+            this.liveTimeV = moment(entityGetter[0].displayTime * 1000).format('LLLL')
             this.liveanalysisStart = entityGetter[0].selectTimeStart
             this.liveSelectTime = this.liveanalysisStart
             let AvgDstart = await this.getAverages(this.activeEntity)

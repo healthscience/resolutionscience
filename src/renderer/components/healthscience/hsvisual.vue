@@ -44,7 +44,7 @@
           </ul>
         </div>
         <div id="view-time">
-          {{ liveTime }}
+          {{ displayTime }}
         </div>
         <div id="calendar-selector">
         </div>
@@ -87,7 +87,8 @@
       },
       options: {
         type: Object
-      }
+      },
+      displayTime: ''
     },
     data () {
       return {

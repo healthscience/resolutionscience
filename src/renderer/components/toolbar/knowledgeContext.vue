@@ -261,7 +261,7 @@
           // console.log('start deviceslist')
           // setting dataType Smartcontract CNRL id  (needs to be extract and mapp to storageAPI)
           localthis.devices[0].cnrl = 'cnrl-33221101'
-          // console.log(localthis.devices)
+          console.log(dataH)
           localthis.$store.commit('setDevice', dataH)
           localthis.dataType()
         }

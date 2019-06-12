@@ -81,7 +81,7 @@
         let newARHR = 55
         AvgDailyHolder.avgdhr = currentAHR
         AvgDailyHolder.avgdrhr = newARHR
-        console.log(this.liveOptions)
+        // console.log(this.liveOptions)
         // this.liveOptions.annotation.annotations[0].value = newAHR
         // this.liveOptions.annotation.annotations[1].value = newARHR
         return AvgDailyHolder

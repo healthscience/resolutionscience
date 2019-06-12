@@ -1,9 +1,10 @@
 <template>
-<div id="live-view">
+  <div id="live-view">
     <div id="live-knowledge-elements">
-      <div id="context-language" class="live-element">
+      <div v-if="liveData.languageLive !== undefine" id="context-language" class="live-element">
         Language: <div class="live-item">{{ liveData.languageLive.word }}</div>
       </div>
+      <div v-else id="live-context-language" class="live-element">Please set</div>
       <div id="live-context-devices" class="live-element">
         <header>Devices:</header>
           <ul>
@@ -30,9 +31,10 @@
             </li>
           </ul>
       </div>
-      <div id="live-context-science" class="live-element">
-        Science - <div class="live-item">{{ liveData.scienceLive.prime.text }}</div>
+      <div v-if="liveData.scienceLive.prime !== undefine" id="live-context-science" class="live-element">
+        Science - <div class="live-item">{{ liveData.scienceLive.prime.text || 'none' }}</div>
       </div>
+      <div v-else id="live-context-science" class="live-element">Science: not selected</div>
       <div id="context-time" class="live-element">
         <header>Time:</header>
           <ul>
@@ -93,7 +95,7 @@
       liveData: {
         type: Object
       },
-      KLexperimentData: []
+      KLexperimentData: null
     },
     data () {
       return {
@@ -196,6 +198,7 @@
         liveBundle.language = this.liveData.languageLive
         liveBundle.devices = this.liveData.devicesLive
         liveBundle.datatypes = this.liveData.datatypesLive
+        liveBundle.categories = this.liveData.categoryLive
         liveBundle.science = this.liveData.scienceLive
         liveBundle.realtime = realTime
         liveBundle.time = updateTbundle
@@ -264,6 +267,18 @@
           this.removeLiveElement(liveD.device_mac)
         }
         this.liveData.devicesLive = deviceLive
+      },
+      removeLiveElement (remove) {
+        console.log('device remove')
+        let array = this.liveData.devicesLive
+        function arrayRemove (arr, value) {
+          return arr.filter(function (ele) {
+            return ele.device_mac !== value
+          })
+        }
+        let result = arrayRemove(array, remove)
+        console.log(result)
+        return true
       },
       datatypeStatus (ldt) {
         console.log('live datatypes')

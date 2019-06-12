@@ -115,14 +115,6 @@
           this.historyData = this.$store.getters.startBundlesList
         }
       },
-      viewHistory (hist) {
-        hist.active = !hist.active
-        if (hist.active === true) {
-          hist.name = 'Close history'
-        } else {
-          hist.name = 'View history'
-        }
-      },
       async makeKLive (status) {
         console.log('make this knowledge bundle live')
         // loop over arry of bundles and match bid number and make active

@@ -771,7 +771,7 @@ ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
 *
 */
 ChartSystem.prototype.AverageChartOptions = function () {
-  // var localthis = this
+  const localthis = this
   let options = {
     responsive: true,
     hoverMode: 'index',
@@ -825,6 +825,89 @@ ChartSystem.prototype.AverageChartOptions = function () {
           steps: 10,
           stepValue: 5,
           max: 180
+        }
+      }]
+    },
+    annotation: {
+      events: ['click'],
+      annotations: [{
+        drawTime: 'afterDatasetsDraw',
+        type: 'line',
+        mode: 'horizontal',
+        scaleID: 'bpm',
+        value: localthis.startAvg,
+        borderColor: 'cyan',
+        borderWidth: 6,
+        label: {
+          enabled: true,
+          content: 'average daily heart rate'
+        },
+        draggable: true,
+        onClick: function (e) {
+          // console.log(e.type, this)
+        }
+      },
+      {
+        drawTime: 'afterDatasetsDraw',
+        type: 'line',
+        mode: 'horizontal',
+        scaleID: 'bpm',
+        value: localthis.startRestAvg,
+        borderColor: 'pink',
+        borderWidth: 6,
+        label: {
+          enabled: true,
+          content: 'average resting heart rate'
+        },
+        draggable: true,
+        onClick: function (e) {
+          // console.log(e.type, this)
+        }
+      },
+      {
+        id: 'time',
+        scaleID: 'x-axis-0',
+        type: 'line',
+        mode: 'vertical',
+        value: 0,
+        borderColor: 'blue',
+        borderWidth: 12,
+        label: {
+          enabled: true,
+          content: 'start point'
+        },
+        draggable: true,
+        onClick: function (e) {
+          // console.log(e.type, this.options.value)
+          localthis.analysisStart = options.value
+          // console.log(this.analysisStart + 'any ting')
+        },
+        onDrag: function (event) {
+          // console.log(event.subject.config.value)
+          localthis.analysisStart = event.subject.config.value
+        }
+      },
+      {
+        id: 'time2',
+        scaleID: 'x-axis-0',
+        type: 'line',
+        mode: 'vertical',
+        value: 0,
+        borderColor: '#7A33FF',
+        borderWidth: 12,
+        label: {
+          enabled: true,
+          content: 'end point'
+        },
+        draggable: true,
+        onClick: function (et) {
+          // console.log(et.type, this)
+          localthis.analysisEnd = options.value
+          // console.log(this.options.value)
+        },
+        onDrag: function (eventt) {
+          // console.log(event.subject.config.value)
+          localthis.analysisEnd = eventt.subject.config.value
         }
       }]
     }

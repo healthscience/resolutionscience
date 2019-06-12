@@ -132,6 +132,7 @@ safeFlow.prototype.setpeerContext = function (bundleIN) {
   ecsIN.resolution = bundleIN.resolution
   ecsIN.devices = bundleIN.devices
   ecsIN.datatypes = bundleIN.datatypes
+  ecsIN.categories = bundleIN.categories
   ecsIN.language = bundleIN.language
   return ecsIN
 }

@@ -50,6 +50,7 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
       this.liveSEntities[cid].liveDataC.setTimeList(timeBundle.startperiod)
       this.liveSEntities[cid].liveDataC.setTimeSegments(timeBundle.timeseg)
       this.liveSEntities[cid].liveDataC.setDatatypesLive(ecsIN.datatypes)
+      this.liveSEntities[cid].liveDataC.setCategories(ecsIN.categories)
     } else {
     /* else if (ecsIN.timeperiod === true) {
       // toolbar select timerange mode
@@ -66,6 +67,7 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
       this.liveSEntities[cid].liveDataC.setTimeList(timeBundle.startperiod)
       this.liveSEntities[cid].liveDataC.setTimeSegments(timeBundle.timeseg)
       this.liveSEntities[cid].liveDataC.setDatatypesLive(ecsIN.datatypes)
+      this.liveSEntities[cid].liveDataC.setCategories(ecsIN.categories)
       await this.controlFlow(ecsIN).then(function (cFlow) {
         console.log('CONTROLFLOW--already-COMPLETE')
         // console.log(cFlow)

@@ -32,6 +32,7 @@ var DataComponent = function (DID, setIN) {
   this.setCNRLsciencemapping()
   this.setDatatypesLive(this.did.datatypes)
   this.setTimeSegments(this.did.time.timeseg)
+  this.setCategories(this.did.categories)
 }
 
 /**
@@ -96,6 +97,15 @@ DataComponent.prototype.setDatatypesLive = function (dtIN) {
 }
 
 /**
+*  set the datatype asked for
+* @method setCategories
+*
+*/
+DataComponent.prototype.setCategories = function (ctIN) {
+  this.categoryList = ctIN
+}
+
+/**
 *  source data from device sensor
 * @method RawData
 *
@@ -131,7 +141,15 @@ DataComponent.prototype.TidyData = async function () {
     dBundle.deviceList = this.deviceList
     dBundle.datatypeList = this.datatypeList
     tidyHolder = this.liveDataSystem.tidyRawData(dBundle, this.dataRaw)
-    this.tidyData.push(tidyHolder)
+    console.log('categorisation require????')
+    console.log(this.categoryList)
+    if (this.categoryList.length > 0) {
+      console.log('yes, categories asked for')
+      let catTidyHolder = this.liveDataSystem.categorySorter(this.categoryList, tidyHolder)
+      this.tidyData.push(catTidyHolder)
+    } else {
+      this.tidyData.push(tidyHolder)
+    }
   } else {
     console.log('NOTtidy require')
     this.tidyData = this.dataRaw

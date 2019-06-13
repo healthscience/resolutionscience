@@ -124,6 +124,12 @@ export default new Vuex.Store({
           ukb.startStatus = lss
         }
       }
+    },
+    setBundlestartTime: (state, inVerified) => {
+      console.log(state.bundle.time)
+      // TEMP add cateogry data
+      state.bundle.categories = []
+      state.bundle.time.startperiod = inVerified
     }
   },
   actions: {
@@ -146,6 +152,10 @@ export default new Vuex.Store({
     actionUpdateBundleItem: (context, update) => {
     // update settings to show at startup per bundle item
       context.commit('setStartStatusUpdate', update)
+    },
+    actionUpdateStartTime: (context, update) => {
+    // update settings to show at startup per bundle item
+      context.commit('setBundlestartTime', update)
     }
   },
   modules,

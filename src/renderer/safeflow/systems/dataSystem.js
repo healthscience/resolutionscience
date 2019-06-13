@@ -151,11 +151,10 @@ DataSystem.prototype.datatypeMapping = async function (systemBundle) {
     console.log('SIMULTATED__DATA__REQUIRED')
   } else {
     if (systemBundle.scienceAsked.cnrl === 'cnrl-2356388731') {
-      console.log('OBSERVATION QU')
+      console.log('OBSERVATION QI')
       await this.getRawData(systemBundle).then(function (sourcerawData) {
         rawHolder = {}
         rawHolder[systemBundle.startperiod] = sourcerawData
-        // localthis.dataRaw.push(rawHolder)
       })
     } else if (systemBundle.scienceAsked.cnrl === 'cnrl-2356388737') {
       console.log('SUM QUERY')
@@ -337,6 +336,18 @@ DataSystem.prototype.getHRrecovery = async function (bundleIN, dtAsked) {
     })
   }
   return this.recoverHR
+}
+
+/**
+* lookup categorisation rules and apply
+* @method categorySorter
+*
+*/
+DataSystem.prototype.categorySorter = function (cats, tidyDataIN) {
+  // loop over and apply startBundles
+  console.log('categoriesation sorter start')
+  console.log(cats)
+  console.log(tidyDataIN)
 }
 
 /**

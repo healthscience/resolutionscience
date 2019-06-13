@@ -240,11 +240,15 @@
       makeLiveKnowledge (lBund) {
         console.log('make live')
         console.log(lBund)
-        console.log(lBund.cnrl)
-        console.log(this.liveData.scienceLive)
+        // set live Bundle for context
+        this.$store.dispatch('actionLiveBundle', lBund)
+        const nowTime = moment()
+        let updatestartPeriodTime = moment.utc(nowTime).startOf('day')
+        this.$store.dispatch('actionUpdateStartTime', updatestartPeriodTime)
         this.liveData.scienceLive = {}
         this.liveData.scienceLive.cnrl = lBund.cnrl
-        this.$emit('liveLearn', lBund)
+        let updatedBundle = this.$store.getters.liveBundle
+        this.$emit('liveLearn', updatedBundle)
       },
       languageStatus (lIN) {
         console.log('language set in')

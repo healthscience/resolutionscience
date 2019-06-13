@@ -51,6 +51,7 @@ ComputeComponent.prototype.filterCompute = async function (compInfo, rawIN) {
     systemBundle.realtime = compInfo.realtime
     systemBundle.timeseg = compInfo.timeseg
     systemBundle.dtAsked = this.EIDinfo.datatypes
+    systemBundle.categoryList = this.EIDinfo.categoryList
     systemBundle.deviceList = this.EIDinfo.devices
     systemBundle.lastComputeTime = compInfo.lastComputeTime
     let computeState = await this.liveComputeSystem.computationSystem(systemBundle, rawIN)

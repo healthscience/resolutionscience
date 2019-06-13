@@ -86,6 +86,7 @@ TestStorageAPI.prototype.getFirstData = async function (deviceID) {
   let jsondata = await axios.get(this.baseAPI + '/devicefirstdata/' + this.tempPubkey + '/' + this.tempToken + '/' + deviceID)
   return jsondata.data
 }
+
 /**
 *  Get compute Data
 * @method getComputeData

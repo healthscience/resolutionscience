@@ -91,9 +91,7 @@
         }
       },
       async startKSetting () {
-        console.log('start settings')
         let startKset = await this.liveSafeFlow.startSettings('retreive')
-        console.log(startKset)
         // set via store and then pick up in historyData
         this.$store.dispatch('actionStartKBundles', startKset)
       },

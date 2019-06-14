@@ -11,6 +11,7 @@
 */
 import DataComponent from './components/dataComponent.js'
 import DatatypeComponent from './components/datatypeComponent.js'
+import TimeComponent from './components/timeComponent.js'
 import ComputeComponent from './components/computeComponent.js'
 import VisualComponent from './components/visualComponent.js'
 // import SimComponent from './components/simComponent.js'
@@ -21,6 +22,7 @@ var ScienceEntities = function (EID, dAccess) {
   events.EventEmitter.call(this)
   this.seid = EID
   this.liveDataC = new DataComponent(EID, dAccess)
+  this.liveTimeC = new TimeComponent(EID, dAccess)
   this.liveDatatypeC = new DatatypeComponent()
   this.liveComputeC = new ComputeComponent(EID, dAccess)
   this.liveVisualC = new VisualComponent(EID)

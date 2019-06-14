@@ -280,7 +280,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.tidyList = []
     dataCNRLbundle.tableStructure = []
     dataCNRLbundle.subsource = 'cnrl-derived'
-    dataCNRLbundle.dtsource = ['cnrl-', 'cnrl-']
+    dataCNRLbundle.dtsource = ['cnrl-3356388722']
     dataCNRLbundle.columncodes.push({})
     dataCNRLbundle.resolution = { 'text': '', 'active': false }
     dataCNRLbundle.namespace = ''
@@ -435,7 +435,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.tidy = false
     dataCNRLbundle.tidyList = []
     dataCNRLbundle.tableStructure = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856389322', 'text': 'sum-steps', 'active': false}, {'cnrl': 'cnrl-8856388924', 'text': 'sum-heartrate', 'active': false}]
-    dataCNRLbundle.subsource = ''
+    dataCNRLbundle.subsource = [{'cnrl': 'cnrl-8356388727', 'text': 'Sleep', 'active': false}]
     dataCNRLbundle.resolution = {}
     dataCNRLbundle.wasmhash = '2356388737'
     dataCNRLbundle.wasmfile = 'safe://wasm/cnrl-2356388736'
@@ -445,6 +445,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.livingpaper = 'http://www.healthscience.network/average'
     dataCNRLbundle.prime = {'text': 'average', 'active': false}
     dataCNRLbundle.tableStructure = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856388322', 'text': 'average-steps', 'active': false}, {'cnrl': 'cnrl-8856388724', 'text': 'average-bpm', 'active': false}]
+    dataCNRLbundle.subsource = [{'cnrl': 'cnrl-8356388727', 'text': 'Sleep', 'active': false}]
     dataCNRLbundle.wasmhash = '2356388732'
     dataCNRLbundle.wasmfile = 'safe://wasm/cnrl-2356388732'
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388732'
@@ -455,6 +456,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.tidy = false
     dataCNRLbundle.resolution = {'text': 'xx seconds', 'active': 'fase'}
     dataCNRLbundle.tableStructure = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856388748', 'text': 'p-value', 'active': false}]
+    dataCNRLbundle.subsource = [{'cnrl': 'cnrl-8356388727', 'text': 'Sleep', 'active': false}]
     dataCNRLbundle.wasmhash = '2356388733'
     dataCNRLbundle.wasmfile = 'safe://wasm/cnrl-2356383848'
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356383848'
@@ -493,7 +495,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = [{'cnrl-8856388711': [-1, 0, 255]}]
     dataCNRLbundle.tableStructure = [{'cnrl': 'cnrl-8856388713', 'text': 'TIMESTAMP', 'active': false}, {'cnrl': 'cnrl', 'text': 'DEVICE_ID', 'active': false}, {'cnrl': 'cnrl', 'text': 'USER_ID', 'active': false}, {'cnrl': 'cnrl-3356388733', 'text': 'RAW_INTENSITY', 'active': false}, {'cnrl': 'cnrl-8856388711', 'text': 'STEPS', 'active': false}, {'cnrl': 'cnrl-3356388722', 'text': 'RAW_KIND', 'active': false}, {'cnrl': 'cnrl-8856388711', 'text': 'HEART_RATE', 'active': false}]
-    dataCNRLbundle.columncodes.push({'column': 'cnrl-3356388722', 'coding': [{'212': 'cnrl-8356388727', 'active': false}, {'202': 'cnrl-8356388727', 'active': false}]})
+    dataCNRLbundle.columncodes.push({'column': 'cnrl-3356388722', 'coding': [{'112': 'cnrl-8356388727', 'active': false}, {'202': 'cnrl-8356388727', 'active': false}]})
     dataCNRLbundle.columncodes.push({'column': 'cnrl-3356388733', 'coding': [{'312': 'cnrl-8326388727', 'active': false}, {'302': 'cnrl-8326328727', 'active': false}]})
     dataCNRLbundle.resolution = {}
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-773355992211'
@@ -688,6 +690,23 @@ CNRLmaster.prototype.sensorSource = function (refIN) {
     dataCNRLbundle.input.push(dataTypePrimary)
   }
   return dataCNRLbundle
+}
+
+/**
+*  take CNRL contract and follows to source API and filters out categor codes
+* @method drillDowntoLogic
+*
+*/
+CNRLmaster.prototype.drillDowntoLogic = function (refIN) {
+  console.log('CRNL---drilldowFILTER')
+  console.log(refIN)
+  let drillDownFilter = {}
+  if (refIN === 'cnrl-3356388722') {
+    console.log('matchfilter')
+    drillDownFilter.code = 112
+  }
+  console.log(drillDownFilter)
+  return drillDownFilter
 }
 
 /**

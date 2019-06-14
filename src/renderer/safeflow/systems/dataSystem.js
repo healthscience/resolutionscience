@@ -10,12 +10,14 @@
 * @version    $Id$
 */
 
+import CNRLmaster from '../cnrl/cnrlMaster.js'
 import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
 const util = require('util')
 const events = require('events')
 
 var DataSystem = function (setIN) {
   events.EventEmitter.call(this)
+  this.liveCNRL = new CNRLmaster()
   this.liveTestStorage = new TestStorageAPI(setIN)
   this.defaultStorage = 'cnrl-33221101'
   this.devicePairs = []
@@ -343,11 +345,42 @@ DataSystem.prototype.getHRrecovery = async function (bundleIN, dtAsked) {
 * @method categorySorter
 *
 */
-DataSystem.prototype.categorySorter = function (cats, tidyDataIN) {
+DataSystem.prototype.categorySorter = function (dataASK, tidyData) {
   // loop over and apply startBundles
   console.log('categoriesation sorter start')
-  console.log(cats)
-  console.log(tidyDataIN)
+  console.log(dataASK)
+  console.log(tidyData)
+  // TODO a CNRL utility that can look at Datapackaing contract, data type contracts and drill down to column codes for logic screen of source data
+  let catLogic = this.liveCNRL.lookupContract(dataASK.categoryList[0].cnrl)
+  console.log(catLogic)
+  let DrillDownCNRLcontract = this.liveCNRL.drillDowntoLogic(catLogic.dtsource[0])
+  let filterCat = DrillDownCNRLcontract.code
+  console.log('filter CODE')
+  console.log(filterCat)
+  let liveStarttime = dataASK.timePeriod
+  // build object structureReturn
+  let catHolder = {}
+  catHolder[liveStarttime] = {}
+  // one, two or more sources needing tidying???
+  // data structure in  Object indexed by startTime, object IndexbyDevice, Array[]of object -> heart_rate steps  {plus other source data}
+  let catData = []
+  // need to import error codes from device/mobile app
+  // let errorCodes = [255]
+  for (let devI of dataASK.deviceList) {
+    // loop over rawData until the start date matchtes
+    // tidyHoldertidyHolder[liveStarttime][devI] = []
+    for (let dateMatch of tidyData) {
+      if (dateMatch[liveStarttime]) {
+        catData = dateMatch[liveStarttime][devI].filter(function (item) {
+          console.log(item)
+          // these data table column names could be dynamic ie programable.
+          return item.raw_kind === filterCat
+        })
+        catHolder[liveStarttime][devI] = catData
+      }
+    }
+  }
+  return catHolder
 }
 
 /**

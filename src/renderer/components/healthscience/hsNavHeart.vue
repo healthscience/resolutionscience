@@ -173,6 +173,7 @@
         liveBundleUpdate.language = this.liveBundle.language
         liveBundleUpdate.devices = this.liveBundle.devices
         liveBundleUpdate.datatypes = this.liveBundle.datatypes
+        liveBundleUpdate.categories = this.liveBundle.categories
         liveBundleUpdate.science = this.liveBundle.science
         liveBundleUpdate.time = updateTbundle
         liveBundleUpdate.realtime = realTime

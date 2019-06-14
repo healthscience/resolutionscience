@@ -41,7 +41,7 @@ ComputeSystem.prototype.computationSystem = async function (compInfo, rawIN) {
   // console.log(rawIN)
   let computeStatus = {}
   if (compInfo.cid === 'cnrl-2356388732') {
-    computeStatus = await this.liveAverage.averageSystem(compInfo, rawIN)
+    computeStatus = await this.liveAverage.averageSystemStart(compInfo, rawIN)
   } else if (compInfo.cid === 'cnrl-2356388733') {
     computeStatus = await this.recoverySystem(compInfo, rawIN)
   } else if (compInfo.cid === 'cnrl-2356388737') {

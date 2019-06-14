@@ -23,8 +23,10 @@ var DataComponent = function (DID, setIN) {
   this.deviceList = []
   this.CNRLscience = {}
   this.datatypeList = []
+  this.categoryList = []
   this.dataRaw = []
   this.tidyData = []
+  this.categoryData = []
   this.dataType = []
   this.timeSegs = []
   this.setStartTime(this.did.time.startperiod)
@@ -141,20 +143,37 @@ DataComponent.prototype.TidyData = async function () {
     dBundle.deviceList = this.deviceList
     dBundle.datatypeList = this.datatypeList
     tidyHolder = this.liveDataSystem.tidyRawData(dBundle, this.dataRaw)
-    console.log('categorisation require????')
-    console.log(this.categoryList)
-    if (this.categoryList.length > 0) {
-      console.log('yes, categories asked for')
-      let catTidyHolder = this.liveDataSystem.categorySorter(this.categoryList, tidyHolder)
-      this.tidyData.push(catTidyHolder)
-    } else {
-      this.tidyData.push(tidyHolder)
-    }
+    this.tidyData.push(tidyHolder)
   } else {
     console.log('NOTtidy require')
     this.tidyData = this.dataRaw
   }
   return true
+}
+
+/**
+*
+* @method CategoriseData
+*
+*/
+DataComponent.prototype.CategoriseData = function () {
+  console.log('categorisation require????')
+  let catTidyHolder = {}
+  let cBundle = {}
+  cBundle.timePeriod = this.livedate
+  cBundle.deviceList = this.deviceList
+  cBundle.datatypeList = this.datatypeList
+  cBundle.categoryList = this.categoryList
+  if (this.categoryList.length > 0) {
+    console.log('yes, categories asked for')
+    catTidyHolder = this.liveDataSystem.categorySorter(cBundle, this.tidyData)
+    this.tidyData.push(catTidyHolder)
+  } else {
+    catTidyHolder = this.tidyData
+  }
+  this.categoryData = catTidyHolder
+  console.log('category DATAback')
+  console.log(this.categoryData)
 }
 
 export default DataComponent

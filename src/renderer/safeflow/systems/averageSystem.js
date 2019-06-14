@@ -11,7 +11,7 @@
 */
 import TimeUtilities from './timeUtility.js'
 import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
-import StatisticsSystem from './wasm/average-statistics.js'
+import AvgStatisticsSystem from './wasm/average-statistics.js'
 
 const util = require('util')
 const events = require('events')
@@ -20,7 +20,7 @@ var AverageSystem = function (setIN) {
   events.EventEmitter.call(this)
   this.liveTimeUtil = new TimeUtilities()
   this.liveTestStorage = new TestStorageAPI(setIN)
-  this.liveStatistics = new StatisticsSystem(setIN)
+  this.avgliveStatistics = new AvgStatisticsSystem(setIN)
   this.lastComputeTime = {}
 }
 
@@ -44,8 +44,8 @@ AverageSystem.prototype.verifyComputeWASM = function (wasmFile) {
 * @method averageSystem
 *
 */
-AverageSystem.prototype.averageSystem = async function (compInfo, rawIN) {
-  console.log('averageSYSTEM')
+AverageSystem.prototype.averageSystemStart = async function (compInfo, rawIN) {
+  console.log('averageSYSTEM--start')
   let updateStatus = {}
   if (compInfo.status === false) {
     console.log('AVGSYS2-averageAssess')
@@ -69,7 +69,7 @@ AverageSystem.prototype.computeControlFlow = async function (compInfo, rawIN) {
   computeStatusLive = compInfo.computeStatus
   // what time segments have been asked for?
   let segAsk = this.convertSeg(compInfo.timeseg)
-  // given devices, datatypes, segments and type of average, statistcs, rolling, autoregression, ML
+  // given devices, datatypes, segments, categories and type of average, statistcs, rolling, autoregression, ML
   for (let dvc of compInfo.deviceList) {
     // need to loop for datatype and time seg
     for (let dtl of compInfo.dtAsked) {
@@ -78,7 +78,7 @@ AverageSystem.prototype.computeControlFlow = async function (compInfo, rawIN) {
         // what is status of compute?
         if (checkComp.status === 'update-required' && checkComp.timeseg === 'day') {
           let computeDates = this.updateAverageDates(checkComp.lastComputeTime, compInfo.startperiod)
-          let computeStatus = await this.liveStatistics.prepareAvgCompute(computeDates, dvc, dtl, checkComp.timeseg, compInfo.cid)
+          let computeStatus = await this.avgliveStatistics.prepareAvgCompute(computeDates, dvc, dtl, checkComp.timeseg, compInfo.cid)
           console.log('COMPSYS3a--AVERAGE FINISHED')
           cFlowStatus = computeStatus
         } else {

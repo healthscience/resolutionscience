@@ -20,6 +20,16 @@
               <li id="bmp-data-sensor" v-for="dts in lh.datatypes">
                 <div class="live-item">{{ dts.text }}</div>
               </li>
+              <li>
+                <header>Category</header>
+                  <div id="live-context-category" class="live-element">
+                    <ul>
+                      <li id="cat-items" v-for="catL in lh.categories">
+                        <div class="live-item">{{ catL.text }}</div>
+                      </li>
+                    </ul>
+                  </div>
+              </li>
             </ul>
         </div>
         <div id="history-context-science" class="live-element">

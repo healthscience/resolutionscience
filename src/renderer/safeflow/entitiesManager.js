@@ -109,6 +109,7 @@ EntitiesManager.prototype.controlFlow = async function (cflowIN) {
   await this.liveSEntities[cid].liveDataC.RawData()
   console.log('EMANAGER1-----raw complete')
   await localthis.liveSEntities[cid].liveDataC.TidyData()
+  localthis.liveSEntities[cid].liveDataC.CategoriseData()
   console.log('EMANAGER2-----tidy complete')
   // console.log(tidyReturn)
   console.log('EMANAGER3---START')

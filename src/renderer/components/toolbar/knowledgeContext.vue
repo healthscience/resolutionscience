@@ -44,7 +44,7 @@
           </ul>
           <header>Device DataTypes - </header>
             <ul>
-              <li id="data-type-live" v-for="dts in datatypes[0][0]">
+              <li id="data-type-live" v-for="dts in datatypes">
                 <a class="" href="" id="bmp-data" @click.prevent="selectDatatypes(dts)" v-bind:class="{ 'active': dts.active}">{{ dts.text }}</a>
                 <!-- <a class="" href="" id="sub-data" @click.prevent="subContext(dts)" v-bind:class="{ 'active': dts.active}"> >>> </a>
                  <div id="sub-context-holder">
@@ -227,6 +227,8 @@
         // console.log(s)
         s.active = !s.active
         kBus.$emit('setVDevice', s)
+        // display datatypes for this device source
+        this.dataTypeDevice()
       },
       selectDatatypes (std) {
         console.log('datatype selected')
@@ -263,11 +265,10 @@
           localthis.devices[0].cnrl = 'cnrl-33221101'
           console.log(dataH)
           localthis.$store.commit('setDevice', dataH)
-          localthis.dataType()
         }
         const deviceSet = localthis.$store.getters.liveContext.device
-        // console.log('device context')
-        // console.log(deviceSet)
+        console.log('device context')
+        console.log(deviceSet)
         // has the device context been set already?  Assume no for NOW
         if (deviceSet.length > 678) {
           this.devices = deviceSet
@@ -279,16 +280,35 @@
           this.liveSafeFlow.toolkitContext(flag, callbackC)
           // console.log('device callsettings')
         }
-        // console.log(this.devices)
+        console.log(this.devices)
+      },
+      dataTypeDevice () {
+        console.log('device data types build')
+        console.log(this.devices)
+        let devDTHolder = []
+        let cnrlIDholderDev = []
+        // repeat for datatyes coming from the mobile app CRNL contract
+        for (let devCdt of this.devices) {
+          let deviceDTypes = this.liveSafeFlow.cnrlDeviceDTs(devCdt.cnrl)
+          devDTHolder.push(deviceDTypes)
+        }
+        console.log('device DTs')
+        console.log(devDTHolder)
+        this.datatypes = devDTHolder[0].datatypes
+        for (let cnrldi of this.datatypes) {
+          for (let cnd of cnrldi) {
+            for (let cns of cnd) {
+              cnrlIDholderDev.push(cns.cnrl)
+            }
+          }
+        }
       },
       dataType () {
         // make call to set start dataType for the device sensors
         // console.log('start data type')
         const localthis = this
         let sciDTHolder = []
-        let devDTHolder = []
         let cnrlIDholderSci = []
-        let cnrlIDholderDev = []
         // loop over science for this context and display range of datatypes, sub types and match to sensor thus device
         for (let scLiv of this.scoptions) {
           let sciDTypes = this.liveSafeFlow.cnrlLookup(scLiv.cid)
@@ -300,49 +320,8 @@
             cnrlIDholderSci.push(cnlist.cnrl)
           }
         }
-        // repeat for datatyes coming from the mobile app CRNL contract
-        for (let devCdt of this.devices) {
-          let devDTypes = this.liveSafeFlow.cnrlLookup(devCdt.cnrl)
-          devDTHolder.push(devDTypes.tableStructure)
-          // next are there further details on ie. follow subsource refContext
-          /* if (devDTypes.type === 'dtpackaging') {
-            console.log('extra data types')
-            let tdtHolder = []
-            for (let tdt of devDTypes.tableStructure) {
-              console.log('table datatypes')
-              console.log(tdt)
-              // console.log(devDTypes.tableStructure)
-              /* for (let dtts of devDTypes.tableStructure) {
-                console.log(tdt)
-                console.log(dtts)
-                console.log('extract dt from table')
-                console.log(dtts[tdt])
-                // localthis.subcontextholder.push(devDTypes.prime)
-                tdtHolder.push(dtts[tdt])
-              }
-            }
-            console.log('table DT holder')
-            console.log(tdtHolder)
-            localthis.datatypes.push(tdtHolder)
-          } else {
-            console.log('further CNRL found')
-            let subsubDTypes = this.liveSafeFlow.cnrlLookup(devDTypes.cnrl)
-            console.log(subsubDTypes)
-            localthis.subcontextholder.push(subsubDTypes.prime)
-            localthis.datatypes.push(devDTypes.prime)
-          } */
-        }
-        // console.log('device DTs')
-        this.datatypes = devDTHolder
-        for (let cnrldi of this.datatypes) {
-          for (let cnd of cnrldi) {
-            for (let cns of cnd) {
-              cnrlIDholderDev.push(cns.cnrl)
-            }
-          }
-        }
         // take the two start points and see what is in common
-        this.compareDataTypes(cnrlIDholderSci, cnrlIDholderDev)
+        // this.compareDataTypes(cnrlIDholderSci, cnrlIDholderDev)
       },
       scienceContext () {
         // set the first science priority on start of RS
@@ -353,14 +332,14 @@
         // console.log('science has changed')
         this.activeEntity = sciIN
         // use cid to look up datatype for this scienceEntities
-        let sciDTypesSelect = this.liveSafeFlow.cnrlLookup(sciIN)
-        sciDTypesSelect.cnrl = sciIN
-        this.scidtypes = sciDTypesSelect.tableStructure
-        this.cdtypes = sciDTypesSelect.subsource
+        let sciDTypesSelect = this.liveSafeFlow.cnrlScienceDTs(sciIN)
         console.log('science contract')
         console.log(sciDTypesSelect)
-        this.liveScience.livingpaper = sciDTypesSelect.livingpaper
-        kBus.$emit('setVScience', sciDTypesSelect)
+        sciDTypesSelect.cnrl = sciIN
+        this.scidtypes = sciDTypesSelect.datatypes
+        this.cdtypes = sciDTypesSelect.categories
+        this.liveScience.livingpaper = sciDTypesSelect.contract.livingpaper
+        kBus.$emit('setVScience', sciDTypesSelect.contract)
       },
       compareDataTypes (sciArr, devArr) {
         // compare two array datatypes and return common to setBoth

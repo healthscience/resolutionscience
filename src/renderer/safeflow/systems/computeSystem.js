@@ -80,34 +80,4 @@ ComputeSystem.prototype.recoverySystem = async function (compInfo, rawIN, device
   return stateHolder
 }
 
-/**
-* sum system
-* @method sumSystem
-*
-*/
-ComputeSystem.prototype.sumSystem = async function (compInfo, rawIN, deviceList) {
-  let statusHolder = {}
-  return statusHolder
-}
-
-/**
-*  check if entity already has data raw tidy visual
-* @method checkForData
-*
-*/
-ComputeSystem.prototype.checkForData = function (cid, timePeriod) {
-  // need to loop over
-  console.log('check timePeriod data?????')
-  let entityData = this.liveSEntities[cid].liveDataC
-  for (let dataI of entityData.dataRaw) {
-    if (dataI[timePeriod]) {
-      // console.log('check true')
-      return true
-    } else {
-      // console.log('check false')
-      return false
-    }
-  }
-}
-
 export default ComputeSystem

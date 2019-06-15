@@ -9,6 +9,7 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
+import DTsystem from './systems/dtSystem.js'
 import CNRLmaster from './cnrl/cnrlMaster.js'
 import TimeUtilities from './systems/timeUtility.js'
 import DataSystem from './systems/dataSystem.js'
@@ -18,11 +19,12 @@ const events = require('events')
 
 var safeFlow = function (setIN) {
   events.EventEmitter.call(this)
-  this.defaultStorage = ''
+  this.defaultStorage = setIN.cnrl
   this.liveCNRL = new CNRLmaster()
   this.liveTimeUtil = new TimeUtilities()
   this.liveEManager = new EntitiesManager()
   this.liveDataSystem = new DataSystem(setIN)
+  this.liveDTsystem = new DTsystem(setIN)
   this.settings = setIN
   this.peerliveContext = {}
 }
@@ -120,6 +122,7 @@ safeFlow.prototype.setpeerContext = function (bundleIN) {
   // does an existing bundle exist?
   let ecsIN = {}
   ecsIN.cid = bundleIN.cnrl
+  ecsIN.storageAPI = this.defaultStorage
   ecsIN.visID = bundleIN.visualisation
   // convert all the time to millisecons format
   let timeBundle = {}
@@ -212,6 +215,28 @@ safeFlow.prototype.cnrlExperimentIndex = function () {
 */
 safeFlow.prototype.cnrlLookup = function (cid) {
   let cnrlContract = this.liveCNRL.lookupContract(cid)
+  return cnrlContract
+}
+
+/**
+* look up devcie data types and return in CNRL format
+* @method cnrlDeviceDTs
+*
+*/
+safeFlow.prototype.cnrlDeviceDTs = function (cid) {
+  console.log(cid)
+  let cnrlContract = this.liveDTsystem.DTtableStructure(cid)
+  return cnrlContract
+}
+
+/**
+* look up science data types and return in CNRL format
+* @method cnrlScienceDTs
+*
+*/
+safeFlow.prototype.cnrlScienceDTs = function (cid) {
+  console.log(cid)
+  let cnrlContract = this.liveDTsystem.DTscienceStructure(cid)
   return cnrlContract
 }
 

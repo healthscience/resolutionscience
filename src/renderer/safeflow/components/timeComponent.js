@@ -14,7 +14,9 @@ const util = require('util')
 const events = require('events')
 
 var TimeComponent = function (DID, setIN) {
+  this.did = DID
   this.liveDataSystem = new TimeSystem(setIN)
+  this.liveTime = []
 }
 
 /**
@@ -30,6 +32,17 @@ util.inherits(TimeComponent, events.EventEmitter)
 */
 TimeComponent.prototype.setStartTime = function (startDate) {
   this.livedate = startDate
+  return true
+}
+
+/**
+*  discover the start end range times for each data type selected
+* @method startTimeSystem
+*
+*/
+TimeComponent.prototype.startTimeSystem = function () {
+  //  need to look at the entity input bundle and map to datatypes, primary and source to discover time requiring discovery
+  this.liveTime.push('2')
   return true
 }
 

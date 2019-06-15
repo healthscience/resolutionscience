@@ -37,7 +37,7 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
   console.log(ecsIN)
   let cid = ecsIN.cid
   let timeBundle = ecsIN.time // starting time ms
-  let visID = ecsIN.visID[0]
+  let visID = ecsIN.visID[0] // limited to one for now will free up TODO
   if (this.liveSEntities[cid]) {
     console.log('entity' + cid + 'already exists')
     // does the data exist for this visualisation and time?
@@ -77,10 +77,6 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
     console.log('entity' + cid + 'is new')
     // start workflow for setting up entity, compute and vis/sim etc.
     this.liveSEntities[cid] = new Entity(ecsIN, setIN)
-    // set listener for recoveryHR
-    if (cid === 'cnrl-2356388733') {
-      this.listenRHRdataEvent()
-    }
     // default input set on setting up of component
     await this.controlFlow(ecsIN).then(function (cFlow) {
       console.log('CONTROLFLOW--new--COMPLETE')
@@ -97,15 +93,17 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
 *
 */
 EntitiesManager.prototype.controlFlow = async function (cflowIN) {
-  var localthis = this
+  // var localthis = this
   console.log('controlflow start')
   console.log(cflowIN)
   let cid = cflowIN.cid
   // let timePeriod = cflowIN.time
-  let range = cflowIN.time.range
-  let wasmID = cflowIN.wasm
-  let visID = cflowIN.visID[0]
+  // let range = cflowIN.time.range
+  // let wasmID = cflowIN.wasm
+  // let visID = cflowIN.visID[0]
   console.log('EMANAGER0-----beginCONTROL-FLOW')
+  this.liveSEntities[cid].liveDatatypeC.dataTypeMapping()
+  /* await this.liveSEntities[cid].liveTimeC.startTimeSystem()
   await this.liveSEntities[cid].liveDataC.RawData()
   console.log('EMANAGER1-----raw complete')
   await localthis.liveSEntities[cid].liveDataC.TidyData()
@@ -161,7 +159,7 @@ EntitiesManager.prototype.controlFlow = async function (cflowIN) {
     let visStatus = localthis.liveSEntities[cid].liveVisualC.filterVisual(visBundle2, liveUpdatedCompData)
     console.log(visStatus)
     console.log('5dVISOVER2___OVER(2ndpass)')
-  }
+  } */
   console.log('6CONTROLFLOW___OVER(2ndpass)')
   return true
 }

@@ -147,39 +147,38 @@ DataSystem.prototype.datatypeMapping = async function (systemBundle) {
   console.log('DATATYPE--mapping')
   console.log(systemBundle)
   let rawHolder = {}
-  //  this need datatype MAPPING UTILITY to check the data source via CNRL identify the API call that will contain the data type then inform the system to make  call to retrieve the data.  WIP, hardwired connect for now.
+  // review the apiInfo  map to function that will make acutal API call (should abstrac to build rest or crypto storage query string programmatically)
   // first is the data from the PAST or FUTURE ie simulated?
+  console.log(systemBundle.apiInfo)
   if (systemBundle.startperiod === 'simulateData') {
     console.log('SIMULTATED__DATA__REQUIRED')
   } else {
-    if (systemBundle.scienceAsked.cnrl === 'cnrl-2356388731') {
-      console.log('OBSERVATION QI')
-      await this.getRawData(systemBundle).then(function (sourcerawData) {
-        rawHolder = {}
-        rawHolder[systemBundle.startperiod] = sourcerawData
-      })
-    } else if (systemBundle.scienceAsked.cnrl === 'cnrl-2356388737') {
-      console.log('SUM QUERY')
-      await this.getRawSumData(systemBundle).then(function (sourcerawData) {
-        rawHolder = {}
-        rawHolder[systemBundle.startperiod] = sourcerawData
-      })
-    } else if (systemBundle.scienceAsked.cnrl === 'cnrl-2356388732') {
-      console.log('AVERAGE QUERY')
-      await this.getRawAverageData(systemBundle).then(function (sourcerawData) {
-        rawHolder = {}
-        rawHolder[systemBundle.startperiod] = sourcerawData
-      })
-    } else if (systemBundle.CNRLscience === 'cnrl-2356388733') {
-      console.log('recovery heart rate ask')
-      await this.getHRrecovery(systemBundle).then(function (rawData) {
-        rawHolder = {}
-        rawHolder[systemBundle.startperiod] = rawData
-      })
+    for (let dtItem of systemBundle.apiInfo.apiquery) {
+      console.log('api call')
+      console.log(dtItem)
+      if (dtItem.api === 'computedata/<publickey>/<token>/<queryTime>/<deviceID>/') {
+        console.log('OBSERVATION QI')
+        await this.getRawData(systemBundle).then(function (sourcerawData) {
+          rawHolder = {}
+          rawHolder[systemBundle.startperiod] = sourcerawData
+        })
+      } else if (dtItem.api === 'sum/<publickey>/<token>/<queryTime>/<deviceID>/') {
+        console.log('SUM QUERY')
+        await this.getRawSumData(systemBundle).then(function (sourcerawData) {
+          rawHolder = {}
+          rawHolder[systemBundle.startperiod] = sourcerawData
+        })
+      } else if (dtItem.api === 'average/<publickey>/<token>/<queryTime>/<deviceID>/') {
+        console.log('AVERAGE QUERY')
+        await this.getRawAverageData(systemBundle).then(function (sourcerawData) {
+          rawHolder = {}
+          rawHolder[systemBundle.startperiod] = sourcerawData
+        })
+      }
     }
   }
-  // console.log('rawHolder')
-  // console.log(rawHolder)
+  console.log('rawHolder')
+  console.log(rawHolder)
   return rawHolder
 }
 
@@ -188,21 +187,24 @@ DataSystem.prototype.datatypeMapping = async function (systemBundle) {
 * @method getRawData
 *
 */
-DataSystem.prototype.getRawData = async function (queryIN) {
+DataSystem.prototype.getRawData = async function (SBqueryIN) {
   console.log('DATASYSTEM0---getrawdata')
-  let localthis = this
   let dataBack = {}
   // check for number of devices, sensor/datatypes are asked for
-  const deviceQuery = queryIN.deviceList
+  const deviceQuery = SBqueryIN.deviceList
+  const dataTypesList = SBqueryIN.apiInfo.apiquery
   // form loop to make data calls
   for (let di of deviceQuery) {
-    // observation has fixed input but technically should loop over this on basis of timeSegs
-    await localthis.liveTestStorage.getComputeData(queryIN.startperiod, di).then(function (result) {
-      dataBack[di] = result
+    dataBack[di] = {}
+    for (let dtQ of dataTypesList) {
+      // observation has fixed input but technically should loop over this on basis of timeSegs
+      let result = await this.liveTestStorage.getComputeData(SBqueryIN.startperiod, di).catch(function (err) {
+        console.log(err)
+      })
+      let dtCNRL = dtQ.cnrl
+      dataBack[di][dtCNRL] = result
       result = []
-    }).catch(function (err) {
-      console.log(err)
-    })
+    }
   }
   return dataBack
 }
@@ -214,31 +216,70 @@ DataSystem.prototype.getRawData = async function (queryIN) {
 */
 DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
   console.log('DATASYSTEM2T----tidyRaw')
+  console.log(dataASK)
   let liveStarttime = dataASK.timePeriod
+  let filterMat = null
   // build object structureReturn
   let tidyHolder = {}
   tidyHolder[liveStarttime] = {}
   // one, two or more sources needing tidying???
   // data structure in  Object indexed by startTime, object IndexbyDevice, Array[]of object -> heart_rate steps  {plus other source data}
   let cleanData = []
-  // need to import error codes from device/mobile app
-  // let errorCodes = [255]
   for (let devI of dataASK.deviceList) {
-    // loop over rawData until the start date matchtes
-    // tidyHoldertidyHolder[liveStarttime][devI] = []
+    // do the two data types match?  If yes, filter if not raw =s tidydata
+    tidyHolder[liveStarttime][devI] = {}
     for (let dateMatch of dataRaw) {
+      console.log('start rawa LLLOOOP')
+      console.log(dateMatch)
       if (dateMatch[liveStarttime]) {
-        // console.log(dateMatch[dataASK.timePeriod.startperiod][devI])
-        cleanData = dateMatch[liveStarttime][devI].filter(function (item) {
-          // console.log(item)
-          return item.heart_rate !== 255 || item.heart_rate <= 0
-        })
-        tidyHolder[liveStarttime][devI] = cleanData
+        for (let dtList of dataASK.datatypeList) {
+          // loop over rawData until the start date matchtes
+          for (let tItem of dataASK.tidyList) {
+            if (dtList.cnrl === tItem.cnrl) {
+              console.log('data type match needing tidying')
+              let tidyDT = tItem.cnrl
+              console.log(dateMatch[liveStarttime][devI])
+              console.log(tidyDT)
+              if (dateMatch[liveStarttime][devI][tidyDT]) {
+                console.log('start of clean')
+                console.log(tidyDT)
+                cleanData = dateMatch[liveStarttime][devI][tidyDT].filter(function (vali) {
+                  for (var i = 0; i < tItem.codes.length; i++) {
+                    if (vali['heart_rate'] !== tItem.codes[i]) {
+                      filterMat = true
+                    } else {
+                      filterMat = false
+                    }
+                    // return vali.heart_rate !== cds || vali.heart_rate <= 0
+                  }
+                  if (filterMat === true) {
+                    return true
+                  }
+                })
+                // console.log('clean complete')
+                // console.log(cleanData)
+                tidyHolder[liveStarttime][devI][tidyDT] = cleanData
+                console.log(tidyHolder)
+              } else {
+                console.log('LOOP tidy NO tidying required')
+              }
+            } else {
+              console.log('just let raw data = tidy clean data')
+              console.log(liveStarttime)
+              console.log(devI)
+              console.log(dtList)
+              console.log(dateMatch[liveStarttime][devI][dtList.cnrl])
+              // tidyHolder[liveStarttime][devI] = {}
+              tidyHolder[liveStarttime][devI][dtList.cnrl] = dateMatch[liveStarttime][devI][dtList.cnrl]
+            }
+          }
+        }
+        console.log('end of raw loop')
       }
     }
   }
-  // console.log('clearn holder')
-  // console.log(tidyHolder)
+  console.log('clearn holder')
+  console.log(tidyHolder)
   return tidyHolder
 }
 
@@ -348,15 +389,12 @@ DataSystem.prototype.getHRrecovery = async function (bundleIN, dtAsked) {
 DataSystem.prototype.categorySorter = function (dataASK, tidyData) {
   // loop over and apply startBundles
   console.log('categoriesation sorter start')
-  console.log(dataASK)
-  console.log(tidyData)
+  // console.log(dataASK)
+  // console.log(tidyData)
   // TODO a CNRL utility that can look at Datapackaing contract, data type contracts and drill down to column codes for logic screen of source data
   let catLogic = this.liveCNRL.lookupContract(dataASK.categoryList[0].cnrl)
-  console.log(catLogic)
   let DrillDownCNRLcontract = this.liveCNRL.drillDowntoLogic(catLogic.dtsource[0])
   let filterCat = DrillDownCNRLcontract.code
-  console.log('filter CODE')
-  console.log(filterCat)
   let liveStarttime = dataASK.timePeriod
   // build object structureReturn
   let catHolder = {}
@@ -368,15 +406,16 @@ DataSystem.prototype.categorySorter = function (dataASK, tidyData) {
   // let errorCodes = [255]
   for (let devI of dataASK.deviceList) {
     // loop over rawData until the start date matchtes
-    // tidyHoldertidyHolder[liveStarttime][devI] = []
     for (let dateMatch of tidyData) {
       if (dateMatch[liveStarttime]) {
-        catData = dateMatch[liveStarttime][devI].filter(function (item) {
-          console.log(item)
-          // these data table column names could be dynamic ie programable.
-          return item.raw_kind === filterCat
-        })
-        catHolder[liveStarttime][devI] = catData
+        for (let dti of dataASK.datatypeList) {
+          catData = dateMatch[liveStarttime][devI][dti.cnrl].filter(function (item) {
+            // these data table column names could be dynamic ie programable.
+            return item.raw_kind === filterCat
+          })
+          catHolder[liveStarttime][devI] = {}
+          catHolder[liveStarttime][devI][dti.cnrl] = catData
+        }
       }
     }
   }

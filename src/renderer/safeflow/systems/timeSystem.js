@@ -32,7 +32,10 @@ util.inherits(TimeSystem, events.EventEmitter)
 * @method timeStartFilter
 *
 */
-TimeSystem.prototype.timeStartFilter = function () {
+TimeSystem.prototype.discoverTimeStatus = function (dtInfo) {
+  console.log('discover time status logic')
+  console.log('datatype INFOIN')
+  console.log(dtInfo)
 }
 
 /**

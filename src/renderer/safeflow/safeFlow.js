@@ -101,7 +101,7 @@ safeFlow.prototype.scienceEntities = async function (contextIN) {
   // add a new entity via manager
   // first prepare input in ECS format
   console.log('start---scienceEntitiees')
-  // console.log(contextIN)
+  console.log(contextIN)
   let ecsIN = this.setpeerContext(contextIN)
   await this.liveEManager.addScienceEntity(ecsIN, this.settings).then(function (bk) {
     // console.log('SAFEFLOW-new entitycomplete')

@@ -181,7 +181,7 @@
       filterLearn (s) {
         // get language, device, datatypes and sci comp bundles
         // pass on to SAFEflow to pass on entity manager
-        this.activeEntity = this.liveData.scienceLive.cnrl
+        this.activeEntity = this.liveData.scienceLive.prime.cnrl
         this.activevis = this.$store.getters.liveVis[0]
         console.log('active vis ====')
         console.log(this.activevis)
@@ -193,7 +193,7 @@
         updateTbundle.startperiod = startPeriodTime
         updateTbundle.timevis = ['day']
         let liveBundle = {}
-        liveBundle.cnrl = this.liveData.scienceLive.cnrl
+        liveBundle.cnrl = this.activeEntity
         liveBundle.startStatus = {'active': false, 'name': 'no'}
         liveBundle.language = this.liveData.languageLive
         liveBundle.devices = this.liveData.devicesLive

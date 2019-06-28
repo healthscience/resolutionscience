@@ -32,13 +32,14 @@ util.inherits(VisSystem, events.EventEmitter)
 * @method chartSystem
 *
 */
-VisSystem.prototype.chartSystem = function (chartBundle, dataIN) {
+VisSystem.prototype.chartSystem = function (eInfo, chartBundle, dataIN) {
   console.log('VISCOMP==CHARTSYTSEM START1')
-  console.log(chartBundle)
-  console.log(dataIN)
+  // console.log(eInfo)
+  // console.log(chartBundle)
+  // console.log(dataIN)
   var localthis = this
-  let visIN = chartBundle.vid
-  let liveTime = chartBundle.liveTime
+  let visIN = eInfo.visID[0]
+  let liveTime = eInfo.time.startperiod
   let structureHolder = {}
   let chartGroupHolder = []
   let chartData = {}
@@ -47,11 +48,10 @@ VisSystem.prototype.chartSystem = function (chartBundle, dataIN) {
   let dataTypeBucket = {}
   chartDataH.options = {}
   chartDataH.prepared = {}
-  if (chartBundle.cnrl === 'cnrl-2356388731') {
+  if (eInfo.cid === 'cnrl-2356388731') {
     console.log('observation data')
-    for (let dtv of chartBundle.datatypeList) {
-      console.log('VISC----loop datatypes')
-      structureHolder = this.liveChartSystem.structureChartData(dtv, chartBundle, dataIN)
+    for (let dtv of eInfo.datatypes) {
+      structureHolder = this.liveChartSystem.structureChartData(dtv, eInfo, chartBundle, dataIN)
       // prepare the colors for the charts
       let chartColorsSet = localthis.liveChartSystem.chartColors(dtv)
       dataTypeBucket.data = structureHolder
@@ -61,7 +61,7 @@ VisSystem.prototype.chartSystem = function (chartBundle, dataIN) {
       dataTypeBucket = {}
     }
     // package all the info. to pass to vue
-    chartData.prepared = this.liveChartSystem.prepareVueChartJS(chartDataH)
+    chartData.prepared = this.liveChartSystem.prepareVueChartJS(chartDataH.chart)
     // prepare chart options
     let chartOptionsSet = this.liveChartSystem.getterChartOptions()
     chartData.options = chartOptionsSet
@@ -77,7 +77,6 @@ VisSystem.prototype.chartSystem = function (chartBundle, dataIN) {
     // could be more than one visualisation required,  devices, datatypes, timeseg or computation or event resolutions
     for (let dType of chartBundle.datatypeList) {
       for (let device of chartBundle.deviceList) {
-        console.log('loop bud')
         for (let entry of dataIN[0][liveTime][device][dType.cnrl]) {
           // pass on to appropriate structure, day, week, in context of resolution etc.
           console.log('data structure for time segs')
@@ -154,7 +153,7 @@ VisSystem.prototype.chartSystem = function (chartBundle, dataIN) {
     console.log(this.liveChartSystem)
   }
   console.log('liveCHARTsytem object')
-  console.log(this.liveChartSystem)
+  console.log(this.visSystemData)
   return this.visSystemData
 }
 

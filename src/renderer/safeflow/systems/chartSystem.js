@@ -33,38 +33,49 @@ util.inherits(ChartSystem, events.EventEmitter)
 * @method structureChartData
 *
 */
-ChartSystem.prototype.structureChartData = function (datatypeIN, cBundle, cData) {
+ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle, cData) {
   this.options = this.prepareChartOptions()
-  let dataholder = {}
+  console.log('STRUCTUREchart DATA1')
+  console.log(cData)
+  console.log(datatypeIN)
   let datalabel = []
+  let visCHolder = {}
   let datay = []
-  let liveDate = cBundle.liveTime
+  let liveDate = eInfo.time.startperiod
+  visCHolder[liveDate] = {}
+  // console.log(cBundle)
   this.chartPrep = {}
   // loop through and build two sperate arrays
   for (let dataI of cData) {
-    // for (let tItem of cBundle.timeList) {
     if (dataI[liveDate]) {
-      for (let devI of cBundle.deviceList) {
-        for (let datatypeData of dataI[liveDate][devI]) {
-          var mDateString = moment(datatypeData.timestamp * 1000).toDate()
+      for (let devI of eInfo.devices) {
+        visCHolder[liveDate][devI.device_mac] = {}
+        // for (let dtLive of cBundle.datatypes) {
+        let dataholder = {}
+        for (let liveData of dataI[liveDate][devI.device_mac][datatypeIN.cnrl]) {
+          var mDateString = moment(liveData.timestamp * 1000).toDate()
           datalabel.push(mDateString)
-          // console.log(datatypeData)
-          // console.log(datatypeIN)
           if (datatypeIN.cnrl === 'cnrl-8856388711') {
-            datay.push(datatypeData.heart_rate)
+            datay.push(liveData.heart_rate)
           } else if (datatypeIN.cnrl === 'cnrl-8856388712') {
-            datay.push(datatypeData.steps)
+            datay.push(liveData.steps)
           }
         }
+        dataholder.labels = datalabel
+        dataholder.datasets = datay
+        // visCHolder[liveDate][devI.device_mac][datatypeIN.cnrl] = {}
+        // visCHolder[liveDate][devI.device_mac][datatypeIN.cnrl] = dataholder
+        visCHolder = {}
+        visCHolder = dataholder
+        datalabel = []
+        datay = []
+        // }
       }
     }
-    // }
   }
-  dataholder.labels = datalabel
-  dataholder.datasets = datay
-  console.log('chartholder')
-  console.log(dataholder)
-  return dataholder
+  console.log('chartholderPREPAREDstructure')
+  console.log(visCHolder)
+  return visCHolder
 }
 
 /**
@@ -105,46 +116,28 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
   this.colorback2 = ''
   this.colorlineback2 = ''
   this.activityback = ''
-  // how man y dataTypes asked for?
-  if (results.chart.length === 2) {
-    // need to prepare different visualisations, data return will fit only one Chart vis option
-    for (let chD of results.chart) {
-      console.log(chD.color.datatype)
-      if (chD.color.datatype === 'bpm') {
-        this.labelback = chD.data.labels
-        this.databack = chD.data.datasets
-        this.colorback = chD.color.backgroundColor
-        this.colorlineback = chD.color.borderColor
-      } else if (chD.color.datatype === 'steps') {
-        this.labelback = chD.data.labels
-        this.activityback = chD.data.datasets
-        this.colorback2 = chD.color.backgroundColor
-        this.colorlineback2 = chD.color.borderColor
-      }
-    }
-  } else {
-    console.log('one data set to chart')
-    console.log(results.chart[0].color.datatype)
-    console.log(results.chart[0].data.datasets)
-    if (results.chart[0].color.datatype === 'bpm') {
-      this.activityback = []
-      this.labelback = results.chart[0].data.labels
-      this.databack = results.chart[0].data.datasets
-      this.colorback = results.chart[0].color.backgroundColor
-      this.colorlineback = results.chart[0].color.borderColor
-    } else if (results.chart[0].color.datatype === 'steps') {
-      this.databack = []
-      this.labelback = results.chart[0].data.labels
-      this.activityback = results.chart[0].data.datasets
-      this.colorback2 = results.chart[0].color.backgroundColor
-      this.colorlineback2 = results.chart[0].color.borderColor
-    }
+  // label ie x axis data for the charts
+  let labelchart = []
+  // if more than one time data source take the longest
+  let labelData = []
+  let datachart = []
+  for (let rItems of results) {
+    let chartItem = {}
+    chartItem.type = 'line'
+    chartItem.label = rItems.color.datatype
+    chartItem.borderColor = rItems.color.borderColor
+    chartItem.backgroundColor = rItems.color.backgroundColor
+    chartItem.fill = false
+    chartItem.data = rItems.data.datasets
+    chartItem.yAxisID = rItems.color.datatype
+    datachart.push(chartItem)
+    labelData.push(rItems.data.labels)
   }
-  // console.log('chartjs time array')
-  // console.log(this.labelback)
-  // console.log(this.databack)
+  console.log('chart data array vuechart.js')
+  console.log(datachart)
+  labelchart = this.prepareLabelchart(labelData)
   // check for no data available
-  if (results === 'no data') {
+  if (results.length === 0) {
     // no data to display
     this.chartmessage = 'No data to display'
     datacollection = {
@@ -179,32 +172,27 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
     this.liveTime = startChartDate
     // this.chartmessage = 'BPM'
     datacollection = {
-      labels: this.labelback,
-      datasets: [
-        {
-          type: 'line',
-          label: 'Beats per minute',
-          borderColor: this.colorlineback, // '#ea1212',
-          backgroundColor: this.colorback, // 'rgba(255, 99, 132, 0.2)',
-          fill: false,
-          data: this.databack,
-          yAxisID: 'bpm'
-        }, {
-          type: 'bar',
-          label: 'Activity - Steps',
-          lineThickness: 0.2,
-          borderColor: this.colorlineback2, // '#020b2d',
-          backgroundColor: this.colorback2, // '#050d2d',
-          fill: true,
-          data: this.activityback,
-          yAxisID: 'steps'
-        }
-      ]
+      labels: labelchart,
+      datasets: datachart
     }
   }
   console.log('prepared datacollection')
   console.log(datacollection)
   return datacollection
+}
+
+/**
+* prepare the x axis data array
+* @method prepareLabelchart
+*
+*/
+ChartSystem.prototype.prepareLabelchart = function (labelIN) {
+  console.log('label prepare')
+  // return the longest array
+  console.log(labelIN)
+  let preparedLabel = labelIN.reduce((p, c, i, a) => a[p].length > c.length ? p : i, 0)
+  console.log(labelIN[preparedLabel])
+  return labelIN[preparedLabel]
 }
 
 /**

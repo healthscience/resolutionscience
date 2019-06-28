@@ -28,13 +28,131 @@ var DTSystem = function (setIN) {
 util.inherits(DTSystem, events.EventEmitter)
 
 /**
+*  // match datatypes to query API via CNRL packaging contract(s)
+* @method DTStartMatch
+*
+*/
+DTSystem.prototype.DTStartMatch = function (dAPI, lDTs, catDTs) {
+  console.log('dt to query matchter')
+  // look up packaging contract
+  let packagingDTs = this.liveCNRL.lookupContract(dAPI)
+  let SpackagingDTs = {}
+  let TidyDataLogic = []
+  // is this a derived source?
+  if (packagingDTs.source !== 'cnrl-primary') {
+    // look up source data packaging
+    SpackagingDTs = this.liveCNRL.lookupContract(packagingDTs.source)
+    // tidy data info available?
+    if (packagingDTs.tidy === true) {
+      // investiage the source contract
+      // does the live DT require any tidying?
+      for (let tldt of SpackagingDTs.tidyList) {
+        console.log('tidy list cnrl')
+        console.log(tldt)
+        for (let dtl of lDTs) {
+          console.log('live dts')
+          console.log(dtl)
+          if (dtl.cnrl === tldt.cnrl) {
+            console.log('match')
+            TidyDataLogic = SpackagingDTs.tidyList
+          } else {
+            // TidyDataLogic = []
+          }
+        }
+      }
+    }
+  } else {
+    // extract tidy logic info.
+    TidyDataLogic = packagingDTs.tidyList
+  }
+  let DTmapAPI = this.datatypeCheck(packagingDTs, lDTs)
+  // if null check if category dt, ie derived from two or more dataTypeSensor
+  let checkDTcategory = []
+  let extractCatDT = []
+  let catDTmapAPI = []
+  if (catDTs.length > 0) {
+    checkDTcategory = this.categoryCheck(catDTs[0], SpackagingDTs)
+    // now check the API query for this dataType
+    // todo extract data type ie loop over category matches, same or all different?
+    // lookup the dataType
+    let catDT = []
+    extractCatDT = this.liveCNRL.lookupContract(checkDTcategory[0].column)
+    catDT.push(extractCatDT.prime)
+    catDTmapAPI = this.datatypeCheck(packagingDTs, catDT)
+  } else {
+    checkDTcategory = []
+  }
+
+  let apiInfo = {}
+  apiInfo.apiquery = [...DTmapAPI, ...catDTmapAPI]
+  apiInfo.categorycodes = checkDTcategory
+  apiInfo.datatypes = lDTs
+  apiInfo.tidyList = TidyDataLogic
+  console.log('FINAL datatpe INFO')
+  console.log(apiInfo)
+  return apiInfo
+}
+
+/**
+*  // map data prime to source data types
+* @method datatypeCheck
+*
+*/
+DTSystem.prototype.datatypeCheck = function (packagingDTs, lDTs) {
+  console.log('check datatype to api location')
+  let apiMatch = []
+  // given datatypes select find match to the query string
+  let tableCount = 0
+  // match to source API query
+  for (let dtt of packagingDTs.tableStructure) {
+    for (let idt of lDTs) {
+      const result = dtt.filter(item => item.cnrl === idt.cnrl)
+      if (result.length > 0) {
+        let packAPImatch = {}
+        packAPImatch.cnrl = result[0].cnrl
+        packAPImatch.column = result[0].text
+        packAPImatch.api = packagingDTs.apistructure[tableCount]
+        apiMatch.push(packAPImatch)
+      }
+    }
+    tableCount++
+  }
+  return apiMatch
+}
+
+/**
+*  // map data prime to source data types
+* @method categoryCheck
+*
+*/
+DTSystem.prototype.categoryCheck = function (cdt, catSource) {
+  console.log('check category')
+  console.log(cdt)
+  console.log(catSource)
+  let catMatch = []
+  for (let catS of catSource.categorycodes) {
+    for (let sc of catS.categories) {
+      let scat = sc.cnrl
+      let uicat = cdt.cnrl
+      // any matches to data type in
+      if (scat === uicat) {
+        let codeLogic = sc.code
+        let catHolderLogic = {}
+        catHolderLogic.column = catS.column
+        catHolderLogic.code = codeLogic
+        catMatch.push(catHolderLogic)
+      }
+    }
+  }
+  return catMatch
+}
+
+/**
 *  // map data prime to source data types
 * @method DTStartFilter
 *
 */
 DTSystem.prototype.DTStartFilter = function (dAPI, cnrl) {
-  console.log(dAPI)
-  console.log(cnrl)
   // given datastore and CNRL science contract map the source API queries to datatypes or source Types
   let APIcnrl = this.DTtableStructure(dAPI)
   // look up science computations contract if see what datatypes are listed (this assumes they are enter on setting up science contract???)
@@ -56,12 +174,7 @@ DTSystem.prototype.mapDTs = function (dts1, dts2) {
   // matching of two arrays
   let matchArray = []
   console.log('dt matchter')
-  console.log(dts1)
-  console.log(dts2)
-  // matchArray = dts1.filter(x => dts2.includes(x.cnrl))
   matchArray = dts1.filter(({ cnrl: id1 }) => dts2.some(({ cnrl: id2 }) => id2 === id1))
-  console.log('filter match')
-  console.log(matchArray)
   return matchArray
 }
 
@@ -71,7 +184,6 @@ DTSystem.prototype.mapDTs = function (dts1, dts2) {
 *
 */
 DTSystem.prototype.DTtableStructure = function (dAPI) {
-  console.log(dAPI)
   let dtHolder = {}
   let subSourceAPI = {}
   let apiDTs = []
@@ -90,7 +202,6 @@ DTSystem.prototype.DTtableStructure = function (dAPI) {
   if (APIcnrl.source) {
     subSourceAPI = this.liveCNRL.lookupContract(APIcnrl.source)
   }
-  console.log(subSourceAPI)
   dtHolder.datatypes = apiDTs
   dtHolder.sourcedts = subSourceAPI
   return dtHolder
@@ -102,23 +213,17 @@ DTSystem.prototype.DTtableStructure = function (dAPI) {
 *
 */
 DTSystem.prototype.DTscienceStructure = function (cnrl) {
-  console.log(cnrl)
   let sciDTholder = {}
   let sciSourceDTs = []
   let sciCategoryDTs = []
   let scienceCNRL = this.liveCNRL.lookupContract(cnrl)
-  console.log(scienceCNRL)
   // look up datatypes and check to see if they are derive from other datatypes?
   for (let iDT of scienceCNRL.datatypes) {
-    console.log(iDT)
     let indivDT = this.liveCNRL.lookupContract(iDT.cnrl)
     sciSourceDTs.push(indivDT.prime)
   }
   for (let icDT of scienceCNRL.categories) {
-    console.log('list of categories')
-    console.log(icDT)
     let indivcDT = this.liveCNRL.lookupContract(icDT.cnrl)
-    console.log(indivcDT)
     sciCategoryDTs.push(indivcDT.prime)
   }
   sciDTholder.contract = scienceCNRL

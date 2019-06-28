@@ -98,7 +98,7 @@
         console.log('start Learning')
         console.log(lBundle)
         this.liveBundle = lBundle
-        this.activeEntity = this.liveData.scienceLive.cnrl
+        this.activeEntity = lBundle.cnrl
         this.activevis = this.$store.getters.liveVis[0]
         await this.liveSafeFlow.scienceEntities(lBundle)
         console.log('entity setup/operational')

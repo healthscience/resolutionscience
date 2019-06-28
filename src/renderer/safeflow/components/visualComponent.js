@@ -48,14 +48,14 @@ VisualComponent.prototype.filterVisual = function (visIN, vData) {
   // which of three types of visualisations?
   let status = false
   console.log('VISCOMP--start')
+  console.log(this.EIDinfo)
   console.log(visIN)
   console.log(vData)
-  if (visIN.vid === 'vis-sc-1') {
+  // todo need to check if one or many visualisation types required? ONe for now
+  if (this.EIDinfo.visID[0] === 'vis-sc-1') {
     console.log('charts asked for')
-    if (visIN.computeStatus === 'go' || visIN.computeStatus === 'observation') {
-      this.visualData = this.liveVisSystem.chartSystem(visIN, vData)
-      console.log(this.visualData)
-    }
+    this.visualData = this.liveVisSystem.chartSystem(this.EIDinfo, visIN, vData)
+    console.log(this.visualData)
     status = true
   } else if (visIN.vid === 'vis-sc-2') {
     console.log('table asked for')

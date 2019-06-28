@@ -30,6 +30,7 @@ util.inherits(TimeComponent, events.EventEmitter)
 * @method setStartTime
 *
 */
+
 TimeComponent.prototype.setStartTime = function (startDate) {
   this.livedate = startDate
   return true
@@ -40,9 +41,10 @@ TimeComponent.prototype.setStartTime = function (startDate) {
 * @method startTimeSystem
 *
 */
-TimeComponent.prototype.startTimeSystem = function () {
-  //  need to look at the entity input bundle and map to datatypes, primary and source to discover time requiring discovery
-  this.liveTime.push('2')
+TimeComponent.prototype.startTimeSystem = function (dtInfo) {
+  // need to look at the entity datatype INFO bundle and map times start stop update status
+  let timeInfo = this.liveDataSystem.discoverTimeStatus(dtInfo)
+  this.liveTime.push(timeInfo)
   return true
 }
 

@@ -16,6 +16,7 @@ const events = require('events')
 var DataComponent = function (DID, setIN) {
   events.EventEmitter.call(this)
   this.did = DID
+  this.liveData = []
   this.livedate = this.did.timeperiod
   this.liveDatatype = ''
   this.liveDataSystem = new DataSystem(setIN)
@@ -35,6 +36,7 @@ var DataComponent = function (DID, setIN) {
   this.setDatatypesLive(this.did.datatypes)
   this.setTimeSegments(this.did.time.timeseg)
   this.setCategories(this.did.categories)
+  this.apiInfoLive = {}
 }
 
 /**
@@ -112,10 +114,12 @@ DataComponent.prototype.setCategories = function (ctIN) {
 * @method RawData
 *
 */
-DataComponent.prototype.RawData = async function () {
-  console.log('DATACOMPONENT1----start rawdaata')
+DataComponent.prototype.sourceData = async function (apiINFO) {
+  console.log('DATACOMPONENT1----start sourcedata')
   // console.log(this.livedate)
+  this.apiInfoLive = apiINFO
   let systemBundle = {}
+  systemBundle.apiInfo = apiINFO
   systemBundle.startperiod = this.livedate
   systemBundle.scienceAsked = this.CNRLscience
   systemBundle.dtAsked = this.datatypeList
@@ -123,8 +127,12 @@ DataComponent.prototype.RawData = async function () {
   systemBundle.timeseg = this.timeSegs
   let dataRback = await this.liveDataSystem.datatypeMapping(systemBundle)
   this.dataRaw.push(dataRback)
-  console.log('rawData------')
-  // console.log(this.dataRaw)
+  console.log('component rawdata')
+  console.log(this.dataRaw)
+  // is there any data tidying required
+  this.TidyData()
+  // is there a categories filter to apply?
+  this.CategoriseData()
   return true
 }
 
@@ -133,19 +141,20 @@ DataComponent.prototype.RawData = async function () {
 * @method TidyData
 *
 */
-DataComponent.prototype.TidyData = async function () {
+DataComponent.prototype.TidyData = function () {
   console.log('DCOMPONENT1-- datatidy started')
-  if (this.CNRLscience.tidy === true) {
+  if (this.apiInfoLive.tidyList.length !== 0) {
     console.log('tidy require')
     let tidyHolder = {}
     let dBundle = {}
     dBundle.timePeriod = this.livedate
     dBundle.deviceList = this.deviceList
     dBundle.datatypeList = this.datatypeList
+    dBundle.tidyList = this.apiInfoLive.tidyList
     tidyHolder = this.liveDataSystem.tidyRawData(dBundle, this.dataRaw)
     this.tidyData.push(tidyHolder)
   } else {
-    console.log('NOTtidy require')
+    console.log('NOtidy required')
     this.tidyData = this.dataRaw
   }
   return true
@@ -167,13 +176,29 @@ DataComponent.prototype.CategoriseData = function () {
   if (this.categoryList.length > 0) {
     console.log('yes, categories asked for')
     catTidyHolder = this.liveDataSystem.categorySorter(cBundle, this.tidyData)
-    this.tidyData.push(catTidyHolder)
+    this.categoryData.push(catTidyHolder)
   } else {
     catTidyHolder = this.tidyData
   }
-  this.categoryData = catTidyHolder
+  // this.categoryData = catTidyHolder
   console.log('category DATAback')
   console.log(this.categoryData)
+  // set liveData based on/if category data asked for
+  this.assessDataStatus()
+}
+/**
+*
+* @method assessDataStatus
+*
+*/
+DataComponent.prototype.assessDataStatus = function () {
+  console.log('set which data is live')
+  console.log(this.categoryData.length)
+  if (this.categoryData.length > 0) {
+    this.liveData = this.categoryData
+  } else {
+    this.liveData = this.tidyData
+  }
 }
 
 export default DataComponent

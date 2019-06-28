@@ -263,6 +263,7 @@
           // console.log('start deviceslist')
           // setting dataType Smartcontract CNRL id  (needs to be extract and mapp to storageAPI)
           localthis.devices[0].cnrl = 'cnrl-33221101'
+          localthis.devices[1].cnrl = 'cnrl-33221101'
           console.log(dataH)
           localthis.$store.commit('setDevice', dataH)
         }
@@ -289,6 +290,8 @@
         let cnrlIDholderDev = []
         // repeat for datatyes coming from the mobile app CRNL contract
         for (let devCdt of this.devices) {
+          console.log('devices')
+          console.log(devCdt)
           let deviceDTypes = this.liveSafeFlow.cnrlDeviceDTs(devCdt.cnrl)
           devDTHolder.push(deviceDTypes)
         }

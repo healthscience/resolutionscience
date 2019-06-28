@@ -45,6 +45,7 @@ export default new Vuex.Store({
     },
     setBoth: (state, inVerified) => {
       state.system = inVerified
+      state.system.cnrl = 'cnrl-33221101'
     },
     setPublickey: (state, inVerified) => {
       state.system.publickey = inVerified

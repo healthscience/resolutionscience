@@ -37,7 +37,7 @@ ComputeComponent.prototype.filterCompute = async function (compInfo, rawIN) {
   console.log(compInfo)
   let computeStatelive = {}
   // var localthis = this
-  if (compInfo.cid === 'cnrl-2356388731' && this.computeStatus === false) {
+  if (this.EIDinfo.science.wasmfile === 'none' && this.computeStatus === false) {
     // raw data nothing to compute
     console.log('observation mode and false logic')
     computeStatelive.computeState = 'observation'

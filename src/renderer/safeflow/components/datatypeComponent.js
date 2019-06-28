@@ -17,7 +17,7 @@ var DatatypeComponent = function (DID, setIN) {
   events.EventEmitter.call(this)
   this.did = DID
   this.liveDTsystem = new DTsystem(setIN)
-  this.datatypeLive = []
+  this.datatypeInfoLive = []
 }
 
 /**
@@ -34,8 +34,10 @@ util.inherits(DatatypeComponent, events.EventEmitter)
 DatatypeComponent.prototype.dataTypeMapping = function () {
   // query CNRL for hash and parse out datatype and packaging info.
   // return list of Datatypes - cnrl-IDs  primary and source ie Datatypes require to compute results
-  let dataTypeMapped = this.liveDTsystem.DTStartFilter(this.did.storageAPI, this.did.cid)
-  this.datatypeLive.push(dataTypeMapped)
+  console.log(this.did)
+  let dataTypeMapped = this.liveDTsystem.DTStartMatch(this.did.storageAPI, this.did.datatypes, this.did.categories)
+  this.datatypeInfoLive = dataTypeMapped
+  return true
 }
 
 export default DatatypeComponent

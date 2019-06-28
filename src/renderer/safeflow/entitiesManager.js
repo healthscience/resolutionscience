@@ -68,6 +68,7 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
       this.liveSEntities[cid].liveDataC.setTimeSegments(timeBundle.timeseg)
       this.liveSEntities[cid].liveDataC.setDatatypesLive(ecsIN.datatypes)
       this.liveSEntities[cid].liveDataC.setCategories(ecsIN.categories)
+      this.liveSEntities[cid].liveVisualC.setVisLive(timeBundle.startperiod)
       await this.controlFlow(ecsIN).then(function (cFlow) {
         console.log('CONTROLFLOW--already-COMPLETE')
         // console.log(cFlow)

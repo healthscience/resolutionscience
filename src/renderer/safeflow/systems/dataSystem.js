@@ -236,13 +236,8 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
           // loop over rawData until the start date matchtes
           for (let tItem of dataASK.tidyList) {
             if (dtList.cnrl === tItem.cnrl) {
-              console.log('data type match needing tidying')
               let tidyDT = tItem.cnrl
-              console.log(dateMatch[liveStarttime][devI])
-              console.log(tidyDT)
               if (dateMatch[liveStarttime][devI][tidyDT]) {
-                console.log('start of clean')
-                console.log(tidyDT)
                 cleanData = dateMatch[liveStarttime][devI][tidyDT].filter(function (vali) {
                   for (var i = 0; i < tItem.codes.length; i++) {
                     if (vali['heart_rate'] !== tItem.codes[i]) {
@@ -256,20 +251,12 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
                     return true
                   }
                 })
-                // console.log('clean complete')
-                // console.log(cleanData)
                 tidyHolder[liveStarttime][devI][tidyDT] = cleanData
-                console.log(tidyHolder)
               } else {
                 console.log('LOOP tidy NO tidying required')
               }
             } else {
               console.log('just let raw data = tidy clean data')
-              console.log(liveStarttime)
-              console.log(devI)
-              console.log(dtList)
-              console.log(dateMatch[liveStarttime][devI][dtList.cnrl])
-              // tidyHolder[liveStarttime][devI] = {}
               tidyHolder[liveStarttime][devI][dtList.cnrl] = dateMatch[liveStarttime][devI][dtList.cnrl]
             }
           }

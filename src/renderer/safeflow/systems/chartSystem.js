@@ -73,8 +73,8 @@ ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle,
       }
     }
   }
-  console.log('chartholderPREPAREDstructure')
-  console.log(visCHolder)
+  // console.log('chartholderPREPAREDstructure')
+  // console.log(visCHolder)
   return visCHolder
 }
 
@@ -107,7 +107,7 @@ ChartSystem.prototype.chartColors = function (datatypeItem) {
 */
 ChartSystem.prototype.prepareVueChartJS = function (results) {
   console.log('CHARTJS--prepare')
-  console.log(results)
+  // console.log(results)
   let datacollection = {}
   this.labelback = []
   this.databack = []
@@ -133,8 +133,8 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
     datachart.push(chartItem)
     labelData.push(rItems.data.labels)
   }
-  console.log('chart data array vuechart.js')
-  console.log(datachart)
+  // console.log('chart data array vuechart.js')
+  // console.log(datachart)
   labelchart = this.prepareLabelchart(labelData)
   // check for no data available
   if (results.length === 0) {
@@ -165,9 +165,9 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
     }
   } else {
     // prepare the Chart OBJECT FOR CHART.JS  Up to 2 line e.g. BMP or Steps or BPM + Steps
-    console.log('CHARTSYSTEM-----draw chart')
+    // console.log('CHARTSYSTEM-----draw chart')
     var startChartDate = moment(this.labelback[0])
-    console.log(startChartDate)
+    // console.log(startChartDate)
     this.updateChartoptions(startChartDate)
     this.liveTime = startChartDate
     // this.chartmessage = 'BPM'
@@ -187,11 +187,11 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
 *
 */
 ChartSystem.prototype.prepareLabelchart = function (labelIN) {
-  console.log('label prepare')
+  // console.log('label prepare')
   // return the longest array
-  console.log(labelIN)
+  // console.log(labelIN)
   let preparedLabel = labelIN.reduce((p, c, i, a) => a[p].length > c.length ? p : i, 0)
-  console.log(labelIN[preparedLabel])
+  // console.log(labelIN[preparedLabel])
   return labelIN[preparedLabel]
 }
 

@@ -31,10 +31,11 @@ util.inherits(ComputeComponent, events.EventEmitter)
 * @method filterCompute
 *
 */
-ComputeComponent.prototype.filterCompute = async function (compInfo, rawIN) {
+ComputeComponent.prototype.filterCompute = async function (compInfo, timeInfo) {
   console.log('COMPUTE-COMP1----filter start')
   console.log(this.EIDinfo)
   console.log(compInfo)
+  console.log(timeInfo)
   let computeStatelive = {}
   // var localthis = this
   if (this.EIDinfo.science.wasmfile === 'none' && this.computeStatus === false) {
@@ -43,22 +44,11 @@ ComputeComponent.prototype.filterCompute = async function (compInfo, rawIN) {
     computeStatelive.computeState = 'observation'
   } else {
     console.log('PASSto--computesystem')
-    let systemBundle = {}
-    systemBundle.cid = compInfo.cid
-    systemBundle.status = compInfo.status
-    systemBundle.computeStatus = compInfo.computeStatus
-    systemBundle.startperiod = compInfo.liveTime
-    systemBundle.realtime = compInfo.realtime
-    systemBundle.timeseg = compInfo.timeseg
-    systemBundle.dtAsked = this.EIDinfo.datatypes
-    systemBundle.categoryList = this.EIDinfo.categoryList
-    systemBundle.deviceList = this.EIDinfo.devices
-    systemBundle.lastComputeTime = compInfo.lastComputeTime
-    let computeState = await this.liveComputeSystem.computationSystem(systemBundle, rawIN)
+    let computeState = await this.liveComputeSystem.computationSystem(this.EIDinfo, compInfo, timeInfo)
     computeStatelive = computeState
   }
-  // console.log('2COMPUTE-COMP---return')
-  // console.log(computeStatelive)
+  console.log('2COMPUTE-COMP---return')
+  console.log(computeStatelive)
   return computeStatelive
 }
 

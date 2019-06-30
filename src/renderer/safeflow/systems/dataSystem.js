@@ -128,7 +128,6 @@ DataSystem.prototype.getDataTypes = async function () {
 *
 */
 DataSystem.prototype.getLiveDatatypes = function (dtIN) {
-  console.log('LIVE-datatypes')
   let liveDTs = []
   for (let dt of dtIN) {
     if (dt.active === true) {
@@ -144,18 +143,14 @@ DataSystem.prototype.getLiveDatatypes = function (dtIN) {
 *
 */
 DataSystem.prototype.datatypeMapping = async function (systemBundle) {
-  console.log('DATATYPE--mapping')
   console.log(systemBundle)
   let rawHolder = {}
   // review the apiInfo  map to function that will make acutal API call (should abstrac to build rest or crypto storage query string programmatically)
   // first is the data from the PAST or FUTURE ie simulated?
-  console.log(systemBundle.apiInfo)
   if (systemBundle.startperiod === 'simulateData') {
     console.log('SIMULTATED__DATA__REQUIRED')
   } else {
     for (let dtItem of systemBundle.apiInfo.apiquery) {
-      console.log('api call')
-      console.log(dtItem)
       if (dtItem.api === 'computedata/<publickey>/<token>/<queryTime>/<deviceID>/') {
         console.log('OBSERVATION QI')
         await this.getRawData(systemBundle).then(function (sourcerawData) {
@@ -177,8 +172,6 @@ DataSystem.prototype.datatypeMapping = async function (systemBundle) {
       }
     }
   }
-  console.log('rawHolder')
-  console.log(rawHolder)
   return rawHolder
 }
 
@@ -188,7 +181,6 @@ DataSystem.prototype.datatypeMapping = async function (systemBundle) {
 *
 */
 DataSystem.prototype.getRawData = async function (SBqueryIN) {
-  console.log('DATASYSTEM0---getrawdata')
   let dataBack = {}
   // check for number of devices, sensor/datatypes are asked for
   const deviceQuery = SBqueryIN.deviceList
@@ -215,8 +207,6 @@ DataSystem.prototype.getRawData = async function (SBqueryIN) {
 *
 */
 DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
-  console.log('DATASYSTEM2T----tidyRaw')
-  console.log(dataASK)
   let liveStarttime = dataASK.timePeriod
   let filterMat = null
   // build object structureReturn
@@ -229,8 +219,6 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
     // do the two data types match?  If yes, filter if not raw =s tidydata
     tidyHolder[liveStarttime][devI] = {}
     for (let dateMatch of dataRaw) {
-      console.log('start rawa LLLOOOP')
-      console.log(dateMatch)
       if (dateMatch[liveStarttime]) {
         for (let dtList of dataASK.datatypeList) {
           // loop over rawData until the start date matchtes
@@ -256,18 +244,53 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
                 console.log('LOOP tidy NO tidying required')
               }
             } else {
-              console.log('just let raw data = tidy clean data')
               tidyHolder[liveStarttime][devI][dtList.cnrl] = dateMatch[liveStarttime][devI][dtList.cnrl]
             }
           }
         }
-        console.log('end of raw loop')
       }
     }
   }
-  console.log('clearn holder')
-  console.log(tidyHolder)
   return tidyHolder
+}
+
+/**
+* Tidy raw single data item
+* @method tidyRawDataSingle
+*
+*/
+DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, dtTidy, catCodes) {
+  let cleanData = []
+  let sTidyarray = []
+  let filterMat = false
+  // need to loop and match dt to tidy dts?
+  for (let idt of dtTidy) {
+    if (idt.cnrl === DTlive.cnrl) {
+      cleanData = dataRawS.filter(function (vali) {
+        for (var i = 0; i < idt.codes.length; i++) {
+          if (vali['heart_rate'] !== idt.codes[i]) {
+            filterMat = true
+          } else {
+            filterMat = false
+          }
+          // return vali.heart_rate !== cds || vali.heart_rate <= 0
+        }
+        if (filterMat === true) {
+          return true
+        }
+      })
+      sTidyarray = cleanData
+    } else {
+      sTidyarray = dataRawS
+    }
+  }
+  // does a category filter apply?
+  if (catCodes.length === 0) {
+    // nothing to filter
+  } else {
+    sTidyarray = this.categorySorterSingle(sTidyarray, catCodes)
+  }
+  return sTidyarray
 }
 
 /**
@@ -276,8 +299,6 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
 *
 */
 DataSystem.prototype.getRawSumData = async function (bundleIN) {
-  console.log('sum get')
-  // console.log(bundleIN)
   const localthis = this
   // how many sensor ie data sets are being asked for?
   // loop over and return Statistics Data and return to callback
@@ -314,8 +335,6 @@ DataSystem.prototype.getRawSumData = async function (bundleIN) {
 *
 */
 DataSystem.prototype.getRawAverageData = async function (bundleIN) {
-  console.log('average get')
-  // console.log(bundleIN)
   const localthis = this
   // how many sensor ie data sets are being asked for?
   // loop over and return Statistics Data and return to callback
@@ -352,7 +371,6 @@ DataSystem.prototype.getRawAverageData = async function (bundleIN) {
 *
 */
 DataSystem.prototype.getHRrecovery = async function (bundleIN, dtAsked) {
-  console.log('Recovery HR data ask')
   const localthis = this
   this.recoverHR = {}
   const deviceLiveFilter = bundleIN.deviceList
@@ -375,9 +393,6 @@ DataSystem.prototype.getHRrecovery = async function (bundleIN, dtAsked) {
 */
 DataSystem.prototype.categorySorter = function (dataASK, tidyData) {
   // loop over and apply startBundles
-  console.log('categoriesation sorter start')
-  // console.log(dataASK)
-  // console.log(tidyData)
   // TODO a CNRL utility that can look at Datapackaing contract, data type contracts and drill down to column codes for logic screen of source data
   let catLogic = this.liveCNRL.lookupContract(dataASK.categoryList[0].cnrl)
   let DrillDownCNRLcontract = this.liveCNRL.drillDowntoLogic(catLogic.dtsource[0])
@@ -407,6 +422,21 @@ DataSystem.prototype.categorySorter = function (dataASK, tidyData) {
     }
   }
   return catHolder
+}
+
+/**
+* lookup categorisation and apply to single data array
+* @method categorySorterSingle
+*
+*/
+DataSystem.prototype.categorySorterSingle = function (dataTidy, catList) {
+  // loop over and apply startBundles
+  let catFiltered = []
+  catFiltered = dataTidy.filter(function (item) {
+  // these data table column names could be dynamic ie programable.
+    return item.raw_kind === catList
+  })
+  return catFiltered
 }
 
 /**

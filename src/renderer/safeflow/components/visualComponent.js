@@ -34,9 +34,6 @@ util.inherits(VisualComponent, events.EventEmitter)
 *
 */
 VisualComponent.prototype.setVisLive = function (updateEID) {
-  // console.log('set visualisation styles')
-  console.log(this.EIDinfo)
-  console.log(updateEID)
   this.EIDinfo.time.startperiod = updateEID
 }
 

@@ -264,39 +264,39 @@
           // setting dataType Smartcontract CNRL id  (needs to be extract and mapp to storageAPI)
           localthis.devices[0].cnrl = 'cnrl-33221101'
           localthis.devices[1].cnrl = 'cnrl-33221101'
-          console.log(dataH)
+          // console.log(dataH)
           localthis.$store.commit('setDevice', dataH)
         }
         const deviceSet = localthis.$store.getters.liveContext.device
-        console.log('device context')
-        console.log(deviceSet)
+        // console.log('device context')
+        // console.log(deviceSet)
         // has the device context been set already?  Assume no for NOW
         if (deviceSet.length > 678) {
           this.devices = deviceSet
-          console.log('device settings')
-          console.log(this.devices)
+          // console.log('device settings')
+          // console.log(this.devices)
         } else {
           // make call to set start dataContext for this pubkey
           const flag = 'device'
           this.liveSafeFlow.toolkitContext(flag, callbackC)
           // console.log('device callsettings')
         }
-        console.log(this.devices)
+        // console.log(this.devices)
       },
       dataTypeDevice () {
-        console.log('device data types build')
-        console.log(this.devices)
+        // console.log('device data types build')
+        // console.log(this.devices)
         let devDTHolder = []
         let cnrlIDholderDev = []
         // repeat for datatyes coming from the mobile app CRNL contract
         for (let devCdt of this.devices) {
-          console.log('devices')
-          console.log(devCdt)
+          // console.log('devices')
+          // console.log(devCdt)
           let deviceDTypes = this.liveSafeFlow.cnrlDeviceDTs(devCdt.cnrl)
           devDTHolder.push(deviceDTypes)
         }
-        console.log('device DTs')
-        console.log(devDTHolder)
+        // console.log('device DTs')
+        // console.log(devDTHolder)
         this.datatypes = devDTHolder[0].datatypes
         for (let cnrldi of this.datatypes) {
           for (let cnd of cnrldi) {
@@ -336,8 +336,8 @@
         this.activeEntity = sciIN
         // use cid to look up datatype for this scienceEntities
         let sciDTypesSelect = this.liveSafeFlow.cnrlScienceDTs(sciIN)
-        console.log('science contract')
-        console.log(sciDTypesSelect)
+        // console.log('science contract')
+        // console.log(sciDTypesSelect)
         sciDTypesSelect.cnrl = sciIN
         this.scidtypes = sciDTypesSelect.datatypes
         this.cdtypes = sciDTypesSelect.categories
@@ -358,9 +358,9 @@
         return commonHolder
       },
       selectCatTD (cIN) {
-        console.log('categorisation of data type')
+        // console.log('categorisation of data type')
         cIN.active = !cIN.active
-        console.log(cIN)
+        // console.log(cIN)
         kBus.$emit('setVDataCategory', cIN)
       },
       subContext () {
@@ -390,7 +390,7 @@
         shell.openExternal(this.liveScience.livingpaper)
       },
       listenkBus () {
-        console.log(kBus)
+        // console.log(kBus)
       }
     }
   }

@@ -34,7 +34,6 @@ util.inherits(DatatypeComponent, events.EventEmitter)
 DatatypeComponent.prototype.dataTypeMapping = function () {
   // query CNRL for hash and parse out datatype and packaging info.
   // return list of Datatypes - cnrl-IDs  primary and source ie Datatypes require to compute results
-  console.log(this.did)
   let dataTypeMapped = this.liveDTsystem.DTStartMatch(this.did.storageAPI, this.did.datatypes, this.did.categories)
   this.datatypeInfoLive = dataTypeMapped
   return true

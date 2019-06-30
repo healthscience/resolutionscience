@@ -118,7 +118,6 @@ safeFlow.prototype.scienceEntities = async function (contextIN) {
 safeFlow.prototype.setpeerContext = function (bundleIN) {
   // prepare ECS input format and hold context
   console.log('form==peercontext')
-  // console.log(bundleIN)
   // does an existing bundle exist?
   let ecsIN = {}
   ecsIN.cid = bundleIN.cnrl
@@ -129,8 +128,6 @@ safeFlow.prototype.setpeerContext = function (bundleIN) {
   timeBundle.time = bundleIN.time
   timeBundle.realtime = bundleIN.realtime
   ecsIN.time = this.liveTimeUtil.timeConversionUtility(timeBundle)
-  console.log('converted time returned')
-  console.log(ecsIN.time)
   ecsIN.science = bundleIN.science
   ecsIN.resolution = bundleIN.resolution
   ecsIN.devices = bundleIN.devices
@@ -182,8 +179,6 @@ safeFlow.prototype.entityCurrentAverageHR = async function (eid) {
 *
 */
 safeFlow.prototype.cnrlLivingKnowledge = function (refIN) {
-  console.log('cnrl')
-  // console.log(refIN)
   let startSemantics = this.liveCNRL.livingKnowledge(refIN)
   return startSemantics
 }
@@ -224,7 +219,6 @@ safeFlow.prototype.cnrlLookup = function (cid) {
 *
 */
 safeFlow.prototype.cnrlDeviceDTs = function (cid) {
-  console.log(cid)
   let cnrlContract = this.liveDTsystem.DTtableStructure(cid)
   return cnrlContract
 }

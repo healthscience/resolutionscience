@@ -38,6 +38,7 @@ ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle,
   console.log('STRUCTUREchart DATA1')
   console.log(cData)
   console.log(datatypeIN)
+  let lastDataObject = cData.slice(-1)[0]
   let datalabel = []
   let visCHolder = {}
   let datay = []
@@ -46,33 +47,32 @@ ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle,
   // console.log(cBundle)
   this.chartPrep = {}
   // loop through and build two sperate arrays
-  for (let dataI of cData) {
-    if (dataI[liveDate]) {
-      for (let devI of eInfo.devices) {
-        visCHolder[liveDate][devI.device_mac] = {}
-        // for (let dtLive of cBundle.datatypes) {
-        let dataholder = {}
-        for (let liveData of dataI[liveDate][devI.device_mac][datatypeIN.cnrl]) {
-          var mDateString = moment(liveData.timestamp * 1000).toDate()
-          datalabel.push(mDateString)
-          if (datatypeIN.cnrl === 'cnrl-8856388711') {
-            datay.push(liveData.heart_rate)
-          } else if (datatypeIN.cnrl === 'cnrl-8856388712') {
-            datay.push(liveData.steps)
-          }
+  //  for (let dataI of lastDataObject) {
+  //  console.log('loop of data to match to date')
+  //  console.log(dataI)
+  if (lastDataObject[liveDate]) {
+    for (let devI of eInfo.devices) {
+      visCHolder[liveDate][devI.device_mac] = {}
+      let dataholder = {}
+      for (let liveData of lastDataObject[liveDate][devI.device_mac][datatypeIN.cnrl]) {
+        console.log('loop each data item')
+        var mDateString = moment(liveData.timestamp * 1000).toDate()
+        datalabel.push(mDateString)
+        if (datatypeIN.cnrl === 'cnrl-8856388711') {
+          datay.push(liveData.heart_rate)
+        } else if (datatypeIN.cnrl === 'cnrl-8856388712') {
+          datay.push(liveData.steps)
         }
-        dataholder.labels = datalabel
-        dataholder.datasets = datay
-        // visCHolder[liveDate][devI.device_mac][datatypeIN.cnrl] = {}
-        // visCHolder[liveDate][devI.device_mac][datatypeIN.cnrl] = dataholder
-        visCHolder = {}
-        visCHolder = dataholder
-        datalabel = []
-        datay = []
-        // }
       }
+      dataholder.labels = datalabel
+      dataholder.datasets = datay
+      visCHolder = {}
+      visCHolder = dataholder
+      datalabel = []
+      datay = []
     }
   }
+  // }
   // console.log('chartholderPREPAREDstructure')
   // console.log(visCHolder)
   return visCHolder

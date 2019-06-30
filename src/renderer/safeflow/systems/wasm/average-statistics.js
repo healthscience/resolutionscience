@@ -11,6 +11,7 @@
 */
 import TimeUtilities from '../timeUtility.js'
 import TestStorageAPI from '../dataprotocols/teststorage/testStorage.js'
+import DataSystem from '../dataSystem.js'
 const util = require('util')
 const events = require('events')
 
@@ -18,6 +19,7 @@ var StatisticsSystem = function (setIN) {
   events.EventEmitter.call(this)
   this.liveTimeUtil = new TimeUtilities()
   this.liveTestStorage = new TestStorageAPI(setIN)
+  this.liveDataSystem = new DataSystem(setIN)
 }
 
 /**
@@ -40,18 +42,18 @@ StatisticsSystem.prototype.statisticsSystem = function () {
 * @method prepareAvgCompute
 *
 */
-StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, device, datatype, tseg, compRef) {
+StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, device, datatype, tseg, compRef, tidyList, categoryCodes) {
   console.log('prepare avg. compute START')
-  let localthis = this
   for (let qt of computeTimes) {
     let queryTime = qt / 1000
     // The datatype asked should be MAPPED to storage API via source Datatypes that make up e.g. average-bpm
     // CNRL should be consulted to find which function calls the API for the source data
-    let dataBatch = await localthis.liveTestStorage.getComputeData(queryTime, device.device_mac, datatype)
+    let dataBatch = await this.liveTestStorage.getComputeData(queryTime, device.device_mac, datatype)
     // console.log(dataBatch)
     if (dataBatch.length > 0) {
-      let singleArray = localthis.tidySinglearray(dataBatch, datatype)
-      let saveReady = this.averageStatistics(singleArray.tidyarray)
+      let singleArray = this.liveDataSystem.tidyRawDataSingle(dataBatch, datatype, tidyList, categoryCodes)
+      // need to check for categories TODO
+      let saveReady = this.averageStatistics(singleArray)
       // prepare JSON object for POST
       let saveJSON = {}
       saveJSON.publickey = ''

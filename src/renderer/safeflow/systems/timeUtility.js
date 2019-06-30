@@ -38,7 +38,6 @@ TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
   let timeConversion = {}
   this.liveStarttime = timeBundle.time.startperiod
   this.realtime = timeBundle.realtime
-  console.log('time changes from UI')
   timeConversion = this.updateUItime(timeBundle.time.timevis)
   // split for compute segments or UI visualisation choices
   /* if (timeBundle.timeseg.length > 0) {
@@ -65,11 +64,9 @@ TimeUtilities.prototype.computeTimeSegments = function (tSegs) {
   for (let ti of tSegs) {
     if (ti === 'SELECT') {
       let rangeMills = this.rangeCovert(ti)
-      console.log('range times in MS time format')
       // console.log(rangeMills)
       timeConversion.range = rangeMills
     } else {
-      console.log('convert seg to mills')
       let timePeriod = {}
       timePeriod = this.timeSegBuilder(ti)
       timeConversion.startperiod = timePeriod
@@ -84,19 +81,13 @@ TimeUtilities.prototype.computeTimeSegments = function (tSegs) {
 *
 */
 TimeUtilities.prototype.updateUItime = function (timeUI) {
-  console.log('time for UI converstion update')
-  console.log(timeUI)
   let timeMills = {}
   // does a standard time types need converting or range or both?
   for (let ti of timeUI) {
-    console.log(ti)
     if (ti === 'SELECT') {
       let rangeMills = this.rangeCovert(ti)
-      console.log('range times in MS time format')
-      console.log(rangeMills)
       timeMills.range = rangeMills
     } else {
-      console.log('convert seg to mills')
       let timePeriod = {}
       timePeriod = this.timeConvert(ti)
       timeMills.startperiod = timePeriod
@@ -111,7 +102,6 @@ TimeUtilities.prototype.updateUItime = function (timeUI) {
 *
 */
 TimeUtilities.prototype.timeSegBuilder = function (segIN) {
-  console.log('build time array ms format')
   let startTime = 0
   let endTime = 0
   // when to start this?
@@ -151,42 +141,31 @@ TimeUtilities.prototype.rangeCovert = function (rangeIN) {
 */
 TimeUtilities.prototype.timeConvert = function (uT) {
   //  turn segment into time query profile
-  console.log('timeperiod builder')
-  console.log(uT)
   let startTime
   let timestamp
   if (uT === 'day') {
     // asking for one 24hr display
     startTime = this.liveStarttime
-    console.log('day in moment format')
-    console.log(startTime)
   } else if (uT === '-day') {
     // move back one day in time
-    console.log('back one day')
-    console.log(this.liveStarttime)
-    console.log(uT)
     if (this.liveStarttime === 'relative') {
       this.liveStarttime = this.liveLasttime * 1000
     }
-    console.log(this.liveStarttime)
     startTime = (this.liveStarttime - 86400000)
   } else if (uT === '+day') {
     // move forward day in time
     if (this.liveStarttime === 'relative') {
       this.liveStarttime = this.liveLasttime * 1000
     }
-    console.log(this.liveStarttime)
     startTime = (this.liveStarttime + 86400000)
     // console.log(this.realtime)
     let msRealtime = moment(this.realtime).valueOf()
     if (startTime > msRealtime) {
       // pass on to simulated data
-      console.log('future time')
       startTime = 'simulateData'
       // let simTime = startTime
       // this.simulateData(simTime)
     } else {
-      console.log('PAST time')
       // console.log('forward one day')
     }
   } else if (uT === '-year') {
@@ -213,8 +192,6 @@ TimeUtilities.prototype.timeConvert = function (uT) {
     timestamp = 'simulateData'
   }
   this.liveLasttime = timestamp
-  console.log('ui converted time ms')
-  console.log(timestamp)
   return timestamp
 }
 
@@ -257,13 +234,9 @@ TimeUtilities.prototype.timeDayArrayBuilder = function (liveTime, lastTime) {
   let TimeHolder = {}
   let timeArray = []
   let yearEndmnoth = 11
-  console.log('time DAILY builder array')
-  console.log(lastTime)
-  console.log(liveTime)
   const monthNo = moment(lastTime).month()
   const monthNocurrent = moment(liveTime).month()
   let dayIncurrentMonth = moment(liveTime).date()
-  console.log(dayIncurrentMonth)
   // let shortLastTime = lastTime / 1000
   const yearNum = moment(lastTime).year()
   const yearNumcurrent = moment(liveTime).year()
@@ -284,7 +257,6 @@ TimeUtilities.prototype.timeDayArrayBuilder = function (liveTime, lastTime) {
     let longDateformat
     for (let numM of monthsNumberFirst) {
       if (numM >= firstmonthNo && numM <= firstmonthNocurrent) {
-        console.log('start--mulit year first part------')
         if (counter === 1) {
           longDateformat = firstbaseMills
         } else {
@@ -296,14 +268,12 @@ TimeUtilities.prototype.timeDayArrayBuilder = function (liveTime, lastTime) {
         counter++
       }
     }
-    console.log('second part of array build')
     counter = 1
     let SecondbaseMills = firstbaseMills
     for (let numM of monthsNumberFirst) {
       const SecondmonthNocurrent = moment(liveTime).month()
       // console.log(SecondmonthNocurrent)
       if (numM >= 0 && numM <= SecondmonthNocurrent) {
-        console.log('start--2nd mulit year------')
         if (counter === 1) {
           longDateformat = SecondbaseMills + (31 * secondsInday)
         } else {
@@ -316,7 +286,6 @@ TimeUtilities.prototype.timeDayArrayBuilder = function (liveTime, lastTime) {
       }
     }
   } else {
-    console.log('one year only')
     let baseStartMonth = moment(lastTime).startOf('month')
     let baseMills = moment(baseStartMonth).valueOf() + 3600000
     let secondsInday = 86400000
@@ -340,15 +309,12 @@ TimeUtilities.prototype.timeDayArrayBuilder = function (liveTime, lastTime) {
       }
     }
   }
-  console.log('time array++++')
-  console.log(timeArray)
   TimeHolder.calendar = timeArray
   TimeHolder.uptoDateTime = lastTime
   TimeHolder.currentday = dayIncurrentMonth
   let lastMonthStartTime = timeArray.slice(-1).pop()
   TimeHolder.currentML = lastMonthStartTime.longDateformat
   let calendarList = this.longDataArray(TimeHolder)
-  console.log(calendarList)
   return calendarList
 }
 
@@ -359,20 +325,15 @@ TimeUtilities.prototype.timeDayArrayBuilder = function (liveTime, lastTime) {
 */
 TimeUtilities.prototype.longDataArray = function (calInfo) {
   // build date array for year
-  console.log(calInfo)
   let calendarTimeList = []
   let yearArray = calInfo.calendar
   this.dayCounter = 0
   // loop over all months
   for (let scMonth of yearArray) {
-    console.log('month time info')
-    console.log(scMonth)
     let daysInmonth = scMonth.dayCount
     let accDaily = 0
     let millsSecDay = 86400000
     this.dayCounter = scMonth.longDateformat
-    console.log(this.dayCounter)
-    console.log(calInfo.currentML)
     if (calInfo.currentML === this.dayCounter) {
       // last month, stop at current live days
       while (accDaily < (calInfo.currentday - 2)) {
@@ -390,8 +351,6 @@ TimeUtilities.prototype.longDataArray = function (calInfo) {
       }
     }
   }
-  console.log('list of array query times ')
-  console.log(calendarTimeList)
   return calendarTimeList
 }
 

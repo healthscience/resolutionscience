@@ -4,6 +4,9 @@
       <knowledge-Live :liveData="liveData" @liveLearn="learnStart" :KLexperimentData="liveExper" @liveExperiments="experimentsStart"></knowledge-Live>
       <knowledge-Context :kContext="kContext"></knowledge-Context>
     </section>
+    <section v-if="chartmessage.active == true" id="compute-status">
+      {{ chartmessage.text }}
+    </section>
     <hsvisual :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" @updateLearn="learnUpdate" @toolsStatus="toolsSwitch"></hsvisual>
   </section>
 </template>
@@ -51,7 +54,11 @@
         activeEntity: '',
         liveBundle: {},
         liveExper: [],
-        liveTimeV: 'time'
+        liveTimeV: 'time',
+        chartmessage: {
+          text: 'compute status = stopped',
+          active: false
+        }
       }
     },
     computed: {
@@ -97,15 +104,18 @@
       async learnStart (lBundle) {
         console.log('start Learning')
         console.log(lBundle)
+        this.chartmessage.text = 'Visualisation being prepared'
+        this.chartmessage.active = true
         this.liveBundle = lBundle
         this.activeEntity = lBundle.cnrl
         this.activevis = this.$store.getters.liveVis[0]
         await this.liveSafeFlow.scienceEntities(lBundle)
         console.log('entity setup/operational')
-        // this.learnListening()
+        this.learnListening()
         let entityGetter = await this.liveSafeFlow.entityGetter(this.activeEntity, this.activevis)
         console.log('VUE---return getter data')
         console.log(entityGetter)
+        this.chartmessage.active = false
         if (this.activevis === 'vis-sc-1') {
           console.log('chartjs')
           if (entityGetter.chartMessage === 'computation in progress') {
@@ -123,7 +133,7 @@
           } else {
             console.log('chartjs-- uptodate finised')
             console.log(entityGetter)
-            this.chartmessage = 'computation up-to-date'
+            this.chartmessage.text = 'computation up-to-date'
             this.options2 = entityGetter[0].liveChartOptions
             this.datacollection2 = entityGetter[0].chartPackage
             this.liveTimeV = moment(entityGetter[0].displayTime * 1000).format('LLLL')
@@ -188,9 +198,9 @@
           console.log('computation event from manager')
           console.log(cState)
           if (cState === 'in-progress') {
-            localthis.chartmessage = cState
+            localthis.chartmessage.text = cState
           } else {
-            localthis.chartmessage = 'computation up-to-date'
+            localthis.chartmessage.text = 'computation up-to-date'
           }
         })
       },
@@ -228,4 +238,26 @@ a {
   color: white;
 }
 
+#compute-status {
+  width: 300px;
+  height: 30px;
+  background-color: pink;
+  /*-webkit-animation-name: example; /* Safari 4.0 - 8.0 */
+  /*-webkit-animation-duration: 12s; /* Safari 4.0 - 8.0 */
+  /*animation-name: example;
+  animation-duration: 12s;*/
+  animation: example 1s linear infinite;
+}
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes example {
+  from {background-color: red;}
+  to {background-color: yellow;}
+}
+
+/* Standard syntax */
+@keyframes example {
+  from {background-color: pink;}
+  to {background-color: yellow;}
+}
 </style>

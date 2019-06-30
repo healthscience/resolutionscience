@@ -98,66 +98,27 @@ EntitiesManager.prototype.controlFlow = async function (cflowIN) {
   console.log('controlflow start')
   console.log(cflowIN)
   let cid = cflowIN.cid
-  // let timePeriod = cflowIN.time
-  // let range = cflowIN.time.range
-  // let wasmID = cflowIN.wasm
-  // let visID = cflowIN.visID[0]
   console.log('EMANAGER0-----beginCONTROL-FLOW')
   this.liveSEntities[cid].liveDatatypeC.dataTypeMapping()
-  // await this.liveSEntities[cid].liveTimeC.startTimeSystem(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive)
   await this.liveSEntities[cid].liveDataC.sourceData(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive)
-  console.log('EMANAGER1-----data comp finished')
-  console.log('EMANAGER3---START')
-  let computeBundle = {}
-  computeBundle.lastComputeTime = ''
-  computeBundle.cid = cid
-  computeBundle.wasmID = 'wasmID'
-  computeBundle.status = false
-  computeBundle.liveTime = this.liveSEntities[cid].liveDataC.livedate
-  computeBundle.realtime = cflowIN.time.realtime
-  computeBundle.rangeTime = ''
-  computeBundle.timeseg = cflowIN.time.timeseg
-  this.computeStatus = await this.liveSEntities[cid].liveComputeC.filterCompute(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive)
+  console.log('EMANAGER1-----DATACOMP. finished')
+  await this.liveSEntities[cid].liveTimeC.startTimeSystem(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveDataC.dataRaw)
+  console.log('EMANAGER1-----TIMEUpdate-COMP. finished')
+  console.log('EMANAGER3---START--COMPUTE')
+  this.emit('computation', 'in-progress')
+  this.computeStatus = await this.liveSEntities[cid].liveComputeC.filterCompute(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveTimeC.liveTime)
   console.log('EMANAGER3--compute finished')
+  console.log(this.computeStatus)
+  this.emit('computation', 'finished')
+  if (this.computeStatus === '') {
+  // go direct and get raw data direct
+    await this.liveSEntities[cid].liveDataC.liveDataSystem.directSourceUpdated()
+  }
   console.log('EMANAGE4--START-VIS')
-  let visBundle = {}
-  visBundle.vid = 'visID'
-  visBundle.cnrl = cid
-  visBundle.computeStatus = this.computeStatus.computeState
-  visBundle.deviceList = this.liveSEntities[cid].liveDataC.deviceList
-  visBundle.datatypeList = this.liveSEntities[cid].liveDataC.datatypeList
-  visBundle.liveTime = this.liveSEntities[cid].liveDataC.livedate
-  visBundle.timeList = this.liveSEntities[cid].liveDataC.livedate
   let visStatus = this.liveSEntities[cid].liveVisualC.filterVisual(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveDataC.liveData)
   console.log('visCompenent--FINISHED')
   console.log('5CONTROLFLOW___OVER(firstpass)')
   console.log(visStatus)
-  console.log(this.computeStatus)
-  /* if (visStatus === true) {
-    console.log('5a--2ndSTARTFLOW----')
-    // emit message to inform peer that computation is progressing
-    localthis.emit('computation', 'in-progress')
-    computeBundle.status = true
-    computeBundle.computeStatus = this.computeStatus
-    computeBundle.liveTime = localthis.liveSEntities[cid].liveDataC.livedate
-    console.log('5b--START_COMPUTEagain')
-    await localthis.liveSEntities[cid].liveComputeC.filterCompute(computeBundle, localthis.liveSEntities[cid].liveDataC.dataRaw)
-    console.log('5c---asked for the rawdata of results')
-    await this.liveSEntities[cid].liveDataC.RawData()
-    let visBundle2 = {}
-    visBundle2.vid = visID
-    visBundle2.cnrl = cid
-    visBundle2.deviceList = localthis.liveSEntities[cid].liveDataC.deviceList
-    visBundle2.datatypeList = localthis.liveSEntities[cid].liveDataC.datatypeList
-    visBundle2.liveTime = localthis.liveSEntities[cid].liveDataC.livedate
-    visBundle2.timeList = localthis.liveSEntities[cid].liveDataC.livedate
-    visBundle2.computeStatus = 'go'
-    let liveUpdatedCompData = this.latestData(localthis.liveSEntities[cid].liveDataC.tidyData)
-    let visStatus = localthis.liveSEntities[cid].liveVisualC.filterVisual(visBundle2, liveUpdatedCompData)
-    console.log(visStatus)
-    console.log('5dVISOVER2___OVER(2ndpass)')
-  } */
-  console.log('6CONTROLFLOW___OVER(2ndpass)')
   return true
 }
 

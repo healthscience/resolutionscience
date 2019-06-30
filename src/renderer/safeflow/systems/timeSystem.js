@@ -10,6 +10,7 @@
 * @version    $Id$
 */
 
+import TimeUtilities from './timeUtility.js'
 import CNRLmaster from '../cnrl/cnrlMaster.js'
 import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
 const util = require('util')
@@ -17,6 +18,7 @@ const events = require('events')
 
 var TimeSystem = function (setIN) {
   events.EventEmitter.call(this)
+  this.liveTimeUtil = new TimeUtilities()
   this.liveCNRL = new CNRLmaster()
   this.liveTestStorage = new TestStorageAPI(setIN)
 }
@@ -32,67 +34,55 @@ util.inherits(TimeSystem, events.EventEmitter)
 * @method timeStartFilter
 *
 */
-TimeSystem.prototype.discoverTimeStatus = function (dtInfo) {
-  console.log('discover time status logic')
-  console.log('datatype INFOIN')
-  console.log(dtInfo)
-}
-
-/**
-* asses the status of the avg compute
-* @method assessAvgStatus
-*
-*/
-TimeSystem.prototype.assessAvgStatus = async function (compInfo, rawIN) {
-  console.log('assess Average')
-  let timeStart = await this.updatedAverageStatus(compInfo, rawIN)
-  console.log('COMPSYS2-RETURN')
+TimeSystem.prototype.discoverTimeStatus = async function (EIDinfo, compInfo, rawIN) {
+  // establish start date or last compute date, deal with segmentation if required.
+  let timeStart = await this.updatedDTCStatus(EIDinfo, compInfo, rawIN)
   return timeStart
 }
 
 /**
 * does this data ask need updating? Y N
-* @method updatedAverageStatus
+* @method updatedDTCStatus
 *
 */
-TimeSystem.prototype.updatedAverageStatus = async function (compInfo, rawIN) {
-  console.log('average status=====')
+TimeSystem.prototype.updatedDTCStatus = async function (EIDinfo, compInfo, rawIN) {
   let statusHolder = {}
   let lastComputetime = ''
-  let liveTime = compInfo.startperiod
+  let liveTime = EIDinfo.time.startperiod
   // is there any data?
-  for (let dev of compInfo.deviceList) {
-    for (let dtl of compInfo.dtAsked) {
-      // for (let tsg of compInfo.timeseg) {
+  for (let dev of EIDinfo.devices) {
+    for (let dtl of compInfo.datatypes) {
       let devMac = dev.device_mac
       statusHolder[liveTime] = {}
       statusHolder[liveTime][devMac] = {}
       statusHolder[liveTime][devMac][dtl.cnrl] = []
-      for (let tsega of rawIN[0][liveTime][devMac][dtl.cnrl]) {
+      // need to select the latest data object from array
+      let lastDataObject = rawIN.slice(-1)[0]
+      // for (let tsega of rawIN[0][liveTime][devMac][dtl.cnrl]) {
+      for (let tsega of lastDataObject[liveTime][devMac][dtl.cnrl]) {
         // need to
         let checkD = tsega
         if (checkD !== undefined) {
           if (tsega.day) {
             lastComputetime = tsega.day.slice(-1)
-            let catStatus2 = await this.categoriseStatusperTimeseg(compInfo, lastComputetime, dev, 'day')
+            let catStatus2 = await this.categoriseStatusperTimeseg(EIDinfo, lastComputetime, dev, 'day')
             statusHolder[liveTime][devMac][dtl.cnrl].push(catStatus2)
           }
           if (tsega.week) {
             lastComputetime = tsega.week.slice(-1)
-            let catStatus3 = await this.categoriseStatusperTimeseg(compInfo, lastComputetime, dev, 'week')
+            let catStatus3 = await this.categoriseStatusperTimeseg(EIDinfo, lastComputetime, dev, 'week')
             statusHolder[liveTime][devMac][dtl.cnrl].push(catStatus3)
           }
           if (tsega.month) {
             lastComputetime = tsega.week.slice(-1)
-            let catStatus4 = await this.categoriseStatusperTimeseg(compInfo, lastComputetime, dev, 'month')
+            let catStatus4 = await this.categoriseStatusperTimeseg(EIDinfo, lastComputetime, dev, 'month')
             statusHolder[liveTime][devMac][dtl.cnrl].push(catStatus4)
           }
           if (tsega.year) {
             lastComputetime = tsega.week.slice(-1)
-            let catStatus5 = await this.categoriseStatusperTimeseg(compInfo, lastComputetime, dev, 'year')
+            let catStatus5 = await this.categoriseStatusperTimeseg(EIDinfo, lastComputetime, dev, 'year')
             statusHolder[liveTime][devMac][dtl.cnrl].push(catStatus5)
           }
-          // }
         }
       }
     }
@@ -105,19 +95,21 @@ TimeSystem.prototype.updatedAverageStatus = async function (compInfo, rawIN) {
 * @method categoriseStatusperTimeseg
 *
 */
-TimeSystem.prototype.categoriseStatusperTimeseg = async function (compInfo, statusIN, dev, timeSeg) {
-  console.log('cat status logic')
+TimeSystem.prototype.categoriseStatusperTimeseg = async function (EIDinfo, statusIN, dev, timeSeg) {
   let catHolder = {}
-  let realTime = compInfo.realtime
+  let realTime = EIDinfo.time.realtime
   let updateCompStatus = ''
   let liveLastTime = 0
   let startTimeFound = ''
+  let timeArray = []
   if (statusIN.length > 0) {
     liveLastTime = statusIN[0].timestamp
   }
   if (statusIN.length === 0) {
     updateCompStatus = 'update-required'
     startTimeFound = await this.sourceDTstartTime(dev)
+    // form array for compute structure???
+    timeArray = this.updateAverageDates(startTimeFound, EIDinfo.time.startperiod)
   } else if (liveLastTime < realTime) {
     startTimeFound = statusIN[0].timestamp
     updateCompStatus = 'update-required'
@@ -127,6 +119,7 @@ TimeSystem.prototype.categoriseStatusperTimeseg = async function (compInfo, stat
   catHolder.lastComputeTime = startTimeFound
   catHolder.status = updateCompStatus
   catHolder.timeseg = timeSeg
+  catHolder.computeTime = timeArray
   return catHolder
 }
 
@@ -138,9 +131,6 @@ TimeSystem.prototype.categoriseStatusperTimeseg = async function (compInfo, stat
 TimeSystem.prototype.sourceDTstartTime = async function (devIN) {
   let timeDevHolder = ''
   let dateDevice = await this.checkForDataPerDevice(devIN.device_mac)
-  console.log('first data date----')
-  console.log(dateDevice[0])
-  console.log(dateDevice[0].lastComputeTime)
   timeDevHolder = dateDevice[0].lastComputeTime
   return timeDevHolder
 }
@@ -151,16 +141,11 @@ TimeSystem.prototype.sourceDTstartTime = async function (devIN) {
 *
 */
 TimeSystem.prototype.updateAverageDates = function (lastCompTime, liveTime) {
-  console.log('AVG DATE----RANGE')
-  console.log(lastCompTime)
-  console.log(liveTime)
   let computeList = []
   const liveDate = liveTime * 1000
   const lastComputeDate = lastCompTime * 1000
   // use time utiity to form array fo dates require
   computeList = this.liveTimeUtil.timeDayArrayBuilder(liveDate, lastComputeDate)
-  console.log('Array of daily dates from start of data')
-  console.log(computeList)
   return computeList
 }
 
@@ -170,17 +155,13 @@ TimeSystem.prototype.updateAverageDates = function (lastCompTime, liveTime) {
 *
 */
 TimeSystem.prototype.checkForDataPerDevice = async function (device) {
-  console.log('timePeriod PER DEVICE')
   let deviceStatus = {}
   let dataStatus = []
   // does any input source data exist?
   await this.liveTestStorage.getFirstData(device).then(function (firstD) {
-    console.log('return axios first data')
-    console.log(firstD)
     deviceStatus.lastComputeTime = firstD[0].timestamp
     deviceStatus[device] = false
     dataStatus.push(deviceStatus)
-    console.log('EXIT OF START-PerDEVICE')
   }).catch(function (err) {
     console.log(err)
   })
@@ -193,7 +174,6 @@ TimeSystem.prototype.checkForDataPerDevice = async function (device) {
 *
 */
 TimeSystem.prototype.convertSeg = function (tSeg) {
-  console.log('segments assess=====start')
   let segMStime = {}
   for (let ts of tSeg) {
     if (ts === 'week' || ts === 'month' || ts === 'year') {

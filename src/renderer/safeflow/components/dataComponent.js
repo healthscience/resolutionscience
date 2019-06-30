@@ -115,8 +115,6 @@ DataComponent.prototype.setCategories = function (ctIN) {
 *
 */
 DataComponent.prototype.sourceData = async function (apiINFO) {
-  console.log('DATACOMPONENT1----start sourcedata')
-  // console.log(this.livedate)
   this.apiInfoLive = apiINFO
   let systemBundle = {}
   systemBundle.apiInfo = apiINFO
@@ -127,8 +125,6 @@ DataComponent.prototype.sourceData = async function (apiINFO) {
   systemBundle.timeseg = this.timeSegs
   let dataRback = await this.liveDataSystem.datatypeMapping(systemBundle)
   this.dataRaw.push(dataRback)
-  console.log('component rawdata')
-  console.log(this.dataRaw)
   // is there any data tidying required
   this.TidyData()
   // is there a categories filter to apply?
@@ -142,9 +138,7 @@ DataComponent.prototype.sourceData = async function (apiINFO) {
 *
 */
 DataComponent.prototype.TidyData = function () {
-  console.log('DCOMPONENT1-- datatidy started')
   if (this.apiInfoLive.tidyList.length !== 0) {
-    console.log('tidy require')
     let tidyHolder = {}
     let dBundle = {}
     dBundle.timePeriod = this.livedate
@@ -186,6 +180,7 @@ DataComponent.prototype.CategoriseData = function () {
   // set liveData based on/if category data asked for
   this.assessDataStatus()
 }
+
 /**
 *
 * @method assessDataStatus
@@ -199,6 +194,17 @@ DataComponent.prototype.assessDataStatus = function () {
   } else {
     this.liveData = this.tidyData
   }
+  console.log(this.liveData)
+}
+
+/**
+*
+* @method directSourceUpdated
+*
+*/
+DataComponent.prototype.directSourceUpdated = function () {
+  console.log('go straight and get updated results')
+  this.liveData = this.liveDataSystem.getRawData(this.did)
 }
 
 export default DataComponent

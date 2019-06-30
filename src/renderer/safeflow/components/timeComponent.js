@@ -15,8 +15,8 @@ const events = require('events')
 
 var TimeComponent = function (DID, setIN) {
   this.did = DID
-  this.liveDataSystem = new TimeSystem(setIN)
-  this.liveTime = []
+  this.liveTimeSystem = new TimeSystem(setIN)
+  this.liveTime = {}
 }
 
 /**
@@ -41,10 +41,11 @@ TimeComponent.prototype.setStartTime = function (startDate) {
 * @method startTimeSystem
 *
 */
-TimeComponent.prototype.startTimeSystem = function (dtInfo) {
+TimeComponent.prototype.startTimeSystem = async function (dtInfo, rawIN) {
   // need to look at the entity datatype INFO bundle and map times start stop update status
-  let timeInfo = this.liveDataSystem.discoverTimeStatus(dtInfo)
-  this.liveTime.push(timeInfo)
+  this.liveTime = await this.liveTimeSystem.discoverTimeStatus(this.did, dtInfo, rawIN)
+  console.log('liveTime')
+  console.log(this.liveTime)
   return true
 }
 

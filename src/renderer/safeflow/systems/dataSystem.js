@@ -152,7 +152,7 @@ DataSystem.prototype.datatypeMapping = async function (systemBundle) {
   } else {
     for (let dtItem of systemBundle.apiInfo.apiquery) {
       if (dtItem.api === 'computedata/<publickey>/<token>/<queryTime>/<deviceID>/') {
-        console.log('OBSERVATION QI')
+        console.log('OBSERVATION QI or SOURCE DT query')
         await this.getRawData(systemBundle).then(function (sourcerawData) {
           rawHolder = {}
           rawHolder[systemBundle.startperiod] = sourcerawData
@@ -259,12 +259,12 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
 * @method tidyRawDataSingle
 *
 */
-DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, dtTidy, catCodes) {
+DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, compInfo) {
   let cleanData = []
   let sTidyarray = []
   let filterMat = false
   // need to loop and match dt to tidy dts?
-  for (let idt of dtTidy) {
+  for (let idt of compInfo.tidyList) {
     if (idt.cnrl === DTlive.cnrl) {
       cleanData = dataRawS.filter(function (vali) {
         for (var i = 0; i < idt.codes.length; i++) {
@@ -284,13 +284,40 @@ DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, dtTidy, cat
       sTidyarray = dataRawS
     }
   }
+  // extract the dt required
+  sTidyarray = this.extractDTcolumn(DTlive, sTidyarray)
+  console.log('post extact dt colum')
+  console.log(sTidyarray)
   // does a category filter apply?
-  if (catCodes.length === 0) {
+  if (compInfo.categorycodes.length === 0) {
     // nothing to filter
   } else {
-    sTidyarray = this.categorySorterSingle(sTidyarray, catCodes)
+    sTidyarray = this.categorySorterSingle(sTidyarray, compInfo.categorycodes)
   }
   return sTidyarray
+}
+
+/**
+* extract out the data type colum and timestamp
+* @method extractDTcolumn
+*
+*/
+DataSystem.prototype.extractDTcolumn = function (sourceDT, arrayIN) {
+  console.log('extract DT for compute')
+  console.log(sourceDT)
+  console.log(arrayIN)
+  let singleArray = []
+  let intData = 0
+  for (let sing of arrayIN) {
+    if (sourceDT.cnrl === 'cnrl-8856388711') {
+      intData = parseInt(sing.heart_rate, 10)
+      singleArray.push(intData)
+    } else if (sourceDT.cnrl === 'cnrl-8856388712') {
+      intData = parseInt(sing.steps, 10)
+      singleArray.push(intData)
+    }
+  }
+  return singleArray
 }
 
 /**

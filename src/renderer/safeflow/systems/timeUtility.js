@@ -39,14 +39,6 @@ TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
   this.liveStarttime = timeBundle.time.startperiod
   this.realtime = timeBundle.realtime
   timeConversion = this.updateUItime(timeBundle.time.timevis)
-  // split for compute segments or UI visualisation choices
-  /* if (timeBundle.timeseg.length > 0) {
-    console.log('prepare compute segmentations')
-    timeConversion = this.computeTimeSegments(timeBundle.timeseg)
-  } else {
-    console.log('time changes from UI')
-    timeConversion = this.updateUItime(timeBundle.timesvis)
-  } */
   timeConversion.timeseg = timeBundle.time.timeseg
   let realTimems = moment(timeBundle.realtime).valueOf()
   timeConversion.realtime = Math.round(realTimems / 1000)

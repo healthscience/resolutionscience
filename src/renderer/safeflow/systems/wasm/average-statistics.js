@@ -42,8 +42,16 @@ StatisticsSystem.prototype.statisticsSystem = function () {
 * @method prepareAvgCompute
 *
 */
-StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, device, datatype, tseg, compRef, tidyList, categoryCodes) {
+StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, device, datatype, tseg, compRef, compInfo) {
   console.log('prepare avg. compute START')
+  console.log(computeTimes)
+  console.log(device)
+  console.log(datatype)
+  console.log(tseg)
+  console.log(compRef)
+  console.log(compInfo.tidyList)
+  console.log(compInfo.categorycodes)
+  console.log(compInfo.sourceDTs)
   for (let qt of computeTimes) {
     let queryTime = qt / 1000
     // The datatype asked should be MAPPED to storage API via source Datatypes that make up e.g. average-bpm
@@ -51,7 +59,7 @@ StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, dev
     let dataBatch = await this.liveTestStorage.getComputeData(queryTime, device.device_mac, datatype)
     // console.log(dataBatch)
     if (dataBatch.length > 0) {
-      let singleArray = this.liveDataSystem.tidyRawDataSingle(dataBatch, datatype, tidyList, categoryCodes)
+      let singleArray = this.liveDataSystem.tidyRawDataSingle(dataBatch, datatype, compInfo)
       // need to check for categories TODO
       let saveReady = this.averageStatistics(singleArray)
       // prepare JSON object for POST
@@ -65,8 +73,8 @@ StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, dev
       saveJSON.clean = saveReady.count
       saveJSON.tidy = singleArray.tidycount
       saveJSON.timeseg = tseg
-      // console.log('average preSAVE')
-      // console.log(saveJSON)
+      console.log('average preSAVE')
+      console.log(saveJSON)
       this.liveTestStorage.saveaverageData(saveJSON)
     }
   }
@@ -136,6 +144,7 @@ StatisticsSystem.prototype.extractDT = function (dtPrim) {
 StatisticsSystem.prototype.averageStatistics = function (dataArray) {
   // statistical avg. smart contract/crypt ID ref & verfied wasm/network/trubit assume done
   console.log('start average compute')
+  console.log(dataArray)
   let AvgHolder = {}
   let numberEntries = dataArray.length
   // accumulate sum the daily data

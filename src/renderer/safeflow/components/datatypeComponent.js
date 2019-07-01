@@ -36,6 +36,8 @@ DatatypeComponent.prototype.dataTypeMapping = function () {
   // return list of Datatypes - cnrl-IDs  primary and source ie Datatypes require to compute results
   let dataTypeMapped = this.liveDTsystem.DTStartMatch(this.did.storageAPI, this.did.datatypes, this.did.categories)
   this.datatypeInfoLive = dataTypeMapped
+  console.log('data type INFO')
+  console.log(this.datatypeInfoLive)
   return true
 }
 

@@ -34,9 +34,16 @@ util.inherits(DTSystem, events.EventEmitter)
 */
 DTSystem.prototype.DTStartMatch = function (dAPI, lDTs, catDTs) {
   // look up packaging contract
+  let packagingDTs = this.liveCNRL.lookupContract(dAPI)
+  console.log('source packaging')
+  console.log(packagingDTs)
   // is the data type primary
   let sourceDTextract = this.mapSourceDTs(lDTs)
-  let packagingDTs = this.liveCNRL.lookupContract(dAPI)
+  console.log('source DTs')
+  console.log(sourceDTextract)
+  let sourceDTmapAPI = this.datatypeCheckAPI(packagingDTs, sourceDTextract)
+  console.log('source check API 0.5')
+  console.log(sourceDTmapAPI)
   let SpackagingDTs = {}
   let TidyDataLogic = []
   // is this a derived source?
@@ -62,6 +69,8 @@ DTSystem.prototype.DTStartMatch = function (dAPI, lDTs, catDTs) {
     TidyDataLogic = packagingDTs.tidyList
   }
   let DTmapAPI = this.datatypeCheckAPI(packagingDTs, lDTs)
+  console.log('check API 1')
+  console.log(DTmapAPI)
   // if null check if category dt, ie derived from two or more dataTypeSensor
   let checkDTcategory = []
   let extractCatDT = []
@@ -75,15 +84,21 @@ DTSystem.prototype.DTStartMatch = function (dAPI, lDTs, catDTs) {
     extractCatDT = this.liveCNRL.lookupContract(checkDTcategory[0].column)
     catDT.push(extractCatDT.prime)
     catDTmapAPI = this.datatypeCheckAPI(packagingDTs, catDT)
+    console.log('check API 2')
+    console.log(DTmapAPI)
   } else {
     checkDTcategory = []
   }
 
   let apiInfo = {}
   apiInfo.apiquery = [...DTmapAPI, ...catDTmapAPI]
+  apiInfo.sourceapiquery = sourceDTmapAPI
+  apiInfo.sourceDTs = sourceDTextract
   apiInfo.categorycodes = checkDTcategory
   apiInfo.datatypes = lDTs
   apiInfo.tidyList = TidyDataLogic
+  console.log('API DT info')
+  console.log(apiInfo)
   return apiInfo
 }
 
@@ -93,24 +108,43 @@ DTSystem.prototype.DTStartMatch = function (dAPI, lDTs, catDTs) {
 *
 */
 DTSystem.prototype.datatypeCheckAPI = function (packagingDTs, lDTs) {
+  console.log('check api')
+  console.log(packagingDTs)
+  console.log(lDTs)
   let apiMatch = []
+  let apiKeep = []
   // given datatypes select find match to the query string
   let tableCount = 0
   // match to source API query
   for (let dtt of packagingDTs.tableStructure) {
+    console.log('table structure')
+    console.log(dtt)
     for (let idt of lDTs) {
+      console.log('dt')
+      console.log(idt.cnrl)
       const result = dtt.filter(item => item.cnrl === idt.cnrl)
+      console.log('result of filter')
+      console.log(result)
       if (result.length > 0) {
         let packAPImatch = {}
         packAPImatch.cnrl = result[0].cnrl
         packAPImatch.column = result[0].text
         packAPImatch.api = packagingDTs.apistructure[tableCount]
+        console.log('match')
+        console.log(apiMatch)
         apiMatch.push(packAPImatch)
+        console.log(apiMatch.length)
+        if (apiMatch.length >= 2) {
+          apiKeep.push(apiMatch)
+        }
       }
     }
+    apiMatch = []
     tableCount++
   }
-  return apiMatch
+  console.log('api mapped keep')
+  console.log(apiKeep)
+  return apiKeep
 }
 
 /**
@@ -120,13 +154,17 @@ DTSystem.prototype.datatypeCheckAPI = function (packagingDTs, lDTs) {
 */
 DTSystem.prototype.mapSourceDTs = function (lDTs) {
   let sourceDTextract = []
+  console.log('map to sourc e DT')
+  console.log(lDTs)
   for (let iDT of lDTs) {
     // look up datatype contract to see if derived?
     let dtSourceContract = this.liveCNRL.lookupContract(iDT.cnrl)
     if (dtSourceContract.source === 'cnrl-derived') {
       // loop over source DT's
+      console.log('derived')
       for (let sDT of dtSourceContract.dtsource) {
         // look up datatype contract
+        console.log('and again')
         let dtprime = this.liveCNRL.lookupContract(sDT)
         sourceDTextract.push(dtprime.prime)
       }
@@ -134,6 +172,12 @@ DTSystem.prototype.mapSourceDTs = function (lDTs) {
       sourceDTextract.push(iDT)
     }
   }
+  // need to remove duplicate elements
+  sourceDTextract = sourceDTextract.filter((sourceDTextract, index, self) =>
+    index === self.findIndex((t) => (
+      t.cnrl === sourceDTextract.cnrl
+    ))
+  )
   return sourceDTextract
 }
 /**

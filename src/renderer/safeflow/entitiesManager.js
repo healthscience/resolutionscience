@@ -110,9 +110,9 @@ EntitiesManager.prototype.controlFlow = async function (cflowIN) {
   console.log('EMANAGER3--compute finished')
   console.log(this.computeStatus)
   this.emit('computation', 'finished')
-  if (this.computeStatus === '') {
+  if (this.computeStatus === true) {
   // go direct and get raw data direct
-    await this.liveSEntities[cid].liveDataC.liveDataSystem.directSourceUpdated()
+    await this.liveSEntities[cid].liveDataC.directSourceUpdated()
   }
   console.log('EMANAGE4--START-VIS')
   let visStatus = this.liveSEntities[cid].liveVisualC.filterVisual(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveDataC.liveData)

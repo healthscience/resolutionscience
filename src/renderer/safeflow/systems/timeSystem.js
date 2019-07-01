@@ -87,6 +87,8 @@ TimeSystem.prototype.updatedDTCStatus = async function (EIDinfo, compInfo, rawIN
       }
     }
   }
+  console.log('update time system')
+  console.log(statusHolder)
   return statusHolder
 }
 
@@ -165,6 +167,8 @@ TimeSystem.prototype.checkForDataPerDevice = async function (device) {
   }).catch(function (err) {
     console.log(err)
   })
+  console.log('check data start per devcie')
+  console.log(dataStatus)
   return dataStatus
 }
 

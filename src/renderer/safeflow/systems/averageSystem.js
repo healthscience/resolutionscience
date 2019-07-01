@@ -58,6 +58,9 @@ AverageSystem.prototype.averageSystemStart = async function (EIDinfo, compInfo, 
 */
 AverageSystem.prototype.computeControlFlow = async function (EIDinfo, compInfo, timeInfo) {
   console.log('AVGcomputeCONTROLFLOW---start')
+  console.log(EIDinfo)
+  console.log(compInfo)
+  console.log(timeInfo)
   let cFlowStatus = {}
   // what time segments have been asked for?
   let segAsk = compInfo
@@ -68,7 +71,7 @@ AverageSystem.prototype.computeControlFlow = async function (EIDinfo, compInfo, 
       for (let checkComp of timeInfo[EIDinfo.time.startperiod][dvc.device_mac][dtl.cnrl]) {
         // what is status of compute?
         if (checkComp.status === 'update-required' && checkComp.timeseg === 'day') {
-          let computeStatus = await this.avgliveStatistics.prepareAvgCompute(checkComp.computeTime, dvc, dtl, checkComp.timeseg, compInfo.cid, compInfo.tidyList, compInfo.categorycodes)
+          let computeStatus = await this.avgliveStatistics.prepareAvgCompute(checkComp.computeTime, dvc, dtl, checkComp.timeseg, EIDinfo.cid, compInfo)
           cFlowStatus = computeStatus
         } else {
           // for each time segment week, month, year use existing daily averageSave

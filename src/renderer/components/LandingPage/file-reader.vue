@@ -65,7 +65,7 @@
           this.$emit('removeCreatekey', false)
           this.fileinputSeen = false
           this.pwinputSeen = false
-          this.verifyfeedbackM = 'Key has been verifed.'
+          this.verifyfeedbackM = 'Key has been self-verifed.'
           // set public key startTime
           // const tokenJSONsetP = {}
           // tokenJSONsetP.publickey = this.pkaddress

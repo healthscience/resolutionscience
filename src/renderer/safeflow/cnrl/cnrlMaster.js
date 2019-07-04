@@ -214,6 +214,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
   dataCNRLbundle.wasmfile = ''
   dataCNRLbundle.namespace = ''
   dataCNRLbundle.index = []
+  dataCNRLbundle.kentities = []
   if (refIN === 'cnrl-8856388711') {
     dataCNRLbundle.type = 'datatype'
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-8856388711', 'text': 'bpm', 'active': false }
@@ -515,6 +516,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.resolution = {}
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-888355992223'
     dataCNRLbundle.index = []
+    dataCNRLbundle.kentities = ['cnrl-2356388731']
   } else if (refIN === 'cnrl-888355992224') {
     // CNRL implementation contract e.g. from mobile phone sqlite table structure
     dataCNRLbundle.type = 'experiment'
@@ -529,6 +531,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.resolution = {}
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-888355992223'
     dataCNRLbundle.index = []
+    dataCNRLbundle.kentities = ['cnrl-2356388731']
   } else if (refIN === 'cnrl-888388992224') {
     // CNRL implementation contract e.g. from mobile phone sqlite table structure
     dataCNRLbundle.type = 'experiment'
@@ -543,6 +546,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.resolution = {}
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-888388992224'
     dataCNRLbundle.index = []
+    dataCNRLbundle.kentities = ['cnrl-2356388731']
   } else if (refIN === 'cnrl-888388232224') {
     // CNRL implementation contract e.g. from mobile phone sqlite table structure
     dataCNRLbundle.type = 'experiment'
@@ -557,6 +561,52 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.resolution = {}
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-888388992224'
     dataCNRLbundle.index = []
+    dataCNRLbundle.kentities = ['cnrl-2356388731']
+  } else if (refIN === 'cnrl-888388233324') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'experiment'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-888388233324', 'text': 'Air quality and weather', 'active': false }
+    dataCNRLbundle.livingpaper = {'link': 'https://docs.google.com/document/'}
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.tableStructure = []
+    dataCNRLbundle.categorycodes.push()
+    dataCNRLbundle.categorycodes.push()
+    dataCNRLbundle.resolution = {}
+    dataCNRLbundle.namespace = 'safe://cnrl/cnrl-888388233324'
+    dataCNRLbundle.index = []
+    dataCNRLbundle.kentities = []
+  } else if (refIN === 'cnrl-888388443324') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'experiment'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-888388443324', 'text': 'Stemcell patch recovery', 'active': false }
+    dataCNRLbundle.livingpaper = {'link': 'https://docs.google.com/document/'}
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.tableStructure = []
+    dataCNRLbundle.categorycodes.push()
+    dataCNRLbundle.categorycodes.push()
+    dataCNRLbundle.resolution = {}
+    dataCNRLbundle.namespace = 'safe://cnrl/cnrl-888388233324'
+    dataCNRLbundle.index = []
+    dataCNRLbundle.kentities = ['cnrl-2356388731']
+  } else if (refIN === 'cnrl-848388553323') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'experiment'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-848388553323', 'text': 'Daily step planning', 'active': false }
+    dataCNRLbundle.livingpaper = {'link': 'https://docs.google.com/document/'}
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.tableStructure = []
+    dataCNRLbundle.categorycodes.push()
+    dataCNRLbundle.categorycodes.push()
+    dataCNRLbundle.resolution = {}
+    dataCNRLbundle.namespace = 'safe://cnrl/cnrl-848388553323'
+    dataCNRLbundle.index = []
+    dataCNRLbundle.kentities = ['cnrl-2356388731']
   }
   return dataCNRLbundle
 }
@@ -605,7 +655,7 @@ CNRLmaster.prototype.indexDatapackaging = function () {
 CNRLmaster.prototype.indexExperiments = function () {
   // index datatype live in network by cnrl // id
   let indexExperimentslive = []
-  indexExperimentslive.push('cnrl-888355992223', 'cnrl-888355992224', 'cnrl-888388992224', 'cnrl-888388232224')
+  indexExperimentslive.push('cnrl-848388553323', 'cnrl-888355992223', 'cnrl-888355992224', 'cnrl-888388992224', 'cnrl-888388232224', 'cnrl-888388233324', 'cnrl-888388443324')
   return indexExperimentslive
 }
 

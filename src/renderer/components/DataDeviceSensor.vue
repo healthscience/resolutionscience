@@ -1,12 +1,16 @@
 <template>
   <div id="devices-sensors-data">
     <h1>Devices, Sensors & Data</h1>
+    <div id="help-data">
+      Connect to device data stores and verify account ownership.
+    </div>
     <div id="device-data-status">
+      <header>DATA STORES</header>
       <ul>
-        <li>
+        <li class="datastore-item">
           <header>TESTnetwork</header>
           <div id="hardware">
-            <header>Hardware</header>
+            <header>Verify token to access</header>
             <div v-if="firstTimetokenseen" id="askfor-token" >
               First time generation of token
                 <first-token @load="text = $event" @removeGenbutton="firstGenerateseen($event)"></first-token>
@@ -15,26 +19,13 @@
               Please navigate token file:
               <token-reader @load="text = $event" :viewPkey="viewPkey"> </token-reader>
             </div>
-            <div id="hardware-firmware">
-              OS Linux <a id="" href="">Cloud</a>
-            </div>
-            <div id="hardware-manufactureid">
-              DigitalOcean
-            </div>
-          </div>
-          <div id="data">
-            <header>Data</header>
-            <div id="data-location">
-              TestServer
-            </div>
-            <div id="data-volume">
-            </div>
           </div>
         </li>
-        <li>
+        <li class="datastore-item">
           <header>SAFEnetwork</header>
           <div id="safe-api">
             <header>Peer to Peer Secure Storage</header>
+            <header>Verify token to access</header>
           </div>
         </li>
         <li>
@@ -130,5 +121,11 @@
 
 #data header {
   font-weight: bold;
+}
+
+.datastore-item {
+  display: inline-block;
+  border-top-style: dotted;
+  border: 1px solid blue
 }
 </style>

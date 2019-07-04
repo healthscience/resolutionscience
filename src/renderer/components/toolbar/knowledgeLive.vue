@@ -61,26 +61,15 @@
           </div>
         </div>
       </div>
-      <div id="experiment-learn" class="live-element">
-        <div id="experiment-learn-container">
-          <div id="experiment-view">
-            <a href="" id="experiment-button" @click.prevent="viewExperiment(exper)" v-bind:class="{ 'active': exper.active}">{{ exper.name }}</a>
-          </div>
-        </div>
-      </div>
       <div id="learn-close"></div>
     </div>
-    <div id="experiments" v-if="exper.active">
-      <experiment-List :experimentData="KLexperimentData" ></experiment-List>
-    </div>
     <div id="history" v-if="hist.active">
-      <history-List :historyData="historyData" @setLiveBundle="makeLiveKnowledge"></history-List>
+      <history-List :historyData="historyData" @setLiveBundle="makeLiveKnowledge" @setLiveExperimentBundle="makeLiveExperiment"></history-List>
     </div>
   </div>
 </template>
 
 <script>
-  import experimentList from '@/components/toolbar/experimentList.vue'
   import historyList from '@/components/toolbar/historyList.vue'
   import { kBus } from '../../main.js'
   const moment = require('moment')
@@ -88,7 +77,6 @@
   export default {
     name: 'knowledge-live',
     components: {
-      experimentList,
       historyList
     },
     props: {
@@ -114,12 +102,6 @@
           active: false
         },
         historyData: this.$store.getters.startBundlesList,
-        exper:
-        {
-          name: 'View experiments',
-          id: 'learn-experiments',
-          active: false
-        },
         experimentData: [],
         bundleid: 0
       }
@@ -208,16 +190,6 @@
           hist.name = 'Close history'
         } else {
           hist.name = 'View history'
-        }
-      },
-      viewExperiment (exper) {
-        exper.active = !exper.active
-        // query CNRL to get live EXPERIMENTS
-        this.$emit('liveExperiments')
-        if (exper.active === true) {
-          exper.name = 'Close experiment'
-        } else {
-          exper.name = 'View experiments'
         }
       },
       makeLiveKnowledge (lBund) {

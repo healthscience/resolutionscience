@@ -1,29 +1,26 @@
 <template>
   <div id="visual-view">
     <div id="diy-science">
-      <div id="add-experiment">
-        Add to experiment. Please select:
-        <select v-model="selectedExperiment" @change="addToExperiment(selectedCompute)">
-        <option class="science-compute" v-for="expi in liveexerimentList" v-bind:value="expi.cnrl">
-          {{ expi.cnrl }}
-        </option>
-        <div id="add-button">
-          <button class="" href="" id="add-exp-button" @click.prevent="experADD(expi)">Add</button>
+      <div id="experiment-summary">
+          <div id="experiment-toolbar">
+            <ul>
+              <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis1)" v-bind:class="{ 'active': vis1.active}">{{ vis1.name }}</a></li>
+              <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis2)" v-bind:class="{ 'active': vis2.active}">{{ vis2.name }}</a></li>
+              <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis3)" v-bind:class="{ 'active': vis3.active}">{{ vis3.name }}</a></li>
+              <li id="tool-bar">
+                <header>Tools</header>
+                <a class="" href="" id="toolbarholder" @click.prevent="toolsSwitch(toolbar)" v-bind:class="{ 'active': toolbar.active}">{{ toolbar.text }}</a>
+              </li>
+            </ul>
+            <div id="edit-experiment">Edit
+          </div>
         </div>
-      </select>
       </div>
-      <div id="oracles">oracles</div>
-      <div id="tends">trends</div>
-      <div id="visulation-select">
-        <ul>
-          <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis1)" v-bind:class="{ 'active': vis1.active}">{{ vis1.name }}</a></li>
-          <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis2)" v-bind:class="{ 'active': vis2.active}">{{ vis2.name }}</a></li>
-          <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis3)" v-bind:class="{ 'active': vis3.active}">{{ vis3.name }}</a></li>
-          <li id="tool-bar">
-            <header>Tools</header>
-            <a class="" href="" id="toolbarholder" @click.prevent="toolsSwitch(toolbar)" v-bind:class="{ 'active': toolbar.active}">{{ toolbar.text }}</a>
-          </li>
-        </ul>
+      <div id="reports">
+        <Learn-Report :recoveryData="recoveryData" @recoverySet="recoveryStatus()" ></Learn-Report>
+      </div>
+      <div id="action">
+        <Learn-Action></Learn-Action>
       </div>
       <div v-if="visChartview" id="charts-live">
         <reactive :chartData="datacollection" :options="options" :width="1200" :height="600"></reactive>
@@ -53,23 +50,23 @@
 </template>
 
 <script>
-  // import SAFEflow from '../../safeflow/safeFlow.js'
-  // import LineChart from '@/components/charts/LineChart'
-  // import BarChart from '@/components/charts/BarChart'
-  // import BubbleChart from '@/components/charts/BubbleChart'
   import Reactive from '@/components/charts/Reactive'
   import Reactivestats from '@/components/charts/Reactivestats'
   import ToolbarTools from '@/components/toolbar/statisticstools'
+  import LearnReport from '@/components/reports/LearnReport'
+  import LearnAction from '@/components/reports/LearnAction'
   import tableBuild from '@/components/table/tableBuilder'
   import simulationView from '@/components/simulation/simulation-life'
   // const moment = require('moment')
 
   export default {
-    name: 'visual-liveview',
+    name: 'expvisual-liveview',
     components: {
       Reactive,
       Reactivestats,
       ToolbarTools,
+      LearnReport,
+      LearnAction,
       tableBuild,
       simulationView
     },
@@ -139,7 +136,7 @@
     },
     methods: {
       setAccess () {
-        this.liveSafeFlow = this.safeFlow // new SAFEflow(this.system)
+        this.liveSafeFlow = this.safeFlow
       },
       timeNavSegments () {
         this.timeVis = this.liveSafeFlow.cnrlTimeIndex('datatime-index')

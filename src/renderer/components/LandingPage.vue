@@ -3,8 +3,12 @@
     <img id="logo" src="~@/assets/logo.png" alt="electron-vue">
     <main>
       <div class="left-side">
-        <span class="title">
-          Welcome to the Resolution Science Graphical User Interface v0.02f
+        <span id="welcome">
+          <header>Welcome, the DIY Science toolkit allows you</header>
+          <p>1. learn & particpate in Experiments</p>
+          <p>2. contribute science</p>
+          <p>3. build your own dashboards</p>
+          <header>START by securing an account below:</header>
         </span>
         <!-- <system-information></system-information>-->
       </div>
@@ -12,9 +16,7 @@
       <div class="right-side">
         <div class="doc">
           <div class="title">Peer to Peer Science</div>
-          <p>
-            An open source graphical user interface.
-          </p>
+          <p>version v0.02f</p>
           <br><br>
           <div id="network-status">
             Status: Peer Autonomous - Network: NOT CONNECTED
@@ -26,7 +28,7 @@
     </main>
     <div id="secure-start">
       <div id="returning-start">
-        Please navigate to private key:
+        <header>Please select private key to self sign-in:</header>
         <file-reader @load="text = $event" @removeCreatekey="newKeystartseen = $event"></file-reader>
         <br />
         <br />
@@ -196,6 +198,17 @@
     margin-bottom: 6px;
   }
 
+  #welcome {
+    color: #2c3e50;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+
+ #welcome header {
+   margin: 12px;
+ }
+
   .title.alt {
     font-size: 18px;
     margin-bottom: 10px;
@@ -224,4 +237,9 @@
     color: #42b983;
     background-color: transparent;
   }
+
+#secure-start {
+  margin: 30px;
+  border-top-style: dotted;
+}
 </style>

@@ -1,5 +1,6 @@
 <template>
   <div id="knowledge-view">
+    <knowledge-Live :liveData="liveData" @liveLearn="learnStart"></knowledge-Live>
     <div id="select-knowledge">
       <a href="" id="open-knowledge" @click.prevent="openKnowledge(ok)" v-bind:class="{ 'active': ok.active}">{{ ok.name }}</a>
     </div>
@@ -45,7 +46,7 @@
           <header>Device DataTypes - </header>
             <ul>
               <li id="data-type-live" v-for="dts in datatypes">
-                <a class="" href="" id="bmp-data" @click.prevent="selectDatatypes(dts)" v-bind:class="{ 'active': dts.active}">{{ dts.text }}</a>
+                <a class="" href="" id="bmp-data" @click.prevent="selectDatatypes(dts)" v-bind:class="{ 'active': dts.active}">{{ dts.text }}</a>-->
                 <!-- <a class="" href="" id="sub-data" @click.prevent="subContext(dts)" v-bind:class="{ 'active': dts.active}"> >>> </a>
                  <div id="sub-context-holder">
                   <ul>
@@ -95,16 +96,21 @@
         <div id="clear-data-box"></div>
       </div>
     </div>
+    <hsvisual :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" @updateLearn="learnUpdate" @toolsStatus="toolsSwitch"></hsvisual>
   </div>
 </template>
 
 <script>
   import { kBus } from '../../main.js'
+  import KnowledgeLive from '@/components/toolbar/knowledgeLive'
+  import hsvisual from '@/components/healthscience/hsvisual'
   const shell = require('electron').shell
 
   export default {
     name: 'knowledge-context',
     components: {
+      KnowledgeLive,
+      hsvisual
     },
     props: {
       kContext: {
@@ -113,6 +119,16 @@
     },
     data () {
       return {
+        liveData:
+        {
+          devicesLive: [],
+          datatypesLive: [],
+          categoryLive: [],
+          scienceLive: {},
+          languageLive: {},
+          timeLive: [],
+          resolutionLive: ''
+        },
         knowledge:
         [{
           name: 'human',

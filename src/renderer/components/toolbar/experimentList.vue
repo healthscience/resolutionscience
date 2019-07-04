@@ -12,7 +12,7 @@
           <div id="context-experiment" class="live-eelement">
             <header>Name:</header>
             <div class="live-item">
-              {{ exp.prime.text }}
+              {{ exp.contract.prime.text }}
             </div>
           </div>
           <div id="context-experiment" class="live-eelement">
@@ -33,17 +33,30 @@
               N=1
             </div>
           </div>
+          <div id="select-ebox" class="live-element">
+            <div id="select-ebox-container">
+              <div id="select-status">
+                <header>Select</header>
+                <input type="checkbox" v-bind:id="exp.cnrl" v-bind:value="exp.cnrl" v-model="eboxSelect" @change="makeELive($event)">
+                <label for="e-select">{{ }}</label>
+              </div>
+            </div>
+          </div>
           <div id="experiment-close"></div>
         </div>
+        <edashboard></edashboard>
       </li>
     </ul>
   </div>
 </template>
 
 <script>
+  import edashboard from '@/components/healthscience/edashBoard'
+
   export default {
     name: 'experiment-history',
     components: {
+      edashboard
     },
     props: {
       experimentData: {
@@ -63,14 +76,26 @@
       },
       safeFlow: function () {
         return this.$store.state.safeFlow
+      },
+      experimentDataR: function () {
+        return this.$store.state.experiments
       }
     },
     mounted () {
     },
     methods: {
-      makeELive (status) {
-        console.log('make this Experiment live')
-        console.log(status.target.id)
+      async makeELive (status) {
+        console.log('make this Experiment bundle live')
+        // loop over arry of bundles and match bid number and make active
+        let expCNRL = status.target.id
+        console.log(expCNRL)
+        console.log('match experiment')
+        for (let ueb of this.experimentData) {
+          if (ueb.cnrl === expCNRL) {
+            console.log('match')
+            this.$store.dispatch('actionUpdateExperiment', ueb)
+          }
+        }
       }
     }
   }

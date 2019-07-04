@@ -20,7 +20,10 @@ export default new Vuex.Store({
     datatypes: [],
     bundle: {},
     startBundles: [],
-    bundleCounter: 0
+    bundleCounter: 0,
+    experimentCNRL: {},
+    experimentList: {},
+    expEntities: []
   },
   getters: {
     liveSafeFlow: state => state.safeFlow,
@@ -36,7 +39,9 @@ export default new Vuex.Store({
     liveDatatypes: state => state.datatypes,
     liveBundle: state => state.bundle,
     startBundlesList: state => state.startBundles,
-    liveBundleCounter: state => state.bundleCounter
+    liveBundleCounter: state => state.bundleCounter,
+    liveExperiment: state => state.experimentCNRL,
+    liveExperimentList: state => state.experimentList
   },
   mutations: {
     // Mutations
@@ -131,6 +136,20 @@ export default new Vuex.Store({
       // TEMP add cateogry data
       state.bundle.categories = []
       state.bundle.time.startperiod = inVerified
+    },
+    setExperimentCNRL: (state, inVerified) => {
+      console.log('experiment CNRL')
+      state.experimentCNRL = inVerified
+      console.log(state.experimentCNRL)
+      // take Kbundles list and prepare for display
+      for (let ke of state.experimentCNRL.contract.kentities) {
+        state.expEntities.push(ke)
+      }
+    },
+    setExperimentList: (state, inVerified) => {
+      console.log('experiment LIST')
+      state.experimentList = inVerified
+      console.log(state.experimentList)
     }
   },
   actions: {
@@ -157,6 +176,14 @@ export default new Vuex.Store({
     actionUpdateStartTime: (context, update) => {
     // update settings to show at startup per bundle item
       context.commit('setBundlestartTime', update)
+    },
+    actionUpdateExperiment: (context, update) => {
+    // update settings to show at startup per bundle item
+      context.commit('setExperimentCNRL', update)
+    },
+    actionExperimentList: (context, update) => {
+    // update settings to show at startup per bundle item
+      context.commit('setExperimentList', update)
     }
   },
   modules,

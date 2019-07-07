@@ -1,6 +1,6 @@
 <template>
   <div id="visual-view">
-    <div id="diy-science">
+    <div id="diy-science">  --as {{ entityCNRL }}
       <div id="experiment-summary">
           <div id="experiment-toolbar">
             <ul>
@@ -16,14 +16,8 @@
           </div>
         </div>
       </div>
-      <div id="reports">
-        <Learn-Report :recoveryData="recoveryData" @recoverySet="recoveryStatus()" ></Learn-Report>
-      </div>
-      <div id="action">
-        <Learn-Action></Learn-Action>
-      </div>
-      <div v-if="visChartview" id="charts-live">
-        <reactive :chartData="datacollection" :options="options" :width="1200" :height="600"></reactive>
+      <div v-if="visChartview" id="charts-live">chartdata== {{ datacollection}}
+        <reactive :chartData="datacollection" :options="options" :width="400" :height="180"></reactive>
       </div>
       <div v-if="visTableview" id="table-view">
         <table-Build></table-Build>
@@ -53,8 +47,6 @@
   import Reactive from '@/components/charts/Reactive'
   import Reactivestats from '@/components/charts/Reactivestats'
   import ToolbarTools from '@/components/toolbar/statisticstools'
-  import LearnReport from '@/components/reports/LearnReport'
-  import LearnAction from '@/components/reports/LearnAction'
   import tableBuild from '@/components/table/tableBuilder'
   import simulationView from '@/components/simulation/simulation-life'
   // const moment = require('moment')
@@ -65,12 +57,11 @@
       Reactive,
       Reactivestats,
       ToolbarTools,
-      LearnReport,
-      LearnAction,
       tableBuild,
       simulationView
     },
     props: {
+      entityCNRL: '',
       datacollection: {
         type: Object
       },
@@ -120,26 +111,16 @@
     computed: {
       system: function () {
         return this.$store.state.system
-      },
-      safeFlow: function () {
-        return this.$store.state.safeFlow
-      },
-      liveexerimentList: function () {
-        return this.$store.state.experimentList
       }
     },
     created () {
-      this.setAccess()
       this.timeNavSegments()
     },
     mounted () {
     },
     methods: {
-      setAccess () {
-        this.liveSafeFlow = this.safeFlow
-      },
       timeNavSegments () {
-        this.timeVis = this.liveSafeFlow.cnrlTimeIndex('datatime-index')
+        // this.timeVis = this.liveSafeFlow.cnrlTimeIndex('datatime-index')
       },
       selectVis (visIN) {
         if (visIN.id === 'vis-sc-1') {

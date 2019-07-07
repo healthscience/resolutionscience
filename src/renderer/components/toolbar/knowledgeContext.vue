@@ -1,6 +1,5 @@
 <template>
   <div id="knowledge-view">
-    <knowledge-Live :liveData="liveData" @liveLearn="learnStart"></knowledge-Live>
     <div id="select-knowledge">
       <a href="" id="open-knowledge" @click.prevent="openKnowledge(ok)" v-bind:class="{ 'active': ok.active}">{{ ok.name }}</a>
     </div>
@@ -75,11 +74,11 @@
             <div id="context-time">
               <header>Time:</header>
                 <ul>
-                  <li v-for="t in timeSeg" class="context-time">
-                    <a href="" id="" @click.prevent="selectTime(t)" v-bind:class="{ 'active': t.active, 'text-danger': hasError}">{{ t.text }}</a>
+                  <li v-if="timeSeg" v-for="t in timeSeg" class="context-time">
+                    <a href="" id="" @click.prevent="selectTime(t)" v-bind:class="{ 'active': t.active}">{{ t.text }}</a>
                   </li>
                 </ul>
-                <div v-if="timeSelect !== undefine" id="time-select" >
+                <div v-if="timeSelect" id="time-select" >
                   <div id="start-point" class="context-time">Start: {{ kContext.analysisStart }}</div>
                   <div id="end-point" class="context-time">End: {{ kContext.analysisEnd }}</div>
                 </div>
@@ -96,21 +95,17 @@
         <div id="clear-data-box"></div>
       </div>
     </div>
-    <hsvisual :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" @updateLearn="learnUpdate" @toolsStatus="toolsSwitch"></hsvisual>
   </div>
 </template>
 
 <script>
+  import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
   import { kBus } from '../../main.js'
-  import KnowledgeLive from '@/components/toolbar/knowledgeLive'
-  import hsvisual from '@/components/healthscience/hsvisual'
   const shell = require('electron').shell
 
   export default {
     name: 'knowledge-context',
     components: {
-      KnowledgeLive,
-      hsvisual
     },
     props: {
       kContext: {
@@ -119,16 +114,6 @@
     },
     data () {
       return {
-        liveData:
-        {
-          devicesLive: [],
-          datatypesLive: [],
-          categoryLive: [],
-          scienceLive: {},
-          languageLive: {},
-          timeLive: [],
-          resolutionLive: ''
-        },
         knowledge:
         [{
           name: 'human',
@@ -174,7 +159,10 @@
         timeSelect: true,
         livedtypes: [],
         startLine: '1',
-        stopLine: '2'
+        stopLine: '2',
+        liveDataCollection: {},
+        liveOptions: {},
+        liveTimeV: ''
       }
     },
     created () {
@@ -184,21 +172,15 @@
       })
     },
     computed: {
-      system: function () {
-        return this.$store.state.system
-      },
-      safeFlow: function () {
-        return this.$store.state.safeFlow
-      },
       context: function () {
         return this.$store.state.context
       }
     },
     mounted () {
     },
+    mixins: [liveMixinSAFEflow],
     methods: {
       setAccess () {
-        this.liveSafeFlow = this.safeFlow
         this.languageContext()
         this.scienceContext()
         this.deviceContext()
@@ -220,13 +202,13 @@
       },
       timeContext () {
         // call the CNRL for time segment option live in SAFEnetwork
-        this.timeSeg = this.liveSafeFlow.cnrlTimeIndex('time-index')
+        this.timeSeg = this.safeMixin.cnrlTimeIndex('time-index')
       },
       displayLanugage (cnrlID) {
         // loop over match and display words or display human body graphic
         // console.log('inplang')
         this.kwords = []
-        let lanuageCNRL = this.liveSafeFlow.cnrlLivingKnowledge(cnrlID)
+        let lanuageCNRL = this.safeMixin.cnrlLivingKnowledge(cnrlID)
         console.log(lanuageCNRL)
         let wordsPlacer = {}
         wordsPlacer.word = lanuageCNRL.prime.word
@@ -265,7 +247,7 @@
       },
       languageContext () {
         let refContext = 'human'
-        let lanuageCNRL = this.liveSafeFlow.cnrlLivingKnowledge(refContext)
+        let lanuageCNRL = this.safeMixin.cnrlLivingKnowledge(refContext)
         // console.log('semanics')
         // console.log(lanuageCNRL)
         this.kwords = lanuageCNRL
@@ -294,33 +276,40 @@
         } else {
           // make call to set start dataContext for this pubkey
           const flag = 'device'
-          this.liveSafeFlow.toolkitContext(flag, callbackC)
+          this.safeMixin.toolkitContext(flag, callbackC)
           // console.log('device callsettings')
         }
         // console.log(this.devices)
       },
       dataTypeDevice () {
-        // console.log('device data types build')
-        // console.log(this.devices)
+        console.log('device data types build')
+        console.log(this.devices)
         let devDTHolder = []
-        let cnrlIDholderDev = []
+        // let cnrlIDholderDev = []
         // repeat for datatyes coming from the mobile app CRNL contract
         for (let devCdt of this.devices) {
           // console.log('devices')
           // console.log(devCdt)
-          let deviceDTypes = this.liveSafeFlow.cnrlDeviceDTs(devCdt.cnrl)
+          let deviceDTypes = this.safeMixin.cnrlDeviceDTs(devCdt.cnrl)
           devDTHolder.push(deviceDTypes)
         }
-        // console.log('device DTs')
-        // console.log(devDTHolder)
+        console.log('device DTs')
+        console.log(devDTHolder)
         this.datatypes = devDTHolder[0].datatypes
-        for (let cnrldi of this.datatypes) {
+        console.log(this.datatypes)
+        /* for (let cnrldi of this.datatypes) {
+          console.log('leleoopepe')
           for (let cnd of cnrldi) {
+            console.log('dfdidfidif')
+            console.log(cnd)
             for (let cns of cnd) {
-              cnrlIDholderDev.push(cns.cnrl)
+              console.log(cns)
+              if (cns) {
+                cnrlIDholderDev.push(cns.cnrl)
+              }
             }
           }
-        }
+        } */
       },
       dataType () {
         // make call to set start dataType for the device sensors
@@ -330,7 +319,7 @@
         let cnrlIDholderSci = []
         // loop over science for this context and display range of datatypes, sub types and match to sensor thus device
         for (let scLiv of this.scoptions) {
-          let sciDTypes = this.liveSafeFlow.cnrlLookup(scLiv.cid)
+          let sciDTypes = this.cnrlLookup(scLiv.cid)
           sciDTHolder.push(sciDTypes.tableStructure)
         }
         // extract CNRL ids for science
@@ -351,7 +340,7 @@
         // console.log('science has changed')
         this.activeEntity = sciIN
         // use cid to look up datatype for this scienceEntities
-        let sciDTypesSelect = this.liveSafeFlow.cnrlScienceDTs(sciIN)
+        let sciDTypesSelect = this.safeMixin.cnrlScienceDTs(sciIN)
         // console.log('science contract')
         // console.log(sciDTypesSelect)
         sciDTypesSelect.cnrl = sciIN

@@ -35,7 +35,7 @@ util.inherits(EntitiesManager, events.EventEmitter)
 */
 EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
   console.log(ecsIN)
-  let cid = ecsIN.cid
+  let cid = ecsIN.kbid
   let timeBundle = ecsIN.time // starting time ms
   let visID = ecsIN.visID[0] // limited to one for now will free up TODO
   if (this.liveSEntities[cid]) {
@@ -97,7 +97,7 @@ EntitiesManager.prototype.controlFlow = async function (cflowIN) {
   // var localthis = this
   console.log('controlflow start')
   console.log(cflowIN)
-  let cid = cflowIN.cid
+  let cid = cflowIN.kbid
   console.log('EMANAGER0-----beginCONTROL-FLOW')
   this.liveSEntities[cid].liveDatatypeC.dataTypeMapping()
   await this.liveSEntities[cid].liveDataC.sourceData(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive)
@@ -171,7 +171,7 @@ EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
   console.log(eid)
   console.log(visStyle)
   console.log(this.liveSEntities[eid].liveVisualC)
-  let GroupVisBundle = []
+  let GroupVisBundle = {}
   let messageVisBundle = {}
   let timeLive = this.liveSEntities[eid].liveDataC.livedate
   // loop over visualisation available and pick out match
@@ -182,7 +182,7 @@ EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
       console.log('no existing chart data')
       messageVisBundle = {}
       messageVisBundle.chartMessage = 'computation in progress/ Nothing to chart'
-      GroupVisBundle.push(messageVisBundle)
+      GroupVisBundle = messageVisBundle
     } else if (lvc[visStyle].status === 'report-component') {
       console.log('HR learn report instead of chart')
       messageVisBundle = {}
@@ -191,7 +191,7 @@ EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
       messageVisBundle.chartPackage = {}
       messageVisBundle.displayTime = timeLive
       messageVisBundle.hrcReport = this.liveSEntities[eid].liveDataC.dataRaw
-      GroupVisBundle.push(messageVisBundle)
+      GroupVisBundle = messageVisBundle
     } else if (lvc['vis-sc-1']) {
       console.log('existing data to chart')
       console.log(timeLive)
@@ -206,7 +206,7 @@ EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
         messageVisBundle.chartPackage = lvc[visStyle][timeLive].day.prepared
         messageVisBundle.displayTime = timeLive
         messageVisBundle.selectTimeStart = this.liveSEntities[eid].liveVisualC.liveVisSystem.liveChartSystem
-        GroupVisBundle.push(messageVisBundle)
+        GroupVisBundle = messageVisBundle
       }
       // }
     }

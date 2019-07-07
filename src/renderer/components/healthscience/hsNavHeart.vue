@@ -34,10 +34,6 @@
           id: 'learn-experiments',
           active: false
         },
-        /* kContext: {
-          startLine: 's',
-          endLine: 'e'
-        }, */
         liveDataCollection: {},
         liveOptions: {},
         liveAnnotations: {},
@@ -66,8 +62,7 @@
       this.setAccess()
       this.experimentsStart()
       sBus.$on('saveLBundle', (cData) => {
-        console.log('emit sbus')
-        this.saveStartBundle(cData)
+        console.log('NOT USED')
       })
     },
     methods: {
@@ -94,9 +89,9 @@
         let experimentList = this.liveSafeFlow.cnrlExperimentIndex()
         for (let exl of experimentList) {
           let expCNRL = this.liveSafeFlow.cnrlLookup(exl)
-          console.log(expCNRL)
           let experBundle = {}
           experBundle.cnrl = exl
+          experBundle.status = false
           experBundle.contract = expCNRL
           this.liveExper.push(experBundle)
         }

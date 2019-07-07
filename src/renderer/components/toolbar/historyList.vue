@@ -51,7 +51,7 @@
           <div id="start-learn-container">
             <div id="start-status">
               <header>View on Start</header>
-              <a href="" id="start-save" v-bind:id="lh.bid" @click.prevent="startStatus(lh.startStatus, $event)" v-bind:class="{ 'active': lh.startStatus.active}">{{ lh.startStatus.name }}</a>
+              <a href="" id="start-save" v-bind:id="lh.kbid" @click.prevent="startStatus(lh.startStatus, $event)" v-bind:class="{ 'active': lh.startStatus.active}">{{ lh.startStatus.name }}</a>
             </div>
           </div>
         </div>
@@ -67,7 +67,7 @@
           <div id="select-kbox-container">
             <div id="select-status">
               <header>Select</header>
-              <input type="checkbox" v-bind:id="lh.cnrl" v-bind:value="lh.bid" v-model="kboxSelect" @change="makeKLive($event)">
+              <input type="checkbox" v-bind:id="lh.cnrl" v-bind:value="lh.kbid" v-model="kboxSelect" @change="makeKLive($event)">
               <label for="k-select">{{ kboxSelect }} {{ lh.bid }} </label>
             </div>
           </div>
@@ -80,7 +80,8 @@
 </template>
 
 <script>
-  import { sBus } from '../../main.js'
+  import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
+  // import { sBus } from '../../main.js'
 
   export default {
     name: 'knowledge-history',
@@ -100,12 +101,6 @@
       this.startKup()
     },
     computed: {
-      system: function () {
-        return this.$store.state.system
-      },
-      safeFlow: function () {
-        return this.$store.state.safeFlow
-      },
       startK: function () {
         return this.$store.state.startBundles
       },
@@ -115,6 +110,7 @@
     },
     mounted () {
     },
+    mixins: [liveMixinSAFEflow],
     methods: {
       startKup () {
         console.log('start settings KKKK')
@@ -128,25 +124,31 @@
       async makeKLive (status) {
         console.log('make this knowledge bundle live')
         // loop over arry of bundles and match bid number and make active
+        console.log(status.target)
+        console.log(this.historyData)
         for (let ukb of this.historyData) {
-          let makeInt = parseInt(status.target.value)
-          if (ukb.bid === makeInt) {
+          let makeInt = status.target.value
+          if (ukb.kbid === makeInt) {
             console.log('match')
-            console.log(this.historyData[ukb.bid])
-            this.$emit('setLiveBundle', this.historyData[ukb.bid])
-            // return true
+            console.log(ukb)
+            this.$emit('setLiveBundle', ukb)
           }
         }
       },
       startStatus (lss, se) {
         // change start status and save or delete settings
         console.log('save start status')
-        let startInt = parseInt(se.target.id)
-        this.$store.dispatch('actionUpdateBundleItem', startInt)
+        console.log(lss)
+        console.log(se.target)
+        let startInt = se.target.id
+        // this.$store.dispatch('actionUpdateBundleItem', startInt)
         let updateBundle = this.$store.getters.startBundlesList
+        console.log(updateBundle)
         for (let iB of updateBundle) {
-          if (iB.bid === startInt) {
-            sBus.$emit('saveLBundle', iB)
+          console.log(iB.bid)
+          console.log(startInt)
+          if (iB.kbid === startInt) {
+            this.saveStartBundle(iB)
           }
         }
       }

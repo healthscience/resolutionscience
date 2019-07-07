@@ -1,32 +1,40 @@
 <template>
   <div id="science">
     <h1>DIY Science & Computations</h1>
-    <button class="" href="" id="add-new-science" @click.prevent="addnewScience()">New Science</button>
+    <button class="" href="" id="add-new-science" @click.prevent="addnewScience()">Add New Science Experiment</button>
+    <knowledge-Live :liveData="liveData" ></knowledge-Live>
     <!-- <section v-if="newScienceSeen" id="new-science"> -->
     <!--<science-contribute  :contributeData="contributeData"></science-contribute>-->
     <!--<science-list></science-list>-->
-    <knowledge-Context :kContext="kContext"></knowledge-Context>
   </div>
 </template>
 
 <script>
-import SAFEflow from '../safeflow/safeFlow.js'
 import scienceList from '@/components/healthscience/scienceData.vue'
+import KnowledgeLive from '@/components/toolbar/knowledgeLive'
 import scienceContribute from '@/components/healthscience/scienceContribute.vue'
-import KnowledgeContext from '@/components/toolbar/knowledgeContext'
 const moment = require('moment')
 
 export default {
   name: 'Science',
   components: {
+    KnowledgeLive,
     scienceList,
-    scienceContribute,
-    KnowledgeContext
+    scienceContribute
   },
   data () {
     return {
       liveFlow: null,
-      kContext: {},
+      liveData:
+      {
+        devicesLive: [],
+        datatypesLive: [],
+        categoryLive: [],
+        scienceLive: {},
+        languageLive: {},
+        timeLive: [],
+        resolutionLive: ''
+      },
       avgStatusCompute: false,
       avgStatusCompMessage: '',
       newScienceSeen: false,
@@ -58,96 +66,8 @@ export default {
     }
   },
   created () {
-    this.setAccess()
   },
   methods: {
-    setAccess () {
-      this.liveFlow = new SAFEflow(this.system)
-    },
-    async getAverages (eid) {
-      // update latest daily average HR
-      let AvgDailyHolder = {}
-      let currentAHR = await this.liveSafeFlow.entityCurrentAverageHR(eid)
-      console.log('averageHR current====')
-      console.log(currentAHR)
-      let newARHR = 55
-      AvgDailyHolder.avgdhr = currentAHR
-      AvgDailyHolder.avgdrhr = newARHR
-      // console.log(this.liveOptions)
-      // this.liveOptions.annotation.annotations[0].value = newAHR
-      // this.liveOptions.annotation.annotations[1].value = newARHR
-      return AvgDailyHolder
-    },
-    timeRange () {
-      let rangeHolder = {}
-      rangeHolder.startTime = this.toolbarData.liveOptions.analysisStart
-      rangeHolder.endTime = this.toolbarData.liveOptions.analysisEnd
-      rangeHolder.active = true
-      return rangeHolder
-    },
-    async learnStart (lBundle) {
-      console.log('start Learning')
-      console.log(lBundle)
-      this.chartmessage.text = 'Visualisation being prepared'
-      this.chartmessage.active = true
-      this.liveBundle = lBundle
-      this.activeEntity = lBundle.cnrl
-      this.activevis = this.$store.getters.liveVis[0]
-      await this.liveSafeFlow.scienceEntities(lBundle)
-      console.log('entity setup/operational')
-      this.learnListening()
-      let entityGetter = await this.liveSafeFlow.entityGetter(this.activeEntity, this.activevis)
-      console.log('VUE---return getter data')
-      console.log(entityGetter)
-      this.chartmessage.active = false
-      if (this.activevis === 'vis-sc-1') {
-        console.log('chartjs')
-        if (entityGetter.chartMessage === 'computation in progress') {
-          console.log('chartjs--ongoing computation or obseration data')
-          // this.chartmessage = entityGetter.chartMessage
-          // this.options = entityGetter.chartPackage.options
-          // this.datacollection = entityGetter.chartPackage.prepared
-          // this.liveTime = entityGetter.chartPackage.livetime
-        } else if (entityGetter.chartMessage === 'vis-report') {
-          console.log('prepare report for HR recovery')
-          let recoveryStart = {}
-          recoveryStart.seenStatus = true
-          recoveryStart.hrcdata = entityGetter.hrcReport
-          this.recoveryData = recoveryStart
-        } else {
-          console.log('chartjs-- uptodate finised')
-          console.log(entityGetter)
-          this.chartmessage.text = 'computation up-to-date'
-          this.options2 = entityGetter[0].liveChartOptions
-          this.datacollection2 = entityGetter[0].chartPackage
-          this.liveTimeV = moment(entityGetter[0].displayTime * 1000).format('LLLL')
-          this.liveanalysisStart = entityGetter[0].selectTimeStart
-          this.liveSelectTime = this.liveanalysisStart
-          let AvgDstart = await this.getAverages(this.activeEntity)
-          this.options2.annotation.annotations[0].value = AvgDstart.avgdhr
-          this.options2.annotation.annotations[1].value = AvgDstart.avgdrhr
-          this.kContext = this.liveanalysisStart
-          this.liveOptions = this.options2
-          this.liveDataCollection = this.datacollection2
-        }
-      } else if (this.activevis === 'vis-sc-2') {
-        console.log('tablejs')
-        // localthis.tableHTML = entityGetter.table
-      } else if (this.activevis === 'vis-sc-3') {
-        console.log('simjs')
-        // localthis.simulationHeart = entityGetter.heart
-        // localthis.simulationMovement = entityGetter.heart
-        // localthis.simulationTime = entityGetter.time
-      }
-    },
-    startComputeUpdate () {
-      this.activedevice = this.$store.getters.liveContext
-      console.log('before active device')
-      console.log(this.activedevice)
-      this.liveFlow.computationSystem('wasm-sc-2', this.activedevice[0].device_mac)
-      this.avgStatusCompMessage = 'Average compute is taking place'
-      this.avgStatusCompute = true
-    },
     selectContext (s) {
       s.active = !s.active
     },
@@ -213,19 +133,6 @@ export default {
       liveBundleUpdate.visualisation = this.liveBundle.visualisation
       this.learnStart(liveBundleUpdate)
     },
-    learnListening () {
-      var localthis = this
-      // listening to give peer info. on computation statusTime
-      this.liveSafeFlow.liveEManager.on('computation', function (cState) {
-        console.log('computation event from manager')
-        console.log(cState)
-        if (cState === 'in-progress') {
-          localthis.chartmessage.text = cState
-        } else {
-          localthis.chartmessage.text = 'computation up-to-date'
-        }
-      })
-    },
     toolsSwitch (tss) {
       console.log('tools switch')
       console.log(tss)
@@ -241,10 +148,6 @@ export default {
       } else if (tss === false) {
         this.liveOptions.annotation = {}
       }
-    },
-    saveStartBundle (bund) {
-      console.log(' go and save via safeFLOW')
-      this.liveSafeFlow.startSettings('save', bund)
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <div id="live-view">
     <div id="live-knowledge-elements">
-      <div v-if="liveData.languageLive !== undefine" id="context-language" class="live-element">
+      <div v-if="liveData.languageLive" id="context-language" class="live-element">
         Language: <div class="live-item">{{ liveData.languageLive.word }}</div>
       </div>
       <div v-else id="live-context-language" class="live-element">Please set</div>
@@ -31,7 +31,7 @@
             </li>
           </ul>
       </div>
-      <div v-if="liveData.scienceLive.prime !== undefine" id="live-context-science" class="live-element">
+      <div v-if="liveData.scienceLive.prime" id="live-context-science" class="live-element">
         Compute - <div class="live-item">{{ liveData.scienceLive.prime.text || 'none' }}</div>
       </div>
       <div v-else id="live-context-science" class="live-element">Compute: not selected</div>
@@ -64,20 +64,30 @@
       <div id="learn-close"></div>
     </div>
     <div id="history" v-if="hist.active">
-      <history-List :historyData="historyData" @setLiveBundle="makeLiveKnowledge" @setLiveExperimentBundle="makeLiveExperiment"></history-List>
+      <history-List :historyData="historyData" @setLiveBundle="makeLiveKnowledge"></history-List>
     </div>
+    <knowledge-Context :kContext="kContext"></knowledge-Context>
+    <hsvisual :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" ></hsvisual>
   </div>
 </template>
 
 <script>
+  import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
+  import KnowledgeContext from '@/components/toolbar/knowledgeContext'
   import historyList from '@/components/toolbar/historyList.vue'
+  import hsvisual from '@/components/healthscience/hsvisual'
   import { kBus } from '../../main.js'
   const moment = require('moment')
+  const crypto = require('crypto')
+  const bs58 = require('bs58')
+  const hashObject = require('object-hash')
 
   export default {
     name: 'knowledge-live',
     components: {
-      historyList
+      historyList,
+      KnowledgeContext,
+      hsvisual
     },
     props: {
       liveData: {
@@ -103,7 +113,8 @@
         },
         historyData: this.$store.getters.startBundlesList,
         experimentData: [],
-        bundleid: 0
+        bundleid: 0,
+        kContext: {}
       }
     },
     created () {
@@ -130,12 +141,6 @@
       })
     },
     computed: {
-      system: function () {
-        return this.$store.state.system
-      },
-      safeFlow: function () {
-        return this.$store.state.safeFlow
-      },
       bundleCounter: function () {
         return this.$store.state.bundleCounter
       }
@@ -145,8 +150,9 @@
       sciStartEmpty.prime = {'text': 'empty'}
       this.liveData.scienceLive = sciStartEmpty
     },
+    mixins: [liveMixinSAFEflow],
     methods: {
-      filterLearn (s) {
+      async filterLearn (s) {
         // get language, device, datatypes and sci comp bundles
         // pass on to SAFEflow to pass on entity manager
         this.activeEntity = this.liveData.scienceLive.prime.cnrl
@@ -172,17 +178,42 @@
         liveBundle.time = updateTbundle
         liveBundle.resolution = this.liveData.resolutionLive
         liveBundle.visualisation = ['vis-sc-1']
-        liveBundle.bid = this.$store.getters.liveBundleCounter
+        // liveBundle.bid = this.$store.getters.liveBundleCounter
+        // create unquie ID for kbundle and use to save
+        let uuidBundle = this.createKBID(liveBundle)
+        liveBundle.kbid = uuidBundle
         this.saveLearnHistory(liveBundle)
-        this.$emit('liveLearn', liveBundle)
+        let visDataBack = await this.learnStart(liveBundle)
+        console.log(visDataBack)
+        this.liveDataCollection = visDataBack.liveDataCollection
+        this.liveOptions = visDataBack.liveOptions
+        this.liveTimeV = visDataBack.kContext.liveTime
         // close the knowledge
         kBus.$emit('closeKnowledge')
         this.liveData.datatypesLive = []
       },
       saveLearnHistory (lBundle) {
         // save to network  save to LOCAL storage(encrpted???)
-        this.$store.commit('setBCounter', this.bundleCounter)
+        // this.$store.commit('setBCounter', this.bundleCounter)
         this.historyData.push(lBundle)
+      },
+      createKBID (addressIN) {
+        console.log('Start generate tempTOKEN')
+        console.log(addressIN)
+        // hash Object
+        let kbundleHash = hashObject(addressIN)
+        console.log(kbundleHash)
+        let tempTokenG = ''
+        let salt = crypto.randomBytes(16).toString('base64')
+        // let hashs = crypto.createHmac('sha256',salt).update(password).digest('base64')
+        let hash = crypto.createHmac('sha256', salt).update(kbundleHash).digest()
+        // const bytes = Buffer.from('003c176e659bea0f29a3e9bf7880c112b1b31b4dc826268187', 'hex')
+        tempTokenG = bs58.encode(hash)
+        // decode
+        // const addressde = address
+        // const bytes = bs58.decode(addressde)
+        // console.log(bytes.toString('base64'))
+        return tempTokenG
       },
       viewHistory (hist) {
         hist.active = !hist.active
@@ -200,8 +231,7 @@
         this.$store.dispatch('actionUpdateStartTime', updatestartPeriodTime)
         this.liveData.scienceLive = {}
         this.liveData.scienceLive.cnrl = lBund.cnrl
-        let updatedBundle = this.$store.getters.liveBundle
-        this.$emit('liveLearn', updatedBundle)
+        this.learnStart(lBund)
       },
       languageStatus (lIN) {
         this.liveData.languageLive = lIN

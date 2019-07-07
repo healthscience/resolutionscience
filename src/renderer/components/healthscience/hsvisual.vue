@@ -3,7 +3,7 @@
     <div id="diy-science">
       <div id="add-experiment">
         Add to experiment. Please select:
-        <select v-model="selectedExperiment" @change="addToExperiment(selectedCompute)">
+        <select v-model="liveexerimentList" @change="addToExperiment(selectedCompute)">
         <option class="science-compute" v-for="expi in liveexerimentList" v-bind:value="expi.cnrl">
           {{ expi.cnrl }}
         </option>
@@ -121,28 +121,18 @@
       }
     },
     computed: {
-      system: function () {
-        return this.$store.state.system
-      },
-      safeFlow: function () {
-        return this.$store.state.safeFlow
-      },
       liveexerimentList: function () {
         return this.$store.state.experimentList
       }
     },
     created () {
-      this.setAccess()
       this.timeNavSegments()
     },
     mounted () {
     },
     methods: {
-      setAccess () {
-        this.liveSafeFlow = this.safeFlow // new SAFEflow(this.system)
-      },
       timeNavSegments () {
-        this.timeVis = this.liveSafeFlow.cnrlTimeIndex('datatime-index')
+        // this.timeVis = this.liveSafeFlow.cnrlTimeIndex('datatime-index')
       },
       selectVis (visIN) {
         if (visIN.id === 'vis-sc-1') {
@@ -193,12 +183,12 @@
           this.toolbar.text = 'on'
           console.log('ON')
           // need to add annotation to chart OPTIONS
-          this.$emit('toolsStatus', true)
+          // this.$emit('toolsStatus', true)
         } else {
           this.toolbar.text = 'off'
           console.log('Offf')
           // remove the annotation from the chart OPTIONS
-          this.$emit('toolsStatus', false)
+          // this.$emit('toolsStatus', false)
         }
       },
       recoveryStatus () {
@@ -211,7 +201,7 @@
         // back and forward and time
         console.log(seg)
         console.log('liveContractBundle')
-        this.$emit('updateLearn', seg)
+        // this.$emit('updateLearn', seg)
       },
       addToExperiment (exB) {
         console.log('experiment selected')

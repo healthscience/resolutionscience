@@ -22,16 +22,49 @@
           </div>
         </li>
         <li class="datastore-item">
-          <header>SAFEnetwork</header>
-          <div id="safe-api">
-            <header>Peer to Peer Secure Storage</header>
-            <header>Verify token to access</header>
+          <header>LuftdatenAPI</header>
+          <div id="luftdaten-api">
+            <header>Air Quality Monitoring</header>
+            <header>Add sensor ID</header>
           </div>
         </li>
-        <li>
-          <device-list></device-list>
+        <li class="datastore-item">
+          <header>MetofficeAPI</header>
+          <div id="metoffice-api">
+            <header>Weather Station</header>
+            <header>Add postcode</header>
+          </div>
+        </li>
+        <li class="datastore-item">
+          <header>Blood Glucose</header>
+          <div id="nightscount-api">
+            <header>Nightscout CBG</header>
+            <header>Verify token</header>
+          </div>
+        </li>
+        <li class="datastore-item">
+          <header>GoogleFIT</header>
+          <div id="googlefit-api">
+            <header>fitAPI</header>
+            <header>Verify token</header>
+          </div>
+        </li>
+        <li class="datastore-item">
+          <header>Wearables</header>
+          <div id="human-api">
+            <header>HumanAPI</header>
+            <header>Verify token</header>
+          </div>
+        </li>
+        <li class="datastore-item">
+          <header>Genetics</header>
+          <div id="openhumans-api">
+            <header>OpenhumansAPI</header>
+            <header>Verify token</header>
+          </div>
         </li>
       </ul>
+      <device-list></device-list>
     </div>
   </div>
 </template>
@@ -126,6 +159,8 @@
 .datastore-item {
   display: inline-block;
   border-top-style: dotted;
-  border: 1px solid blue
+  border: 1px solid blue;
+  margin: 10px;
+  padding: 8px;
 }
 </style>

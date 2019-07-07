@@ -1,5 +1,6 @@
 <template>
-  <div id="learn-report">REPORT
+  <div id="learn-report">
+    <header>REPORT</header>
     <div id="oracles">oracles</div>
     <div id="tends">trends</div>
     <div id="visulation-select"></div>
@@ -35,4 +36,12 @@
 </script>
 
 <style>
+#learn-report {
+  margin: 1em;
+  background-color: #D0FCC1;
+}
+
+header {
+  font-weight: bold;
+}
 </style>

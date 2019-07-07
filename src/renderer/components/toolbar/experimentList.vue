@@ -1,8 +1,8 @@
 <template>
   <div id="experiment-view">EXPERIMENTS  (+ new)
-    <ul>
-      <li id="experiment-item" v-for="exp in experimentData">
-        <div id="live-experiment-elements">
+    <ul v-if="experimentData.length !== 0" >
+      <li id="experiment-item" v-for="(exp, index) in experimentData">
+        <div id="live-experiment-elements">{{ index }}
           <div id="context-experiment" class="live-eelement">
             <header>Status:</header>
             <div class="live-item">
@@ -44,7 +44,7 @@
           </div>
           <div id="experiment-close"></div>
         </div>
-        <edashboard></edashboard>
+        <edashboard v-bind:dashCNRL="exp.cnrl"></edashboard>
       </li>
     </ul>
   </div>
@@ -86,15 +86,19 @@
     methods: {
       async makeELive (status) {
         console.log('make this Experiment bundle live')
-        // loop over arry of bundles and match bid number and make active
+        console.log(status.target.checked)
         let expCNRL = status.target.id
-        console.log(expCNRL)
-        console.log('match experiment')
-        for (let ueb of this.experimentData) {
-          if (ueb.cnrl === expCNRL) {
-            console.log('match')
-            this.$store.dispatch('actionUpdateExperiment', ueb)
-          }
+        if (status.target.checked === true) {
+          // loop over arry of bundles and match bid number and make active
+          let expState = {}
+          expState.cnrl = expCNRL
+          expState.view = true
+          this.$store.dispatch('actionUpdateExperiment', expState)
+        } else {
+          let expCState = {}
+          expCState.cnrl = expCNRL
+          expCState.view = false
+          this.$store.dispatch('actionUpdateExperiment', expCState)
         }
       }
     }

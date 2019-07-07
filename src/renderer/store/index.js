@@ -23,7 +23,7 @@ export default new Vuex.Store({
     bundleCounter: 0,
     experimentCNRL: {},
     experimentList: {},
-    expEntities: []
+    expEntities: {}
   },
   getters: {
     liveSafeFlow: state => state.safeFlow,
@@ -132,24 +132,29 @@ export default new Vuex.Store({
       }
     },
     setBundlestartTime: (state, inVerified) => {
-      console.log(state.bundle.time)
       // TEMP add cateogry data
       state.bundle.categories = []
       state.bundle.time.startperiod = inVerified
     },
     setExperimentCNRL: (state, inVerified) => {
-      console.log('experiment CNRL')
-      state.experimentCNRL = inVerified
-      console.log(state.experimentCNRL)
-      // take Kbundles list and prepare for display
-      for (let ke of state.experimentCNRL.contract.kentities) {
-        state.expEntities.push(ke)
+      if (inVerified.view === true) {
+        // take Kbundles list and prepare for display
+        for (let kel of state.experimentList) {
+          if (inVerified.cnrl === kel.cnrl) {
+            kel.status = true
+            let objectProp = inVerified.cnrl
+            Vue.set(state.experimentCNRL, objectProp, kel)
+          }
+        }
+      } else {
+        // set to fase the experiment entity
+        let updateECNRL = state.experimentCNRL[inVerified.cnrl]
+        updateECNRL.status = false
+        Vue.set(state.experimentCNRL, inVerified.cnrl, updateECNRL)
       }
     },
     setExperimentList: (state, inVerified) => {
-      console.log('experiment LIST')
       state.experimentList = inVerified
-      console.log(state.experimentList)
     }
   },
   actions: {

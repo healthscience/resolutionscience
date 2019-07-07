@@ -365,6 +365,8 @@ ChartSystem.prototype.prepareChartOptions = function (results) {
 *
 */
 ChartSystem.prototype.updateChartoptions = function (startChartDate) {
+  console.log('update chart options time')
+  console.log(startChartDate)
   this.newDate(startChartDate) // moment('12/21/2018', 'MM-DD-YYYY')
   this.newDateEnd(startChartDate) // moment('12/21/2018', 'MM-DD-YYYY')
 }
@@ -375,6 +377,8 @@ ChartSystem.prototype.updateChartoptions = function (startChartDate) {
 *
 */
 ChartSystem.prototype.newDate = function (selectDay) {
+  console.log('new date options')
+  console.log(selectDay)
   var nowTime = ''
   if (selectDay === 0) {
     nowTime = moment()
@@ -382,7 +386,7 @@ ChartSystem.prototype.newDate = function (selectDay) {
     nowTime = moment(selectDay)
     nowTime = nowTime.subtract(selectDay, 'days')
   }
-  // console.log(nowTime)
+  console.log(nowTime)
   var startTime = moment.utc(nowTime).startOf('day')
   const time = moment.duration('2:0:00')
   startTime.add(time)

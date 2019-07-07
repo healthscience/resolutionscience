@@ -120,6 +120,7 @@ safeFlow.prototype.setpeerContext = function (bundleIN) {
   console.log('form==peercontext')
   // does an existing bundle exist?
   let ecsIN = {}
+  ecsIN.kbid = bundleIN.kbid
   ecsIN.cid = bundleIN.cnrl
   ecsIN.storageAPI = this.defaultStorage
   ecsIN.visID = bundleIN.visualisation

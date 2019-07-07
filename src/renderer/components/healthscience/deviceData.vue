@@ -1,7 +1,7 @@
 <template>
   <div id="device-list">
   <header>DEVICES</header>
-    <li v-for="dev in devices">
+    <li v-for="dev in devices" class="device-item">
       <header>{{ dev.device_name }} <a href="" @click.prevent="viewDeviceDetail(dev)" id="view-details">View details</a> </header>
       <div id="device-details" v-if="dev.active">
         <div id="hardware" >
@@ -93,4 +93,7 @@
   margin: 1em;
 }
 
+.device-item {
+  display: block;
+}
 </style>

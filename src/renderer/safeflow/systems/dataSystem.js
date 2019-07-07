@@ -150,7 +150,11 @@ DataSystem.prototype.datatypeMapping = async function (systemBundle) {
   if (systemBundle.startperiod === 'simulateData') {
     console.log('SIMULTATED__DATA__REQUIRED')
   } else {
+    console.log('datatypeAPI list')
+    console.log(systemBundle.apiInfo.apiquery)
     for (let dtItem of systemBundle.apiInfo.apiquery) {
+      console.log('api item')
+      console.log(dtItem)
       if (dtItem.api === 'computedata/<publickey>/<token>/<queryTime>/<deviceID>/') {
         console.log('OBSERVATION QI or SOURCE DT query')
         await this.getRawData(systemBundle).then(function (sourcerawData) {
@@ -172,6 +176,8 @@ DataSystem.prototype.datatypeMapping = async function (systemBundle) {
       }
     }
   }
+  console.log('rawSourceHOlder')
+  console.log(rawHolder)
   return rawHolder
 }
 
@@ -189,6 +195,8 @@ DataSystem.prototype.getRawData = async function (SBqueryIN) {
   for (let di of deviceQuery) {
     dataBack[di] = {}
     for (let dtQ of dataTypesList) {
+      console.log('dts')
+      console.log(dtQ)
       // observation has fixed input but technically should loop over this on basis of timeSegs
       let result = await this.liveTestStorage.getComputeData(SBqueryIN.startperiod, di).catch(function (err) {
         console.log(err)
@@ -198,6 +206,8 @@ DataSystem.prototype.getRawData = async function (SBqueryIN) {
       result = []
     }
   }
+  console.log('raw data query')
+  console.log(dataBack)
   return dataBack
 }
 

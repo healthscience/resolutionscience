@@ -1,5 +1,5 @@
 <template>
-  <div v-if="experimentDash.cnrl" id="dashboard-view">exp-- {{ experimentDash }}
+  <div v-if="experimentDash.status" id="dashboard-view">exp-- {{ experimentDash }}
     <header>Dashboard for experiment {{ experimentDash.cnrl }}</header>
     <div id="experiment-summary">
       <div class="summary-item" id="exerpiment-name"> Experiment: {{ experimentDash.contract.prime.text }} </div>
@@ -9,8 +9,9 @@
     <learn-Action></learn-Action>
     <ul v-if="experimentDash.contract.kentities" > list {{ experimentDash.contract.kentities }}
       <li :counter="loopCounter()" v-for="(visentity, index) in experimentDash.contract.kentities" > {{ visentity }} {{ index}}
-        <!--<progress-Message :counter="loopCounter()" :progressMessage="entityPrepareStatus"></progress-Message>-->
-        <expvisual  :counter="loopCounterTWO()" :ddd="visDataPrepare(visentity)" :entityCNRL="visentity" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV"></expvisual>
+        <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
+        <!--<expvisual :vvvv="visDataPrepare(visentity)" :entityCNRL="visentity" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV"></expvisual>-->
+        <hsvisual :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :vvvv="visDataPrepare(visentity)"></hsvisual>
       </li>
     </ul>
   </div>
@@ -21,12 +22,12 @@
   import progressMessage from '@/components/toolbar/inProgress'
   import learnReport from '@/components/reports/LearnReport'
   import learnAction from '@/components/reports/LearnAction'
-  import expvisual from '@/components/healthscience/expVisual'
+  import hsvisual from '@/components/healthscience/hsVisual'
   export default {
     name: 'visual-liveview',
     components: {
       progressMessage,
-      expvisual,
+      hsvisual,
       learnReport,
       learnAction
     },
@@ -67,6 +68,12 @@
       },
       loopCounterTWO () {
         console.log('loop coutnerTWO')
+        const localthis = this
+        setTimeout(function () { localthis.entityPrepareStatus.active = false }, 3000)
+      },
+      visDataPrepareTEST (kentityIN) {
+        console.log('just a test with NO ADYNC Or safeFlow aclalll')
+        console.log(kentityIN)
       },
       async visDataPrepare (kentityIN) {
         console.log('prepare===================')

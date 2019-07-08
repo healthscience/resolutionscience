@@ -95,14 +95,8 @@
           active: false,
           text: 'off'
         },
-        datacollection2: null,
-        options2: null,
         toolbarData: {},
-        recoveryData: {},
-        datastatistics: null,
-        liveChartoptions: null,
         visChartview: true,
-        liveTime: '',
         visTableview: false,
         visSimview: false,
         timeVis: []
@@ -111,7 +105,7 @@
     computed: {
     },
     created () {
-      this.timeNavSegments()
+      // this.timeNavSegments()
     },
     mounted () {
     },

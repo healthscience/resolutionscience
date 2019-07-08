@@ -78,16 +78,15 @@
     methods: {
       async makeELive (status) {
         console.log('make this Experiment bundle live')
-        console.log(status.target.checked)
         let expCNRL = status.target.id
         if (status.target.checked === true) {
           // loop over arry of bundles and match bid number and make active
           let expState = {}
           expState.cnrl = expCNRL
           expState.view = true
+          this.$store.dispatch('actionUpdateExperiment', expState)
           console.log(this.$store.state.experimentCNRL[expCNRL])
           this.eKBundle = this.$store.state.experimentCNRL[expCNRL]
-          this.$store.dispatch('actionUpdateExperiment', expState)
         } else {
           let expCState = {}
           expCState.cnrl = expCNRL

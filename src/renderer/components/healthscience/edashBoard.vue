@@ -1,5 +1,5 @@
 <template>
-  <div v-if="eDashStatus === true" id="dashboard-view">
+  <div v-if="experimentDash.cnrl" id="dashboard-view">exp-- {{ experimentDash }}
     <header>Dashboard for experiment {{ experimentDash.cnrl }}</header>
     <div id="experiment-summary">
       <div class="summary-item" id="exerpiment-name"> Experiment: {{ experimentDash.contract.prime.text }} </div>
@@ -7,9 +7,10 @@
     </div>
     <learn-Report></learn-Report>
     <learn-Action></learn-Action>
-    <ul v-if="experimentDash.length !== 0" >
-      <li v-for="visentity in experimentDash.contract.kentities" > {{ visentity }}
-        <expvisual :entityCNRL="kbundlelive" :datacollection="visDataPrepare(visentity)" :options="liveOptions" :displayTime="liveTimeV"></expvisual>
+    <ul v-if="experimentDash.contract.kentities" > list {{ experimentDash.contract.kentities }}
+      <li :counter="loopCounter()" v-for="(visentity, index) in experimentDash.contract.kentities" > {{ visentity }} {{ index}}
+        <!--<progress-Message :counter="loopCounter()" :progressMessage="entityPrepareStatus"></progress-Message>-->
+        <expvisual  :counter="loopCounterTWO()" :ddd="visDataPrepare(visentity)" :entityCNRL="visentity" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV"></expvisual>
       </li>
     </ul>
   </div>
@@ -17,70 +18,82 @@
 
 <script>
   import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
+  import progressMessage from '@/components/toolbar/inProgress'
   import learnReport from '@/components/reports/LearnReport'
   import learnAction from '@/components/reports/LearnAction'
   import expvisual from '@/components/healthscience/expVisual'
   export default {
     name: 'visual-liveview',
     components: {
+      progressMessage,
       expvisual,
       learnReport,
       learnAction
     },
     props: {
       dashCNRL: '',
-      displayTime: ''
+      experimentDash:
+      {
+        type: Object
+      },
+      displayTime: '',
+      liveDataCollection: {},
+      liveOptions: {},
+      liveTimeV: ''
     },
     data () {
       return {
         dashEstatus: false,
-        kbundlelive: {}
+        experimentDash2: {},
+        kbundlelive: {},
+        entityPrepareStatus:
+        {
+          active: true,
+          text: 'Preparing visualisation'
+        }
       }
     },
     computed: {
-      eDashStatus: function () {
-        if (this.$store.state.experimentCNRL[this.dashCNRL]) {
-          this.dashEstatus = this.$store.state.experimentCNRL[this.dashCNRL].status
-          return this.dashEstatus
-        } else {
-          this.dashEstatus = false
-          return this.dashEstatus
-        }
-      },
-      experimentDash: function () {
-        return this.$store.state.experimentCNRL[this.dashCNRL]
-      },
-      liveEntities: function () {
-        return this.$store.state.startBundles
-      }
     },
     created () {
     },
     mounted () {
+      // this.setExperimentList()
     },
     mixins: [liveMixinSAFEflow],
     methods: {
-      visDataPrepare (kentityIN) {
-        console.log('prepare date array for all the entities asked for')
-        console.log(kentityIN)
+      loopCounter () {
+        console.log('loop coutner')
+      },
+      loopCounterTWO () {
+        console.log('loop coutnerTWO')
+      },
+      async visDataPrepare (kentityIN) {
+        console.log('prepare===================')
+        let currentEntities = this.$store.getters.startBundlesList // this.liveEntities
+        console.log(currentEntities)
+        let chartDataReady = {}
         let bundle = {}
         // loop over startBundles and match to kbundle cnrl
-        console.log('before looping')
-        console.log(this.liveEntities)
-        for (let kbs of this.liveEntities) {
+        for (let kbs of currentEntities) {
           console.log('ooping live Kbundles')
-          console.log(kbs.cnrl)
+          console.log(kbs.kbid)
           console.log(kentityIN)
-          if (kbs.cnrl === kentityIN) {
+          if (kbs.kbid === kentityIN) {
             console.log('match')
             bundle = kbs
+            this.kbundlelive = bundle
+            this.entityPrepareStatus.active = true
+            chartDataReady = await this.learnStart(bundle)
+            console.log('chart data ready')
+            console.log(chartDataReady)
+            this.entityPrepareStatus.active = false
+            this.liveDataCollection = chartDataReady.liveDataCollection
+            this.liveOptions = chartDataReady.liveOptions
+            this.liveTimeV = chartDataReady.kContext.liveTime
           }
         }
-        this.kbundlelive = bundle
-        let chartDataReady = this.learnStart(bundle)
-        this.liveOptions = {} // chartDataReady.options
-        this.liveTimeV = {} // chartDataReady.liveTime
-        return chartDataReady.datacollection
+        return true
       }
     }
   }

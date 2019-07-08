@@ -28,15 +28,15 @@ export default {
       this.activevis = this.$store.getters.liveVis[0]
       await this.safeMixin.scienceEntities(lBundle)
       console.log('entity setup/operational')
-      this.learnListening()
+      // this.learnListening()
       let entityGetter = await this.safeMixin.entityGetter(this.activeEntity, this.activevis)
       console.log('VUE---return getter data')
       console.log(entityGetter)
       this.chartmessage.active = false
-      returnVISvue = await this.diplayFilter(this.activevis, this.activevis, entityGetter)
+      returnVISvue = this.diplayFilter(this.activevis, this.activevis, entityGetter)
       return returnVISvue
     },
-    async diplayFilter (aEID, aVis, entityGetter) {
+    diplayFilter (aEID, aVis, entityGetter) {
       // setup return vis Object
       let visObjectVUE = {}
       if (aVis === 'vis-sc-1') {
@@ -63,7 +63,7 @@ export default {
           this.liveTimeV = moment(entityGetter.displayTime * 1000).format('LLLL')
           this.liveanalysisStart = entityGetter.selectTimeStart
           this.liveSelectTime = this.liveanalysisStart
-          let AvgDstart = 78 // await this.getAverages(aEID)
+          let AvgDstart = 34 // await this.getAverages(aEID)
           this.options2.annotation.annotations[0].value = AvgDstart.avgdhr
           this.options2.annotation.annotations[1].value = AvgDstart.avgdrhr
           visObjectVUE.kContext = this.liveanalysisStart

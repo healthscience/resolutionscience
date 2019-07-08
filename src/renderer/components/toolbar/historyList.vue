@@ -124,14 +124,16 @@
       async makeKLive (status) {
         console.log('make this knowledge bundle live')
         // loop over arry of bundles and match bid number and make active
-        console.log(status.target)
-        console.log(this.historyData)
-        for (let ukb of this.historyData) {
-          let makeInt = status.target.value
-          if (ukb.kbid === makeInt) {
-            console.log('match')
-            console.log(ukb)
-            this.$emit('setLiveBundle', ukb)
+        console.log(status)
+        if (status.target.checked === true) {
+          console.log(this.historyData)
+          for (let ukb of this.historyData) {
+            let makeInt = status.target.value
+            if (ukb.kbid === makeInt) {
+              console.log('match')
+              console.log(ukb)
+              this.$emit('setLiveBundle', ukb)
+            }
           }
         }
       },

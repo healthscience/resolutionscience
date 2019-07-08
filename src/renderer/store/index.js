@@ -144,6 +144,8 @@ export default new Vuex.Store({
             kel.status = true
             let objectProp = inVerified.cnrl
             Vue.set(state.experimentCNRL, objectProp, kel)
+            console.log('experimentCNRL selected')
+            console.log(state.experimentCNRL)
           }
         }
       } else {

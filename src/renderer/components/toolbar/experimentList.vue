@@ -44,7 +44,7 @@
           </div>
           <div id="experiment-close"></div>
         </div>
-        <edashboard v-bind:dashCNRL="exp.cnrl"></edashboard>
+        <edashboard v-bind:dashCNRL="exp.cnrl" v-bind:experimentDash="eKBundle" ></edashboard>
       </li>
     </ul>
   </div>
@@ -65,21 +65,13 @@
     },
     data () {
       return {
-        eboxSelect: []
+        eboxSelect: [],
+        eKBundle: {}
       }
     },
     created () {
     },
     computed: {
-      system: function () {
-        return this.$store.state.system
-      },
-      safeFlow: function () {
-        return this.$store.state.safeFlow
-      },
-      experimentDataR: function () {
-        return this.$store.state.experiments
-      }
     },
     mounted () {
     },
@@ -93,6 +85,8 @@
           let expState = {}
           expState.cnrl = expCNRL
           expState.view = true
+          console.log(this.$store.state.experimentCNRL[expCNRL])
+          this.eKBundle = this.$store.state.experimentCNRL[expCNRL]
           this.$store.dispatch('actionUpdateExperiment', expState)
         } else {
           let expCState = {}

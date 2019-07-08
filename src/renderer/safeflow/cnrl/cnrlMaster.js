@@ -606,7 +606,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.resolution = {}
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-848388553323'
     dataCNRLbundle.index = []
-    dataCNRLbundle.kentities = ['22KiJoZK9rnpapBSfWepwQBGZgzova74GhwkHtWYFp8a'] // ['cnrl-2356388731'] // , 'cnrl-2356388733']
+    dataCNRLbundle.kentities = ['PxaTn6JAP8fUowppmNvLniqmFYV9VQMDVVcP5n7BqTm'] // ['cnrl-2356388731'] // , 'cnrl-2356388733']
   }
   return dataCNRLbundle
 }

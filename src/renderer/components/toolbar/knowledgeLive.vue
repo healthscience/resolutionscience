@@ -67,6 +67,7 @@
       <history-List :historyData="historyData" @setLiveBundle="makeLiveKnowledge"></history-List>
     </div>
     <knowledge-Context :kContext="kContext"></knowledge-Context>
+    <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
     <hsvisual :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" ></hsvisual>
   </div>
 </template>
@@ -75,6 +76,7 @@
   import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
   import KnowledgeContext from '@/components/toolbar/knowledgeContext'
   import historyList from '@/components/toolbar/historyList.vue'
+  import progressMessage from '@/components/toolbar/inProgress'
   import hsvisual from '@/components/healthscience/hsvisual'
   import { kBus } from '../../main.js'
   const moment = require('moment')
@@ -87,6 +89,7 @@
     components: {
       historyList,
       KnowledgeContext,
+      progressMessage,
       hsvisual
     },
     props: {
@@ -102,6 +105,11 @@
           name: 'learn',
           id: 'learn-status'
         },
+        entityPrepareStatus:
+        {
+          active: false,
+          text: 'Preparing visualisation'
+        },
         liveSafeFlow: null,
         activeEntity: '',
         activevis: '',
@@ -114,7 +122,10 @@
         historyData: this.$store.getters.startBundlesList,
         experimentData: [],
         bundleid: 0,
-        kContext: {}
+        kContext: {},
+        liveDataCollection: {},
+        liveOptions: {},
+        liveTimeV: ''
       }
     },
     created () {
@@ -183,8 +194,11 @@
         let uuidBundle = this.createKBID(liveBundle)
         liveBundle.kbid = uuidBundle
         this.saveLearnHistory(liveBundle)
+        // set message to UI IN-progress
+        this.entityPrepareStatus.active = true
         let visDataBack = await this.learnStart(liveBundle)
         console.log(visDataBack)
+        this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions
         this.liveTimeV = visDataBack.kContext.liveTime
@@ -223,7 +237,7 @@
           hist.name = 'View history'
         }
       },
-      makeLiveKnowledge (lBund) {
+      async makeLiveKnowledge (lBund) {
         // set live Bundle for context
         this.$store.dispatch('actionLiveBundle', lBund)
         const nowTime = moment()
@@ -231,7 +245,15 @@
         this.$store.dispatch('actionUpdateStartTime', updatestartPeriodTime)
         this.liveData.scienceLive = {}
         this.liveData.scienceLive.cnrl = lBund.cnrl
-        this.learnStart(lBund)
+        console.log('before learnin start select')
+        this.entityPrepareStatus.active = true
+        let visDataBack = await this.learnStart(lBund)
+        console.log('select back')
+        console.log(visDataBack)
+        this.entityPrepareStatus.active = false
+        this.liveDataCollection = visDataBack.liveDataCollection
+        this.liveOptions = visDataBack.liveOptions
+        this.liveTimeV = visDataBack.kContext.liveTime
       },
       languageStatus (lIN) {
         this.liveData.languageLive = lIN

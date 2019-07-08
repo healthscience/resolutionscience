@@ -159,10 +159,7 @@
         timeSelect: true,
         livedtypes: [],
         startLine: '1',
-        stopLine: '2',
-        liveDataCollection: {},
-        liveOptions: {},
-        liveTimeV: ''
+        stopLine: '2'
       }
     },
     created () {

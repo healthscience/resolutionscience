@@ -1,5 +1,5 @@
 <template>
-  <div v-if="experimentDash.status" id="dashboard-view">exp-- {{ experimentDash }}
+  <div v-if="experimentDash.status === true && dashCNRL === experimentDash.cnrl" id="dashboard-view">exp-- {{ experimentDash }}
     <header>Dashboard for experiment {{ experimentDash.cnrl }}</header>
     <div id="experiment-summary">
       <div class="summary-item" id="exerpiment-name"> Experiment: {{ experimentDash.contract.prime.text }} </div>
@@ -7,11 +7,11 @@
     </div>
     <learn-Report></learn-Report>
     <learn-Action></learn-Action>
-    <ul v-if="experimentDash.contract.kentities" > list {{ experimentDash.contract.kentities }}
-      <li :counter="loopCounter()" v-for="(visentity, index) in experimentDash.contract.kentities" > {{ visentity }} {{ index}}
-        <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
-        <!--<expvisual :vvvv="visDataPrepare(visentity)" :entityCNRL="visentity" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV"></expvisual>-->
-        <hsvisual :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :vvvv="visDataPrepare(visentity)"></hsvisual>
+    <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
+    <ul>
+      <li v-for="(vEnt, index) in makeKbundles">
+        {{ index }}
+        <expvisual :entityCNRL="vEnt.cnrl" :datacollection="vEnt.liveDataCollection" :options="vEnt.liveOptions" :displayTime="vEnt.liveTimeV"></expvisual>
       </li>
     </ul>
   </div>
@@ -22,12 +22,13 @@
   import progressMessage from '@/components/toolbar/inProgress'
   import learnReport from '@/components/reports/LearnReport'
   import learnAction from '@/components/reports/LearnAction'
-  import hsvisual from '@/components/healthscience/hsVisual'
+  import expvisual from '@/components/healthscience/expVisual'
+
   export default {
     name: 'visual-liveview',
     components: {
       progressMessage,
-      hsvisual,
+      expvisual,
       learnReport,
       learnAction
     },
@@ -37,7 +38,6 @@
       {
         type: Object
       },
-      displayTime: '',
       liveDataCollection: {},
       liveOptions: {},
       liveTimeV: ''
@@ -49,8 +49,16 @@
         kbundlelive: {},
         entityPrepareStatus:
         {
-          active: true,
+          active: false,
           text: 'Preparing visualisation'
+        }
+      }
+    },
+    asyncComputed: {
+      async makeKbundles () {
+        if (this.experimentDash.contract.kentities) {
+          let makeEntity = await this.visDataPrepare(this.experimentDash.contract.kentities)
+          return makeEntity
         }
       }
     },
@@ -59,48 +67,33 @@
     created () {
     },
     mounted () {
-      // this.setExperimentList()
+      this.makeLiveProgress()
     },
     mixins: [liveMixinSAFEflow],
     methods: {
-      loopCounter () {
-        console.log('loop coutner')
-      },
-      loopCounterTWO () {
-        console.log('loop coutnerTWO')
-        const localthis = this
-        setTimeout(function () { localthis.entityPrepareStatus.active = false }, 3000)
-      },
-      visDataPrepareTEST (kentityIN) {
-        console.log('just a test with NO ADYNC Or safeFlow aclalll')
-        console.log(kentityIN)
-      },
       async visDataPrepare (kentityIN) {
         console.log('prepare===================')
-        let currentEntities = this.$store.getters.startBundlesList // this.liveEntities
+        console.log(kentityIN)
+        let currentEntities = this.$store.getters.startBundlesList
+        console.log('bundle list')
         console.log(currentEntities)
-        let chartDataReady = {}
-        let bundle = {}
-        // loop over startBundles and match to kbundle cnrl
-        for (let kbs of currentEntities) {
-          console.log('ooping live Kbundles')
-          console.log(kbs.kbid)
-          console.log(kentityIN)
-          if (kbs.kbid === kentityIN) {
-            console.log('match')
-            bundle = kbs
-            this.kbundlelive = bundle
-            this.entityPrepareStatus.active = true
-            chartDataReady = await this.learnStart(bundle)
-            console.log('chart data ready')
-            console.log(chartDataReady)
-            this.entityPrepareStatus.active = false
-            this.liveDataCollection = chartDataReady.liveDataCollection
-            this.liveOptions = chartDataReady.liveOptions
-            this.liveTimeV = chartDataReady.kContext.liveTime
+        let entityArray = []
+        for (let ike of kentityIN) {
+          console.log(ike)
+          for (let iee of currentEntities) {
+            if (ike === iee.kbid) {
+              let chartDataReady = await this.learnStart(iee)
+              console.log('chart data ready')
+              console.log(chartDataReady)
+              entityArray.push(chartDataReady)
+            }
           }
         }
-        return true
+        this.entityPrepareStatus.active = false
+        return entityArray
+      },
+      makeLiveProgress () {
+        this.entityPrepareStatus.active = true
       }
     }
   }

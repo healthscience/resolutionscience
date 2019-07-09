@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import store from './store'
 
+import AsyncComputed from 'vue-async-computed'
 import 'chart.js'
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
@@ -14,7 +15,7 @@ Vue.config.productionTip = false
 /* if (process.env.NODE_ENV !== 'production') {
   require('vue-devtools').install()
 } */
-
+Vue.use(AsyncComputed)
 export const kBus = new Vue()
 export const sBus = new Vue()
 

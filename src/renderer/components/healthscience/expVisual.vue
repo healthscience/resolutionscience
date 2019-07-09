@@ -26,13 +26,13 @@
         <simulation-View></simulation-View>
       </div>
       <div id="time-context">
-        <div id="select-time">
+        <!--<div id="select-time">
           <ul>
             <li v-for="tv in timeVis" class="context-time">
               <button class="button is-primary" @click.prevent="setTimeData(tv)">{{ tv.text }}</button>
             </li>
           </ul>
-        </div>
+        </div> -->
         <div id="view-time">
           {{ displayTime }}
         </div>

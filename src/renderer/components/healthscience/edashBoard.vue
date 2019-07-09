@@ -57,7 +57,9 @@
     asyncComputed: {
       async makeKbundles () {
         // look up Kentitycomponents for this experiment per this Peer
-        let mapEKentities = this.$store.getters.livemapExperimentKbundles
+        // prepare kEntities for this experiments
+        this.$store.dispatch('actionFilterKBundles', this.experimentDash.cnrl)
+        let mapEKentities = this.$store.getters.liveKentities
         console.log('mapped Exp to KBundles')
         console.log(mapEKentities)
         if (this.experimentDash.contract.kentities) {

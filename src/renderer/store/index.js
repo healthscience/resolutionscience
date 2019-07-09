@@ -24,7 +24,8 @@ export default new Vuex.Store({
     experimentCNRL: {},
     experimentList: {},
     expEntities: {},
-    mapExperimentKbundles: []
+    mapExperimentKbundles: [],
+    activeKentities: []
   },
   getters: {
     liveSafeFlow: state => state.safeFlow,
@@ -43,7 +44,8 @@ export default new Vuex.Store({
     liveBundleCounter: state => state.bundleCounter,
     liveExperiment: state => state.experimentCNRL,
     liveExperimentList: state => state.experimentList,
-    livemapExperimentKbundles: state => state.mapExperimentKbundles
+    livemapExperimentKbundles: state => state.mapExperimentKbundles,
+    liveKentities: state => state.activeKentities
   },
   mutations: {
     // Mutations
@@ -162,6 +164,14 @@ export default new Vuex.Store({
     },
     setMappedExpKbundles: (state, inVerified) => {
       state.mapExperimentKbundles = inVerified
+    },
+    filterKbundles: (state, inVerified) => {
+      console.log('filter Experiments for Kbundles')
+      for (let expCNRL of state.mapExperimentKbundles) {
+        if (expCNRL.experimentCNRL === inVerified) {
+          state.activeKentities.push(expCNRL.kbid)
+        }
+      }
     }
   },
   actions: {
@@ -200,6 +210,10 @@ export default new Vuex.Store({
     actionExperimentKBundles: (context, update) => {
     // update peers ExerperimentCNRLs to KBundles
       context.commit('setMappedExpKbundles', update)
+    },
+    actionFilterKBundles: (context, update) => {
+    // filter a list of Kentity bundles given the Experiment CNRL
+      context.commit('filterKbundles', update)
     }
   },
   modules,

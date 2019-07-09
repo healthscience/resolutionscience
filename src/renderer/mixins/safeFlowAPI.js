@@ -128,6 +128,10 @@ export default {
     saveStartBundle (bund) {
       console.log(' go and save via safeFLOW')
       this.safeMixin.startSettings('save', bund)
+    },
+    SaveexperimentKbundles (mapEKb) {
+      console.log(' go and save via safeFLOW mapping Exp to KBundles')
+      this.safeMixin.experimentKbundles('save', mapEKb)
     }
   }
 }

@@ -3,14 +3,15 @@
     <div id="diy-science">
       <div id="add-experiment">
         Add to experiment. Please select:
-        <select v-model="liveexerimentList" @change="addToExperiment(selectedCompute)">
-        <option class="science-compute" v-for="expi in liveexerimentList" v-bind:value="expi.cnrl">
-          {{ expi.cnrl }}
-        </option>
+        <select v-model="liveexerimentList" @change="addToExperiment($event)">
+          <option class="science-compute" v-for="expi in liveexerimentList" v-bind:value="expi.cnrl">
+            {{ expi.contract.prime.text }}
+          </option>
+        </select>
         <div id="add-button">
-          <button class="" href="" id="add-exp-button" @click.prevent="experADD(expi)">Add</button>
+          <button v-model="liveexerimentList" class="button-expadd" href="" id="add-exp-button" @click.prevent="experADD($event)">Add</button>
         </div>
-      </select>
+
       </div>
       <div id="oracles">oracles</div>
       <div id="tends">trends</div>
@@ -117,7 +118,8 @@
         liveTime: '',
         visTableview: false,
         visSimview: false,
-        timeVis: []
+        timeVis: [],
+        selectedExperiment: ''
       }
     },
     computed: {
@@ -205,11 +207,15 @@
       },
       addToExperiment (exB) {
         console.log('experiment selected')
-        console.log(exB)
+        console.log(exB.target.value)
+        this.selectedExperiment = exB.target.value
       },
       experADD (expA) {
         console.log('add to experiment and diplay back message')
         console.log(expA)
+        console.log(this.selectedExperiment)
+        // need to keep permanent store of experiments to Ecomponents linked (save, delete, update also)
+        this.$emit('experimentMap', this.selectedExperiment)
       }
     }
   }
@@ -287,6 +293,16 @@ li {
 #view-time {
   margin-top: 10px;
   font-size: 1.4em;
+}
+
+#add-button {
+  display: inline-block;
+}
+
+#add-exp-button {
+  font-size: 1.4em;
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
 .tg  {border-collapse:collapse;border-spacing:0;}

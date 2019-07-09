@@ -68,7 +68,7 @@
     </div>
     <knowledge-Context :kContext="kContext"></knowledge-Context>
     <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
-    <hsvisual :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" ></hsvisual>
+    <hsvisual @experimentMap="saveMappingExpKB" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" ></hsvisual>
   </div>
 </template>
 
@@ -121,7 +121,7 @@
         },
         historyData: this.$store.getters.startBundlesList,
         experimentData: [],
-        bundleid: 0,
+        bundleuuid: '',
         kContext: {},
         liveDataCollection: {},
         liveOptions: {},
@@ -193,6 +193,7 @@
         // create unquie ID for kbundle and use to save
         let uuidBundle = this.createKBID(liveBundle)
         liveBundle.kbid = uuidBundle
+        this.bundleuuid = uuidBundle
         this.saveLearnHistory(liveBundle)
         // set message to UI IN-progress
         this.entityPrepareStatus.active = true
@@ -345,6 +346,13 @@
         let result = arrayRemove(array, remove)
         this.liveData.categoryLive = result
         return true
+      },
+      saveMappingExpKB (expMapIN) {
+        console.log('prepare and save mapping Experiment to KBundles')
+        let mappingEKB = {}
+        mappingEKB.experimentCNRL = expMapIN
+        mappingEKB.kbid = this.bundleuuid
+        this.SaveexperimentKbundles(mappingEKB)
       }
     }
   }

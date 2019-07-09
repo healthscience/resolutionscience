@@ -86,17 +86,8 @@
       experimentsStart () {
         console.log('get experiments')
         this.liveExper = []
-        let experimentList = this.liveSafeFlow.cnrlExperimentIndex()
-        for (let exl of experimentList) {
-          let expCNRL = this.liveSafeFlow.cnrlLookup(exl)
-          let experBundle = {}
-          experBundle.cnrl = exl
-          experBundle.status = false
-          experBundle.contract = expCNRL
-          this.liveExper.push(experBundle)
-        }
-        this.KLexperimentData = this.liveExper
-        this.$store.dispatch('actionExperimentList', this.liveExper)
+        console.log(this.$store.getters.liveExperimentList)
+        this.KLexperimentData = this.$store.getters.liveExperimentList
       }
     }
   }

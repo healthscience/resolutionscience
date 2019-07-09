@@ -68,6 +68,31 @@ DataSystem.prototype.getStartStatus = async function () {
   // console.log(startStatusresult)
   return startStatusresult
 }
+
+/**
+* get mappings experimetns to Kbundles
+* @method getExpKbundles
+*
+*/
+DataSystem.prototype.getExpKbundles = async function () {
+  // make query to network for context data per devices
+  let startStatusresult = await this.liveTestStorage.getExpKbundles()
+  // console.log(startStatusresult)
+  return startStatusresult
+}
+
+/**
+* save the inital start settings set
+* @method saveExpKbundles
+*
+*/
+DataSystem.prototype.saveExpKbundles = async function (bundle) {
+  // make query to network for context data per devices
+  let startStatusresult = await this.liveTestStorage.saveExpKbundles(bundle)
+  // console.log(startStatusresult)
+  return startStatusresult
+}
+
 /**
 * get the inital context for data required
 * @method systemDevice

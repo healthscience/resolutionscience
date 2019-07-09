@@ -83,6 +83,22 @@ safeFlow.prototype.startSettings = async function (flag, bundle) {
 }
 
 /**
+* mapping of Experiments to Kbundles entities save retrieve
+* @method experimentKbundles
+*
+*/
+safeFlow.prototype.experimentKbundles = async function (flag, bundle) {
+  // first time start of device, datatype context for toolkitContext
+  let startStatusData = []
+  if (flag === 'save') {
+    startStatusData = await this.liveDataSystem.saveExpKbundles(bundle)
+  } else if (flag === 'retreive') {
+    startStatusData = await this.liveDataSystem.getExpKbundles()
+  }
+  return startStatusData
+}
+
+/**
 * call the CNRL index service/peer history log for active science
 * @method cnrlScienceStart
 *

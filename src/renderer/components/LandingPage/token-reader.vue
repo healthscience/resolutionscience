@@ -90,10 +90,31 @@
           // no token
         }
       },
+      startExperiments () {
+        console.log('get experiments')
+        let liveExper = []
+        let experimentList = this.liveSafeFlow.cnrlExperimentIndex()
+        for (let exl of experimentList) {
+          let expCNRL = this.liveSafeFlow.cnrlLookup(exl)
+          let experBundle = {}
+          experBundle.cnrl = exl
+          experBundle.status = false
+          experBundle.contract = expCNRL
+          liveExper.push(experBundle)
+        }
+        this.$store.dispatch('actionExperimentList', liveExper)
+      },
       async startKSetting () {
         let startKset = await this.liveSafeFlow.startSettings('retreive')
         // set via store and then pick up in historyData
         this.$store.dispatch('actionStartKBundles', startKset)
+      },
+      async startExpMappedKbundles () {
+        let mappedExpKbundles = await this.liveSafeFlow.experimentKbundles('retreive')
+        console.log('mapped Exp to Kbundles')
+        console.log(mappedExpKbundles)
+        // set via store and then pick up in historyData
+        this.$store.dispatch('actionExperimentKBundles', mappedExpKbundles)
       },
       deviceContext () {
         // make call to set start deviceContext for this pubkey
@@ -103,6 +124,8 @@
           localthis.$store.commit('setDevice', dataH)
           localthis.dataType()
           localthis.cnrlScience()
+          localthis.startExperiments()
+          localthis.startExpMappedKbundles()
           localthis.startKSetting()
         }
         const deviceFlag = 'device'

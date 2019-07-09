@@ -152,6 +152,33 @@ TestStorageAPI.prototype.saveStartSettings = async function (jsonIN) {
 }
 
 /**
+*  Get start settings
+* @method getExpKbundles
+*
+*/
+TestStorageAPI.prototype.getExpKbundles = async function () {
+  //  nosql query
+  // console.log('StorageAIP ----')
+  let jsondata = await axios.get(this.baseAPI + '/experimentKBundles/' + this.tempPubkey + '/' + this.tempToken + '/')
+  // console.log(jsondata)
+  return jsondata.data
+}
+
+/**
+*  Insert start status settings
+* @method saveExpKbundles
+*
+*/
+TestStorageAPI.prototype.saveExpKbundles = async function (jsonIN) {
+  console.log('saving start status settings')
+  jsonIN.publickey = this.tempPubkey
+  await axios.post(this.baseAPI + '/experimentKBundlesSave/' + this.tempPubkey + '/' + this.tempToken + '/' + jsonIN.device_mac, jsonIN)
+    .then(function (response) {
+      console.log(response)
+    })
+}
+
+/**
 *  Insert data to peer dataStore via Axios
 * @method saveaverageData
 *

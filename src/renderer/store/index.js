@@ -23,7 +23,8 @@ export default new Vuex.Store({
     bundleCounter: 0,
     experimentCNRL: {},
     experimentList: {},
-    expEntities: {}
+    expEntities: {},
+    mapExperimentKbundles: []
   },
   getters: {
     liveSafeFlow: state => state.safeFlow,
@@ -41,7 +42,8 @@ export default new Vuex.Store({
     startBundlesList: state => state.startBundles,
     liveBundleCounter: state => state.bundleCounter,
     liveExperiment: state => state.experimentCNRL,
-    liveExperimentList: state => state.experimentList
+    liveExperimentList: state => state.experimentList,
+    livemapExperimentKbundles: state => state.mapExperimentKbundles
   },
   mutations: {
     // Mutations
@@ -157,6 +159,9 @@ export default new Vuex.Store({
     },
     setExperimentList: (state, inVerified) => {
       state.experimentList = inVerified
+    },
+    setMappedExpKbundles: (state, inVerified) => {
+      state.mapExperimentKbundles = inVerified
     }
   },
   actions: {
@@ -191,6 +196,10 @@ export default new Vuex.Store({
     actionExperimentList: (context, update) => {
     // update settings to show at startup per bundle item
       context.commit('setExperimentList', update)
+    },
+    actionExperimentKBundles: (context, update) => {
+    // update peers ExerperimentCNRLs to KBundles
+      context.commit('setMappedExpKbundles', update)
     }
   },
   modules,

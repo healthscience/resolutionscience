@@ -35,9 +35,6 @@ util.inherits(ChartSystem, events.EventEmitter)
 */
 ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle, cData) {
   this.options = this.prepareChartOptions()
-  console.log('STRUCTUREchart DATA1')
-  console.log(cData)
-  console.log(datatypeIN)
   let lastDataObject = cData.slice(-1)[0]
   let datalabel = []
   let visCHolder = {}
@@ -55,7 +52,6 @@ ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle,
       visCHolder[liveDate][devI.device_mac] = {}
       let dataholder = {}
       for (let liveData of lastDataObject[liveDate][devI.device_mac][datatypeIN.cnrl]) {
-        console.log('loop each data item')
         var mDateString = moment(liveData.timestamp * 1000).toDate()
         datalabel.push(mDateString)
         if (datatypeIN.cnrl === 'cnrl-8856388711') {
@@ -84,7 +80,6 @@ ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle,
 *
 */
 ChartSystem.prototype.chartColors = function (datatypeItem) {
-  console.log('COLOOOOR')
   let colorHolder = {}
   // LOOP over datatypeList and prepare chart colors
   if (datatypeItem.cnrl === 'cnrl-8856388712') {
@@ -106,8 +101,6 @@ ChartSystem.prototype.chartColors = function (datatypeItem) {
 *
 */
 ChartSystem.prototype.prepareVueChartJS = function (results) {
-  console.log('CHARTJS--prepare')
-  // console.log(results)
   let datacollection = {}
   this.labelback = []
   this.databack = []
@@ -176,8 +169,6 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
       datasets: datachart
     }
   }
-  console.log('prepared datacollection')
-  console.log(datacollection)
   return datacollection
 }
 
@@ -187,11 +178,7 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
 *
 */
 ChartSystem.prototype.prepareLabelchart = function (labelIN) {
-  // console.log('label prepare')
-  // return the longest array
-  // console.log(labelIN)
   let preparedLabel = labelIN.reduce((p, c, i, a) => a[p].length > c.length ? p : i, 0)
-  // console.log(labelIN[preparedLabel])
   return labelIN[preparedLabel]
 }
 
@@ -365,8 +352,6 @@ ChartSystem.prototype.prepareChartOptions = function (results) {
 *
 */
 ChartSystem.prototype.updateChartoptions = function (startChartDate) {
-  console.log('update chart options time')
-  console.log(startChartDate)
   this.newDate(startChartDate) // moment('12/21/2018', 'MM-DD-YYYY')
   this.newDateEnd(startChartDate) // moment('12/21/2018', 'MM-DD-YYYY')
 }
@@ -377,8 +362,6 @@ ChartSystem.prototype.updateChartoptions = function (startChartDate) {
 *
 */
 ChartSystem.prototype.newDate = function (selectDay) {
-  console.log('new date options')
-  console.log(selectDay)
   var nowTime = ''
   if (selectDay === 0) {
     nowTime = moment()
@@ -386,7 +369,6 @@ ChartSystem.prototype.newDate = function (selectDay) {
     nowTime = moment(selectDay)
     nowTime = nowTime.subtract(selectDay, 'days')
   }
-  console.log(nowTime)
   var startTime = moment.utc(nowTime).startOf('day')
   const time = moment.duration('2:0:00')
   startTime.add(time)
@@ -414,7 +396,6 @@ ChartSystem.prototype.newDateEnd = function (endTimeIN) {
 */
 ChartSystem.prototype.structureStatisticsData = function (dataIN) {
   this.options = this.AverageChartOptions()
-  console.log('STRUCTURE AVERAGE CHART DATA1')
   // console.log(dataIN)
   let dataholder = {}
   let datalabel = []
@@ -429,8 +410,6 @@ ChartSystem.prototype.structureStatisticsData = function (dataIN) {
   }
   dataholder.labels = datalabel
   dataholder.datasets = dataC
-  console.log('structure average data for charting')
-  console.log(dataholder)
   return dataholder
 }
 
@@ -441,8 +420,6 @@ ChartSystem.prototype.structureStatisticsData = function (dataIN) {
 */
 ChartSystem.prototype.structureSumData = function (dataIN) {
   this.options = this.SumChartOptions()
-  console.log('STRUCTURE SUM CHART DATA1')
-  // console.log(dataIN)
   let dataholder = {}
   let datalabel = []
   let dataC = []
@@ -456,8 +433,6 @@ ChartSystem.prototype.structureSumData = function (dataIN) {
   }
   dataholder.labels = datalabel
   dataholder.datasets = dataC
-  console.log('structure SUM data for charting')
-  console.log(dataholder)
   return dataholder
 }
 
@@ -467,7 +442,6 @@ ChartSystem.prototype.structureSumData = function (dataIN) {
 *
 */
 ChartSystem.prototype.StatschartColors = function (datatypeItem) {
-  console.log('CHARTSYSTEM3--setcolors')
   let colorHolder = {}
   // LOOP over datatypeList and prepare chart colors
   if (datatypeItem.cnrl === 'cnrl-8856388724') {
@@ -487,7 +461,6 @@ ChartSystem.prototype.StatschartColors = function (datatypeItem) {
     colorHolder.backgroundColor = '#ed7d7d'
     colorHolder.borderColor = '#ea1212'
   }
-  // console.log(colorHolder)
   return colorHolder
 }
 
@@ -498,7 +471,6 @@ ChartSystem.prototype.StatschartColors = function (datatypeItem) {
 */
 ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
   // need to prepare different visualisations, data return will fit only one select option
-  console.log('PREPARE STATS CHARTJS-- START')
   var localthis = this
   let datacollection = {}
   this.labelback = []
@@ -528,8 +500,6 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
       }
     }
   } else {
-    console.log('one')
-    console.log(results.chart[0].color)
     if (results.chart[0].color.datatype === 'cnrl-8856388724') {
       this.avg = []
       this.labelback = results.chart[0].data.labels
@@ -538,7 +508,6 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
       this.colorlineback = results.chart[0].color.borderColor
     } else if (results.chart[0].color.datatype === 'cnrl-8856388322') {
       this.heartback = []
-      console.log('labels')
       // console.log(results.chart[0].data.labels)
       this.labelback = results.chart[0].data.labels
       this.avg = results.chart[0].data.datasets
@@ -575,7 +544,6 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
   } else {
     // how many devices average to visualise?
     if (deviceList.length === 2) {
-      console.log('TWO devices averages')
       localthis.chartmessage = 'AVG BPM'
       datacollection = {
         labels: localthis.labelback,
@@ -601,7 +569,6 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
       }
     } else if (deviceList.length === 1) {
       // only one average device data to display
-      console.log('ONE devices averages')
       localthis.chartmessage = 'BPM'
       datacollection = {
         labels: localthis.labelback,
@@ -619,8 +586,6 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
       }
     }
   }
-  // console.log('avg--chart')
-  // console.log(datacollection)
   return datacollection
 }
 
@@ -631,7 +596,6 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
 */
 ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
   // need to prepare different visualisations, data return will fit only one select option
-  console.log('PREPARE SUM CHARTJS-- START')
   var localthis = this
   let datacollection = {}
   this.labelback = []
@@ -642,12 +606,9 @@ ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
   this.colorback2 = ''
   this.colorlineback2 = ''
   // how many average dataTypes asked for?
-  // console.log(results.chart.length)
   if (results.chart.length === 2) {
     // need to prepare different visualisations, data return will fit only one Chart vis option
     for (let chD of results.chart) {
-      // console.log(chD)
-      // console.log(chD.color.datatype)
       if (chD.color.datatype === 'cnrl-8856388924') {
         this.labelback = chD.data.labels
         this.avg = chD.data.datasets
@@ -661,8 +622,6 @@ ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
       }
     }
   } else {
-    console.log('one')
-    console.log(results.chart[0].color)
     if (results.chart[0].color.datatype === 'cnrl-8856388924') {
       this.avg = []
       this.labelback = results.chart[0].data.labels
@@ -670,9 +629,6 @@ ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
       this.colorback = results.chart[0].color.backgroundColor
       this.colorlineback = results.chart[0].color.borderColor
     } else if (results.chart[0].color.datatype === 'cnrl-8856389322') {
-      this.heartback = []
-      console.log('labels')
-      // console.log(results.chart[0].data.labels)
       this.labelback = results.chart[0].data.labels
       this.avg = results.chart[0].data.datasets
       this.colorback2 = results.chart[0].color.backgroundColor
@@ -708,7 +664,6 @@ ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
   } else {
     // how many devices average to visualise?
     if (deviceList.length === 2) {
-      console.log('TWO devices sums')
       localthis.chartmessage = 'SUM BPM'
       datacollection = {
         labels: localthis.labelback,
@@ -734,7 +689,6 @@ ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
       }
     } else if (deviceList.length === 1) {
       // only one average device data to display
-      console.log('ONE devices sum')
       localthis.chartmessage = 'SUM-'
       datacollection = {
         labels: localthis.labelback,
@@ -752,8 +706,6 @@ ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
       }
     }
   }
-  // console.log('avg--chart')
-  // console.log(datacollection)
   return datacollection
 }
 

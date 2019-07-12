@@ -175,11 +175,7 @@ DataSystem.prototype.datatypeMapping = async function (systemBundle) {
   if (systemBundle.startperiod === 'simulateData') {
     console.log('SIMULTATED__DATA__REQUIRED')
   } else {
-    console.log('datatypeAPI list')
-    console.log(systemBundle.apiInfo.apiquery)
     for (let dtItem of systemBundle.apiInfo.apiquery) {
-      console.log('api item')
-      console.log(dtItem)
       if (dtItem.api === 'computedata/<publickey>/<token>/<queryTime>/<deviceID>/') {
         console.log('OBSERVATION QI or SOURCE DT query')
         await this.getRawData(systemBundle).then(function (sourcerawData) {
@@ -201,8 +197,6 @@ DataSystem.prototype.datatypeMapping = async function (systemBundle) {
       }
     }
   }
-  console.log('rawSourceHOlder')
-  console.log(rawHolder)
   return rawHolder
 }
 
@@ -216,12 +210,13 @@ DataSystem.prototype.getRawData = async function (SBqueryIN) {
   // check for number of devices, sensor/datatypes are asked for
   const deviceQuery = SBqueryIN.deviceList
   const dataTypesList = SBqueryIN.apiInfo.apiquery
+  console.log('raw data gets')
+  console.log(deviceQuery)
+  console.log(dataTypesList)
   // form loop to make data calls
   for (let di of deviceQuery) {
     dataBack[di] = {}
     for (let dtQ of dataTypesList) {
-      console.log('dts')
-      console.log(dtQ)
       // observation has fixed input but technically should loop over this on basis of timeSegs
       let result = await this.liveTestStorage.getComputeData(SBqueryIN.startperiod, di).catch(function (err) {
         console.log(err)
@@ -231,8 +226,6 @@ DataSystem.prototype.getRawData = async function (SBqueryIN) {
       result = []
     }
   }
-  console.log('raw data query')
-  console.log(dataBack)
   return dataBack
 }
 
@@ -321,8 +314,6 @@ DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, compInfo) {
   }
   // extract the dt required
   sTidyarray = this.extractDTcolumn(DTlive, sTidyarray)
-  console.log('post extact dt colum')
-  console.log(sTidyarray)
   // does a category filter apply?
   if (compInfo.categorycodes.length === 0) {
     // nothing to filter
@@ -338,9 +329,6 @@ DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, compInfo) {
 *
 */
 DataSystem.prototype.extractDTcolumn = function (sourceDT, arrayIN) {
-  console.log('extract DT for compute')
-  console.log(sourceDT)
-  console.log(arrayIN)
   let singleArray = []
   let intData = 0
   for (let sing of arrayIN) {

@@ -44,6 +44,7 @@
           </div>
           <div id="experiment-close"></div>
         </div>
+        {{ eKBundle[exp.cnrl] }}
         <edashboard v-bind:dashCNRL="exp.cnrl" v-bind:experimentDash="eKBundle[exp.cnrl]" ></edashboard>
       </li>
     </ul>
@@ -76,7 +77,7 @@
     mounted () {
     },
     methods: {
-      async makeELive (status) {
+      makeELive (status) {
         console.log('make this Experiment bundle live')
         let expCNRL = status.target.id
         // are any of the other experiments OPEN?  If so keep them open
@@ -88,8 +89,7 @@
           expState.cnrl = expCNRL
           expState.view = true
           this.$store.dispatch('actionUpdateExperiment', expState)
-          console.log(this.$store.state.experimentCNRL[expCNRL])
-          this.eKBundle = this.$store.state.experimentCNRL
+          this.eKBundle = this.$store.getters.liveExperiment
         } else {
           let expCState = {}
           expCState.cnrl = expCNRL

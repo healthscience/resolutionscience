@@ -25,7 +25,7 @@ export default new Vuex.Store({
     experimentList: {},
     expEntities: {},
     mapExperimentKbundles: [],
-    activeKentities: []
+    activeKentities: {}
   },
   getters: {
     liveSafeFlow: state => state.safeFlow,
@@ -141,6 +141,7 @@ export default new Vuex.Store({
       state.bundle.time.startperiod = inVerified
     },
     setExperimentCNRL: (state, inVerified) => {
+      console.log('STORE---mapp Exp. to Entities')
       if (inVerified.view === true) {
         // take Kbundles list and prepare for display
         for (let kel of state.experimentList) {
@@ -157,6 +158,8 @@ export default new Vuex.Store({
         let updateECNRL = state.experimentCNRL[inVerified.cnrl]
         updateECNRL.status = false
         Vue.set(state.experimentCNRL, inVerified.cnrl, updateECNRL)
+        console.log('experimentCNRL DEselected')
+        console.log(state.experimentCNRL)
       }
     },
     setExperimentList: (state, inVerified) => {
@@ -165,13 +168,24 @@ export default new Vuex.Store({
     setMappedExpKbundles: (state, inVerified) => {
       state.mapExperimentKbundles = inVerified
     },
-    filterKbundles: (state, inVerified) => {
-      console.log('filter Experiments for Kbundles')
-      for (let expCNRL of state.mapExperimentKbundles) {
-        if (expCNRL.experimentCNRL === inVerified) {
-          state.activeKentities.push(expCNRL.kbid)
+    filterKbundles: (state) => {
+      console.log('FILTET START Kbundles###MAPPING')
+      console.log(state.mapExperimentKbundles)
+      state.activeKentities = {}
+      for (let budi of state.experimentList) {
+        console.log(budi.cnrl)
+        for (let expCNRL of state.mapExperimentKbundles) {
+          console.log(expCNRL.experimentCNRL)
+          if (budi.cnrl === expCNRL.experimentCNRL) {
+            console.log('matchhhhhed')
+            let objectProp = budi.cnrl
+            let objectValue = expCNRL.kbid
+            Vue.set(state.activeKentities, objectProp, objectValue)
+          }
         }
       }
+      console.log('FILTET MAPPED EEEND#####')
+      console.log(state.activeKentities)
     }
   },
   actions: {

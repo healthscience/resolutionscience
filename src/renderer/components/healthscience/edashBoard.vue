@@ -1,5 +1,5 @@
 <template>
-  <div v-if="experimentDash.status === true && dashCNRL === experimentDash.cnrl" id="dashboard-view">exp-- {{ experimentDash }}
+  <div v-if="experimentDash && experimentDash.status === true && dashCNRL === experimentDash.cnrl" id="dashboard-view">exp-- {{ experimentDash }}
     <header>Dashboard for experiment {{ experimentDash.cnrl }}</header>
     <div id="experiment-summary">
       <div class="summary-item" id="exerpiment-name"> Experiment: {{ experimentDash.contract.prime.text }} </div>
@@ -57,15 +57,10 @@
     asyncComputed: {
       async makeKbundles () {
         // look up Kentitycomponents for this experiment per this Peer
-        // prepare kEntities for this experiments
-        this.$store.dispatch('actionFilterKBundles', this.experimentDash.cnrl)
-        let mapEKentities = this.$store.getters.liveKentities
-        console.log('mapped Exp to KBundles')
-        console.log(mapEKentities)
-        if (this.experimentDash.contract.kentities) {
-          let makeEntity = await this.visDataPrepare(this.experimentDash.contract.kentities)
-          return makeEntity
-        }
+        let visEC = await this.visDataPrepare()
+        console.log(visEC)
+        console.log('ECS LIST READY FOR LOOPING DISPLAY')
+        return visEC
       }
     },
     computed: {
@@ -77,25 +72,24 @@
     },
     mixins: [liveMixinSAFEflow],
     methods: {
-      async visDataPrepare (kentityIN) {
-        console.log('prepare===================')
-        console.log(kentityIN)
-        let currentEntities = this.$store.getters.startBundlesList
-        console.log('bundle list')
-        console.log(currentEntities)
+      async visDataPrepare () {
         let entityArray = []
-        for (let ike of kentityIN) {
-          console.log(ike)
-          for (let iee of currentEntities) {
-            if (ike === iee.kbid) {
-              let chartDataReady = await this.learnStart(iee)
-              console.log('chart data ready')
-              console.log(chartDataReady)
-              entityArray.push(chartDataReady)
-            }
+        let chartDataReady = {}
+        let mappedExpENTs = this.$store.getters.liveKentities
+        console.log('get KBud acive')
+        console.log(mappedExpENTs)
+        console.log(this.experimentDash.cnrl)
+        let currentEntities = this.$store.getters.startBundlesList
+        let liveBundles = mappedExpENTs[this.experimentDash.cnrl]
+        // chartDataReady = await this.learnStart(liveBundles)
+        // entityArray.push(chartDataReady)
+        for (let iee of currentEntities) {
+          console.log(iee)
+          if (liveBundles === iee.kbid) {
+            chartDataReady = await this.learnStart(iee)
+            entityArray.push(chartDataReady)
           }
         }
-        this.entityPrepareStatus.active = false
         return entityArray
       },
       makeLiveProgress () {

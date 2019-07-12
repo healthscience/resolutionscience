@@ -111,8 +111,6 @@
       },
       async startExpMappedKbundles () {
         let mappedExpKbundles = await this.liveSafeFlow.experimentKbundles('retreive')
-        console.log('mapped Exp to Kbundles')
-        console.log(mappedExpKbundles)
         // set via store and then pick up in historyData
         this.$store.dispatch('actionExperimentKBundles', mappedExpKbundles)
       },

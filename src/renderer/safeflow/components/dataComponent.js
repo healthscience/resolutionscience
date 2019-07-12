@@ -187,8 +187,6 @@ DataComponent.prototype.CategoriseData = function () {
 *
 */
 DataComponent.prototype.assessDataStatus = function () {
-  console.log('set which data is live')
-  console.log(this.categoryData.length)
   if (this.categoryData.length > 0) {
     this.liveData = this.categoryData
   } else {

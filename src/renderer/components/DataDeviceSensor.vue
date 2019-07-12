@@ -43,6 +43,34 @@
           </div>
         </li>
         <li class="datastore-item">
+          <header>Genetics</header>
+          <div id="openhumans-api">
+            <header>OpenhumansAPI</header>
+            <header>Verify token</header>
+          </div>
+        </li>
+        <li class="datastore-item">
+          <header>SAFEnetwork</header>
+          <div id="safe-api">
+            <header>D-storage API</header>
+            <header>Verify token</header>
+          </div>
+        </li>
+        <li class="datastore-item">
+          <header>OceanProtocol</header>
+          <div id="oceanprotocol-api">
+            <header>Data Market Palce</header>
+            <header>Verify token</header>
+          </div>
+        </li>
+        <li class="datastore-item">
+          <header>Singularity.net</header>
+          <div id="singularity-api">
+            <header>AI MarketPlace</header>
+            <header>Verify token</header>
+          </div>
+        </li>
+        <li class="datastore-item">
           <header>GoogleFIT</header>
           <div id="googlefit-api">
             <header>fitAPI</header>
@@ -53,13 +81,6 @@
           <header>Wearables</header>
           <div id="human-api">
             <header>HumanAPI</header>
-            <header>Verify token</header>
-          </div>
-        </li>
-        <li class="datastore-item">
-          <header>Genetics</header>
-          <div id="openhumans-api">
-            <header>OpenhumansAPI</header>
             <header>Verify token</header>
           </div>
         </li>

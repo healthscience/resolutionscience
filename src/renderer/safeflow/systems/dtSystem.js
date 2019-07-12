@@ -87,8 +87,6 @@ DTSystem.prototype.DTStartMatch = function (dAPI, lDTs, catDTs) {
   apiInfo.categorycodes = checkDTcategory
   apiInfo.datatypes = lDTs
   apiInfo.tidyList = TidyDataLogic
-  console.log('API DT info')
-  console.log(apiInfo)
   return apiInfo
 }
 
@@ -120,8 +118,6 @@ DTSystem.prototype.datatypeCheckAPI = function (packagingDTs, lDTs) {
     apiMatch = []
     tableCount++
   }
-  console.log('api mapped keep')
-  console.log(apiKeep)
   return apiKeep
 }
 

@@ -141,7 +141,6 @@ export default new Vuex.Store({
       state.bundle.time.startperiod = inVerified
     },
     setExperimentCNRL: (state, inVerified) => {
-      console.log('STORE---mapp Exp. to Entities')
       if (inVerified.view === true) {
         // take Kbundles list and prepare for display
         for (let kel of state.experimentList) {
@@ -149,8 +148,6 @@ export default new Vuex.Store({
             kel.status = true
             let objectProp = inVerified.cnrl
             Vue.set(state.experimentCNRL, objectProp, kel)
-            console.log('experimentCNRL selected')
-            console.log(state.experimentCNRL)
           }
         }
       } else {
@@ -158,8 +155,6 @@ export default new Vuex.Store({
         let updateECNRL = state.experimentCNRL[inVerified.cnrl]
         updateECNRL.status = false
         Vue.set(state.experimentCNRL, inVerified.cnrl, updateECNRL)
-        console.log('experimentCNRL DEselected')
-        console.log(state.experimentCNRL)
       }
     },
     setExperimentList: (state, inVerified) => {
@@ -169,23 +164,18 @@ export default new Vuex.Store({
       state.mapExperimentKbundles = inVerified
     },
     filterKbundles: (state) => {
-      console.log('FILTET START Kbundles###MAPPING')
-      console.log(state.mapExperimentKbundles)
       state.activeKentities = {}
       for (let budi of state.experimentList) {
-        console.log(budi.cnrl)
+        let objectPropE = budi.cnrl
+        Vue.set(state.activeKentities, objectPropE, [])
         for (let expCNRL of state.mapExperimentKbundles) {
-          console.log(expCNRL.experimentCNRL)
           if (budi.cnrl === expCNRL.experimentCNRL) {
-            console.log('matchhhhhed')
             let objectProp = budi.cnrl
             let objectValue = expCNRL.kbid
-            Vue.set(state.activeKentities, objectProp, objectValue)
+            state.activeKentities[objectProp].push(objectValue)
           }
         }
       }
-      console.log('FILTET MAPPED EEEND#####')
-      console.log(state.activeKentities)
     }
   },
   actions: {

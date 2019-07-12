@@ -76,18 +76,14 @@
         let entityArray = []
         let chartDataReady = {}
         let mappedExpENTs = this.$store.getters.liveKentities
-        console.log('get KBud acive')
-        console.log(mappedExpENTs)
-        console.log(this.experimentDash.cnrl)
         let currentEntities = this.$store.getters.startBundlesList
         let liveBundles = mappedExpENTs[this.experimentDash.cnrl]
-        // chartDataReady = await this.learnStart(liveBundles)
-        // entityArray.push(chartDataReady)
-        for (let iee of currentEntities) {
-          console.log(iee)
-          if (liveBundles === iee.kbid) {
-            chartDataReady = await this.learnStart(iee)
-            entityArray.push(chartDataReady)
+        for (let expEB of liveBundles) {
+          for (let iee of currentEntities) {
+            if (expEB === iee.kbid) {
+              chartDataReady = await this.learnStart(iee)
+              entityArray.push(chartDataReady)
+            }
           }
         }
         return entityArray

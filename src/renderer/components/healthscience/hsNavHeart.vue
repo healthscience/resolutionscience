@@ -1,5 +1,6 @@
 <template>
   <section class="container">
+    <oracle-View></oracle-View>
     <section id="knowledge">
       <div id="experiment-learn" class="live-element">
         <div id="experiment-learn-container">
@@ -17,12 +18,14 @@
 
 <script>
   import SAFEflow from '../../safeflow/safeFlow.js'
+  import oracleView from '@/components/toolbar/oracleView.vue'
   import experimentList from '@/components/toolbar/experimentList.vue'
   import { sBus } from '../../main.js'
 
   export default {
     name: 'VueChartJS',
     components: {
+      oracleView,
       experimentList
     },
     data () {
@@ -84,11 +87,11 @@
         console.log('live experiment dashboard')
       },
       experimentsStart () {
-        console.log('BEGIN---experVIS')
+        // console.log('BEGIN---experVIS')
         this.liveExper = []
-        console.log(this.$store.getters.liveExperimentList)
-        console.log(this.$store.getters.livemapExperimentKbundles)
-        console.log(this.$store.getters.startBundlesList)
+        // console.log(this.$store.getters.liveExperimentList)
+        // console.log(this.$store.getters.livemapExperimentKbundles)
+        // console.log(this.$store.getters.startBundlesList)
         this.$store.dispatch('actionFilterKBundles')
         this.KLexperimentData = this.$store.getters.liveExperimentList
       }

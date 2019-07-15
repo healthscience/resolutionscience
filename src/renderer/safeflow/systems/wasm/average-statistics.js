@@ -61,6 +61,8 @@ StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, dev
     if (dataBatch.length > 0) {
       let singleArray = this.liveDataSystem.tidyRawDataSingle(dataBatch, datatype, compInfo)
       // need to check for categories TODO
+      console.log('tidy back from SYSMEM')
+      console.log(singleArray)
       let saveReady = this.averageStatistics(singleArray)
       // prepare JSON object for POST
       let saveJSON = {}

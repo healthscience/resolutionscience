@@ -44,7 +44,6 @@
           </div>
           <div id="experiment-close"></div>
         </div>
-        {{ eKBundle[exp.cnrl] }}
         <edashboard v-bind:dashCNRL="exp.cnrl" v-bind:experimentDash="eKBundle[exp.cnrl]" ></edashboard>
       </li>
     </ul>
@@ -78,11 +77,8 @@
     },
     methods: {
       makeELive (status) {
-        console.log('make this Experiment bundle live')
         let expCNRL = status.target.id
         // are any of the other experiments OPEN?  If so keep them open
-        console.log('experiment CNRL ID')
-        console.log(expCNRL)
         if (status.target.checked === true) {
           // loop over arry of bundles and match bid number and make active
           let expState = {}

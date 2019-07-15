@@ -1,6 +1,6 @@
 <template>
   <div id="wrapper">
-    <img id="logo" src="~@/assets/logo.png" alt="electron-vue">
+    <img id="logo" src="~@/assets/logo.png" alt="DIY science">
     <main>
       <div class="left-side">
         <span id="welcome">

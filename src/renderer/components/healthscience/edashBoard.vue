@@ -1,5 +1,5 @@
 <template>
-  <div v-if="experimentDash && experimentDash.status === true && dashCNRL === experimentDash.cnrl" id="dashboard-view">exp-- {{ experimentDash }}
+  <div v-if="experimentDash && experimentDash.status === true && dashCNRL === experimentDash.cnrl" id="dashboard-view">
     <header>Dashboard for experiment {{ experimentDash.cnrl }}</header>
     <div id="experiment-summary">
       <div class="summary-item" id="exerpiment-name"> Experiment: {{ experimentDash.contract.prime.text }} </div>
@@ -10,7 +10,6 @@
     <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
     <ul>
       <li v-for="(vEnt, index) in makeKbundles">
-        {{ index }}
         <expvisual :entityCNRL="vEnt.cnrl" :datacollection="vEnt.liveDataCollection" :options="vEnt.liveOptions" :displayTime="vEnt.liveTimeV"></expvisual>
       </li>
     </ul>
@@ -57,9 +56,13 @@
     asyncComputed: {
       async makeKbundles () {
         // look up Kentitycomponents for this experiment per this Peer
-        let visEC = await this.visDataPrepare()
-        console.log(visEC)
-        console.log('ECS LIST READY FOR LOOPING DISPLAY')
+        let visEC = {}
+        if (this.experimentDash) {
+          visEC = await this.visDataPrepare()
+          console.log(visEC)
+          console.log('ECS LIST READY FOR LOOPING DISPLAY')
+          this.stopLiveProgress()
+        }
         return visEC
       }
     },
@@ -90,6 +93,9 @@
       },
       makeLiveProgress () {
         this.entityPrepareStatus.active = true
+      },
+      stopLiveProgress () {
+        this.entityPrepareStatus.active = false
       }
     }
   }

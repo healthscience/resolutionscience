@@ -34,10 +34,17 @@ util.inherits(DTSystem, events.EventEmitter)
 */
 DTSystem.prototype.DTStartMatch = function (dAPI, lDTs, catDTs) {
   // look up packaging contract
+  console.log('start DT matching')
+  console.log(dAPI)
+  console.log(lDTs)
+  console.log(catDTs)
   let packagingDTs = this.liveCNRL.lookupContract(dAPI)
-  // is the data type primary
+  console.log(packagingDTs)
+  // is the data type primary?
   let sourceDTextract = this.mapSourceDTs(lDTs)
+  console.log(sourceDTextract)
   let sourceDTmapAPI = this.datatypeCheckAPI(packagingDTs, sourceDTextract)
+  console.log(sourceDTmapAPI)
   let SpackagingDTs = {}
   let TidyDataLogic = []
   // is this a derived source?
@@ -63,6 +70,8 @@ DTSystem.prototype.DTStartMatch = function (dAPI, lDTs, catDTs) {
     TidyDataLogic = packagingDTs.tidyList
   }
   let DTmapAPI = this.datatypeCheckAPI(packagingDTs, lDTs)
+  console.log('api mpper ie restAPI url')
+  console.log(DTmapAPI)
   // if null check if category dt, ie derived from two or more dataTypeSensor
   let checkDTcategory = []
   let extractCatDT = []
@@ -110,8 +119,9 @@ DTSystem.prototype.datatypeCheckAPI = function (packagingDTs, lDTs) {
         packAPImatch.column = result[0].text
         packAPImatch.api = packagingDTs.apistructure[tableCount]
         apiMatch.push(packAPImatch)
-        if (apiMatch.length >= 2) {
+        if (apiMatch.length === lDTs.length) {
           apiKeep = apiMatch
+          apiMatch = []
         }
       }
     }

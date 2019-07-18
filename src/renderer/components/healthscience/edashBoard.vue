@@ -59,8 +59,6 @@
         let visEC = {}
         if (this.experimentDash) {
           visEC = await this.visDataPrepare()
-          console.log(visEC)
-          console.log('ECS LIST READY FOR LOOPING DISPLAY')
           this.stopLiveProgress()
         }
         return visEC
@@ -116,6 +114,8 @@ header {
 .summary-item {
   display: inline-block;
   margin-left: 20px;
+  font-weight: bold;
+  font-size: 1.4em;
 }
 
 </style>

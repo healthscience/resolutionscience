@@ -31,11 +31,11 @@ util.inherits(ComputeComponent, events.EventEmitter)
 * @method filterCompute
 *
 */
-ComputeComponent.prototype.filterCompute = async function (compInfo, timeInfo) {
+ComputeComponent.prototype.filterCompute = async function (compInfo, tidyInfo) {
   console.log('COMPUTE-COMP1----filter start')
   console.log(this.EIDinfo)
   console.log(compInfo)
-  console.log(timeInfo)
+  console.log(tidyInfo)
   let computeStatelive = {}
   // var localthis = this
   if (this.EIDinfo.science.wasmfile === 'none' && this.computeStatus === false) {
@@ -44,7 +44,7 @@ ComputeComponent.prototype.filterCompute = async function (compInfo, timeInfo) {
     computeStatelive.computeState = 'observation'
   } else {
     console.log('PASSto--computesystem')
-    let computeState = await this.liveComputeSystem.computationSystem(this.EIDinfo, compInfo, timeInfo)
+    let computeState = await this.liveComputeSystem.computationSystem(this.EIDinfo, compInfo, tidyInfo)
     computeStatelive = computeState
   }
   console.log('2COMPUTE-COMP---return')

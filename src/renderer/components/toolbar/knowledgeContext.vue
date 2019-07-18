@@ -192,7 +192,6 @@
         }
       },
       selectKnowledge (k) {
-        console.log(k)
         k.active = !k.active
         // display language for
         this.displayLanugage(k.id)
@@ -206,7 +205,6 @@
         // console.log('inplang')
         this.kwords = []
         let lanuageCNRL = this.safeMixin.cnrlLivingKnowledge(cnrlID)
-        console.log(lanuageCNRL)
         let wordsPlacer = {}
         wordsPlacer.word = lanuageCNRL.prime.word
         // wordsPlacer.wordconnect = lanuageCNRL.prime[1].word
@@ -226,8 +224,6 @@
         this.dataTypeDevice()
       },
       selectDatatypes (std) {
-        console.log('datatype selected')
-        console.log(std)
         std.active = !std.active
         kBus.$emit('setVDatatypes', std)
       },
@@ -279,8 +275,6 @@
         // console.log(this.devices)
       },
       dataTypeDevice () {
-        console.log('device data types build')
-        console.log(this.devices)
         let devDTHolder = []
         // let cnrlIDholderDev = []
         // repeat for datatyes coming from the mobile app CRNL contract
@@ -290,23 +284,7 @@
           let deviceDTypes = this.safeMixin.cnrlDeviceDTs(devCdt.cnrl)
           devDTHolder.push(deviceDTypes)
         }
-        console.log('device DTs')
-        console.log(devDTHolder)
         this.datatypes = devDTHolder[0].datatypes
-        console.log(this.datatypes)
-        /* for (let cnrldi of this.datatypes) {
-          console.log('leleoopepe')
-          for (let cnd of cnrldi) {
-            console.log('dfdidfidif')
-            console.log(cnd)
-            for (let cns of cnd) {
-              console.log(cns)
-              if (cns) {
-                cnrlIDholderDev.push(cns.cnrl)
-              }
-            }
-          }
-        } */
       },
       dataType () {
         // make call to set start dataType for the device sensors

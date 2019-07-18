@@ -43,12 +43,11 @@ TimeComponent.prototype.setStartTime = function (startDate) {
 */
 TimeComponent.prototype.startTimeSystem = async function (dtInfo, rawIN) {
   // need to look at the entity datatype INFO bundle and map times start stop update status
-  console.log('timeCOMP start')
+  console.log('TIME--COMP1')
+  console.log(this.did)
   console.log(dtInfo)
   console.log(rawIN)
   this.liveTime = await this.liveTimeSystem.discoverTimeStatus(this.did, dtInfo, rawIN)
-  console.log('liveTime')
-  console.log(this.liveTime)
   return true
 }
 

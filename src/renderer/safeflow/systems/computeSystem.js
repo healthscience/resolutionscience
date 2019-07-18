@@ -34,16 +34,16 @@ util.inherits(ComputeSystem, events.EventEmitter)
 * @method computationSystem
 *
 */
-ComputeSystem.prototype.computationSystem = async function (EIDinfo, compInfo, timeInfo) {
+ComputeSystem.prototype.computationSystem = async function (EIDinfo, compInfo, tidyInfo) {
   // match computation to approprate verified compute need LOADER to add what WASM is being used/required
   console.log('COMPUTESYSTEM1--start')
   let computeStatus = {}
   if (EIDinfo.cid === 'cnrl-2356388732') {
-    computeStatus = await this.liveAverage.averageSystemStart(EIDinfo, compInfo, timeInfo)
+    computeStatus = await this.liveAverage.averageSystemStart(EIDinfo, compInfo, tidyInfo)
   } else if (EIDinfo.cid === 'cnrl-2356388733') {
-    computeStatus = await this.recoverySystem(EIDinfo, compInfo, timeInfo)
+    computeStatus = await this.recoverySystem(EIDinfo, compInfo, tidyInfo)
   } else if (EIDinfo.cid === 'cnrl-2356388737') {
-    computeStatus = await this.liveSum.sumSystem(EIDinfo, compInfo, timeInfo)
+    computeStatus = await this.liveSum.sumSystem(EIDinfo, compInfo, tidyInfo)
   }
   return computeStatus
 }

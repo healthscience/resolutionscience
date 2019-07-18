@@ -3,31 +3,31 @@
     <ul v-if="experimentData.length !== 0" >
       <li id="experiment-item" v-for="(exp, index) in experimentData">
         <div id="live-experiment-elements">{{ index }}
-          <div id="context-experiment" class="live-eelement">
+          <div id="context-experiment" class="live-element">
             <header>Status:</header>
             <div class="live-item">
               NOT live
             </div>
           </div>
-          <div id="context-experiment" class="live-eelement">
+          <div id="context-experiment" class="live-element">
             <header>Name:</header>
             <div class="live-item">
               {{ exp.contract.prime.text }}
             </div>
           </div>
-          <div id="context-experiment" class="live-eelement">
+          <div id="context-experiment" class="live-element">
             <header>Description:</header>
             <div class="live-item">
               Understanding the network of life
             </div>
           </div>
-          <div id="context-experiment" class="live-eelement">
+          <div id="context-experiment" class="live-element">
             <header>Author:</header>
             <div class="live-item">
               Pubkey:    Privacy: annon
             </div>
           </div>
-          <div id="context-experiment" class="live-eelement">
+          <div id="context-experiment" class="live-element">
             <header>Participation:</header>
             <div class="live-item">
               N=1

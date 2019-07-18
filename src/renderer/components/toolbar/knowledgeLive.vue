@@ -168,8 +168,6 @@
         // pass on to SAFEflow to pass on entity manager
         this.activeEntity = this.liveData.scienceLive.prime.cnrl
         this.activevis = this.$store.getters.liveVis[0]
-        console.log('active vis ====')
-        console.log(this.activevis)
         const nowTime = moment()
         let realTime = moment.utc(nowTime)
         let startPeriodTime = moment.utc(nowTime).startOf('day')
@@ -198,7 +196,6 @@
         // set message to UI IN-progress
         this.entityPrepareStatus.active = true
         let visDataBack = await this.learnStart(liveBundle)
-        console.log(visDataBack)
         this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions
@@ -213,11 +210,8 @@
         this.historyData.push(lBundle)
       },
       createKBID (addressIN) {
-        console.log('Start generate tempTOKEN')
-        console.log(addressIN)
         // hash Object
         let kbundleHash = hashObject(addressIN)
-        console.log(kbundleHash)
         let tempTokenG = ''
         let salt = crypto.randomBytes(16).toString('base64')
         // let hashs = crypto.createHmac('sha256',salt).update(password).digest('base64')
@@ -246,11 +240,8 @@
         this.$store.dispatch('actionUpdateStartTime', updatestartPeriodTime)
         this.liveData.scienceLive = {}
         this.liveData.scienceLive.cnrl = lBund.cnrl
-        console.log('before learnin start select')
         this.entityPrepareStatus.active = true
         let visDataBack = await this.learnStart(lBund)
-        console.log('select back')
-        console.log(visDataBack)
         this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions

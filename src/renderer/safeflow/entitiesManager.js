@@ -94,7 +94,6 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
 *
 */
 EntitiesManager.prototype.controlFlow = async function (cflowIN) {
-  // var localthis = this
   console.log('controlflow start')
   console.log(cflowIN)
   let cid = cflowIN.kbid
@@ -103,7 +102,6 @@ EntitiesManager.prototype.controlFlow = async function (cflowIN) {
   await this.liveSEntities[cid].liveDataC.sourceData(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive)
   console.log('EMANAGER1-----DATACOMP. finished')
   await this.liveSEntities[cid].liveTimeC.startTimeSystem(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveDataC.dataRaw)
-  console.log('EMANAGER1-----TIMEUpdate-COMP. finished')
   console.log('EMANAGER3---START--COMPUTE')
   this.emit('computation', 'in-progress')
   this.computeStatus = await this.liveSEntities[cid].liveComputeC.filterCompute(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveTimeC.liveTime)
@@ -115,10 +113,8 @@ EntitiesManager.prototype.controlFlow = async function (cflowIN) {
     await this.liveSEntities[cid].liveDataC.directSourceUpdated()
   }
   console.log('EMANAGE4--START-VIS')
-  let visStatus = this.liveSEntities[cid].liveVisualC.filterVisual(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveDataC.liveData)
+  this.liveSEntities[cid].liveVisualC.filterVisual(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveDataC.liveData)
   console.log('visCompenent--FINISHED')
-  console.log('5CONTROLFLOW___OVER(firstpass)')
-  console.log(visStatus)
   return true
 }
 

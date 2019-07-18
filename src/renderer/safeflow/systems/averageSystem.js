@@ -44,11 +44,11 @@ AverageSystem.prototype.verifyComputeWASM = function (wasmFile) {
 * @method averageSystem
 *
 */
-AverageSystem.prototype.averageSystemStart = async function (EIDinfo, compInfo, timeInfo) {
+AverageSystem.prototype.averageSystemStart = async function (EIDinfo, compInfo, tidyInfo) {
   console.log('averageSYSTEM--start')
   console.log(compInfo)
   let updateStatus = {}
-  updateStatus = await this.computeControlFlow(EIDinfo, compInfo, timeInfo)
+  updateStatus = await this.computeControlFlow(EIDinfo, compInfo, tidyInfo)
   return updateStatus
 }
 
@@ -56,19 +56,19 @@ AverageSystem.prototype.averageSystemStart = async function (EIDinfo, compInfo, 
 * @method computeControlFlow
 *
 */
-AverageSystem.prototype.computeControlFlow = async function (EIDinfo, compInfo, timeInfo) {
+AverageSystem.prototype.computeControlFlow = async function (EIDinfo, compInfo, tidyInfo) {
   console.log('AVGcomputeCONTROLFLOW---start')
   console.log(EIDinfo)
   console.log(compInfo)
-  console.log(timeInfo)
+  console.log(tidyInfo)
   let cFlowStatus = {}
   // what time segments have been asked for?
   let segAsk = compInfo
   for (let dvc of EIDinfo.devices) {
-    // need to loop for datatype and time seg
-    for (let dtl of EIDinfo.datatypes) {
+    // need to loop for datatype and time seg // datatype or source Datatypes that use to compute dt asked for?
+    for (let dtl of compInfo.apiquery) {
       // check status of compute?  uptodate, needs updating or first time compute?
-      for (let checkComp of timeInfo[EIDinfo.time.startperiod][dvc.device_mac][dtl.cnrl]) {
+      for (let checkComp of tidyInfo[EIDinfo.time.startperiod][dvc.device_mac][dtl.cnrl]) {
         // what is status of compute?
         if (checkComp.status === 'update-required' && checkComp.timeseg === 'day') {
           let computeStatus = await this.avgliveStatistics.prepareAvgCompute(checkComp.computeTime, dvc, dtl, checkComp.timeseg, EIDinfo.cid, compInfo)

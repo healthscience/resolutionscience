@@ -33,8 +33,6 @@ util.inherits(TimeUtilities, events.EventEmitter)
 */
 TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
   // pass range to get converted from moment format to miillseconds (stnd for safeflow)
-  console.log(timeBundle)
-  console.log(this.liveLasttime)
   let timeConversion = {}
   this.liveStarttime = timeBundle.time.startperiod
   this.realtime = timeBundle.realtime

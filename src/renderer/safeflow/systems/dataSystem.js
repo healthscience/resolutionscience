@@ -210,9 +210,6 @@ DataSystem.prototype.getRawData = async function (SBqueryIN) {
   // check for number of devices, sensor/datatypes are asked for
   const deviceQuery = SBqueryIN.deviceList
   const dataTypesList = SBqueryIN.apiInfo.apiquery
-  console.log('raw data gets')
-  console.log(deviceQuery)
-  console.log(dataTypesList)
   // form loop to make data calls
   for (let di of deviceQuery) {
     dataBack[di] = {}
@@ -288,10 +285,6 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
 *
 */
 DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, compInfo) {
-  console.log('tidy system')
-  console.log(dataRawS)
-  console.log(DTlive)
-  console.log(compInfo)
   let cleanData = []
   let sTidyarray = []
   let filterMat = false
@@ -333,14 +326,11 @@ DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, compInfo) {
 *
 */
 DataSystem.prototype.extractDTcolumn = function (sourceDT, arrayIN) {
-  console.log('extract colums')
-  console.log(sourceDT)
-  console.log(arrayIN)
   let singleArray = []
   let intData = 0
   for (let sing of arrayIN) {
-    console.log('columloop')
-    console.log(sing)
+    // console.log('columloop')
+    // console.log(sing)
     if (sourceDT.cnrl === 'cnrl-8856388711') {
       intData = parseInt(sing.heart_rate, 10)
       singleArray.push(intData)

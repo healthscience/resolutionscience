@@ -167,8 +167,6 @@ TimeSystem.prototype.checkForDataPerDevice = async function (device) {
   }).catch(function (err) {
     console.log(err)
   })
-  console.log('check data start per devcie')
-  console.log(dataStatus)
   return dataStatus
 }
 

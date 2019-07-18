@@ -25,7 +25,8 @@ export default new Vuex.Store({
     experimentList: {},
     expEntities: {},
     mapExperimentKbundles: [],
-    activeKentities: {}
+    activeKentities: {},
+    computeKidStatus: {}
   },
   getters: {
     liveSafeFlow: state => state.safeFlow,
@@ -45,7 +46,8 @@ export default new Vuex.Store({
     liveExperiment: state => state.experimentCNRL,
     liveExperimentList: state => state.experimentList,
     livemapExperimentKbundles: state => state.mapExperimentKbundles,
-    liveKentities: state => state.activeKentities
+    liveKentities: state => state.activeKentities,
+    liveKComputeStatus: state => state.computeKidStatus
   },
   mutations: {
     // Mutations
@@ -110,20 +112,18 @@ export default new Vuex.Store({
     setStartKBundles: (state, inVerified) => {
       state.startBundles = inVerified
     },
-    setBCounter: (state, inVerified) => {
-      if (inVerified) {
-        state.bundleCounter = inVerified + 1
-      } else {
-        state.bundleCounter++
+    setComputeStatus: (state) => {
+      // prepare object to hold compute state per entity kbid
+      let openStatus = {active: false, text: 'Compute-in-progress'}
+      for (let kItem of state.startBundles) {
+        let kID = kItem.kbid
+        Vue.set(state.computeKidStatus, kID, openStatus)
       }
     },
-    setSortBCounter: (state, inVerified) => {
-      let currentBList = state.startBundles
-      currentBList.sort(function (a, b) {
-        return a.bid - b.bid
-      })
-      let lastBID = currentBList.slice(-1)
-      state.bundleCounter = lastBID[0].bid + 1
+    updateComputeStatus: (state, inVerified) => {
+      // prepare object to hold compute state per entity kbid
+      let computeStatus = {active: true, text: 'Compute-in-progress'}
+      Vue.set(state.computeKidStatus, inVerified, computeStatus)
     },
     setStartStatusUpdate: (state, inVerified) => {
       let lss = {}
@@ -191,10 +191,6 @@ export default new Vuex.Store({
     actionStartKBundles: (context, update) => {
       context.commit('setStartKBundles', update)
     },
-    actionSortSKB: (context, update) => {
-      // need set bidID to allow news additions
-      context.commit('setSortBCounter', update)
-    },
     actionUpdateBundleItem: (context, update) => {
     // update settings to show at startup per bundle item
       context.commit('setStartStatusUpdate', update)
@@ -218,6 +214,14 @@ export default new Vuex.Store({
     actionFilterKBundles: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL
       context.commit('filterKbundles', update)
+    },
+    actionComputeStatus: (context) => {
+    // filter a list of Kentity bundles given the Experiment CNRL
+      context.commit('setComputeStatus')
+    },
+    actionUpdateComputeStatus: (context, update) => {
+    // filter a list of Kentity bundles given the Experiment CNRL
+      context.commit('updateComputeStatus', update)
     }
   },
   modules,

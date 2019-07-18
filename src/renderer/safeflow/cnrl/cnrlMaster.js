@@ -348,7 +348,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.tableStructure = []
     dataCNRLbundle.source = 'cnrl-derived'
     dataCNRLbundle.categories.push()
-    dataCNRLbundle.dtsource = ['cnrl-8856388711', 'cnrl-8856388713']
+    dataCNRLbundle.dtsource = ['cnrl-8856388711']
     dataCNRLbundle.categorycodes.push({})
     dataCNRLbundle.resolution = { 'text': 'statistics', 'active': false }
     dataCNRLbundle.namespace = ''
@@ -655,7 +655,7 @@ CNRLmaster.prototype.indexDatapackaging = function () {
 CNRLmaster.prototype.indexExperiments = function () {
   // index datatype live in network by cnrl // id
   let indexExperimentslive = []
-  indexExperimentslive.push('cnrl-848388553323', 'cnrl-888355992223') // , 'cnrl-888355992224', 'cnrl-888388992224', 'cnrl-888388232224', 'cnrl-888388233324', 'cnrl-888388443324')
+  indexExperimentslive.push('cnrl-848388553323', 'cnrl-888355992223', 'cnrl-888355992224', 'cnrl-888388992224', 'cnrl-888388232224', 'cnrl-888388233324', 'cnrl-888388443324')
   return indexExperimentslive
 }
 

@@ -1,8 +1,8 @@
 <template>
   <div id="history-view">
-    <header>HISTORY</header>
+    <header>Science & Compute List</header>
   <ul>
-    <li id="data-type-history" v-for="lh in historyData">--histd-- {{ lh }}
+    <li id="data-type-history" v-for="lh in historyData">
       <div id="live-knowledge-elements">
         <div id="history-context-science" class="live-element">
           <header>Compute</header>
@@ -53,7 +53,7 @@
           <div id="start-learn-container">
             <div id="start-status">
               <header>View on Start</header>
-              <a href="" id="start-save" v-bind:id="lh.kbid" @click.prevent="startStatus(lh.startStatus, $event)" v-bind:class="{ 'active': lh.startStatus.active}">{{ lh.startStatus.name }}</a>
+              <a href="" v-bind:id="lh.kbid" v-bind:value="lh.kbid" @click.prevent="startStatusSave($event)" v-bind:class="{ 'active': lh.startStatus.active}">{{ lh.startStatus.name }}</a>
             </div>
           </div>
         </div>
@@ -80,22 +80,24 @@
           <div class="compute-control-item">
             <header>Status:</header>
               <div id="update-status">
-              {{ cStatus }}
+              {{ entityPrepareStatus[lh.kbid].update }}
               </div>
           </div>
           <div class="compute-control-button">
-            <button id="compute-start" v-bind:id="lh.kbid" @click.prevent="filterStartCompute($event)">Start</button>
+            <button @click.prevent="filterStartCompute($event)"  v-bind:value="lh.kbid" id="compute-start">Start</button>
           </div>
           <div class="compute-control-button">
             <button id="compute-stop">Stop:</button>
           </div>
-          <div class="compute-control-item">
+          <div class="compute-control-item" id="repeat-select">
             <header>Repeat</header>
-            <b>Manual</b> --- AUTO
+            <div>
+              <b>Manual</b> --- AUTO
+            </div>
           </div>
-          <div class="compute-control-item">{{ entityPrepareStatus[lh.kbid] }}
+          <div class="compute-control-item">
             <progress-Message v-bind:progressMessage="entityPrepareStatus[lh.kbid]"></progress-Message>
-          </div>-a- {{ entityPrepareStatus[lh.kbid] }}
+          </div>
         </div>
       </div>
     </li>
@@ -107,6 +109,7 @@
   import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
   import progressMessage from '@/components/toolbar/inProgress'
   // import { sBus } from '../../main.js'
+  const moment = require('moment')
 
   export default {
     name: 'knowledge-history',
@@ -142,17 +145,16 @@
     mixins: [liveMixinSAFEflow],
     methods: {
       startKup () {
-        this.$store.dispatch('actionComputeStatus')
+        const nowTime = moment()
+        let startPeriodTime = moment.utc(nowTime).startOf('day')
+        let MSstartTime = moment(startPeriodTime).format('x')
+        this.$store.dispatch('actionComputeStatus', MSstartTime)
         if (this.startK.length > 0) {
           this.historyData = this.$store.getters.startBundlesList
           this.entityPrepareStatus = this.$store.getters.liveKComputeStatus
-          console.log('compute status')
-          console.log(this.entityPrepareStatus)
         }
       },
       async makeKLive (status) {
-        console.log('make live kbundle')
-        console.log(status)
         // loop over arry of bundles and match bid number and make active
         if (status.target.checked === true) {
           for (let ukb of this.historyData) {
@@ -163,41 +165,34 @@
           }
         }
       },
-      startStatus (lss, se) {
+      startStatusSave (se) {
         // change start status and save or delete settings
-        let startInt = se.target.value
-        // this.$store.dispatch('actionUpdateBundleItem', startInt)
+        console.log('save on start')
+        let startKID = se.target.id
         let updateBundle = this.$store.getters.startBundlesList
         for (let iB of updateBundle) {
-          if (iB.kbid === startInt) {
+          if (iB.kbid === startKID) {
             this.saveStartBundle(iB)
           }
         }
       },
       filterStartCompute (fsc) {
-        console.log('compute ID')
-        let computeEntityKID = fsc.target.id
+        let computeEntityKID = fsc.target.value
         // create compute progress entry for this Kbid
         this.computeProgressLive(computeEntityKID)
-        console.log('new status compute progress')
-        console.log(this.entityPrepareStatus)
         this.updateCompute(computeEntityKID)
       },
-      async updateCompute (updateC) {
-        console.log('update compute no visualisation')
+      updateCompute (updateC) {
         // loop over arry of bundles and match bid number and make active
         for (let ukb of this.historyData) {
           if (ukb.kbid === updateC) {
-            console.log('match' + updateC)
-            // this.$emit('setLiveBundle', ukb)
+            this.$emit('setLiveBundle', ukb)
           }
         }
       },
       computeProgressLive (computeEntityKID) {
         this.$store.dispatch('actionUpdateComputeStatus', computeEntityKID)
         this.entityPrepareStatus = this.$store.getters.liveKComputeStatus
-        console.log('update status compute')
-        console.log(this.entityPrepareStatus)
       }
     }
   }
@@ -205,7 +200,7 @@
 
 <style>
 #live-view {
-  border: 2px solid lightgrey;
+  border: 1px solid lightgrey;
   margin-left: 1em;
 }
 
@@ -241,6 +236,14 @@
   background-color: #FCE8C1;
 }
 
+#compute-control-panel {
+  background-color: #FAF6C8;
+}
+
+#compute-control-panel header {
+  font-weight: bold;
+}
+
 .compute-control-item {
   display: inline-block;
   margin: 1em;
@@ -256,16 +259,22 @@
 .compute-control-button {
   display: inline-block;
   margin: 1em;
-  width: 40px;
+  width: 60px;
   padding: 30px;
 }
 
 #compute-start {
   padding: 1em;
+  border: 2px solid green;
 }
 
 #compute-stop {
   padding: 1em;
+  border: 2px solid red;
+}
+
+#repeat-select {
+  margin-left: 40px;
 }
 
 </style>

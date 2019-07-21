@@ -63,10 +63,10 @@
       </div>
       <div id="learn-close"></div>
     </div>
+    <knowledge-Context :kContext="kContext"></knowledge-Context>
     <div id="history" v-if="hist.active">
       <history-List :historyData="historyData" @setLiveBundle="makeLiveKnowledge"></history-List>
     </div>
-    <knowledge-Context :kContext="kContext"></knowledge-Context>
     <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
     <hsvisual @experimentMap="saveMappingExpKB" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" ></hsvisual>
   </div>
@@ -115,7 +115,7 @@
         activevis: '',
         hist:
         {
-          name: 'View history',
+          name: 'View compute list',
           id: 'learn-history',
           active: false
         },
@@ -227,13 +227,14 @@
       viewHistory (hist) {
         hist.active = !hist.active
         if (hist.active === true) {
-          hist.name = 'Close history'
+          hist.name = 'Close compute list'
         } else {
-          hist.name = 'View history'
+          hist.name = 'View compute list'
         }
       },
       async makeLiveKnowledge (lBund) {
         // set live Bundle for context
+        this.bundleuuid = lBund.kbid
         this.$store.dispatch('actionLiveBundle', lBund)
         const nowTime = moment()
         let updatestartPeriodTime = moment.utc(nowTime).startOf('day')
@@ -242,6 +243,8 @@
         this.liveData.scienceLive.cnrl = lBund.cnrl
         this.entityPrepareStatus.active = true
         let visDataBack = await this.learnStart(lBund)
+        // remove compute in progress Message
+        this.$store.dispatch('actionstopComputeStatus', lBund.kbid)
         this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions
@@ -374,7 +377,7 @@
 }
 
 #history {
-  border: 2px solid purple;
+  border-top: 1px solid grey;
   margin-top: 2em;
 }
 
@@ -388,4 +391,7 @@
   border: 2px solid pink;
 }
 
+#live-knowledge-elements {
+  background-color: #FBF4A9;
+}
 </style>

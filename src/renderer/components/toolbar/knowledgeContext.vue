@@ -379,7 +379,7 @@
 <style>
 .active{
   background-color:#8ec16d;
-  color: white;
+  color: purple;
 }
 
 .context-horizontal {
@@ -389,7 +389,7 @@
 }
 
 #knowledge-view {
-  border: 1px solid orange;
+  border: 0px solid orange;
 }
 
 #context-devices {
@@ -397,8 +397,7 @@
 }
 
 #select-knowledge {
-  border: 1px solid green;
-  margin: 1em;
+  margin-left: 1em;
 }
 
 #knowlege-boxes {
@@ -432,5 +431,14 @@
 
 #clear-data-box {
   clear: both;
+}
+
+#open-knowledge {
+  display: block;
+  background-color: #FBF4A9;
+  height: 40px;
+  width: 200px;
+  padding-left: 10px;
+  padding-top: 10px;
 }
 </style>

@@ -4,7 +4,7 @@
       <li class="trend-item" v-for="(expT, index) in experimentTrends">
         <div id="live-trend-element">{{ index }}
           <p>{{ trendIcon[index].text }}</p>
-          <img :src="trendIcon[index].url" />
+          <img class="smaller-trends-icons" :src="trendIcon[index].url" />
         </div>
       </li>
     </ul>
@@ -39,7 +39,7 @@
     methods: {
       tremdsStart () {
         this.experimentTrends = this.$store.getters.liveExperimentList
-        this.trendIcon = [{'text': 'How to sleep better?', 'url': greenBetter, 'alt': 'better trend'}, {'text': 'Active step advisor', 'url': orangeNeutral, 'alt': 'neutral trend'}, {'text': 'How to sleep better?', 'url': greenBetter, 'alt': 'better trend'}, {'text': 'Active step advisor', 'url': orangeNeutral, 'alt': 'neutral trend'}, {'text': 'How to sleep better?', 'url': greenBetter, 'alt': 'better trend'}, {'text': 'Active step advisor', 'url': orangeNeutral, 'alt': 'neutral trend'}, {'text': 'Active step advisor', 'url': orangeNeutral, 'alt': 'neutral trend'}]
+        this.trendIcon = [{'text': 'Daily Step Planning?', 'url': greenBetter, 'alt': 'better trend'}, {'text': 'Active step advisor', 'url': orangeNeutral, 'alt': 'neutral trend'}, {'text': 'Recovery heart rate?', 'url': greenBetter, 'alt': 'better trend'}, {'text': 'Air quality', 'url': orangeNeutral, 'alt': 'neutral trend'}, {'text': 'Intermitting fasting?', 'url': greenBetter, 'alt': 'better trend'}, {'text': 'Stem cell recovery help?', 'url': orangeNeutral, 'alt': 'neutral trend'}, {'text': 'CALE update', 'url': orangeNeutral, 'alt': 'neutral trend'}]
         // this.trendIcon = [{'url': 'green-better.png', 'alt': 'better trend'}, {'url': 'orange-neutral.png', 'alt': 'neutral trend'}]
       }
     }
@@ -54,4 +54,8 @@
   margin: 1.1em;
 }
 
+.smaller-trends-icons {
+  width: 40px;
+  height: 40px;
+}
 </style>

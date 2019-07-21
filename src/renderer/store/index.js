@@ -112,17 +112,35 @@ export default new Vuex.Store({
     setStartKBundles: (state, inVerified) => {
       state.startBundles = inVerified
     },
-    setComputeStatus: (state) => {
+    setComputeStatus: (state, startPeriodTime) => {
       // prepare object to hold compute state per entity kbid
-      let openStatus = {active: false, text: 'Compute-in-progress'}
+      let openStatus = {active: false, text: 'Compute-in-progress', update: '---'}
       for (let kItem of state.startBundles) {
         let kID = kItem.kbid
-        Vue.set(state.computeKidStatus, kID, openStatus)
+        // is the bundleData behind real time?
+        console.log('time start status')
+        console.log(kItem.time.startperiod)
+        let d = new Date(kItem.time.startperiod) // new Date(kItem.time.startperiod)
+        console.log(d)
+        let n = d.getTime()
+        console.log(n)
+        console.log(startPeriodTime)
+        if (startPeriodTime > n) {
+          openStatus.update = 'needs updating'
+          Vue.set(state.computeKidStatus, kID, openStatus)
+        } else {
+          Vue.set(state.computeKidStatus, kID, openStatus)
+        }
       }
     },
     updateComputeStatus: (state, inVerified) => {
       // prepare object to hold compute state per entity kbid
-      let computeStatus = {active: true, text: 'Compute-in-progress'}
+      let computeStatus = {active: true, text: 'Compute-in-progress', update: '---'}
+      Vue.set(state.computeKidStatus, inVerified, computeStatus)
+    },
+    stopComputeStatus: (state, inVerified) => {
+      // prepare object to hold compute state per entity kbid
+      let computeStatus = {active: false, text: 'Compute-in-progress', update: 'up-to-date'}
       Vue.set(state.computeKidStatus, inVerified, computeStatus)
     },
     setStartStatusUpdate: (state, inVerified) => {
@@ -215,13 +233,17 @@ export default new Vuex.Store({
     // filter a list of Kentity bundles given the Experiment CNRL
       context.commit('filterKbundles', update)
     },
-    actionComputeStatus: (context) => {
+    actionComputeStatus: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL
-      context.commit('setComputeStatus')
+      context.commit('setComputeStatus', update)
     },
     actionUpdateComputeStatus: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL
       context.commit('updateComputeStatus', update)
+    },
+    actionstopComputeStatus: (context, update) => {
+    // filter a list of Kentity bundles given the Experiment CNRL
+      context.commit('stopComputeStatus', update)
     }
   },
   modules,

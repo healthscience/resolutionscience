@@ -127,6 +127,9 @@ export default {
     },
     saveStartBundle (bund) {
       console.log(' go and save via safeFLOW')
+      // need up date startStatus Object
+      let updateStartStatus = {'active': true, 'name': 'yes'}
+      bund.startStatus = updateStartStatus
       this.safeMixin.startSettings('save', bund)
     },
     SaveexperimentKbundles (mapEKb) {

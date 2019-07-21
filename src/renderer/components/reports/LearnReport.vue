@@ -2,12 +2,25 @@
   <div id="learn-report">
     <header>REPORT</header>
     <div id="oracles">oracles</div>
-    <div id="tends">trends</div>
+    <div id="tends">
+      <header>trends</header>
+      <ul v-if="experimentTrends.length !== 0" >
+        <li class="trend-item" v-for="(expT, index) in experimentTrends">
+          <div id="live-trend-element">{{ index }}
+            <p>{{ trendIcon[index].text }}</p>
+            <img class="smaller-trends-icons" :src="trendIcon[index].url" />
+          </div>
+        </li>
+      </ul>
+    </div>
     <div id="visulation-select"></div>
   </div>
 </template>
 
 <script>
+  import greenBetter from '@/assets/green-better.png'
+  import orangeNeutral from '@/assets/orange-neutral.png'
+
   export default {
     name: 'learn-report',
     components: {
@@ -16,6 +29,9 @@
     },
     data () {
       return {
+        experimentTrends: [],
+        trendIcon: [],
+        imgS: greenBetter
       }
     },
     created () {
@@ -29,8 +45,13 @@
       }
     },
     mounted () {
+      this.tremdsStart()
     },
     methods: {
+      tremdsStart () {
+        this.experimentTrends = this.$store.getters.liveExperimentList
+        this.trendIcon = [{'text': 'better', 'url': greenBetter, 'alt': 'better trend'}, {'text': 'neurtral', 'url': orangeNeutral, 'alt': 'neutral trend'}, {'text': 'better', 'url': greenBetter, 'alt': 'better trend'}, {'text': 'orange', 'url': orangeNeutral, 'alt': 'neutral trend'}, {'text': 'better', 'url': greenBetter, 'alt': 'better trend'}, {'text': 'neutral', 'url': orangeNeutral, 'alt': 'neutral trend'}, {'text': 'neutral', 'url': orangeNeutral, 'alt': 'neutral trend'}]
+      }
     }
   }
 </script>

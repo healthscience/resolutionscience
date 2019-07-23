@@ -34,7 +34,7 @@ util.inherits(DTSystem, events.EventEmitter)
 */
 DTSystem.prototype.DTStartMatch = function (dAPI, lDTs, catDTs) {
   // look up packaging contract
-  console.log('start DT matching')
+  console.log('dtmatch start')
   console.log(dAPI)
   console.log(lDTs)
   console.log(catDTs)
@@ -42,8 +42,10 @@ DTSystem.prototype.DTStartMatch = function (dAPI, lDTs, catDTs) {
   console.log(packagingDTs)
   // is the data type primary?
   let sourceDTextract = this.mapSourceDTs(lDTs)
+  console.log('source DTS')
   console.log(sourceDTextract)
   let sourceDTmapAPI = this.datatypeCheckAPI(packagingDTs, sourceDTextract)
+  console.log('source API query')
   console.log(sourceDTmapAPI)
   let SpackagingDTs = {}
   let TidyDataLogic = []
@@ -51,6 +53,8 @@ DTSystem.prototype.DTStartMatch = function (dAPI, lDTs, catDTs) {
   if (packagingDTs.source !== 'cnrl-primary') {
     // look up source data packaging
     SpackagingDTs = this.liveCNRL.lookupContract(packagingDTs.source)
+    console.log('source not primary')
+    console.log(SpackagingDTs)
     // tidy data info available?
     if (packagingDTs.tidy === true) {
       // investiage the source contract
@@ -70,7 +74,6 @@ DTSystem.prototype.DTStartMatch = function (dAPI, lDTs, catDTs) {
     TidyDataLogic = packagingDTs.tidyList
   }
   let DTmapAPI = this.datatypeCheckAPI(packagingDTs, lDTs)
-  console.log('api mpper ie restAPI url')
   console.log(DTmapAPI)
   // if null check if category dt, ie derived from two or more dataTypeSensor
   let checkDTcategory = []
@@ -96,6 +99,7 @@ DTSystem.prototype.DTStartMatch = function (dAPI, lDTs, catDTs) {
   apiInfo.categorycodes = checkDTcategory
   apiInfo.datatypes = lDTs
   apiInfo.tidyList = TidyDataLogic
+  console.log(apiInfo)
   return apiInfo
 }
 
@@ -105,6 +109,9 @@ DTSystem.prototype.DTStartMatch = function (dAPI, lDTs, catDTs) {
 *
 */
 DTSystem.prototype.datatypeCheckAPI = function (packagingDTs, lDTs) {
+  console.log('api mapper')
+  console.log(packagingDTs)
+  console.log(lDTs)
   let apiMatch = []
   let apiKeep = {}
   // given datatypes select find match to the query string
@@ -119,6 +126,8 @@ DTSystem.prototype.datatypeCheckAPI = function (packagingDTs, lDTs) {
         packAPImatch.column = result[0].text
         packAPImatch.api = packagingDTs.apistructure[tableCount]
         apiMatch.push(packAPImatch)
+        console.log(apiMatch.length)
+        console.log(lDTs.length)
         if (apiMatch.length === lDTs.length) {
           apiKeep = apiMatch
           apiMatch = []

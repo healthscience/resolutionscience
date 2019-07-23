@@ -44,11 +44,11 @@ AverageSystem.prototype.verifyComputeWASM = function (wasmFile) {
 * @method averageSystem
 *
 */
-AverageSystem.prototype.averageSystemStart = async function (EIDinfo, compInfo, tidyInfo) {
+AverageSystem.prototype.averageSystemStart = async function (EIDinfo, compInfo, timeInfo) {
   console.log('averageSYSTEM--start')
   console.log(compInfo)
   let updateStatus = {}
-  updateStatus = await this.computeControlFlow(EIDinfo, compInfo, tidyInfo)
+  updateStatus = await this.computeControlFlow(EIDinfo, compInfo, timeInfo)
   return updateStatus
 }
 
@@ -56,38 +56,77 @@ AverageSystem.prototype.averageSystemStart = async function (EIDinfo, compInfo, 
 * @method computeControlFlow
 *
 */
-AverageSystem.prototype.computeControlFlow = async function (EIDinfo, compInfo, tidyInfo) {
-  console.log('AVGcomputeCONTROLFLOW---start')
-  console.log(EIDinfo)
-  console.log(compInfo)
-  console.log(tidyInfo)
+AverageSystem.prototype.computeControlFlow = async function (EIDinfo, compInfo, timeInfo) {
   let cFlowStatus = {}
   // what time segments have been asked for?
-  let segAsk = compInfo
+  let timeBundle = this.readTimeInfo(EIDinfo, compInfo, timeInfo)
+  console.log('time state back')
+  console.log(timeBundle)
+  for (let dttb of timeBundle) {
+    console.log('loop time bundle')
+    console.log(dttb)
+    if (dttb) {
+      console.log('yes update source DT times to be computed')
+      cFlowStatus = await this.sourceDTtimeUpdate(dttb, EIDinfo, compInfo, timeInfo)
+    } else {
+      // no source DT info required.
+    }
+  }
+  // now compute other time periods segments
+  if (timeBundle.seg === true) {
+    console.log('week monthly yearly averages or even rolling')
+  }
+  if (timeBundle.range === true) {
+    console.log('select range of times to perform compute on')
+  }
+  return cFlowStatus
+}
+
+/**
+* @method readTimeInfo
+*
+*/
+AverageSystem.prototype.readTimeInfo = function (EIDinfo, compInfo, timeInfo) {
+  console.log(compInfo.apiquery)
+  let timeState = []
   for (let dvc of EIDinfo.devices) {
     // need to loop for datatype and time seg // datatype or source Datatypes that use to compute dt asked for?
     for (let dtl of compInfo.apiquery) {
       // check status of compute?  uptodate, needs updating or first time compute?
-      for (let checkComp of tidyInfo[EIDinfo.time.startperiod][dvc.device_mac][dtl.cnrl]) {
-        // what is status of compute?
-        if (checkComp.status === 'update-required' && checkComp.timeseg === 'day') {
-          let computeStatus = await this.avgliveStatistics.prepareAvgCompute(checkComp.computeTime, dvc, dtl, checkComp.timeseg, EIDinfo.cid, compInfo)
-          cFlowStatus = computeStatus
-        } else {
-          // for each time segment week, month, year use existing daily averageSave
-          console.log('NEW---time segs additions required')
-        }
+      for (let checkComp of timeInfo[EIDinfo.time.startperiod][dvc.device_mac][dtl.cnrl]) {
+        let dtTimeBundle = {}
+        dtTimeBundle.cnrl = dtl.cnrl
+        dtTimeBundle.time = checkComp
+        timeState.push(dtTimeBundle)
       }
     }
   }
-  // now compute other time periods segments
-  if (segAsk.seg === true) {
-    console.log('week monthly yearly averages or even rolling')
+  return timeState
+}
+
+/**
+* @method sourceDTtimeUpdate
+*
+*/
+AverageSystem.prototype.sourceDTtimeUpdate = async function (timeBundle, EIDinfo, compInfo, timeInfo) {
+  console.log('start source DT time updates')
+  console.log(timeBundle)
+  let computeStatus = {}
+  for (let dvc of EIDinfo.devices) {
+    // need to loop for datatype and time seg // datatype or source Datatypes that use to compute dt asked for?
+    for (let dtl of compInfo.sourceapiquery) {
+      console.log('loot sourc DT')
+      console.log(dtl)
+      // what is status of compute?
+      if (timeBundle.time.status === 'update-required' && timeBundle.time.timeseg === 'day') {
+        computeStatus = await this.avgliveStatistics.prepareAvgCompute(timeBundle.time.computeTime, dvc, dtl, timeBundle.time.timeseg, EIDinfo.cid, compInfo, timeBundle.cnrl)
+      } else {
+        // for each time segment week, month, year use existing daily averageSave
+        console.log('NEW---time segs additions required')
+      }
+    }
   }
-  if (segAsk.range === true) {
-    console.log('select range of times to perform compute on')
-  }
-  return cFlowStatus
+  return computeStatus
 }
 
 export default AverageSystem

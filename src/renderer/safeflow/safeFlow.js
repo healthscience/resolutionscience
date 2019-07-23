@@ -133,7 +133,6 @@ safeFlow.prototype.scienceEntities = async function (contextIN) {
 */
 safeFlow.prototype.setpeerContext = function (bundleIN) {
   // prepare ECS input format and hold context
-  console.log('form==peercontext')
   // does an existing bundle exist?
   let ecsIN = {}
   ecsIN.kbid = bundleIN.kbid

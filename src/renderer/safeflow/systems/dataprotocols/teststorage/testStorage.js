@@ -95,6 +95,7 @@ TestStorageAPI.prototype.getFirstData = async function (deviceID) {
 TestStorageAPI.prototype.getComputeData = async function (queryTime, deviceID) {
   // need source, devices, data for betwween specific time period
   let jsondata = await axios.get(this.baseAPI + '/computedata/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID)
+  console.log(jsondata)
   return jsondata.data
 }
 
@@ -116,8 +117,12 @@ TestStorageAPI.prototype.getSumData = async function (queryTime, deviceID, compT
 *
 */
 TestStorageAPI.prototype.getAverageData = async function (queryTime, deviceID, compType, datatype, timeseg) {
-  //  nosql query
-  // console.log('StorageAIP ----')
+  console.log('average query')
+  console.log(queryTime)
+  console.log(deviceID)
+  console.log(compType)
+  console.log(datatype)
+  console.log(timeseg)
   let jsondata = await axios.get(this.baseAPI + '/average/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID + '/' + compType + '/' + datatype + '/' + timeseg)
   // console.log(jsondata)
   return jsondata.data
@@ -181,7 +186,6 @@ TestStorageAPI.prototype.saveaverageData = async function (jsonIN) {
   jsonIN.publickey = this.tempPubkey
   await axios.post(this.baseAPI + '/averageSave/' + this.tempPubkey + '/' + this.tempToken + '/' + jsonIN.device_mac, jsonIN)
     .then(function (response) {
-      console.log(response)
     })
 }
 

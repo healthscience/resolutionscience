@@ -164,10 +164,10 @@ DataSystem.prototype.getLiveDatatypes = function (dtIN) {
 
 /**
 *  mapping datatypes to  API source
-* @method datatypeMapping
+* @method datatypeQueryMapping
 *
 */
-DataSystem.prototype.datatypeMapping = async function (systemBundle) {
+DataSystem.prototype.datatypeQueryMapping = async function (systemBundle) {
   console.log(systemBundle)
   let rawHolder = {}
   // review the apiInfo  map to function that will make acutal API call (should abstrac to build rest or crypto storage query string programmatically)
@@ -176,6 +176,8 @@ DataSystem.prototype.datatypeMapping = async function (systemBundle) {
     console.log('SIMULTATED__DATA__REQUIRED')
   } else {
     for (let dtItem of systemBundle.apiInfo.apiquery) {
+      console.log('straight to data no updage')
+      console.log(dtItem)
       if (dtItem.api === 'computedata/<publickey>/<token>/<queryTime>/<deviceID>/') {
         console.log('OBSERVATION QI or SOURCE DT query')
         await this.getRawData(systemBundle).then(function (sourcerawData) {
@@ -285,30 +287,46 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
 *
 */
 DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, compInfo) {
+  console.log('start of tidy')
+  console.log(dataRawS)
+  console.log(compInfo.tidyList)
+  console.log(DTlive.cnrl)
   let cleanData = []
   let sTidyarray = []
   let filterMat = false
   // need to loop and match dt to tidy dts?
-  for (let idt of compInfo.tidyList) {
-    if (idt.cnrl === DTlive.cnrl) {
-      cleanData = dataRawS.filter(function (vali) {
-        for (var i = 0; i < idt.codes.length; i++) {
-          if (vali['heart_rate'] !== idt.codes[i]) {
-            filterMat = true
-          } else {
-            filterMat = false
+  if (compInfo.tidyList.length > 0) {
+    for (let idt of compInfo.tidyList) {
+      console.log(idt.cnrl)
+      console.log(DTlive.cnrl)
+      if (idt.cnrl === DTlive.cnrl) {
+        cleanData = dataRawS.filter(function (vali) {
+          console.log(vali)
+          for (var i = 0; i < idt.codes.length; i++) {
+            console.log(idt.codes[i])
+            if (vali['heart_rate'] !== idt.codes[i]) {
+              filterMat = true
+            } else if (vali['steps'] !== idt.codes[i]) {
+              filterMat = true
+            } else {
+              filterMat = false
+            }
+            // return vali.heart_rate !== cds || vali.heart_rate <= 0
           }
-          // return vali.heart_rate !== cds || vali.heart_rate <= 0
-        }
-        if (filterMat === true) {
-          return true
-        }
-      })
-      sTidyarray = cleanData
-    } else {
-      sTidyarray = dataRawS
+          if (filterMat === true) {
+            return true
+          }
+        })
+        sTidyarray = cleanData
+      } else {
+        sTidyarray = dataRawS
+      }
     }
+  } else {
+    sTidyarray = dataRawS
   }
+  console.log('the tidy array per cnrl contract')
+  console.log(sTidyarray)
   // extract the dt required
   sTidyarray = this.extractDTcolumn(DTlive, sTidyarray)
   // does a category filter apply?
@@ -326,6 +344,9 @@ DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, compInfo) {
 *
 */
 DataSystem.prototype.extractDTcolumn = function (sourceDT, arrayIN) {
+  console.log('extract column')
+  console.log(sourceDT)
+  console.log(arrayIN)
   let singleArray = []
   let intData = 0
   for (let sing of arrayIN) {
@@ -384,11 +405,13 @@ DataSystem.prototype.getRawSumData = async function (bundleIN) {
 *
 */
 DataSystem.prototype.getRawAverageData = async function (bundleIN) {
+  console.log('get avg per device')
+  console.log(bundleIN)
   const localthis = this
   // how many sensor ie data sets are being asked for?
   // loop over and return Statistics Data and return to callback
   let averageData = {}
-  let averageArray = []
+  // let averageArray = []
   let averageHolder = {}
   for (let di of bundleIN.deviceList) {
     // also need to loop for datatype and map to storage API function that matches
@@ -398,16 +421,17 @@ DataSystem.prototype.getRawAverageData = async function (bundleIN) {
       for (let tsg of bundleIN.timeseg) {
         // console.log(tsg)
         // loop over time segments
-        await localthis.liveTestStorage.getAverageData(bundleIN.startperiod, di, bundleIN.scienceAsked.cnrl, dtl.cnrl, tsg).then(function (statsData) {
-          averageHolder = {}
-          averageHolder[tsg] = statsData
-          averageArray.push(averageHolder)
-          averageData[di] = {}
-          averageData[di][dtl.cnrl] = {}
-          averageData[di][dtl.cnrl] = averageArray
-        }).catch(function (err) {
+        let statsData = await localthis.liveTestStorage.getAverageData(bundleIN.startperiod, di, bundleIN.scienceAsked.prime.cnrl, dtl.cnrl, tsg).catch(function (err) {
           console.log(err)
         })
+        console.log('avg query')
+        console.log(statsData)
+        averageHolder = {}
+        averageHolder[tsg] = statsData
+        // averageArray.push(averageHolder)
+        averageData[di] = {}
+        averageData[di][dtl.cnrl] = []
+        averageData[di][dtl.cnrl].push(averageHolder)
       }
     }
   }

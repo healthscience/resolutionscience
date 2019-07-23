@@ -37,7 +37,7 @@ StatisticsSystem.prototype.statisticsSystem = function () {
 
 /**
 *  prepare dates for average compute
-* @method prepareAvgCompute
+* @method prepareSumCompute
 *
 */
 StatisticsSystem.prototype.prepareSumCompute = async function (computeTimes, device, datatype, tseg, compRef) {
@@ -137,7 +137,7 @@ StatisticsSystem.prototype.extractDT = function (dtPrim) {
 */
 StatisticsSystem.prototype.sumStatistics = function (dataArray) {
   // statistical avg. smart contract/crypt ID ref & verfied wasm/network/trubit assume done
-  console.log('start average compute')
+  console.log('start sum compute')
   let SumHolder = {}
   let numberEntries = dataArray.length
   // accumulate sum the daily data

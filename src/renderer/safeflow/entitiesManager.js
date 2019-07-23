@@ -52,17 +52,8 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
       this.liveSEntities[cid].liveDataC.setDatatypesLive(ecsIN.datatypes)
       this.liveSEntities[cid].liveDataC.setCategories(ecsIN.categories)
     } else {
-    /* else if (ecsIN.timeperiod === true) {
-      // toolbar select timerange mode
-      console.log('toolbar select time range')
-      await this.controlFlow(ecsIN).then(function (cFlow) {
-        console.log('CONTROLFLOW--already-COMPLETE')
-        // console.log(cFlow)
-      })
-    } */
       // new data call required for this visualisation time
       console.log('need to prepare new visualisation data')
-      // console.log(timePeriod)
       this.liveSEntities[cid].liveDataC.setStartTime(timeBundle.startperiod)
       this.liveSEntities[cid].liveDataC.setTimeList(timeBundle.startperiod)
       this.liveSEntities[cid].liveDataC.setTimeSegments(timeBundle.timeseg)
@@ -71,7 +62,6 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
       this.liveSEntities[cid].liveVisualC.setVisLive(timeBundle.startperiod)
       await this.controlFlow(ecsIN).then(function (cFlow) {
         console.log('CONTROLFLOW--already-COMPLETE')
-        // console.log(cFlow)
       })
     }
   } else {
@@ -100,19 +90,14 @@ EntitiesManager.prototype.controlFlow = async function (cflowIN) {
   console.log('EMANAGER0-----beginCONTROL-FLOW')
   this.liveSEntities[cid].liveDatatypeC.dataTypeMapping()
   await this.liveSEntities[cid].liveDataC.sourceData(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive)
-  console.log('EMANAGER1-----DATACOMP. finished')
   await this.liveSEntities[cid].liveTimeC.startTimeSystem(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveDataC.dataRaw)
-  console.log('EMANAGER3---START--COMPUTE')
   this.emit('computation', 'in-progress')
   this.computeStatus = await this.liveSEntities[cid].liveComputeC.filterCompute(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveTimeC.liveTime)
-  console.log('EMANAGER3--compute finished')
-  console.log(this.computeStatus)
   this.emit('computation', 'finished')
   if (this.computeStatus === true) {
   // go direct and get raw data direct
-    await this.liveSEntities[cid].liveDataC.directSourceUpdated()
+    await this.liveSEntities[cid].liveDataC.directSourceUpdated(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive)
   }
-  console.log('EMANAGE4--START-VIS')
   this.liveSEntities[cid].liveVisualC.filterVisual(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveDataC.liveData)
   console.log('visCompenent--FINISHED')
   return true

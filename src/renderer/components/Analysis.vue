@@ -12,7 +12,7 @@ export default {
   components: { heartPlugin },
   methods: {
     open (link) {
-      this.$electron.shell.openExternal(link)
+      // this.$electron.shell.openExternal(link)
     }
   }
 }

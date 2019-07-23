@@ -123,8 +123,10 @@ DataComponent.prototype.sourceData = async function (apiINFO) {
   systemBundle.dtAsked = this.datatypeList
   systemBundle.deviceList = this.deviceList
   systemBundle.timeseg = this.timeSegs
-  let dataRback = await this.liveDataSystem.datatypeMapping(systemBundle)
+  let dataRback = await this.liveDataSystem.datatypeQueryMapping(systemBundle)
+  console.log('data back aveg??')
   this.dataRaw.push(dataRback)
+  console.log(this.dataRaw)
   // is there any data tidying required
   this.TidyData()
   // is there a categories filter to apply?
@@ -192,7 +194,6 @@ DataComponent.prototype.assessDataStatus = function () {
   } else {
     this.liveData = this.tidyData
   }
-  console.log(this.liveData)
 }
 
 /**
@@ -200,9 +201,16 @@ DataComponent.prototype.assessDataStatus = function () {
 * @method directSourceUpdated
 *
 */
-DataComponent.prototype.directSourceUpdated = function () {
+DataComponent.prototype.directSourceUpdated = async function (straightBundle) {
   console.log('go straight and get updated results')
-  this.liveData = this.liveDataSystem.getRawData(this.did)
+  let systemBundle = {}
+  systemBundle.apiInfo = straightBundle
+  systemBundle.startperiod = this.livedate
+  systemBundle.scienceAsked = this.CNRLscience
+  systemBundle.dtAsked = this.datatypeList
+  systemBundle.deviceList = this.deviceList
+  systemBundle.timeseg = this.timeSegs
+  this.liveData = await this.liveDataSystem.datatypeQueryMapping(systemBundle)
 }
 
 export default DataComponent

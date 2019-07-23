@@ -164,6 +164,8 @@
     mixins: [liveMixinSAFEflow],
     methods: {
       async filterLearn (s) {
+        // close the knowledge
+        kBus.$emit('closeKnowledge')
         // get language, device, datatypes and sci comp bundles
         // pass on to SAFEflow to pass on entity manager
         this.activeEntity = this.liveData.scienceLive.prime.cnrl
@@ -200,8 +202,6 @@
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions
         this.liveTimeV = visDataBack.kContext.liveTime
-        // close the knowledge
-        kBus.$emit('closeKnowledge')
         this.liveData.datatypesLive = []
       },
       saveLearnHistory (lBundle) {

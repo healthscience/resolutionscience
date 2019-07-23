@@ -1,8 +1,5 @@
 <template>
   <div id="knowledge-view">
-    <div id="select-knowledge">
-      <a href="" id="open-knowledge" @click.prevent="openKnowledge(ok)" v-bind:class="{ 'active': ok.active}">{{ ok.name }}</a>
-    </div>
     <div id="knowlege-boxes" v-if="ok.active">
       <div id="context-language">
         <ul>
@@ -95,6 +92,9 @@
         <div id="clear-data-box"></div>
       </div>
     </div>
+    <div id="select-knowledge">
+      <a href="" id="open-knowledge" @click.prevent="openKnowledge(ok)" v-bind:class="{ 'active': ok.active}">{{ ok.name }}</a>
+    </div>
   </div>
 </template>
 
@@ -165,6 +165,7 @@
     created () {
       this.setAccess()
       kBus.$on('closeKnowledge', (cData) => {
+        this.ok.active = true
         this.openKnowledge(this.ok)
       })
     },
@@ -401,26 +402,27 @@
 }
 
 #knowlege-boxes {
-  border: 1px solid blue;
+  border: 0px solid blue;
+  background-color: #FAF6C8;
   margin: 2em;
 }
 
 #data-boxes {
-  border: 1px solid orange;
+  border: 0px solid orange;
 }
 
 .context-box {
   float: left;
   width: 20%;
   padding: 1em;
-  border: 2px solid grey;
+  border: 1px solid grey;
 }
 
 .context-box-science {
   float: left;
   width: 56%;
   padding: 1em;
-  border: 2px solid grey;
+  border: 1px solid grey;
 }
 
 .context-time {
@@ -440,5 +442,6 @@
   width: 200px;
   padding-left: 10px;
   padding-top: 10px;
+  border: 0px solid black;
 }
 </style>

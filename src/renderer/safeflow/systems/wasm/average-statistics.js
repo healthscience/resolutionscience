@@ -42,41 +42,30 @@ StatisticsSystem.prototype.statisticsSystem = function () {
 * @method prepareAvgCompute
 *
 */
-StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, device, datatype, tseg, compRef, compInfo) {
+StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, device, datatype, tseg, compRef, compInfo, sourceDT) {
   console.log('prepare avg. compute START')
   console.log(computeTimes)
-  console.log(device)
-  console.log(datatype)
-  console.log(tseg)
-  console.log(compRef)
-  console.log(compInfo.tidyList)
-  console.log(compInfo.categorycodes)
-  console.log(compInfo.sourceDTs)
+  // computeTimes = [1535846400000, 1535932800000, 1536019200000]
   for (let qt of computeTimes) {
     let queryTime = qt / 1000
     // The datatype asked should be MAPPED to storage API via source Datatypes that make up e.g. average-bpm
     // CNRL should be consulted to find which function calls the API for the source data
     let dataBatch = await this.liveTestStorage.getComputeData(queryTime, device.device_mac, datatype)
-    // console.log(dataBatch)
     if (dataBatch.length > 0) {
       let singleArray = this.liveDataSystem.tidyRawDataSingle(dataBatch, datatype, compInfo)
       // need to check for categories TODO
-      console.log('tidy back from SYSMEM')
-      console.log(singleArray)
       let saveReady = this.averageStatistics(singleArray)
       // prepare JSON object for POST
       let saveJSON = {}
       saveJSON.publickey = ''
       saveJSON.timestamp = queryTime
       saveJSON.compref = compRef
-      saveJSON.datatype = datatype.cnrl
+      saveJSON.datatype = sourceDT
       saveJSON.value = saveReady.average
       saveJSON.device_mac = device.device_mac
       saveJSON.clean = saveReady.count
       saveJSON.tidy = singleArray.tidycount
       saveJSON.timeseg = tseg
-      console.log('average preSAVE')
-      console.log(saveJSON)
       this.liveTestStorage.saveaverageData(saveJSON)
     }
   }
@@ -90,9 +79,6 @@ StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, dev
 */
 StatisticsSystem.prototype.tidySinglearray = function (arrBatchobj, dtIN) {
   // statistical avg. smart contract/crypt ID ref & verfied wasm/network/trubit assume done
-  console.log('start tidyAVG')
-  // console.log(arrBatchobj)
-  // console.log(dtIN)
   let sourceDT = this.extractDT(dtIN.cnrl)
   let tidyHolder = {}
   let intData
@@ -117,8 +103,6 @@ StatisticsSystem.prototype.tidySinglearray = function (arrBatchobj, dtIN) {
   }
   tidyHolder.tidycount = tidyCount
   tidyHolder.tidyarray = singleArray
-  // console.log('TidyHOlder')
-  // console.log(tidyHolder)
   return tidyHolder
 }
 
@@ -128,7 +112,6 @@ StatisticsSystem.prototype.tidySinglearray = function (arrBatchobj, dtIN) {
 *
 */
 StatisticsSystem.prototype.extractDT = function (dtPrim) {
-  console.log('map prime datatype to source DataTypes')
   let sourceDT = ''
   if (dtPrim === 'cnrl-8856388724') {
     sourceDT = 'cnrl-8856388711'
@@ -145,8 +128,6 @@ StatisticsSystem.prototype.extractDT = function (dtPrim) {
 */
 StatisticsSystem.prototype.averageStatistics = function (dataArray) {
   // statistical avg. smart contract/crypt ID ref & verfied wasm/network/trubit assume done
-  console.log('start average compute')
-  console.log(dataArray)
   let AvgHolder = {}
   let numberEntries = dataArray.length
   // accumulate sum the daily data
@@ -176,7 +157,6 @@ StatisticsSystem.prototype.averageMonthlyStatistics = function () {
 *
 */
 StatisticsSystem.prototype.averageCurrentDailyStatistics = async function (startDate, device, compType, datatype, timeseg) {
-  console.log('start CURRENT average')
   let dataBatch = await this.liveTestStorage.getAverageData(startDate, device, compType, datatype, timeseg)
   let numberEntries = dataBatch.length
   // form single arrays

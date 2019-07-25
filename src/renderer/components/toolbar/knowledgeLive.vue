@@ -346,6 +346,7 @@
         let mappingEKB = {}
         mappingEKB.experimentCNRL = expMapIN
         mappingEKB.kbid = this.bundleuuid
+        this.$store.dispatch('actionExperimentKBundlesItem', mappingEKB)
         this.SaveexperimentKbundles(mappingEKB)
       }
     }

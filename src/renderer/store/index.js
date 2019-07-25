@@ -112,6 +112,9 @@ export default new Vuex.Store({
     setStartKBundles: (state, inVerified) => {
       state.startBundles = inVerified
     },
+    setStartKBundlesItem: (state, inVerified) => {
+      state.startBundles.push(inVerified)
+    },
     setComputeStatus: (state, startPeriodTime) => {
       // prepare object to hold compute state per entity kbid
       let openStatus = {active: false, text: 'Compute-in-progress', update: '---'}
@@ -181,6 +184,9 @@ export default new Vuex.Store({
     setMappedExpKbundles: (state, inVerified) => {
       state.mapExperimentKbundles = inVerified
     },
+    setMappedExpKbundlesItem: (state, inVerified) => {
+      state.mapExperimentKbundles.push(inVerified)
+    },
     filterKbundles: (state) => {
       state.activeKentities = {}
       for (let budi of state.experimentList) {
@@ -209,6 +215,9 @@ export default new Vuex.Store({
     actionStartKBundles: (context, update) => {
       context.commit('setStartKBundles', update)
     },
+    actionStartKBundlesItem: (context, update) => {
+      context.commit('setStartKBundlesItem', update)
+    },
     actionUpdateBundleItem: (context, update) => {
     // update settings to show at startup per bundle item
       context.commit('setStartStatusUpdate', update)
@@ -228,6 +237,10 @@ export default new Vuex.Store({
     actionExperimentKBundles: (context, update) => {
     // update peers ExerperimentCNRLs to KBundles
       context.commit('setMappedExpKbundles', update)
+    },
+    actionExperimentKBundlesItem: (context, update) => {
+    // update peers ExerperimentCNRLs to KBundles
+      context.commit('setMappedExpKbundlesItem', update)
     },
     actionFilterKBundles: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL

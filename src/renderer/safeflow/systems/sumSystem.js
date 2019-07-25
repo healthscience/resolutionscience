@@ -101,11 +101,6 @@ SumSystem.prototype.readTimeInfo = function (EIDinfo, compInfo, timeInfo) {
 *
 */
 SumSystem.prototype.sourceDTtimeUpdate = async function (timeBundle, EIDinfo, compInfo, timeInfo) {
-  console.log('update time')
-  console.log(timeBundle)
-  console.log(EIDinfo)
-  console.log(compInfo)
-  console.log(timeInfo)
   let computeStatus = {}
   for (let dvc of EIDinfo.devices) {
     // need to loop for datatype and time seg // datatype or source Datatypes that use to compute dt asked for?

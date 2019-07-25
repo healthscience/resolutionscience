@@ -44,8 +44,6 @@ TimeComponent.prototype.setStartTime = function (startDate) {
 TimeComponent.prototype.startTimeSystem = async function (dtInfo, rawIN) {
   // need to look at the entity datatype INFO bundle and map times start stop update status
   this.liveTime = await this.liveTimeSystem.discoverTimeStatus(this.did, dtInfo, rawIN)
-  console.log('time seg start etc')
-  console.log(this.liveTime)
   return true
 }
 

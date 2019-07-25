@@ -43,14 +43,6 @@ StatisticsSystem.prototype.statisticsSystem = function () {
 *
 */
 StatisticsSystem.prototype.prepareSumCompute = async function (computeTimes, device, datatype, tseg, compRef, compInfo, sourceDT) {
-  console.log('prepare SUM. compute START')
-  console.log(computeTimes)
-  console.log(device)
-  console.log(datatype)
-  console.log(tseg)
-  console.log(compRef)
-  console.log(compInfo)
-  console.log(sourceDT)
   let localthis = this
   // computeTimes = [1535846400000, 1535932800000, 1536019200000]
   for (let qt of computeTimes) {
@@ -58,8 +50,6 @@ StatisticsSystem.prototype.prepareSumCompute = async function (computeTimes, dev
     // The datatype asked should be MAPPED to storage API via source Datatypes that make up e.g. average-bpm
     // CNRL should be consulted to find which function calls the API for the source data
     let dataBatch = await localthis.liveTestStorage.getComputeData(queryTime, device.device_mac, datatype)
-    console.log('source data')
-    console.log(dataBatch)
     if (dataBatch.length > 0) {
       let singleArray = this.liveDataSystem.tidyRawDataSingle(dataBatch, datatype, compInfo)
       // need to check for categories TODO

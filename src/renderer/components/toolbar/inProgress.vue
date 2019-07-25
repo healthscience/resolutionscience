@@ -33,7 +33,7 @@
 
 <style>
 #compute-status {
-  width: 300px;
+  width: 540px;
   height: 30px;
   background-color: pink;
   /*-webkit-animation-name: example; /* Safari 4.0 - 8.0 */

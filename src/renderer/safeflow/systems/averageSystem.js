@@ -45,8 +45,6 @@ AverageSystem.prototype.verifyComputeWASM = function (wasmFile) {
 *
 */
 AverageSystem.prototype.averageSystemStart = async function (EIDinfo, compInfo, timeInfo) {
-  console.log('averageSYSTEM--start')
-  console.log(compInfo)
   let updateStatus = {}
   updateStatus = await this.computeControlFlow(EIDinfo, compInfo, timeInfo)
   return updateStatus
@@ -60,11 +58,7 @@ AverageSystem.prototype.computeControlFlow = async function (EIDinfo, compInfo, 
   let cFlowStatus = {}
   // what time segments have been asked for?
   let timeBundle = this.readTimeInfo(EIDinfo, compInfo, timeInfo)
-  console.log('time state back')
-  console.log(timeBundle)
   for (let dttb of timeBundle) {
-    console.log('loop time bundle')
-    console.log(dttb)
     if (dttb) {
       console.log('yes update source DT times to be computed')
       cFlowStatus = await this.sourceDTtimeUpdate(dttb, EIDinfo, compInfo, timeInfo)
@@ -87,7 +81,6 @@ AverageSystem.prototype.computeControlFlow = async function (EIDinfo, compInfo, 
 *
 */
 AverageSystem.prototype.readTimeInfo = function (EIDinfo, compInfo, timeInfo) {
-  console.log(compInfo.apiquery)
   let timeState = []
   for (let dvc of EIDinfo.devices) {
     // need to loop for datatype and time seg // datatype or source Datatypes that use to compute dt asked for?
@@ -109,14 +102,10 @@ AverageSystem.prototype.readTimeInfo = function (EIDinfo, compInfo, timeInfo) {
 *
 */
 AverageSystem.prototype.sourceDTtimeUpdate = async function (timeBundle, EIDinfo, compInfo, timeInfo) {
-  console.log('start source DT time updates')
-  console.log(timeBundle)
   let computeStatus = {}
   for (let dvc of EIDinfo.devices) {
     // need to loop for datatype and time seg // datatype or source Datatypes that use to compute dt asked for?
     for (let dtl of compInfo.sourceapiquery) {
-      console.log('loot sourc DT')
-      console.log(dtl)
       // what is status of compute?
       if (timeBundle.time.status === 'update-required' && timeBundle.time.timeseg === 'day') {
         computeStatus = await this.avgliveStatistics.prepareAvgCompute(timeBundle.time.computeTime, dvc, dtl, timeBundle.time.timeseg, EIDinfo.cid, compInfo, timeBundle.cnrl)

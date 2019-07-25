@@ -32,23 +32,15 @@ util.inherits(ComputeComponent, events.EventEmitter)
 *
 */
 ComputeComponent.prototype.filterCompute = async function (compInfo, tidyInfo) {
-  console.log('COMPUTE-COMP1----filter start')
-  console.log(this.EIDinfo)
-  console.log(compInfo)
-  console.log(tidyInfo)
   let computeStatelive = {}
   // var localthis = this
   if (this.EIDinfo.science.wasmfile === 'none' && this.computeStatus === false) {
     // raw data nothing to compute
-    console.log('observation mode and false logic')
     computeStatelive.computeState = 'observation'
   } else {
-    console.log('PASSto--computesystem')
     let computeState = await this.liveComputeSystem.computationSystem(this.EIDinfo, compInfo, tidyInfo)
     computeStatelive = computeState
   }
-  console.log('2COMPUTE-COMP---return')
-  console.log(computeStatelive)
   return computeStatelive
 }
 

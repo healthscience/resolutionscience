@@ -43,8 +43,6 @@ StatisticsSystem.prototype.statisticsSystem = function () {
 *
 */
 StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, device, datatype, tseg, compRef, compInfo, sourceDT) {
-  console.log('prepare avg. compute START')
-  console.log(computeTimes)
   // computeTimes = [1535846400000, 1535932800000, 1536019200000]
   for (let qt of computeTimes) {
     let queryTime = qt / 1000

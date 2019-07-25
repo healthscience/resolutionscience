@@ -168,29 +168,22 @@ DataSystem.prototype.getLiveDatatypes = function (dtIN) {
 *
 */
 DataSystem.prototype.datatypeQueryMapping = async function (systemBundle) {
-  console.log(systemBundle)
   let rawHolder = {}
   // review the apiInfo  map to function that will make acutal API call (should abstrac to build rest or crypto storage query string programmatically)
   // first is the data from the PAST or FUTURE ie simulated?
   if (systemBundle.startperiod === 'simulateData') {
-    console.log('SIMULTATED__DATA__REQUIRED')
   } else {
     for (let dtItem of systemBundle.apiInfo.apiquery) {
-      console.log('straight to data no updage')
-      console.log(dtItem)
       if (dtItem.api === 'computedata/<publickey>/<token>/<queryTime>/<deviceID>/') {
-        console.log('OBSERVATION QI or SOURCE DT query')
         await this.getRawData(systemBundle).then(function (sourcerawData) {
           rawHolder = {}
           rawHolder[systemBundle.startperiod] = sourcerawData
         })
       } else if (dtItem.api === 'sum/<publickey>/<token>/<queryTime>/<deviceID>/') {
-        console.log('SUM QUERY')
         let sourcerawData = await this.getRawSumData(systemBundle)
         rawHolder = {}
         rawHolder[systemBundle.startperiod] = sourcerawData
       } else if (dtItem.api === 'average/<publickey>/<token>/<queryTime>/<deviceID>/') {
-        console.log('AVERAGE QUERY')
         await this.getRawAverageData(systemBundle).then(function (sourcerawData) {
           rawHolder = {}
           rawHolder[systemBundle.startperiod] = sourcerawData
@@ -391,8 +384,6 @@ DataSystem.prototype.getRawSumData = async function (bundleIN) {
 *
 */
 DataSystem.prototype.getRawAverageData = async function (bundleIN) {
-  console.log('get avg per device')
-  console.log(bundleIN)
   const localthis = this
   // how many sensor ie data sets are being asked for?
   // loop over and return Statistics Data and return to callback
@@ -410,8 +401,6 @@ DataSystem.prototype.getRawAverageData = async function (bundleIN) {
         let statsData = await localthis.liveTestStorage.getAverageData(bundleIN.startperiod, di, bundleIN.scienceAsked.prime.cnrl, dtl.cnrl, tsg).catch(function (err) {
           console.log(err)
         })
-        console.log('avg query')
-        console.log(statsData)
         averageHolder = {}
         averageHolder[tsg] = statsData
         // averageArray.push(averageHolder)

@@ -104,16 +104,8 @@ TestStorageAPI.prototype.getComputeData = async function (queryTime, deviceID) {
 *
 */
 TestStorageAPI.prototype.getSumData = async function (queryTime, deviceID, compType, datatype, timeseg) {
-  console.log('sum dgetgggg')
-  console.log(queryTime)
-  console.log(deviceID)
-  console.log(compType)
-  console.log(datatype)
-  console.log(timeseg)
   // console.log('StorageAIP ----')
   let jsondata = await axios.get(this.baseAPI + '/sum/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID + '/' + compType + '/' + datatype + '/' + timeseg)
-  console.log('back')
-  console.log(jsondata.data)
   return jsondata.data
 }
 

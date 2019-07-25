@@ -419,7 +419,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.namespace = ''
     dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-2356388731') {
-    dataCNRLbundle.type = 'science'
+    dataCNRLbundle.type = 'compute'
     dataCNRLbundle.livingpaper = 'http://www.healthscience.network/observation'
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-2356388731', 'text': 'Observations', 'active': false }
     dataCNRLbundle.tidy = true
@@ -432,7 +432,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388731'
   } else if (refIN === 'cnrl-2356388737') {
     console.log('sum compute')
-    dataCNRLbundle.type = 'science'
+    dataCNRLbundle.type = 'compute'
     dataCNRLbundle.livingpaper = 'http://www.healthscience.network/sum'
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-2356388737', 'text': 'Sum per time', 'active': false }
     dataCNRLbundle.tidy = false
@@ -444,7 +444,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.wasmfile = 'safe://wasm/cnrl-2356388737'
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388737'
   } else if (refIN === 'cnrl-2356388732') {
-    dataCNRLbundle.type = 'science'
+    dataCNRLbundle.type = 'compute'
     dataCNRLbundle.livingpaper = 'http://www.healthscience.network/average'
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-2356388732', 'text': 'average', 'active': false }
     dataCNRLbundle.datatypes = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856388322', 'text': 'average-steps', 'active': false}, {'cnrl': 'cnrl-8856388724', 'text': 'average-bpm', 'active': false}]
@@ -453,7 +453,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.wasmfile = 'safe://wasm/cnrl-2356388732'
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388732'
   } else if (refIN === 'cnrl-2356383848') {
-    dataCNRLbundle.type = 'science'
+    dataCNRLbundle.type = 'compute'
     dataCNRLbundle.livingpaper = ''
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-2356383848', 'text': 'correlation', 'active': false }
     dataCNRLbundle.tidy = false
@@ -464,7 +464,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.wasmfile = 'safe://wasm/cnrl-2356383848'
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356383848'
   } else if (refIN === 'cnrl-2356388733') {
-    dataCNRLbundle.type = 'science'
+    dataCNRLbundle.type = 'compute'
     dataCNRLbundle.livingpaper = 'https://docs.google.com/document/d/11JWcbBrwgLIqPc7V7GpI_WbACuIS_4h630zdT66Re3s/edit'
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-2356388733', 'text': 'recovery-heartrate', 'active': false }
     dataCNRLbundle.tidy = false

@@ -103,8 +103,6 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
       }
     }
     this.visSystemData = chartGroupHolder
-    console.log('chart GROUP data holder')
-    console.log(this.visSystemData)
   } else if (eInfo.cid === 'cnrl-2356388733') {
     console.log('HR recovery chart???')
     const chartHolder = {}
@@ -117,11 +115,8 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
     // could be more than one visualisation required,  devices, datatypes, timeseg or computation or event resolutions
     for (let dType of eInfo.datatypes) {
       for (let device of eInfo.devices) {
-        console.log('loop bud')
-        for (let entry of dataIN[0][liveTime][device][dType.cnrl]) {
+        for (let entry of dataIN[liveTime][device.device_mac][dType.cnrl]) {
           // pass on to appropriate structure, day, week, in context of resolution etc.
-          console.log('data structure for time segs')
-          // console.log(entry)
           if (entry.day) {
             structureHolder = this.liveChartSystem.structureSumData(entry.day)
             let chartColorsSet = localthis.liveChartSystem.StatschartColors(dType)
@@ -146,12 +141,7 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
       }
     }
     this.visSystemData = chartGroupHolder
-    console.log('chart GROUP data holder')
-    console.log(this.visSystemData)
-    console.log(this.liveChartSystem)
   }
-  console.log('liveCHARTsytem object')
-  console.log(this.visSystemData)
   return this.visSystemData
 }
 

@@ -11,6 +11,7 @@
 */
 import TimeUtilities from '../timeUtility.js'
 import TestStorageAPI from '../dataprotocols/teststorage/testStorage.js'
+import DataSystem from '../dataSystem.js'
 const util = require('util')
 const events = require('events')
 
@@ -18,6 +19,7 @@ var StatisticsSystem = function (setIN) {
   events.EventEmitter.call(this)
   this.liveTimeUtil = new TimeUtilities()
   this.liveTestStorage = new TestStorageAPI(setIN)
+  this.liveDataSystem = new DataSystem(setIN)
 }
 
 /**
@@ -40,31 +42,39 @@ StatisticsSystem.prototype.statisticsSystem = function () {
 * @method prepareSumCompute
 *
 */
-StatisticsSystem.prototype.prepareSumCompute = async function (computeTimes, device, datatype, tseg, compRef) {
-  console.log('prepare avg. compute START')
+StatisticsSystem.prototype.prepareSumCompute = async function (computeTimes, device, datatype, tseg, compRef, compInfo, sourceDT) {
+  console.log('prepare SUM. compute START')
+  console.log(computeTimes)
+  console.log(device)
+  console.log(datatype)
+  console.log(tseg)
+  console.log(compRef)
+  console.log(compInfo)
+  console.log(sourceDT)
   let localthis = this
+  // computeTimes = [1535846400000, 1535932800000, 1536019200000]
   for (let qt of computeTimes) {
     let queryTime = qt / 1000
     // The datatype asked should be MAPPED to storage API via source Datatypes that make up e.g. average-bpm
     // CNRL should be consulted to find which function calls the API for the source data
     let dataBatch = await localthis.liveTestStorage.getComputeData(queryTime, device.device_mac, datatype)
-    // console.log(dataBatch)
+    console.log('source data')
+    console.log(dataBatch)
     if (dataBatch.length > 0) {
-      let singleArray = localthis.tidySinglearray(dataBatch, datatype)
-      let saveReady = this.sumStatistics(singleArray.tidyarray)
+      let singleArray = this.liveDataSystem.tidyRawDataSingle(dataBatch, datatype, compInfo)
+      // need to check for categories TODO
+      let saveReady = this.sumStatistics(singleArray)
       // prepare JSON object for POST
       let saveJSON = {}
       saveJSON.publickey = ''
       saveJSON.timestamp = queryTime
       saveJSON.compref = compRef
-      saveJSON.datatype = datatype.cnrl
+      saveJSON.datatype = sourceDT
       saveJSON.value = saveReady.average
       saveJSON.device_mac = device.device_mac
       saveJSON.clean = saveReady.count
       saveJSON.tidy = singleArray.tidycount
       saveJSON.timeseg = tseg
-      // console.log('average preSAVE')
-      // console.log(saveJSON)
       this.liveTestStorage.savesumData(saveJSON)
     }
   }
@@ -78,9 +88,6 @@ StatisticsSystem.prototype.prepareSumCompute = async function (computeTimes, dev
 */
 StatisticsSystem.prototype.tidySinglearray = function (arrBatchobj, dtIN) {
   // statistical avg. smart contract/crypt ID ref & verfied wasm/network/trubit assume done
-  console.log('start tidyAVG')
-  // console.log(arrBatchobj)
-  // console.log(dtIN)
   let sourceDT = this.extractDT(dtIN.cnrl)
   let tidyHolder = {}
   let intData
@@ -105,8 +112,6 @@ StatisticsSystem.prototype.tidySinglearray = function (arrBatchobj, dtIN) {
   }
   tidyHolder.tidycount = tidyCount
   tidyHolder.tidyarray = singleArray
-  // console.log('TidyHOlder')
-  // console.log(tidyHolder)
   return tidyHolder
 }
 
@@ -116,15 +121,10 @@ StatisticsSystem.prototype.tidySinglearray = function (arrBatchobj, dtIN) {
 *
 */
 StatisticsSystem.prototype.extractDT = function (dtPrim) {
-  console.log('map prime datatype to source DataTypes')
   let sourceDT = ''
   if (dtPrim === 'cnrl-8856388724') {
     sourceDT = 'cnrl-8856388711'
   } else if (dtPrim === 'cnrl-8856388322') {
-    sourceDT = 'cnrl-8856388712'
-  } else if (dtPrim === 'cnrl-8856388924') {
-    sourceDT = 'cnrl-8856388711'
-  } else if (dtPrim === 'cnrl-8856389322') {
     sourceDT = 'cnrl-8856388712'
   }
   return sourceDT
@@ -137,7 +137,6 @@ StatisticsSystem.prototype.extractDT = function (dtPrim) {
 */
 StatisticsSystem.prototype.sumStatistics = function (dataArray) {
   // statistical avg. smart contract/crypt ID ref & verfied wasm/network/trubit assume done
-  console.log('start sum compute')
   let SumHolder = {}
   let numberEntries = dataArray.length
   // accumulate sum the daily data

@@ -186,10 +186,9 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle) {
         })
       } else if (dtItem.api === 'sum/<publickey>/<token>/<queryTime>/<deviceID>/') {
         console.log('SUM QUERY')
-        await this.getRawSumData(systemBundle).then(function (sourcerawData) {
-          rawHolder = {}
-          rawHolder[systemBundle.startperiod] = sourcerawData
-        })
+        let sourcerawData = await this.getRawSumData(systemBundle)
+        rawHolder = {}
+        rawHolder[systemBundle.startperiod] = sourcerawData
       } else if (dtItem.api === 'average/<publickey>/<token>/<queryTime>/<deviceID>/') {
         console.log('AVERAGE QUERY')
         await this.getRawAverageData(systemBundle).then(function (sourcerawData) {
@@ -287,23 +286,15 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
 *
 */
 DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, compInfo) {
-  console.log('start of tidy')
-  console.log(dataRawS)
-  console.log(compInfo.tidyList)
-  console.log(DTlive.cnrl)
   let cleanData = []
   let sTidyarray = []
   let filterMat = false
   // need to loop and match dt to tidy dts?
   if (compInfo.tidyList.length > 0) {
     for (let idt of compInfo.tidyList) {
-      console.log(idt.cnrl)
-      console.log(DTlive.cnrl)
       if (idt.cnrl === DTlive.cnrl) {
         cleanData = dataRawS.filter(function (vali) {
-          console.log(vali)
           for (var i = 0; i < idt.codes.length; i++) {
-            console.log(idt.codes[i])
             if (vali['heart_rate'] !== idt.codes[i]) {
               filterMat = true
             } else if (vali['steps'] !== idt.codes[i]) {
@@ -325,8 +316,6 @@ DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, compInfo) {
   } else {
     sTidyarray = dataRawS
   }
-  console.log('the tidy array per cnrl contract')
-  console.log(sTidyarray)
   // extract the dt required
   sTidyarray = this.extractDTcolumn(DTlive, sTidyarray)
   // does a category filter apply?
@@ -344,9 +333,6 @@ DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, compInfo) {
 *
 */
 DataSystem.prototype.extractDTcolumn = function (sourceDT, arrayIN) {
-  console.log('extract column')
-  console.log(sourceDT)
-  console.log(arrayIN)
   let singleArray = []
   let intData = 0
   for (let sing of arrayIN) {
@@ -383,7 +369,7 @@ DataSystem.prototype.getRawSumData = async function (bundleIN) {
       for (let tsg of bundleIN.timeseg) {
         // console.log(tsg)
         // loop over time segments
-        await localthis.liveTestStorage.getSumData(bundleIN.startperiod, di, bundleIN.scienceAsked.cnrl, dtl.cnrl, tsg).then(function (statsData) {
+        await localthis.liveTestStorage.getSumData(bundleIN.startperiod, di, bundleIN.scienceAsked.prime.cnrl, dtl.cnrl, tsg).then(function (statsData) {
           averageHolder = {}
           averageHolder[tsg] = statsData
           averageArray.push(averageHolder)

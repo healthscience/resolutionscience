@@ -17,7 +17,7 @@ const axios = require('axios')
 var TestStorageAPI = function (setUP) {
   events.EventEmitter.call(this)
   this.liveTimeUtil = new TimeUtilities()
-  this.baseAPI = 'http://165.227.244.213:8881'
+  this.baseAPI = 'http://165.227.244.213:8882'
   this.liveData = {}
   this.datacollection = []
   this.tempPubkey = setUP.publickey
@@ -95,7 +95,6 @@ TestStorageAPI.prototype.getFirstData = async function (deviceID) {
 TestStorageAPI.prototype.getComputeData = async function (queryTime, deviceID) {
   // need source, devices, data for betwween specific time period
   let jsondata = await axios.get(this.baseAPI + '/computedata/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID)
-  console.log(jsondata)
   return jsondata.data
 }
 
@@ -105,9 +104,16 @@ TestStorageAPI.prototype.getComputeData = async function (queryTime, deviceID) {
 *
 */
 TestStorageAPI.prototype.getSumData = async function (queryTime, deviceID, compType, datatype, timeseg) {
-  //  nosql query
+  console.log('sum dgetgggg')
+  console.log(queryTime)
+  console.log(deviceID)
+  console.log(compType)
+  console.log(datatype)
+  console.log(timeseg)
   // console.log('StorageAIP ----')
   let jsondata = await axios.get(this.baseAPI + '/sum/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID + '/' + compType + '/' + datatype + '/' + timeseg)
+  console.log('back')
+  console.log(jsondata.data)
   return jsondata.data
 }
 
@@ -117,12 +123,6 @@ TestStorageAPI.prototype.getSumData = async function (queryTime, deviceID, compT
 *
 */
 TestStorageAPI.prototype.getAverageData = async function (queryTime, deviceID, compType, datatype, timeseg) {
-  console.log('average query')
-  console.log(queryTime)
-  console.log(deviceID)
-  console.log(compType)
-  console.log(datatype)
-  console.log(timeseg)
   let jsondata = await axios.get(this.baseAPI + '/average/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID + '/' + compType + '/' + datatype + '/' + timeseg)
   // console.log(jsondata)
   return jsondata.data
@@ -148,7 +148,7 @@ TestStorageAPI.prototype.saveStartSettings = async function (jsonIN) {
   jsonIN.publickey = this.tempPubkey
   await axios.post(this.baseAPI + '/startStatusSave/' + this.tempPubkey + '/' + this.tempToken + '/' + jsonIN.device_mac, jsonIN)
     .then(function (response) {
-      console.log(response)
+      // console.log(response)
     })
 }
 
@@ -169,11 +169,10 @@ TestStorageAPI.prototype.getExpKbundles = async function () {
 *
 */
 TestStorageAPI.prototype.saveExpKbundles = async function (jsonIN) {
-  console.log('saving start status settings')
   jsonIN.publickey = this.tempPubkey
   await axios.post(this.baseAPI + '/experimentKBundlesSave/' + this.tempPubkey + '/' + this.tempToken + '/' + jsonIN.device_mac, jsonIN)
     .then(function (response) {
-      console.log(response)
+      // console.log(response)
     })
 }
 
@@ -198,7 +197,7 @@ TestStorageAPI.prototype.savesumData = async function (jsonIN) {
   jsonIN.publickey = this.tempPubkey
   await axios.post(this.baseAPI + '/sumSave/' + this.tempPubkey + '/' + this.tempToken + '/' + jsonIN.device_mac, jsonIN)
     .then(function (response) {
-      console.log(response)
+      // console.log(response)
     })
 }
 

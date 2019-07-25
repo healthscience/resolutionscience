@@ -3,7 +3,7 @@
     <router-link class="menu-space" to="/">Home</router-link>
     <router-link class="menu-space" to="/analysis">Dashboards</router-link>
     <router-link class="menu-space" to="/datadevicesensor">Data</router-link>
-    <router-link class="menu-space" to="science">Science</router-link>
+    <router-link class="menu-space" to="science">DIY Science</router-link>
     <router-link class="menu-space" to="/help">Help</router-link>
     <router-view></router-view>
   </div>

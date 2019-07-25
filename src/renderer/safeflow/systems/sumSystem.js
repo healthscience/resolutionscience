@@ -45,8 +45,6 @@ SumSystem.prototype.verifyComputeWASM = function (wasmFile) {
 *
 */
 SumSystem.prototype.sumSystem = async function (EIDinfo, compInfo, timeInfo) {
-  console.log('SumSystem')
-  console.log(compInfo)
   let updateStatus = {}
   updateStatus = await this.computeControlFlow(EIDinfo, compInfo, timeInfo)
   return updateStatus
@@ -60,13 +58,8 @@ SumSystem.prototype.computeControlFlow = async function (EIDinfo, compInfo, time
   let cFlowStatus = {}
   // what time segments have been asked for?
   let timeBundle = this.readTimeInfo(EIDinfo, compInfo, timeInfo)
-  console.log('time state back')
-  console.log(timeBundle)
   for (let dttb of timeBundle) {
-    console.log('loop time bundle')
-    console.log(dttb)
     if (dttb) {
-      console.log('yes update source DT times to be computed')
       cFlowStatus = await this.sourceDTtimeUpdate(dttb, EIDinfo, compInfo, timeInfo)
     } else {
       // no source DT info required.
@@ -87,7 +80,6 @@ SumSystem.prototype.computeControlFlow = async function (EIDinfo, compInfo, time
 *
 */
 SumSystem.prototype.readTimeInfo = function (EIDinfo, compInfo, timeInfo) {
-  console.log(compInfo.apiquery)
   let timeState = []
   for (let dvc of EIDinfo.devices) {
     // need to loop for datatype and time seg // datatype or source Datatypes that use to compute dt asked for?
@@ -109,14 +101,15 @@ SumSystem.prototype.readTimeInfo = function (EIDinfo, compInfo, timeInfo) {
 *
 */
 SumSystem.prototype.sourceDTtimeUpdate = async function (timeBundle, EIDinfo, compInfo, timeInfo) {
-  console.log('start source DT time updates')
+  console.log('update time')
   console.log(timeBundle)
+  console.log(EIDinfo)
+  console.log(compInfo)
+  console.log(timeInfo)
   let computeStatus = {}
   for (let dvc of EIDinfo.devices) {
     // need to loop for datatype and time seg // datatype or source Datatypes that use to compute dt asked for?
     for (let dtl of compInfo.sourceapiquery) {
-      console.log('loot sourc DT')
-      console.log(dtl)
       // what is status of compute?
       if (timeBundle.time.status === 'update-required' && timeBundle.time.timeseg === 'day') {
         computeStatus = await this.liveSumStatistics.prepareSumCompute(timeBundle.time.computeTime, dvc, dtl, timeBundle.time.timeseg, EIDinfo.cid, compInfo, timeBundle.cnrl)

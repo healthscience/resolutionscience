@@ -599,8 +599,8 @@ ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
   var localthis = this
   let datacollection = {}
   this.labelback = []
-  this.avg = []
-  this.avg2 = []
+  this.sum = []
+  this.sum2 = []
   this.colorback = ''
   this.colorlineback = ''
   this.colorback2 = ''
@@ -611,26 +611,26 @@ ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
     for (let chD of results.chart) {
       if (chD.color.datatype === 'cnrl-8856388924') {
         this.labelback = chD.data.labels
-        this.avg = chD.data.datasets
+        this.sum = chD.data.datasets
         this.colorback = chD.color.backgroundColor
         this.colorlineback = chD.color.borderColor
       } else if (chD.color.datatype === 'cnrl-8856389322') {
         this.labelback = chD.data.labels
-        this.avg2 = chD.data.datasets
+        this.sum2 = chD.data.datasets
         this.colorback2 = chD.color.backgroundColor
         this.colorlineback2 = chD.color.borderColor
       }
     }
   } else {
     if (results.chart[0].color.datatype === 'cnrl-8856388924') {
-      this.avg = []
+      this.sum = []
       this.labelback = results.chart[0].data.labels
-      this.avg = results.chart[0].data.datasets
+      this.sum = results.chart[0].data.datasets
       this.colorback = results.chart[0].color.backgroundColor
       this.colorlineback = results.chart[0].color.borderColor
     } else if (results.chart[0].color.datatype === 'cnrl-8856389322') {
       this.labelback = results.chart[0].data.labels
-      this.avg = results.chart[0].data.datasets
+      this.sum = results.chart[0].data.datasets
       this.colorback2 = results.chart[0].color.backgroundColor
       this.colorlineback2 = results.chart[0].color.borderColor
     }
@@ -674,7 +674,7 @@ ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
             borderColor: '#ea1212',
             backgroundColor: 'rgba(255, 99, 132, 0.2)',
             fill: true,
-            data: localthis.avg,
+            data: localthis.sum,
             yAxisID: 'bpm'
           }, {
             type: 'line',
@@ -682,7 +682,7 @@ ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
             borderColor: '#050d2d',
             backgroundColor: '#050d2d',
             fill: false,
-            data: localthis.avg2,
+            data: localthis.sum2,
             yAxisID: 'bpm'
           }
         ]
@@ -699,7 +699,7 @@ ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
             borderColor: '#ea1212',
             backgroundColor: 'rgba(255, 99, 132, 0.2)',
             fill: true,
-            data: localthis.avg,
+            data: localthis.sum,
             yAxisID: 'bpm'
           }
         ]
@@ -899,7 +899,7 @@ ChartSystem.prototype.SumChartOptions = function () {
           beginAtZero: true,
           steps: 10,
           stepValue: 5,
-          max: 100000
+          max: 300000
         },
         scaleLabel: {
           display: true,
@@ -918,7 +918,7 @@ ChartSystem.prototype.SumChartOptions = function () {
           beginAtZero: true,
           steps: 10,
           stepValue: 5,
-          max: 100000
+          max: 300000
         }
       }]
     },

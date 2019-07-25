@@ -68,7 +68,7 @@
       <history-List :historyData="historyData" @setLiveBundle="makeLiveKnowledge"></history-List>
     </div>
     <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
-    <hsvisual @experimentMap="saveMappingExpKB" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" ></hsvisual>
+    <hsvisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime"></hsvisual>
   </div>
 </template>
 
@@ -110,7 +110,6 @@
           active: false,
           text: 'Preparing visualisation'
         },
-        liveSafeFlow: null,
         activeEntity: '',
         activevis: '',
         hist:
@@ -125,6 +124,7 @@
         kContext: {},
         liveDataCollection: {},
         liveOptions: {},
+        liveNavTime: [],
         liveTimeV: ''
       }
     },
@@ -160,6 +160,7 @@
       let sciStartEmpty = {}
       sciStartEmpty.prime = {'text': 'empty'}
       this.liveData.scienceLive = sciStartEmpty
+      this.setNaveTime()
     },
     mixins: [liveMixinSAFEflow],
     methods: {
@@ -194,19 +195,19 @@
         let uuidBundle = this.createKBID(liveBundle)
         liveBundle.kbid = uuidBundle
         this.bundleuuid = uuidBundle
-        this.saveLearnHistory(liveBundle)
+        // this.saveLearnHistory(liveBundle)
+        this.$store.dispatch('actionStartKBundlesItem', liveBundle)
         // set message to UI IN-progress
         this.entityPrepareStatus.active = true
         let visDataBack = await this.learnStart(liveBundle)
         this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions
+        console.log(visDataBack.kContext)
         this.liveTimeV = visDataBack.kContext.liveTime
         this.liveData.datatypesLive = []
       },
       saveLearnHistory (lBundle) {
-        // save to network  save to LOCAL storage(encrpted???)
-        // this.$store.commit('setBCounter', this.bundleCounter)
         this.historyData.push(lBundle)
       },
       createKBID (addressIN) {
@@ -231,6 +232,31 @@
         } else {
           hist.name = 'View compute list'
         }
+      },
+      async navTimeLearn (uSeg) {
+        let updateTbundle = {}
+        // what KID is live?
+        let bundList = this.$store.getters.startBundlesList
+        for (let ukb of bundList) {
+          if (ukb.kbid === this.bundleuuid) {
+            updateTbundle = ukb
+          }
+        }
+        let timeAsk = []
+        timeAsk.push(uSeg.text)
+        updateTbundle.timeseg = timeAsk
+        updateTbundle.startperiod = 'relative'
+        console.log('nav update bundle')
+        console.log(updateTbundle)
+        // pass on to learn safeFlow
+        this.entityPrepareStatus.active = true
+        let visDataBack = await this.learnStart(updateTbundle)
+        // remove compute in progress Message
+        this.$store.dispatch('actionstopComputeStatus', updateTbundle.kbid)
+        this.entityPrepareStatus.active = false
+        this.liveDataCollection = visDataBack.liveDataCollection
+        this.liveOptions = visDataBack.liveOptions
+        this.liveTimeV = visDataBack.kContext.liveTime
       },
       async makeLiveKnowledge (lBund) {
         // set live Bundle for context
@@ -348,6 +374,9 @@
         mappingEKB.kbid = this.bundleuuid
         this.$store.dispatch('actionExperimentKBundlesItem', mappingEKB)
         this.SaveexperimentKbundles(mappingEKB)
+      },
+      setNaveTime () {
+        this.liveNavTime = this.timeNav('datatime-index')
       }
     }
   }

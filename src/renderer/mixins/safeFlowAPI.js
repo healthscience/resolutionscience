@@ -125,6 +125,11 @@ export default {
       rangeHolder.active = true
       return rangeHolder
     },
+    timeNav (navT) {
+      let navTimelist = []
+      navTimelist = this.safeMixin.cnrlTimeIndex(navT)
+      return navTimelist
+    },
     saveStartBundle (bund) {
       console.log(' go and save via safeFLOW')
       // need up date startStatus Object

@@ -38,7 +38,7 @@
       <div id="time-context">
         <div id="select-time">
           <ul>
-            <li v-for="tv in timeVis" class="context-time">
+            <li v-for="tv in navTime" class="context-time">
               <button class="button is-primary" @click.prevent="setTimeData(tv)">{{ tv.text }}</button>
             </li>
           </ul>
@@ -80,6 +80,9 @@
       },
       options: {
         type: Object
+      },
+      navTime: {
+        type: Array
       },
       displayTime: ''
     },
@@ -128,14 +131,10 @@
       }
     },
     created () {
-      this.timeNavSegments()
     },
     mounted () {
     },
     methods: {
-      timeNavSegments () {
-        // this.timeVis = this.liveSafeFlow.cnrlTimeIndex('datatime-index')
-      },
       selectVis (visIN) {
         if (visIN.id === 'vis-sc-1') {
           if (visIN.active === true) {
@@ -203,7 +202,7 @@
         // back and forward and time
         console.log(seg)
         console.log('liveContractBundle')
-        // this.$emit('updateLearn', seg)
+        this.$emit('updateLearn', seg)
       },
       addToExperiment (exB) {
         console.log('experiment selected')

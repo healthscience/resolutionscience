@@ -172,7 +172,6 @@
         let updateBundle = this.$store.getters.startBundlesList
         for (let iB of updateBundle) {
           if (iB.kbid === startKID) {
-            this.$store.dispatch('actionStartKBundlesItem', iB)
             this.saveStartBundle(iB)
           }
         }

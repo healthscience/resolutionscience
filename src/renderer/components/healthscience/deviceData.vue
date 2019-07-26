@@ -1,19 +1,19 @@
 <template>
   <div id="device-list">
   <header>DEVICES</header>
-    <li v-for="dev in devices" class="device-item">
+    <li v-for="dev in devicesLive" class="device-item">
       <header>{{ dev.device_name }} <a href="" @click.prevent="viewDeviceDetail(dev)" id="view-details">View details</a> </header>
       <div id="device-details" v-if="dev.active">
-        <div id="hardware" >
+        <div id="hardware" class="device-detail-item" >
           <header>Hardware</header>
           <div id="hardware-manufactureid">
             Mac: {{}}
           </div>
-          <div id="hardware-firmware">
+          <div id="hardware-firmware" class="device-detail-item" >
             Fimrware Hash {{}} <a id="" href="">IPS location</a>
           </div>
         </div>
-        <div id="sensors">
+        <div id="sensors" class="device-detail-item">
           <header>Sensors</header>
           <div id="sensor-type">
             Accelerometer -> Steps -> DataType <a id="" href="http://healthscience.network/heartchain/cnrl-773355992211" >heartchain/activity/steps</a>
@@ -22,13 +22,13 @@
             LED -> BMP -> DataType <a id="" href="http://healthscience.network/heartchain/cnrl-773355992213" >heartchain/heart/bmp</a>
           </div>
         </div>
-        <div id="mobile">
+        <div id="mobile" class="device-detail-item" >
           <header>Mobile</header>
           <div id="data-location">
             Android -> HS-GadgetBridge -> Github -> github.com/healthscience/GadgetBridge
           </div>
         </div>
-        <div id="data">
+        <div id="data" class="device-detail-item" >
           <header>Data</header>
           <div id="data-location">
             TESTnetwork ->
@@ -57,7 +57,6 @@
     created () {
     },
     mounted () {
-      this.checkContext()
     },
     computed: {
       system: function () {
@@ -68,15 +67,12 @@
       },
       context: function () {
         return this.$store.state.context
+      },
+      devicesLive: function () {
+        return this.$store.getters.liveContext.device
       }
     },
     methods: {
-      checkContext () {
-        let startContext = this.$store.getters.liveContext
-        // set devices and sensor from Store
-        this.devices = startContext.device
-        this.sensors = startContext.datatype
-      },
       viewDeviceDetail (devIN) {
         if (devIN.active === true) {
           devIN.active = false
@@ -95,5 +91,9 @@
 
 .device-item {
   display: block;
+}
+
+.device-detail-item {
+  display: inline-block;
 }
 </style>

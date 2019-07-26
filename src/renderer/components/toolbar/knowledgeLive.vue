@@ -244,8 +244,8 @@
         }
         let timeAsk = []
         timeAsk.push(uSeg.text)
-        updateTbundle.timeseg = timeAsk
-        updateTbundle.startperiod = 'relative'
+        updateTbundle.time.timeseg = timeAsk
+        updateTbundle.time.startperiod = 'relative'
         console.log('nav update bundle')
         console.log(updateTbundle)
         // pass on to learn safeFlow
@@ -256,7 +256,8 @@
         this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions
-        this.liveTimeV = visDataBack.kContext.liveTime
+        // this.liveTimeV = visDataBack.kContext.liveTime
+        this.liveTimeV = visDataBack.displayTime
       },
       async makeLiveKnowledge (lBund) {
         // set live Bundle for context

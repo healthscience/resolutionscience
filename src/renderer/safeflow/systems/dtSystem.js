@@ -110,8 +110,6 @@ DTSystem.prototype.datatypeCheckAPI = function (packagingDTs, lDTs) {
         packAPImatch.column = result[0].text
         packAPImatch.api = packagingDTs.apistructure[tableCount]
         apiMatch.push(packAPImatch)
-        console.log(apiMatch.length)
-        console.log(lDTs.length)
         if (apiMatch.length === lDTs.length) {
           apiKeep = apiMatch
           apiMatch = []

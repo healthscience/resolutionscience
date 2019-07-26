@@ -68,7 +68,7 @@ export default new Vuex.Store({
       state.context.science = inVerified
     },
     setDevice: (state, inVerified) => {
-      state.context.device = inVerified
+      state.context.device = Vue.set(state, 'device', inVerified)
     },
     setDatatype: (state, inVerified) => {
       state.context.datatypes = inVerified

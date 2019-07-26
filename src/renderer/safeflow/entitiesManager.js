@@ -155,6 +155,8 @@ EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
   let GroupVisBundle = {}
   let messageVisBundle = {}
   let timeLive = this.liveSEntities[eid].liveDataC.livedate
+  console.log('data comoent time updteded???')
+  console.log(timeLive)
   // loop over visualisation available and pick out match
   for (let lvc of this.liveSEntities[eid].liveVisualC.visualData) {
     console.log('visLOOP to match')

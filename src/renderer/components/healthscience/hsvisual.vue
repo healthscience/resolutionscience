@@ -111,8 +111,6 @@
           active: false,
           text: 'off'
         },
-        datacollection2: null,
-        options2: null,
         toolbarData: {},
         recoveryData: {},
         datastatistics: null,

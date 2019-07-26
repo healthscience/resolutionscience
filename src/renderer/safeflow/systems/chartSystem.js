@@ -116,10 +116,18 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
   let datachart = []
   for (let rItems of results) {
     let chartItem = {}
-    chartItem.type = 'line'
+    if (rItems.color.datatype === 'bpm') {
+      chartItem.type = 'line'
+      chartItem.borderColor = rItems.color.borderColor
+      chartItem.backgroundColor = rItems.color.backgroundColor
+    } else {
+      chartItem.type = 'bar'
+      chartItem.fillColor = 'rgba(220, 220, 220, 2)'
+      chartItem.borderWidth = 1
+      // chartItem.borderColor = rItems.color.borderColor
+      // chartItem.backgroundColor = rItems.color.backgroundColor
+    }
     chartItem.label = rItems.color.datatype
-    chartItem.borderColor = rItems.color.borderColor
-    chartItem.backgroundColor = rItems.color.backgroundColor
     chartItem.fill = false
     chartItem.data = rItems.data.datasets
     chartItem.yAxisID = rItems.color.datatype
@@ -178,8 +186,13 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
 *
 */
 ChartSystem.prototype.prepareLabelchart = function (labelIN) {
-  let preparedLabel = labelIN.reduce((p, c, i, a) => a[p].length > c.length ? p : i, 0)
-  return labelIN[preparedLabel]
+  console.log('label data prepare two time series to merge')
+  console.log(labelIN)
+  // let preparedLabel = labelIN.reduce((p, c, i, a) => a[p].length > c.length ? p : i, 0)
+  // let preparedLabel = [...labelIN[0], ...labelIN[1]]
+  // console.log(preparedLabel)
+  // return labelIN[preparedLabel]
+  return labelIN[0]
 }
 
 /**
@@ -200,6 +213,7 @@ ChartSystem.prototype.prepareChartOptions = function (results) {
   var localthis = this
   let options = {
     responsive: true,
+    spanGaps: true,
     tooltips: {
       mode: 'index',
       intersect: true

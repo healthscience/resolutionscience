@@ -227,13 +227,29 @@ DataSystem.prototype.getRawData = async function (SBqueryIN) {
 */
 DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
   let liveStarttime = dataASK.timePeriod
-  let filterMat = null
+  // let filterMat = null
   // build object structureReturn
   let tidyHolder = {}
   tidyHolder[liveStarttime] = {}
   // one, two or more sources needing tidying???
   // data structure in  Object indexed by startTime, object IndexbyDevice, Array[]of object -> heart_rate steps  {plus other source data}
-  let cleanData = []
+  // let cleanData = []
+  const manFilter = (e, tItem) => {
+    let filterMat = null
+    for (var i = 0; i < tItem.codes.length; i++) {
+      if (e['heart_rate'] !== tItem.codes[i]) {
+        filterMat = true
+      } else {
+        filterMat = false
+      }
+    }
+    if (filterMat === true) {
+      return e
+    } else {
+      e['heart_rate'] = null
+      return e
+    }
+  }
   for (let devI of dataASK.deviceList) {
     // do the two data types match?  If yes, filter if not raw =s tidydata
     tidyHolder[liveStarttime][devI] = {}
@@ -245,20 +261,11 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
             if (dtList.cnrl === tItem.cnrl) {
               let tidyDT = tItem.cnrl
               if (dateMatch[liveStarttime][devI][tidyDT]) {
-                cleanData = dateMatch[liveStarttime][devI][tidyDT].filter(function (vali) {
-                  for (var i = 0; i < tItem.codes.length; i++) {
-                    if (vali['heart_rate'] !== tItem.codes[i]) {
-                      filterMat = true
-                    } else {
-                      filterMat = false
-                    }
-                    // return vali.heart_rate !== cds || vali.heart_rate <= 0
-                  }
-                  if (filterMat === true) {
-                    return true
-                  }
-                })
-                tidyHolder[liveStarttime][devI][tidyDT] = cleanData
+                let fullData = dateMatch[liveStarttime][devI][tidyDT]
+                const newfullData = fullData.map(n => manFilter(n, tItem))
+                console.log('tidy clean array')
+                console.log(newfullData)
+                tidyHolder[liveStarttime][devI][tidyDT] = newfullData
               } else {
                 console.log('LOOP tidy NO tidying required')
               }
@@ -279,22 +286,33 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
 *
 */
 DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, compInfo) {
+  console.log('tidy start')
   let cleanData = []
   let sTidyarray = []
   let filterMat = false
   // need to loop and match dt to tidy dts?
   if (compInfo.tidyList.length > 0) {
+    console.log('start of fitler')
     for (let idt of compInfo.tidyList) {
       if (idt.cnrl === DTlive.cnrl) {
         cleanData = dataRawS.filter(function (vali) {
           for (var i = 0; i < idt.codes.length; i++) {
-            if (vali['heart_rate'] !== idt.codes[i]) {
+            console.log('codes matching')
+            let planD1 = parseInt(vali['heart_rate'], 10)
+            console.log(planD1)
+            let planD2 = parseInt(idt.codes[i], 10)
+            console.log(planD2)
+            if (vali['heart_rate'] && planD1 !== planD2) {
+              console.log('one')
               filterMat = true
-            } else if (vali['steps'] !== idt.codes[i]) {
+            } else if (vali['steps'] && vali['steps'] !== idt.codes[i]) {
+              console.log('two')
               filterMat = true
             } else {
+              console.log('three')
               filterMat = false
             }
+            console.log(filterMat)
             // return vali.heart_rate !== cds || vali.heart_rate <= 0
           }
           if (filterMat === true) {

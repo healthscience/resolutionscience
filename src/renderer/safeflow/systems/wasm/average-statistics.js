@@ -44,6 +44,9 @@ StatisticsSystem.prototype.statisticsSystem = function () {
 */
 StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, device, datatype, tseg, compRef, compInfo, sourceDT) {
   // computeTimes = [1535846400000, 1535932800000, 1536019200000]
+  // computeTimes = []
+  // let lastItem = computeTimes.slice(-1)[0]
+  // computeTimes.push(1535846400000)
   for (let qt of computeTimes) {
     let queryTime = qt / 1000
     // The datatype asked should be MAPPED to storage API via source Datatypes that make up e.g. average-bpm
@@ -126,6 +129,8 @@ StatisticsSystem.prototype.extractDT = function (dtPrim) {
 */
 StatisticsSystem.prototype.averageStatistics = function (dataArray) {
   // statistical avg. smart contract/crypt ID ref & verfied wasm/network/trubit assume done
+  console.log('array for avg')
+  console.log(dataArray)
   let AvgHolder = {}
   let numberEntries = dataArray.length
   // accumulate sum the daily data
@@ -133,6 +138,8 @@ StatisticsSystem.prototype.averageStatistics = function (dataArray) {
   function add (a, b) {
     return a + b
   }
+  console.log(sum)
+  console.log(numberEntries)
   let averageResult = sum / numberEntries
   let roundAverage = Math.round(averageResult)
   AvgHolder.count = numberEntries

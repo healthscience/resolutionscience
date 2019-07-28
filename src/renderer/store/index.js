@@ -103,9 +103,7 @@ export default new Vuex.Store({
       state.bundle = Vue.set(state, 'bundle', inVerified)
     },
     updateLiveBTime: (state, inVerified) => {
-      console.log('update time')
       console.log(inVerified)
-      console.log(state.bundle.time.timeseg)
       // state.bundle.time.timeseg = inVerifed.timeseg
       // state.bundle.time.startperiod = inVerifed.startperiod
     },
@@ -121,13 +119,8 @@ export default new Vuex.Store({
       for (let kItem of state.startBundles) {
         let kID = kItem.kbid
         // is the bundleData behind real time?
-        console.log('time start status')
-        console.log(kItem.time.startperiod)
         let d = new Date(kItem.time.startperiod) // new Date(kItem.time.startperiod)
-        console.log(d)
         let n = d.getTime()
-        console.log(n)
-        console.log(startPeriodTime)
         if (startPeriodTime > n) {
           openStatus.update = 'needs updating'
           Vue.set(state.computeKidStatus, kID, openStatus)

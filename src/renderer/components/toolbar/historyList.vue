@@ -167,7 +167,6 @@
       },
       startStatusSave (se) {
         // change start status and save or delete settings
-        console.log('save on start')
         let startKID = se.target.id
         let updateBundle = this.$store.getters.startBundlesList
         for (let iB of updateBundle) {

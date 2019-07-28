@@ -503,7 +503,6 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-888355992223') {
     // CNRL implementation contract e.g. from mobile phone sqlite table structure
-    console.log('Experiment 1')
     dataCNRLbundle.type = 'experiment'
     dataCNRLbundle.source = 'cnrl-primary'
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-888355992223', 'text': 'When do I sleep the best?', 'active': false }

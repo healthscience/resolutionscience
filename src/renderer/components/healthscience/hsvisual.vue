@@ -175,17 +175,13 @@
         }
       },
       toolsSwitch (ts) {
-        console.log('tools sliders overlay')
-        console.log(ts)
         ts.active = !ts.active
         if (ts.active === true) {
           this.toolbar.text = 'on'
-          console.log('ON')
           // need to add annotation to chart OPTIONS
           // this.$emit('toolsStatus', true)
         } else {
           this.toolbar.text = 'off'
-          console.log('Offf')
           // remove the annotation from the chart OPTIONS
           // this.$emit('toolsStatus', false)
         }
@@ -198,19 +194,12 @@
       },
       setTimeData (seg) {
         // back and forward and time
-        console.log(seg)
-        console.log('liveContractBundle')
         this.$emit('updateLearn', seg)
       },
       addToExperiment (exB) {
-        console.log('experiment selected')
-        console.log(exB.target.value)
         this.selectedExperiment = exB.target.value
       },
       experADD (expA) {
-        console.log('add to experiment and diplay back message')
-        console.log(expA)
-        console.log(this.selectedExperiment)
         // need to keep permanent store of experiments to Ecomponents linked (save, delete, update also)
         this.$emit('experimentMap', this.selectedExperiment)
       }

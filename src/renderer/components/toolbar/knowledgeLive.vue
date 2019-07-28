@@ -208,11 +208,9 @@
         // set message to UI IN-progress
         this.entityPrepareStatus.active = true
         let visDataBack = await this.learnStart(liveBundle)
-        console.log(visDataBack)
         this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions
-        console.log(visDataBack.kContext)
         this.kContext = visDataBack.kContext
         this.liveTimeV = visDataBack.kContext.liveTime
         this.liveData.datatypesLive = []
@@ -256,8 +254,6 @@
         timeAsk.push(uSeg.text)
         updateTbundle.time.timeseg = timeAsk
         updateTbundle.time.startperiod = 'relative'
-        console.log('nav update bundle')
-        console.log(updateTbundle)
         // pass on to learn safeFlow
         this.entityPrepareStatus.active = true
         let visDataBack = await this.learnStart(updateTbundle)
@@ -381,7 +377,6 @@
         return true
       },
       saveMappingExpKB (expMapIN) {
-        console.log('prepare and save mapping Experiment to KBundles')
         let mappingEKB = {}
         mappingEKB.experimentCNRL = expMapIN
         mappingEKB.kbid = this.bundleuuid

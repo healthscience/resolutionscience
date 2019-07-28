@@ -20,14 +20,12 @@ export default {
     async learnStart (lBundle) {
       console.log('start Learning')
       let returnVISvue = {}
-      console.log(lBundle)
       this.chartmessage.text = 'Visualisation being prepared'
       this.chartmessage.active = true
       this.liveBundle = lBundle
       this.activeEntity = lBundle.kbid
       this.activevis = this.$store.getters.liveVis[0]
       await this.safeMixin.scienceEntities(lBundle)
-      console.log('entity setup/operational')
       // this.learnListening()
       let entityGetter = await this.safeMixin.entityGetter(this.activeEntity, this.activevis)
       console.log('VUE---return getter data')
@@ -55,8 +53,6 @@ export default {
           this.recoveryData = recoveryStart
         } else {
           console.log('chartjs-- uptodate finised')
-          console.log(entityGetter)
-          console.log(aEID)
           this.chartmessage.text = 'computation up-to-date'
           this.options2 = entityGetter.liveChartOptions
           this.datacollection2 = entityGetter.chartPackage
@@ -80,8 +76,6 @@ export default {
         // localthis.simulationMovement = entityGetter.heart
         // localthis.simulationTime = entityGetter.time
       }
-      console.log('vue vis object for UI')
-      console.log(visObjectVUE)
       return visObjectVUE
     },
     startComputeUpdate () {
@@ -96,8 +90,6 @@ export default {
       var localthis = this
       // listening to give peer info. on computation statusTime
       this.safeMixin.liveEManager.on('computation', function (cState) {
-        console.log('computation event from manager')
-        console.log(cState)
         if (cState === 'in-progress') {
           localthis.chartmessage.text = cState
         } else {
@@ -132,14 +124,12 @@ export default {
       return navTimelist
     },
     saveStartBundle (bund) {
-      console.log(' go and save via safeFLOW')
       // need up date startStatus Object
       let updateStartStatus = {'active': true, 'name': 'yes'}
       bund.startStatus = updateStartStatus
       this.safeMixin.startSettings('save', bund)
     },
     SaveexperimentKbundles (mapEKb) {
-      console.log(' go and save via safeFLOW mapping Exp to KBundles')
       this.safeMixin.experimentKbundles('save', mapEKb)
     }
   }

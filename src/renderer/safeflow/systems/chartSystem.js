@@ -102,8 +102,6 @@ ChartSystem.prototype.chartColors = function (datatypeItem) {
 */
 ChartSystem.prototype.prepareVueChartJS = function (results) {
   let datacollection = {}
-  this.labelback = []
-  this.databack = []
   this.colorback = ''
   this.colorlineback = ''
   this.colorback2 = ''
@@ -166,9 +164,7 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
     }
   } else {
     // prepare the Chart OBJECT FOR CHART.JS  Up to 2 line e.g. BMP or Steps or BPM + Steps
-    // console.log('CHARTSYSTEM-----draw chart')
-    var startChartDate = moment(this.labelback[0])
-    // console.log(startChartDate)
+    var startChartDate = moment(labelchart[0])
     this.updateChartoptions(startChartDate)
     this.liveTime = startChartDate
     // this.chartmessage = 'BPM'
@@ -186,8 +182,6 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
 *
 */
 ChartSystem.prototype.prepareLabelchart = function (labelIN) {
-  console.log('label data prepare two time series to merge')
-  console.log(labelIN)
   // let preparedLabel = labelIN.reduce((p, c, i, a) => a[p].length > c.length ? p : i, 0)
   // let preparedLabel = [...labelIN[0], ...labelIN[1]]
   // console.log(preparedLabel)
@@ -376,17 +370,9 @@ ChartSystem.prototype.updateChartoptions = function (startChartDate) {
 *
 */
 ChartSystem.prototype.newDate = function (selectDay) {
-  var nowTime = ''
-  if (selectDay === 0) {
-    nowTime = moment()
-  } else {
-    nowTime = moment(selectDay)
-    nowTime = nowTime.subtract(selectDay, 'days')
-  }
-  var startTime = moment.utc(nowTime).startOf('day')
+  var startTime = moment.utc(selectDay).startOf('day')
   const time = moment.duration('2:0:00')
   startTime.add(time)
-  // startTime = moment('12/21/2018', 'MM-DD-YYYY')
   this.options.annotation.annotations[2].value = startTime
 }
 

@@ -91,7 +91,6 @@
         }
       },
       startExperiments () {
-        console.log('get experiments')
         let liveExper = []
         let experimentList = this.liveSafeFlow.cnrlExperimentIndex()
         for (let exl of experimentList) {

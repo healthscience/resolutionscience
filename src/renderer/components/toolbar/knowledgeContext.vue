@@ -203,7 +203,6 @@
       },
       displayLanugage (cnrlID) {
         // loop over match and display words or display human body graphic
-        // console.log('inplang')
         this.kwords = []
         let lanuageCNRL = this.safeMixin.cnrlLivingKnowledge(cnrlID)
         let wordsPlacer = {}
@@ -212,13 +211,11 @@
         this.kwords = wordsPlacer
       },
       selectLanguage (l) {
-        // console.log(l)
         l.active = !l.active
         kBus.$emit('setVLanguage', l)
         // this.$emit('setVLanguage', l)
       },
       selectDevice (s) {
-        // console.log(s)
         s.active = !s.active
         kBus.$emit('setVDevice', s)
         // display datatypes for this device source
@@ -229,59 +226,42 @@
         kBus.$emit('setVDatatypes', std)
       },
       selectSciDatatypes (std) {
-        // console.log('science data types set')
-        // console.log(std)
         std.active = !std.active
         kBus.$emit('setVDatatypes', std)
       },
       selectResolution (r) {
-        // console.log(r)
         r.active = !r.active
         kBus.$emit('setVResolution', r)
       },
       languageContext () {
         let refContext = 'human'
         let lanuageCNRL = this.safeMixin.cnrlLivingKnowledge(refContext)
-        // console.log('semanics')
-        // console.log(lanuageCNRL)
         this.kwords = lanuageCNRL
       },
       deviceContext () {
         var localthis = this
         function callbackC (dataH) {
-          // console.log('fresh update---')
-          // console.log(dataH)
           localthis.devices = dataH
-          // console.log('start deviceslist')
           // setting dataType Smartcontract CNRL id  (needs to be extract and mapp to storageAPI)
           localthis.devices[0].cnrl = 'cnrl-33221101'
           localthis.devices[1].cnrl = 'cnrl-33221101'
-          // console.log(dataH)
           localthis.$store.commit('setDevice', dataH)
         }
         const deviceSet = localthis.$store.getters.liveContext.device
-        // console.log('device context')
-        // console.log(deviceSet)
         // has the device context been set already?  Assume no for NOW
         if (deviceSet.length > 678) {
           this.devices = deviceSet
-          // console.log('device settings')
-          // console.log(this.devices)
         } else {
           // make call to set start dataContext for this pubkey
           const flag = 'device'
           this.safeMixin.toolkitContext(flag, callbackC)
-          // console.log('device callsettings')
         }
-        // console.log(this.devices)
       },
       dataTypeDevice () {
         let devDTHolder = []
         // let cnrlIDholderDev = []
         // repeat for datatyes coming from the mobile app CRNL contract
         for (let devCdt of this.devices) {
-          // console.log('devices')
-          // console.log(devCdt)
           let deviceDTypes = this.safeMixin.cnrlDeviceDTs(devCdt.cnrl)
           devDTHolder.push(deviceDTypes)
         }
@@ -289,7 +269,6 @@
       },
       dataType () {
         // make call to set start dataType for the device sensors
-        // console.log('start data type')
         const localthis = this
         let sciDTHolder = []
         let cnrlIDholderSci = []
@@ -310,15 +289,11 @@
       scienceContext () {
         // set the first science priority on start of RS
         this.scoptions = this.$store.getters.liveScience
-        // console.log(this.scoptions)
       },
       updateSciDTs (sciIN) {
-        // console.log('science has changed')
         this.activeEntity = sciIN
         // use cid to look up datatype for this scienceEntities
         let sciDTypesSelect = this.safeMixin.cnrlScienceDTs(sciIN)
-        // console.log('science contract')
-        // console.log(sciDTypesSelect)
         sciDTypesSelect.cnrl = sciIN
         this.scidtypes = sciDTypesSelect.datatypes
         this.cdtypes = sciDTypesSelect.categories
@@ -339,21 +314,14 @@
         return commonHolder
       },
       selectCatTD (cIN) {
-        // console.log('categorisation of data type')
         cIN.active = !cIN.active
-        // console.log(cIN)
         kBus.$emit('setVDataCategory', cIN)
       },
       subContext () {
-        // console.log('sub data types')
-        // console.log(this.subcontextHolder)
-        // console.log(this.subcontextHolder.columncodes)
         this.subcontext = this.subcontextholder.columncodes
       },
       selectTime (tIN) {
-        // console.log('time set')
         tIN.active = !tIN.active
-        // console.log(tIN)
         let tt = {}
         if (tIN.text === 'SELECT') {
           // display start end endPoint
@@ -361,7 +329,6 @@
           tt.text = tIN.text
           tt.start = this.kContext.analysisStart
           tt.end = this.kContext.analysisEnd
-          // console.log(tt)
           kBus.$emit('setVTime', tt)
         } else {
           kBus.$emit('setVTime', tIN)

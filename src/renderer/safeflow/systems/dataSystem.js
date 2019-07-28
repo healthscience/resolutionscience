@@ -175,15 +175,18 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle) {
   } else {
     for (let dtItem of systemBundle.apiInfo.apiquery) {
       if (dtItem.api === 'computedata/<publickey>/<token>/<queryTime>/<deviceID>/') {
+        console.log('compute data query')
         await this.getRawData(systemBundle).then(function (sourcerawData) {
           rawHolder = {}
           rawHolder[systemBundle.startperiod] = sourcerawData
         })
       } else if (dtItem.api === 'sum/<publickey>/<token>/<queryTime>/<deviceID>/') {
+        console.log('sum data query')
         let sourcerawData = await this.getRawSumData(systemBundle)
         rawHolder = {}
         rawHolder[systemBundle.startperiod] = sourcerawData
       } else if (dtItem.api === 'average/<publickey>/<token>/<queryTime>/<deviceID>/') {
+        console.log('average data query')
         await this.getRawAverageData(systemBundle).then(function (sourcerawData) {
           rawHolder = {}
           rawHolder[systemBundle.startperiod] = sourcerawData
@@ -263,8 +266,6 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
               if (dateMatch[liveStarttime][devI][tidyDT]) {
                 let fullData = dateMatch[liveStarttime][devI][tidyDT]
                 const newfullData = fullData.map(n => manFilter(n, tItem))
-                console.log('tidy clean array')
-                console.log(newfullData)
                 tidyHolder[liveStarttime][devI][tidyDT] = newfullData
               } else {
                 console.log('LOOP tidy NO tidying required')
@@ -286,34 +287,31 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
 *
 */
 DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, compInfo) {
-  console.log('tidy start')
+  let postCatdata = []
   let cleanData = []
   let sTidyarray = []
   let filterMat = false
+  // screen out to keep the category data
+  if (compInfo.categorycodes.length === 0) {
+    // nothing to filter
+  } else {
+    postCatdata = this.categorySorterSingle(dataRawS, compInfo.categorycodes)
+  }
   // need to loop and match dt to tidy dts?
   if (compInfo.tidyList.length > 0) {
-    console.log('start of fitler')
     for (let idt of compInfo.tidyList) {
       if (idt.cnrl === DTlive.cnrl) {
-        cleanData = dataRawS.filter(function (vali) {
+        cleanData = postCatdata.filter(function (vali) {
           for (var i = 0; i < idt.codes.length; i++) {
-            console.log('codes matching')
             let planD1 = parseInt(vali['heart_rate'], 10)
-            console.log(planD1)
             let planD2 = parseInt(idt.codes[i], 10)
-            console.log(planD2)
             if (vali['heart_rate'] && planD1 !== planD2) {
-              console.log('one')
               filterMat = true
             } else if (vali['steps'] && vali['steps'] !== idt.codes[i]) {
-              console.log('two')
               filterMat = true
             } else {
-              console.log('three')
               filterMat = false
             }
-            console.log(filterMat)
-            // return vali.heart_rate !== cds || vali.heart_rate <= 0
           }
           if (filterMat === true) {
             return true
@@ -330,11 +328,6 @@ DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, compInfo) {
   // extract the dt required
   sTidyarray = this.extractDTcolumn(DTlive, sTidyarray)
   // does a category filter apply?
-  if (compInfo.categorycodes.length === 0) {
-    // nothing to filter
-  } else {
-    sTidyarray = this.categorySorterSingle(sTidyarray, compInfo.categorycodes)
-  }
   return sTidyarray
 }
 
@@ -402,6 +395,8 @@ DataSystem.prototype.getRawSumData = async function (bundleIN) {
 *
 */
 DataSystem.prototype.getRawAverageData = async function (bundleIN) {
+  console.log('get raw averg query')
+  console.log(bundleIN)
   const localthis = this
   // how many sensor ie data sets are being asked for?
   // loop over and return Statistics Data and return to callback
@@ -416,7 +411,7 @@ DataSystem.prototype.getRawAverageData = async function (bundleIN) {
       for (let tsg of bundleIN.timeseg) {
         // console.log(tsg)
         // loop over time segments
-        let statsData = await localthis.liveTestStorage.getAverageData(bundleIN.startperiod, di, bundleIN.scienceAsked.prime.cnrl, dtl.cnrl, tsg).catch(function (err) {
+        let statsData = await localthis.liveTestStorage.getAverageData(bundleIN.startperiod, di, bundleIN.scienceAsked.prime.cnrl, dtl.cnrl, tsg, bundleIN.categories[0].cnrl).catch(function (err) {
           console.log(err)
         })
         averageHolder = {}
@@ -496,11 +491,17 @@ DataSystem.prototype.categorySorter = function (dataASK, tidyData) {
 *
 */
 DataSystem.prototype.categorySorterSingle = function (dataTidy, catList) {
-  // loop over and apply startBundles
   let catFiltered = []
   catFiltered = dataTidy.filter(function (item) {
-  // these data table column names could be dynamic ie programable.
-    return item.raw_kind === catList
+    for (let cItem of catList) {
+      let planD1 = parseInt(item.raw_kind, 10)
+      let planD2 = parseInt(cItem.code, 10)
+      if (planD2 === planD1) {
+        return true
+      } else {
+        return false
+      }
+    }
   })
   return catFiltered
 }

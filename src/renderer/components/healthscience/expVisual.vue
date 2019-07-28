@@ -17,7 +17,7 @@
         </div>
       </div>
       <div v-if="visChartview" id="charts-live">
-        <reactive :chartData="datacollection" :options="options" :width="400" :height="180"></reactive>
+        <reactive :chartData="datacollection" :options="options" :width="800" :height="400"></reactive>
       </div>
       <div v-if="visTableview" id="table-view">
         <table-Build></table-Build>

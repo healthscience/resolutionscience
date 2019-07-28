@@ -178,13 +178,21 @@
         updateTbundle.timeseg = this.liveData.timeLive
         updateTbundle.startperiod = startPeriodTime
         updateTbundle.timevis = ['day']
+        // has any category been selected?
+        let categoryLive = []
+        if (this.liveData.categoryLive.length === 0) {
+          let noCat = {'active': false, 'cnrl': 'none', 'text': 'none'}
+          categoryLive.push(noCat)
+        } else {
+          categoryLive = this.liveData.categoryLive
+        }
         let liveBundle = {}
         liveBundle.cnrl = this.activeEntity
         liveBundle.startStatus = {'active': false, 'name': 'no'}
         liveBundle.language = this.liveData.languageLive
         liveBundle.devices = this.liveData.devicesLive
         liveBundle.datatypes = this.liveData.datatypesLive
-        liveBundle.categories = this.liveData.categoryLive
+        liveBundle.categories = categoryLive
         liveBundle.science = this.liveData.scienceLive
         liveBundle.realtime = realTime
         liveBundle.time = updateTbundle
@@ -200,10 +208,12 @@
         // set message to UI IN-progress
         this.entityPrepareStatus.active = true
         let visDataBack = await this.learnStart(liveBundle)
+        console.log(visDataBack)
         this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions
         console.log(visDataBack.kContext)
+        this.kContext = visDataBack.kContext
         this.liveTimeV = visDataBack.kContext.liveTime
         this.liveData.datatypesLive = []
       },
@@ -256,6 +266,7 @@
         this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions
+        this.kContext = visDataBack.kContext
         // this.liveTimeV = visDataBack.kContext.liveTime
         this.liveTimeV = visDataBack.displayTime
       },
@@ -275,6 +286,7 @@
         this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions
+        this.kContext = visDataBack.kContext
         this.liveTimeV = visDataBack.kContext.liveTime
       },
       languageStatus (lIN) {

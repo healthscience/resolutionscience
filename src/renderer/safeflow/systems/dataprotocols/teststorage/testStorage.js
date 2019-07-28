@@ -114,8 +114,8 @@ TestStorageAPI.prototype.getSumData = async function (queryTime, deviceID, compT
 * @method getAverageData
 *
 */
-TestStorageAPI.prototype.getAverageData = async function (queryTime, deviceID, compType, datatype, timeseg) {
-  let jsondata = await axios.get(this.baseAPI + '/average/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID + '/' + compType + '/' + datatype + '/' + timeseg)
+TestStorageAPI.prototype.getAverageData = async function (queryTime, deviceID, compType, datatype, timeseg, category) {
+  let jsondata = await axios.get(this.baseAPI + '/average/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID + '/' + compType + '/' + datatype + '/' + timeseg + '/' + category)
   // console.log(jsondata)
   return jsondata.data
 }

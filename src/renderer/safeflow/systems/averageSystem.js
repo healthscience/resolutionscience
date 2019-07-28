@@ -108,7 +108,7 @@ AverageSystem.prototype.sourceDTtimeUpdate = async function (timeBundle, EIDinfo
     for (let dtl of compInfo.sourceapiquery) {
       // what is status of compute?
       if (timeBundle.time.status === 'update-required' && timeBundle.time.timeseg === 'day') {
-        computeStatus = await this.avgliveStatistics.prepareAvgCompute(timeBundle.time.computeTime, dvc, dtl, timeBundle.time.timeseg, EIDinfo.cid, compInfo, timeBundle.cnrl)
+        computeStatus = await this.avgliveStatistics.prepareAvgCompute(timeBundle.time.computeTime, dvc, dtl, timeBundle.time.timeseg, EIDinfo.cid, compInfo, timeBundle.cnrl, EIDinfo.categories[0].cnrl)
       } else {
         // for each time segment week, month, year use existing daily averageSave
         console.log('NEW---time segs additions required')

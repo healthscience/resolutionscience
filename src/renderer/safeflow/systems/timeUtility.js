@@ -40,8 +40,6 @@ TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
   timeConversion.timeseg = timeBundle.time.timeseg
   let realTimems = moment(timeBundle.realtime).valueOf()
   timeConversion.realtime = Math.round(realTimems / 1000)
-  console.log('time converstion back')
-  console.log(timeConversion)
   return timeConversion
 }
 
@@ -132,10 +130,6 @@ TimeUtilities.prototype.rangeCovert = function (rangeIN) {
 *
 */
 TimeUtilities.prototype.timeConvert = function (uT) {
-  //  turn segment into time query profile
-  console.log('start time convert')
-  console.log(uT)
-  console.log(this.liveStarttime)
   let startTime
   let timestamp
   if (uT === 'day') {
@@ -187,8 +181,6 @@ TimeUtilities.prototype.timeConvert = function (uT) {
     timestamp = 'simulateData'
   }
   this.liveLasttime = timestamp
-  console.log('back days convert')
-  console.log(timestamp)
   return timestamp
 }
 

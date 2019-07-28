@@ -82,6 +82,7 @@
         for (let expEB of liveBundles) {
           for (let iee of currentEntities) {
             if (expEB === iee.kbid) {
+              console.log(iee)
               chartDataReady = await this.learnStart(iee)
               entityArray.push(chartDataReady)
             }

@@ -913,7 +913,7 @@ ChartSystem.prototype.SumChartOptions = function () {
           beginAtZero: true,
           steps: 10,
           stepValue: 5,
-          max: 300000
+          max: 100000
         },
         scaleLabel: {
           display: true,
@@ -932,7 +932,7 @@ ChartSystem.prototype.SumChartOptions = function () {
           beginAtZero: true,
           steps: 10,
           stepValue: 5,
-          max: 300000
+          max: 100000
         }
       }]
     },

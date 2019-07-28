@@ -33,7 +33,6 @@ util.inherits(DTSystem, events.EventEmitter)
 *
 */
 DTSystem.prototype.DTStartMatch = function (dAPI, lDTs, catDTs) {
-  // look up packaging contract
   let packagingDTs = this.liveCNRL.lookupContract(dAPI)
   // is the data type primary?
   let sourceDTextract = this.mapSourceDTs(lDTs)
@@ -67,7 +66,8 @@ DTSystem.prototype.DTStartMatch = function (dAPI, lDTs, catDTs) {
   let checkDTcategory = []
   let extractCatDT = []
   let catDTmapAPI = []
-  if (catDTs.length > 0) {
+  console.log(catDTmapAPI)
+  if (catDTs.length > 0 && catDTs[0].cnrl !== 'none') {
     checkDTcategory = this.categoryCheck(catDTs[0], SpackagingDTs)
     // now check the API query for this dataType
     // todo extract data type ie loop over category matches, same or all different?
@@ -81,7 +81,7 @@ DTSystem.prototype.DTStartMatch = function (dAPI, lDTs, catDTs) {
   }
 
   let apiInfo = {}
-  apiInfo.apiquery = [...DTmapAPI, ...catDTmapAPI]
+  apiInfo.apiquery = DTmapAPI // [...DTmapAPI, ...catDTmapAPI]
   apiInfo.sourceapiquery = sourceDTmapAPI
   apiInfo.sourceDTs = sourceDTextract
   apiInfo.categorycodes = checkDTcategory

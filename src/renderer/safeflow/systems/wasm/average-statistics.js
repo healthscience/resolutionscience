@@ -42,7 +42,7 @@ StatisticsSystem.prototype.statisticsSystem = function () {
 * @method prepareAvgCompute
 *
 */
-StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, device, datatype, tseg, compRef, compInfo, sourceDT) {
+StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, device, datatype, tseg, compRef, compInfo, sourceDT, category) {
   // computeTimes = [1535846400000, 1535932800000, 1536019200000]
   // computeTimes = []
   // let lastItem = computeTimes.slice(-1)[0]
@@ -67,6 +67,9 @@ StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, dev
       saveJSON.clean = saveReady.count
       saveJSON.tidy = singleArray.tidycount
       saveJSON.timeseg = tseg
+      saveJSON.category = category
+      // console.log('average save')
+      // console.log(saveJSON)
       this.liveTestStorage.saveaverageData(saveJSON)
     }
   }
@@ -129,8 +132,6 @@ StatisticsSystem.prototype.extractDT = function (dtPrim) {
 */
 StatisticsSystem.prototype.averageStatistics = function (dataArray) {
   // statistical avg. smart contract/crypt ID ref & verfied wasm/network/trubit assume done
-  console.log('array for avg')
-  console.log(dataArray)
   let AvgHolder = {}
   let numberEntries = dataArray.length
   // accumulate sum the daily data
@@ -138,8 +139,6 @@ StatisticsSystem.prototype.averageStatistics = function (dataArray) {
   function add (a, b) {
     return a + b
   }
-  console.log(sum)
-  console.log(numberEntries)
   let averageResult = sum / numberEntries
   let roundAverage = Math.round(averageResult)
   AvgHolder.count = numberEntries

@@ -778,14 +778,10 @@ CNRLmaster.prototype.sensorSource = function (refIN) {
 *
 */
 CNRLmaster.prototype.drillDowntoLogic = function (refIN) {
-  console.log('CRNL---drilldowFILTER')
-  console.log(refIN)
   let drillDownFilter = {}
   if (refIN === 'cnrl-3356388722') {
-    console.log('matchfilter')
     drillDownFilter.code = 112
   }
-  console.log(drillDownFilter)
   return drillDownFilter
 }
 

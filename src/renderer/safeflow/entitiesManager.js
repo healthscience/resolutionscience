@@ -94,10 +94,14 @@ EntitiesManager.prototype.controlFlow = async function (cflowIN) {
   this.emit('computation', 'in-progress')
   this.computeStatus = await this.liveSEntities[cid].liveComputeC.filterCompute(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveTimeC.liveTime)
   this.emit('computation', 'finished')
+  console.log('compute status')
+  console.log(this.computeStatus)
   if (this.computeStatus === true) {
   // go direct and get raw data direct
     await this.liveSEntities[cid].liveDataC.directSourceUpdated(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive)
   }
+  console.log('after source direct get post compuute')
+  console.log(this.liveSEntities[cid].liveDataC.liveData)
   this.liveSEntities[cid].liveVisualC.filterVisual(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveDataC.liveData)
   console.log('visCompenent--FINISHED')
   return true

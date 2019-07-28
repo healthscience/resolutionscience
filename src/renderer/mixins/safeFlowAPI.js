@@ -31,10 +31,10 @@ export default {
       console.log('VUE---return getter data')
       console.log(entityGetter)
       this.chartmessage.active = false
-      returnVISvue = this.diplayFilter(this.activevis, this.activevis, entityGetter)
+      returnVISvue = await this.diplayFilter(this.activeEntity, this.activevis, entityGetter)
       return returnVISvue
     },
-    diplayFilter (aEID, aVis, entityGetter) {
+    async diplayFilter (aEID, aVis, entityGetter) {
       // setup return vis Object
       let visObjectVUE = {}
       if (aVis === 'vis-sc-1') {
@@ -59,7 +59,10 @@ export default {
           this.liveTimeV2 = moment(entityGetter.displayTime * 1000).format('LLLL')
           this.liveanalysisStart = entityGetter.selectTimeStart
           this.liveSelectTime = this.liveanalysisStart
-          let AvgDstart = 34 // await this.getAverages(aEID)
+          let AvgDstart = await this.getAverages(aEID)
+          console.log('average back')
+          console.log(AvgDstart)
+          console.log(this.options2)
           this.options2.annotation.annotations[0].value = AvgDstart.avgdhr
           this.options2.annotation.annotations[1].value = AvgDstart.avgdrhr
           visObjectVUE.kContext = this.liveanalysisStart
@@ -99,11 +102,15 @@ export default {
     },
     async getAverages (eid) {
       // update latest daily average HR
+      console.log('get averages')
       let AvgDailyHolder = {}
-      let currentAHR = await this.safeMixin.entityCurrentAverageHR(eid)
+      let currentAHR = await this.safeMixin.entityCurrentAverageHR(eid, 'none')
       console.log('averageHR current====')
       console.log(currentAHR)
-      let newARHR = 55
+      let newARHR = await this.safeMixin.entityCurrentAverageHR(eid, 'cnrl-8356388727')
+      console.log('averageHR current====')
+      console.log(newARHR)
+      // let newARHR = 55
       AvgDailyHolder.avgdhr = currentAHR
       AvgDailyHolder.avgdrhr = newARHR
       // console.log(this.liveOptions)

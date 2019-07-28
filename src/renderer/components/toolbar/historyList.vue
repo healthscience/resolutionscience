@@ -156,6 +156,8 @@
       },
       async makeKLive (status) {
         // loop over arry of bundles and match bid number and make active
+        // console.log('history data of Kbundels')
+        // console.log(this.historyData)
         if (status.target.checked === true) {
           for (let ukb of this.historyData) {
             let makeInt = status.target.value

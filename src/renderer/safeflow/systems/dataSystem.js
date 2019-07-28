@@ -287,6 +287,10 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
 *
 */
 DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, compInfo) {
+  // console.log('start of tidy raw')
+  // console.log(DTlive)
+  // console.log(compInfo)
+  // console.log(dataRawS)
   let postCatdata = []
   let cleanData = []
   let sTidyarray = []
@@ -294,9 +298,12 @@ DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, compInfo) {
   // screen out to keep the category data
   if (compInfo.categorycodes.length === 0) {
     // nothing to filter
+    postCatdata = dataRawS
   } else {
     postCatdata = this.categorySorterSingle(dataRawS, compInfo.categorycodes)
   }
+  // console.log('post catoery')
+  // console.log(postCatdata)
   // need to loop and match dt to tidy dts?
   if (compInfo.tidyList.length > 0) {
     for (let idt of compInfo.tidyList) {
@@ -325,9 +332,14 @@ DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, compInfo) {
   } else {
     sTidyarray = dataRawS
   }
+  // console.log('end')
+  // console.log(DTlive)
+  // console.log(sTidyarray)
   // extract the dt required
   sTidyarray = this.extractDTcolumn(DTlive, sTidyarray)
   // does a category filter apply?
+  // console.log('endend')
+  // console.log(sTidyarray)
   return sTidyarray
 }
 

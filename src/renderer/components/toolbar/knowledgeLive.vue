@@ -180,12 +180,18 @@
         updateTbundle.timevis = ['day']
         // has any category been selected?
         let categoryLive = []
-        if (this.liveData.categoryLive.length === 0) {
+        console.log('category empty???')
+        console.log(this.liveData.categoryLive)
+        if (this.liveData.categoryLive.length === 0 || this.liveData.categoryLive[0].active === undefined) {
+          console.log('none')
           let noCat = {'active': false, 'cnrl': 'none', 'text': 'none'}
           categoryLive.push(noCat)
         } else {
+          console.log('yes catetyr')
           categoryLive = this.liveData.categoryLive
         }
+        console.log('post cat')
+        console.log(categoryLive)
         let liveBundle = {}
         liveBundle.cnrl = this.activeEntity
         liveBundle.startStatus = {'active': false, 'name': 'no'}
@@ -268,6 +274,8 @@
       },
       async makeLiveKnowledge (lBund) {
         // set live Bundle for context
+        console.log('select bundle')
+        console.log(lBund)
         this.bundleuuid = lBund.kbid
         this.$store.dispatch('actionLiveBundle', lBund)
         const nowTime = moment()

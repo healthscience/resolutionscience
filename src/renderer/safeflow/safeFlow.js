@@ -184,8 +184,8 @@ safeFlow.prototype.entityChartGetter = async function (eid) {
 * @method entityCurrentAverageHR
 *
 */
-safeFlow.prototype.entityCurrentAverageHR = async function (eid) {
-  let currentAverageHR = await this.liveEManager.GetaverageCurrentDailyStatistics(eid)
+safeFlow.prototype.entityCurrentAverageHR = async function (eid, category) {
+  let currentAverageHR = await this.liveEManager.GetaverageCurrentDailyStatistics(eid, category)
   return currentAverageHR
 }
 

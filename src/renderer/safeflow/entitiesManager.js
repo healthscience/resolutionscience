@@ -215,11 +215,11 @@ EntitiesManager.prototype.entityChartReturn = async function (eid) {
 * @method GetaverageCurrentDailyStatistics
 *
 */
-EntitiesManager.prototype.GetaverageCurrentDailyStatistics = async function (eid) {
+EntitiesManager.prototype.GetaverageCurrentDailyStatistics = async function (eid, category) {
   console.log('avg avg live')
   console.log(eid)
   console.log(this.liveSEntities[eid])
-  let averageCurrentAHR = this.liveSEntities[eid].liveComputeC.liveComputeSystem.liveAverage.avgliveStatistics.averageCurrentDailyStatistics('1', this.liveSEntities[eid].seid.devices[0].device_mac, 'cnrl-2356388732', 'cnrl-8856388724', 'day')
+  let averageCurrentAHR = this.liveSEntities[eid].liveComputeC.liveComputeSystem.liveAverage.avgliveStatistics.averageCurrentDailyStatistics('1', this.liveSEntities[eid].seid.devices[0].device_mac, 'cnrl-2356388732', 'cnrl-8856388724', 'day', category)
   return averageCurrentAHR
 }
 

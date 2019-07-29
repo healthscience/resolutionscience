@@ -34,7 +34,6 @@ util.inherits(EntitiesManager, events.EventEmitter)
 *
 */
 EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
-  console.log(ecsIN)
   let cid = ecsIN.kbid
   let timeBundle = ecsIN.time // starting time ms
   let visID = ecsIN.visID[0] // limited to one for now will free up TODO
@@ -85,7 +84,6 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
 */
 EntitiesManager.prototype.controlFlow = async function (cflowIN) {
   console.log('controlflow start')
-  console.log(cflowIN)
   let cid = cflowIN.kbid
   console.log('EMANAGER0-----beginCONTROL-FLOW')
   this.liveSEntities[cid].liveDatatypeC.dataTypeMapping()
@@ -94,14 +92,10 @@ EntitiesManager.prototype.controlFlow = async function (cflowIN) {
   this.emit('computation', 'in-progress')
   this.computeStatus = await this.liveSEntities[cid].liveComputeC.filterCompute(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveTimeC.liveTime)
   this.emit('computation', 'finished')
-  console.log('compute status')
-  console.log(this.computeStatus)
   if (this.computeStatus === true) {
   // go direct and get raw data direct
     await this.liveSEntities[cid].liveDataC.directSourceUpdated(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive)
   }
-  console.log('after source direct get post compuute')
-  console.log(this.liveSEntities[cid].liveDataC.liveData)
   this.liveSEntities[cid].liveVisualC.filterVisual(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveDataC.liveData)
   console.log('visCompenent--FINISHED')
   return true
@@ -153,18 +147,11 @@ EntitiesManager.prototype.listEntities = function () {
 */
 EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
   console.log('ENTITYMANAGER----retrun data')
-  console.log(eid)
-  console.log(visStyle)
-  console.log(this.liveSEntities[eid].liveVisualC)
   let GroupVisBundle = {}
   let messageVisBundle = {}
   let timeLive = this.liveSEntities[eid].liveDataC.livedate
-  console.log('data comoent time updteded???')
-  console.log(timeLive)
   // loop over visualisation available and pick out match
   for (let lvc of this.liveSEntities[eid].liveVisualC.visualData) {
-    console.log('visLOOP to match')
-    console.log(lvc)
     if (lvc[visStyle] === undefined) {
       console.log('no existing chart data')
       messageVisBundle = {}
@@ -181,11 +168,7 @@ EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
       GroupVisBundle = messageVisBundle
     } else if (lvc['vis-sc-1']) {
       console.log('existing data to chart')
-      console.log(timeLive)
-      console.log(lvc)
       // for (let vi of lvc[visStyle][timeLive]) {
-      console.log('chart day item')
-      // console.log(vi)
       if (lvc[visStyle][timeLive].day) {
         messageVisBundle = {}
         messageVisBundle.chartMessage = 'Chart'
@@ -216,9 +199,6 @@ EntitiesManager.prototype.entityChartReturn = async function (eid) {
 *
 */
 EntitiesManager.prototype.GetaverageCurrentDailyStatistics = async function (eid, category) {
-  console.log('avg avg live')
-  console.log(eid)
-  console.log(this.liveSEntities[eid])
   let averageCurrentAHR = this.liveSEntities[eid].liveComputeC.liveComputeSystem.liveAverage.avgliveStatistics.averageCurrentDailyStatistics('1', this.liveSEntities[eid].seid.devices[0].device_mac, 'cnrl-2356388732', 'cnrl-8856388724', 'day', category)
   return averageCurrentAHR
 }

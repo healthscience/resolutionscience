@@ -33,10 +33,6 @@ util.inherits(VisSystem, events.EventEmitter)
 *
 */
 VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
-  console.log('VISCOMP==CHARTSYTSEM START1')
-  console.log(eInfo)
-  console.log(chartBundle)
-  console.log(dataIN)
   var localthis = this
   let visIN = eInfo.visID[0]
   let liveTime = eInfo.time.startperiod

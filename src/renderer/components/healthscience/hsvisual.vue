@@ -10,6 +10,7 @@
         </select>
         <div id="add-button">
           <button v-model="liveexerimentList" class="button-expadd" href="" id="add-exp-button" @click.prevent="experADD($event)">Add</button>
+          <div v-if="saveExpKid.active === true" id="confirm-add-experiment">{{ saveExpKid.text }}</div>
         </div>
 
       </div>
@@ -84,7 +85,8 @@
       navTime: {
         type: Array
       },
-      displayTime: ''
+      displayTime: '',
+      saveExpKid: {}
     },
     data () {
       return {
@@ -120,7 +122,8 @@
         visTableview: false,
         visSimview: false,
         timeVis: [],
-        selectedExperiment: ''
+        selectedExperiment: '',
+        confirmAddE: '---'
       }
     },
     computed: {

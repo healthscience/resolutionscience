@@ -130,8 +130,6 @@ DataComponent.prototype.sourceData = async function (apiINFO) {
   this.TidyData()
   // is there a categories filter to apply?
   this.CategoriseData()
-  console.log('raw data complete')
-  console.log(this.dataRaw)
   return true
 }
 
@@ -185,8 +183,6 @@ DataComponent.prototype.CategoriseData = function () {
 *
 */
 DataComponent.prototype.assessDataStatus = function () {
-  console.log(this.categoryData)
-  console.log(this.tidyData)
   if (this.categoryData.length > 0) {
     this.liveData = this.categoryData
   } else {

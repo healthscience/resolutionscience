@@ -28,8 +28,6 @@ export default {
       await this.safeMixin.scienceEntities(lBundle)
       // this.learnListening()
       let entityGetter = await this.safeMixin.entityGetter(this.activeEntity, this.activevis)
-      console.log('VUE---return getter data')
-      console.log(entityGetter)
       this.chartmessage.active = false
       returnVISvue = await this.diplayFilter(this.activeEntity, this.activevis, entityGetter)
       return returnVISvue
@@ -60,9 +58,6 @@ export default {
           this.liveanalysisStart = entityGetter.selectTimeStart
           this.liveSelectTime = this.liveanalysisStart
           let AvgDstart = await this.getAverages(aEID)
-          console.log('average back')
-          console.log(AvgDstart)
-          console.log(this.options2)
           this.options2.annotation.annotations[0].value = AvgDstart.avgdhr
           this.options2.annotation.annotations[1].value = AvgDstart.avgdrhr
           visObjectVUE.kContext = this.liveanalysisStart
@@ -83,8 +78,6 @@ export default {
     },
     startComputeUpdate () {
       this.activedevice = this.$store.getters.liveContext
-      console.log('before active device')
-      console.log(this.activedevice)
       this.liveFlow.computationSystem('wasm-sc-2', this.activedevice[0].device_mac)
       this.avgStatusCompMessage = 'Average compute is taking place'
       this.avgStatusCompute = true
@@ -102,14 +95,9 @@ export default {
     },
     async getAverages (eid) {
       // update latest daily average HR
-      console.log('get averages')
       let AvgDailyHolder = {}
       let currentAHR = await this.safeMixin.entityCurrentAverageHR(eid, 'none')
-      console.log('averageHR current====')
-      console.log(currentAHR)
       let newARHR = await this.safeMixin.entityCurrentAverageHR(eid, 'cnrl-8356388727')
-      console.log('averageHR current====')
-      console.log(newARHR)
       // let newARHR = 55
       AvgDailyHolder.avgdhr = currentAHR
       AvgDailyHolder.avgdrhr = newARHR
@@ -136,8 +124,9 @@ export default {
       bund.startStatus = updateStartStatus
       this.safeMixin.startSettings('save', bund)
     },
-    SaveexperimentKbundles (mapEKb) {
-      this.safeMixin.experimentKbundles('save', mapEKb)
+    async SaveexperimentKbundles (mapEKb) {
+      let saveStatus = await this.safeMixin.experimentKbundles('save', mapEKb)
+      return saveStatus
     }
   }
 }

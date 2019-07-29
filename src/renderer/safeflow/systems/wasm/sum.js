@@ -86,7 +86,6 @@ SumSystem.prototype.tidySinglearray = async function (startDate, device, avgType
       tidyCount++
     }
   }
-  console.log(tidyCount)
   // await this.averageStatistics(startDate, device, avgType, singleArray, tidyCount)
   return true
 }

@@ -87,11 +87,7 @@
         console.log('live experiment dashboard')
       },
       experimentsStart () {
-        // console.log('BEGIN---experVIS')
         this.liveExper = []
-        // console.log(this.$store.getters.liveExperimentList)
-        // console.log(this.$store.getters.livemapExperimentKbundles)
-        // console.log(this.$store.getters.startBundlesList)
         this.$store.dispatch('actionFilterKBundles')
         this.KLexperimentData = this.$store.getters.liveExperimentList
       }

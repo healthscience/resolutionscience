@@ -53,7 +53,6 @@ DataSystem.prototype.getLiveDevices = function (devicesIN) {
 DataSystem.prototype.saveStartStatus = async function (bundle) {
   // make query to network for context data per devices
   let startStatusresult = await this.liveTestStorage.saveStartSettings(bundle)
-  // console.log(startStatusresult)
   return startStatusresult
 }
 
@@ -65,7 +64,6 @@ DataSystem.prototype.saveStartStatus = async function (bundle) {
 DataSystem.prototype.getStartStatus = async function () {
   // make query to network for context data per devices
   let startStatusresult = await this.liveTestStorage.getStartSettings()
-  // console.log(startStatusresult)
   return startStatusresult
 }
 
@@ -77,7 +75,6 @@ DataSystem.prototype.getStartStatus = async function () {
 DataSystem.prototype.getExpKbundles = async function () {
   // make query to network for context data per devices
   let startStatusresult = await this.liveTestStorage.getExpKbundles()
-  // console.log(startStatusresult)
   return startStatusresult
 }
 
@@ -89,7 +86,6 @@ DataSystem.prototype.getExpKbundles = async function () {
 DataSystem.prototype.saveExpKbundles = async function (bundle) {
   // make query to network for context data per devices
   let startStatusresult = await this.liveTestStorage.saveExpKbundles(bundle)
-  // console.log(startStatusresult)
   return startStatusresult
 }
 
@@ -102,7 +98,6 @@ DataSystem.prototype.systemDevice = async function (callbackC) {
   // make query to network for context data per devices
   let localthis = this
   await this.liveTestStorage.getDeviceData().then(function (result) {
-    // console.log(result)
     localthis.activeContext = result
     // filter over to pair same types of devices and put in newest order and add active to newest of all devices or selected by user as starting device to display
     // extract the device macs per devicename
@@ -287,10 +282,6 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
 *
 */
 DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, compInfo) {
-  // console.log('start of tidy raw')
-  // console.log(DTlive)
-  // console.log(compInfo)
-  // console.log(dataRawS)
   let postCatdata = []
   let cleanData = []
   let sTidyarray = []
@@ -302,8 +293,6 @@ DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, compInfo) {
   } else {
     postCatdata = this.categorySorterSingle(dataRawS, compInfo.categorycodes)
   }
-  // console.log('post catoery')
-  // console.log(postCatdata)
   // need to loop and match dt to tidy dts?
   if (compInfo.tidyList.length > 0) {
     for (let idt of compInfo.tidyList) {
@@ -332,14 +321,8 @@ DataSystem.prototype.tidyRawDataSingle = function (dataRawS, DTlive, compInfo) {
   } else {
     sTidyarray = dataRawS
   }
-  // console.log('end')
-  // console.log(DTlive)
-  // console.log(sTidyarray)
   // extract the dt required
   sTidyarray = this.extractDTcolumn(DTlive, sTidyarray)
-  // does a category filter apply?
-  // console.log('endend')
-  // console.log(sTidyarray)
   return sTidyarray
 }
 
@@ -352,8 +335,6 @@ DataSystem.prototype.extractDTcolumn = function (sourceDT, arrayIN) {
   let singleArray = []
   let intData = 0
   for (let sing of arrayIN) {
-    // console.log('columloop')
-    // console.log(sing)
     if (sourceDT.cnrl === 'cnrl-8856388711') {
       intData = parseInt(sing.heart_rate, 10)
       singleArray.push(intData)
@@ -380,10 +361,8 @@ DataSystem.prototype.getRawSumData = async function (bundleIN) {
   for (let di of bundleIN.deviceList) {
     // also need to loop for datatype and map to storage API function that matches
     for (let dtl of bundleIN.dtAsked) {
-      // console.log(dtl)
       // loop over datatypes
       for (let tsg of bundleIN.timeseg) {
-        // console.log(tsg)
         // loop over time segments
         await localthis.liveTestStorage.getSumData(bundleIN.startperiod, di, bundleIN.scienceAsked.prime.cnrl, dtl.cnrl, tsg).then(function (statsData) {
           averageHolder = {}
@@ -407,8 +386,6 @@ DataSystem.prototype.getRawSumData = async function (bundleIN) {
 *
 */
 DataSystem.prototype.getRawAverageData = async function (bundleIN) {
-  console.log('get raw averg query')
-  console.log(bundleIN)
   const localthis = this
   // how many sensor ie data sets are being asked for?
   // loop over and return Statistics Data and return to callback
@@ -418,10 +395,8 @@ DataSystem.prototype.getRawAverageData = async function (bundleIN) {
   for (let di of bundleIN.deviceList) {
     // also need to loop for datatype and map to storage API function that matches
     for (let dtl of bundleIN.dtAsked) {
-      // console.log(dtl)
       // loop over datatypes
       for (let tsg of bundleIN.timeseg) {
-        // console.log(tsg)
         // loop over time segments
         let statsData = await localthis.liveTestStorage.getAverageData(bundleIN.startperiod, di, bundleIN.scienceAsked.prime.cnrl, dtl.cnrl, tsg, bundleIN.categories[0].cnrl).catch(function (err) {
           console.log(err)
@@ -449,7 +424,6 @@ DataSystem.prototype.getHRrecovery = async function (bundleIN, dtAsked) {
   const deviceLiveFilter = bundleIN.deviceList
   for (let di of deviceLiveFilter) {
     await localthis.liveTestStorage.getHRrecoveryData(bundleIN.timePeriod, di, dtAsked).then(function (statsData) {
-      // console.log('returned recovery data')
       localthis.recoverHR[di] = statsData
       statsData = []
     }).catch(function (err) {

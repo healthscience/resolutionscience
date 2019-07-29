@@ -68,7 +68,7 @@
       <history-List :historyData="historyData" @setLiveBundle="makeLiveKnowledge"></history-List>
     </div>
     <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
-    <hsvisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime"></hsvisual>
+    <hsvisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime" :saveExpKid="saveStatusEK"></hsvisual>
   </div>
 </template>
 
@@ -125,7 +125,8 @@
         liveDataCollection: {},
         liveOptions: {},
         liveNavTime: [],
-        liveTimeV: ''
+        liveTimeV: '',
+        saveStatusEK: {}
       }
     },
     created () {
@@ -160,6 +161,9 @@
       let sciStartEmpty = {}
       sciStartEmpty.prime = {'text': 'empty'}
       this.liveData.scienceLive = sciStartEmpty
+      // let categoryEmpty = {}
+      // categoryEmpty.categories = {'active': false, 'cnrl': 'none', 'text': 'none'}
+      this.liveData.categoryLive.push({'active': false, 'cnrl': 'none', 'text': 'none'}) // categoryEmpty
       this.setNaveTime()
     },
     mixins: [liveMixinSAFEflow],
@@ -180,18 +184,7 @@
         updateTbundle.timevis = ['day']
         // has any category been selected?
         let categoryLive = []
-        console.log('category empty???')
-        console.log(this.liveData.categoryLive)
-        if (this.liveData.categoryLive.length === 0 || this.liveData.categoryLive[0].active === undefined) {
-          console.log('none')
-          let noCat = {'active': false, 'cnrl': 'none', 'text': 'none'}
-          categoryLive.push(noCat)
-        } else {
-          console.log('yes catetyr')
-          categoryLive = this.liveData.categoryLive
-        }
-        console.log('post cat')
-        console.log(categoryLive)
+        categoryLive = this.liveData.categoryLive
         let liveBundle = {}
         liveBundle.cnrl = this.activeEntity
         liveBundle.startStatus = {'active': false, 'name': 'no'}
@@ -204,7 +197,6 @@
         liveBundle.time = updateTbundle
         liveBundle.resolution = this.liveData.resolutionLive
         liveBundle.visualisation = ['vis-sc-1']
-        // liveBundle.bid = this.$store.getters.liveBundleCounter
         // create unquie ID for kbundle and use to save
         let uuidBundle = this.createKBID(liveBundle)
         liveBundle.kbid = uuidBundle
@@ -274,8 +266,6 @@
       },
       async makeLiveKnowledge (lBund) {
         // set live Bundle for context
-        console.log('select bundle')
-        console.log(lBund)
         this.bundleuuid = lBund.kbid
         this.$store.dispatch('actionLiveBundle', lBund)
         const nowTime = moment()
@@ -366,6 +356,7 @@
       },
       categoryStatus (catIN) {
         // this.liveData.categoryLive = catIN
+        this.liveData.categoryLive = []
         if (catIN.active === true) {
           this.liveData.categoryLive.push(catIN)
         } else if (catIN.active === false) {
@@ -384,12 +375,15 @@
         this.liveData.categoryLive = result
         return true
       },
-      saveMappingExpKB (expMapIN) {
+      async saveMappingExpKB (expMapIN) {
         let mappingEKB = {}
         mappingEKB.experimentCNRL = expMapIN
         mappingEKB.kbid = this.bundleuuid
         this.$store.dispatch('actionExperimentKBundlesItem', mappingEKB)
-        this.SaveexperimentKbundles(mappingEKB)
+        let saveEK = await this.SaveexperimentKbundles(mappingEKB)
+        if (saveEK.save === 'expkbundle') {
+          this.saveStatusEK = {'active': true, 'text': 'saved'}
+        }
       },
       setNaveTime () {
         this.liveNavTime = this.timeNav('datatime-index')

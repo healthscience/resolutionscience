@@ -109,12 +109,9 @@ export default {
       this.contributeData = scienceStart
     },
     learnUpdate (uSeg) {
-      console.log('update bundle')
-      console.log(uSeg)
       let updateTbundle = {}
       let timeAsk = []
       timeAsk.push(uSeg.text)
-      console.log(timeAsk)
       updateTbundle.timevis = timeAsk
       updateTbundle.startperiod = 'relative'
       updateTbundle.timeseg = []
@@ -134,16 +131,12 @@ export default {
       this.learnStart(liveBundleUpdate)
     },
     toolsSwitch (tss) {
-      console.log('tools switch')
-      console.log(tss)
       if (tss === true) {
-        console.log(this.liveAnnotations)
         let updateCopyTemp = this.liveDataCollection
         this.liveDataCollection = {}
         let updateOptions = this.liveOptions
         updateOptions.annotation = this.liveAnnotations
         this.liveOptions = updateOptions
-        console.log(this.liveOptions)
         this.liveDataCollection = updateCopyTemp
       } else if (tss === false) {
         this.liveOptions.annotation = {}

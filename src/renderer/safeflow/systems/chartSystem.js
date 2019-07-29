@@ -34,19 +34,15 @@ util.inherits(ChartSystem, events.EventEmitter)
 *
 */
 ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle, cData) {
-  this.options = this.prepareChartOptions()
   let lastDataObject = cData.slice(-1)[0]
   let datalabel = []
   let visCHolder = {}
   let datay = []
   let liveDate = eInfo.time.startperiod
   visCHolder[liveDate] = {}
-  // console.log(cBundle)
   this.chartPrep = {}
   // loop through and build two sperate arrays
   //  for (let dataI of lastDataObject) {
-  //  console.log('loop of data to match to date')
-  //  console.log(dataI)
   if (lastDataObject[liveDate]) {
     for (let devI of eInfo.devices) {
       visCHolder[liveDate][devI.device_mac] = {}
@@ -69,8 +65,6 @@ ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle,
     }
   }
   // }
-  // console.log('chartholderPREPAREDstructure')
-  // console.log(visCHolder)
   return visCHolder
 }
 
@@ -91,7 +85,6 @@ ChartSystem.prototype.chartColors = function (datatypeItem) {
     colorHolder.backgroundColor = '#ed7d7d'
     colorHolder.borderColor = '#ea1212'
   }
-  // console.log(colorHolder)
   return colorHolder
 }
 
@@ -132,8 +125,6 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
     datachart.push(chartItem)
     labelData.push(rItems.data.labels)
   }
-  // console.log('chart data array vuechart.js')
-  // console.log(datachart)
   labelchart = this.prepareLabelchart(labelData)
   // check for no data available
   if (results.length === 0) {
@@ -164,10 +155,6 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
     }
   } else {
     // prepare the Chart OBJECT FOR CHART.JS  Up to 2 line e.g. BMP or Steps or BPM + Steps
-    var startChartDate = moment(labelchart[0])
-    this.updateChartoptions(startChartDate)
-    this.liveTime = startChartDate
-    // this.chartmessage = 'BPM'
     datacollection = {
       labels: labelchart,
       datasets: datachart
@@ -184,7 +171,6 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
 ChartSystem.prototype.prepareLabelchart = function (labelIN) {
   // let preparedLabel = labelIN.reduce((p, c, i, a) => a[p].length > c.length ? p : i, 0)
   // let preparedLabel = [...labelIN[0], ...labelIN[1]]
-  // console.log(preparedLabel)
   // return labelIN[preparedLabel]
   return labelIN[0]
 }
@@ -283,7 +269,6 @@ ChartSystem.prototype.prepareChartOptions = function (results) {
         },
         draggable: true,
         onClick: function (e) {
-          // console.log(e.type, this)
         }
       },
       {
@@ -300,7 +285,6 @@ ChartSystem.prototype.prepareChartOptions = function (results) {
         },
         draggable: true,
         onClick: function (e) {
-          // console.log(e.type, this)
         }
       },
       {
@@ -317,12 +301,9 @@ ChartSystem.prototype.prepareChartOptions = function (results) {
         },
         draggable: true,
         onClick: function (e) {
-          // console.log(e.type, this.options.value)
           localthis.analysisStart = options.value
-          // console.log(this.analysisStart + 'any ting')
         },
         onDrag: function (event) {
-          // console.log(event.subject.config.value)
           localthis.analysisStart = event.subject.config.value
         }
       },
@@ -340,12 +321,9 @@ ChartSystem.prototype.prepareChartOptions = function (results) {
         },
         draggable: true,
         onClick: function (et) {
-          // console.log(et.type, this)
           localthis.analysisEnd = options.value
-          // console.log(this.options.value)
         },
         onDrag: function (eventt) {
-          // console.log(event.subject.config.value)
           localthis.analysisEnd = eventt.subject.config.value
         }
       }]
@@ -359,9 +337,14 @@ ChartSystem.prototype.prepareChartOptions = function (results) {
 * @method updateChartoptions
 *
 */
-ChartSystem.prototype.updateChartoptions = function (startChartDate) {
-  this.newDate(startChartDate) // moment('12/21/2018', 'MM-DD-YYYY')
-  this.newDateEnd(startChartDate) // moment('12/21/2018', 'MM-DD-YYYY')
+ChartSystem.prototype.updateChartoptions = function (labelchart, options) {
+  var startChartDate = moment(labelchart[0])
+  this.liveTime = startChartDate
+  let setstartTime = this.newDate(startChartDate) // moment('12/21/2018', 'MM-DD-YYYY')
+  let setstartTime2 = this.newDateEnd(startChartDate) // moment('12/21/2018', 'MM-DD-YYYY')
+  options.annotation.annotations[2].value = setstartTime
+  options.annotation.annotations[3].value = setstartTime2
+  return options
 }
 
 /**
@@ -373,7 +356,7 @@ ChartSystem.prototype.newDate = function (selectDay) {
   var startTime = moment.utc(selectDay).startOf('day')
   const time = moment.duration('2:0:00')
   startTime.add(time)
-  this.options.annotation.annotations[2].value = startTime
+  return startTime
 }
 
 /**
@@ -386,7 +369,7 @@ ChartSystem.prototype.newDateEnd = function (endTimeIN) {
   var startTime2 = moment.utc(nowTime2).startOf('day')
   var time2 = moment.duration('4:0:00')
   startTime2.add(time2)
-  this.options.annotation.annotations[3].value = startTime2
+  return startTime2
 }
 
 /**
@@ -395,14 +378,11 @@ ChartSystem.prototype.newDateEnd = function (endTimeIN) {
 *
 */
 ChartSystem.prototype.structureStatisticsData = function (dataIN) {
-  this.options = this.AverageChartOptions()
-  // console.log(dataIN)
   let dataholder = {}
   let datalabel = []
   let dataC = []
   // loop through and build two sperate arrays
   for (let dc of dataIN) {
-    // console.log(entry)
     let millTimeprepare = dc.timestamp * 1000
     let mString = moment(millTimeprepare).toDate() // .format('YYYY-MM-DD hh:mm')
     datalabel.push(mString)
@@ -419,13 +399,11 @@ ChartSystem.prototype.structureStatisticsData = function (dataIN) {
 *
 */
 ChartSystem.prototype.structureSumData = function (dataIN) {
-  this.options = this.SumChartOptions()
   let dataholder = {}
   let datalabel = []
   let dataC = []
   // loop through and build two sperate arrays
   for (let dc of dataIN) {
-    // console.log(entry)
     let millTimeprepare = dc.timestamp * 1000
     let mString = moment(millTimeprepare).toDate() // .format('YYYY-MM-DD hh:mm')
     datalabel.push(mString)
@@ -481,12 +459,9 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
   this.colorback2 = ''
   this.colorlineback2 = ''
   // how many average dataTypes asked for?
-  // console.log(results.chart.length)
   if (results.chart.length === 2) {
     // need to prepare different visualisations, data return will fit only one Chart vis option
     for (let chD of results.chart) {
-      // console.log(chD)
-      // console.log(chD.color.datatype)
       if (chD.color.datatype === 'cnrl-8856388724') {
         this.labelback = chD.data.labels
         this.avg = chD.data.datasets
@@ -508,7 +483,6 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
       this.colorlineback = results.chart[0].color.borderColor
     } else if (results.chart[0].color.datatype === 'cnrl-8856388322') {
       this.heartback = []
-      // console.log(results.chart[0].data.labels)
       this.labelback = results.chart[0].data.labels
       this.avg = results.chart[0].data.datasets
       this.colorback2 = results.chart[0].color.backgroundColor
@@ -788,7 +762,6 @@ ChartSystem.prototype.AverageChartOptions = function () {
         },
         draggable: true,
         onClick: function (e) {
-          // console.log(e.type, this)
         }
       },
       {
@@ -805,7 +778,6 @@ ChartSystem.prototype.AverageChartOptions = function () {
         },
         draggable: true,
         onClick: function (e) {
-          // console.log(e.type, this)
         }
       },
       {
@@ -822,12 +794,9 @@ ChartSystem.prototype.AverageChartOptions = function () {
         },
         draggable: true,
         onClick: function (e) {
-          // console.log(e.type, this.options.value)
           localthis.analysisStart = options.value
-          // console.log(this.analysisStart + 'any ting')
         },
         onDrag: function (event) {
-          // console.log(event.subject.config.value)
           localthis.analysisStart = event.subject.config.value
         }
       },
@@ -845,12 +814,9 @@ ChartSystem.prototype.AverageChartOptions = function () {
         },
         draggable: true,
         onClick: function (et) {
-          // console.log(et.type, this)
           localthis.analysisEnd = options.value
-          // console.log(this.options.value)
         },
         onDrag: function (eventt) {
-          // console.log(event.subject.config.value)
           localthis.analysisEnd = eventt.subject.config.value
         }
       }]
@@ -938,7 +904,6 @@ ChartSystem.prototype.SumChartOptions = function () {
         },
         draggable: true,
         onClick: function (e) {
-          // console.log(e.type, this)
         }
       },
       {
@@ -955,7 +920,6 @@ ChartSystem.prototype.SumChartOptions = function () {
         },
         draggable: true,
         onClick: function (e) {
-          // console.log(e.type, this)
         }
       },
       {
@@ -972,12 +936,9 @@ ChartSystem.prototype.SumChartOptions = function () {
         },
         draggable: true,
         onClick: function (e) {
-          // console.log(e.type, this.options.value)
           localthis.analysisStart = options.value
-          // console.log(this.analysisStart + 'any ting')
         },
         onDrag: function (event) {
-          // console.log(event.subject.config.value)
           localthis.analysisStart = event.subject.config.value
         }
       },
@@ -995,12 +956,9 @@ ChartSystem.prototype.SumChartOptions = function () {
         },
         draggable: true,
         onClick: function (et) {
-          // console.log(et.type, this)
           localthis.analysisEnd = options.value
-          // console.log(this.options.value)
         },
         onDrag: function (eventt) {
-          // console.log(event.subject.config.value)
           localthis.analysisEnd = eventt.subject.config.value
         }
       }]

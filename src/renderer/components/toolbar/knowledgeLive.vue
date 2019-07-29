@@ -219,7 +219,7 @@
         this.liveOptions = visDataBack.liveOptions
         this.kContext = visDataBack.kContext
         this.liveTimeV = visDataBack.kContext.liveTime
-        this.liveData.datatypesLive = []
+        // this.liveData.datatypesLive = []
       },
       saveLearnHistory (lBundle) {
         this.historyData.push(lBundle)

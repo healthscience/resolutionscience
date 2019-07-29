@@ -60,12 +60,13 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
       structureHolder = {}
       dataTypeBucket = {}
     }
+    let liveChartOptions = this.liveChartSystem.prepareChartOptions()
     // package all the info. to pass to vue
     chartData.prepared = this.liveChartSystem.prepareVueChartJS(chartDataH.chart)
     // prepare chart options
-    let chartOptionsSet = this.liveChartSystem.getterChartOptions()
+    let setTimeTools = chartData.prepared.labels
+    let chartOptionsSet = this.liveChartSystem.updateChartoptions(setTimeTools, liveChartOptions) // this.liveChartSystem.getterChartOptions()
     chartData.options = chartOptionsSet
-    // chartData.livetime = this.liveTimeUtil.timeHTMLBuilder(liveDate)
     const chartHolder = {}
     chartHolder[visIN] = {}
     chartHolder[visIN][liveTime] = {}
@@ -75,6 +76,7 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
   } else if (eInfo.cid === 'cnrl-2356388732') {
     console.log('average Chart vis start')
     // could be more than one visualisation required,  devices, datatypes, timeseg or computation or event resolutions
+    let liveChartOptions = this.liveChartSystem.AverageChartOptions()
     for (let dType of eInfo.datatypes) {
       for (let device of eInfo.devices) {
         for (let entry of dataIN[liveTime][device.device_mac][dType.cnrl]) {
@@ -82,14 +84,13 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
           if (entry.day) {
             structureHolder = this.liveChartSystem.structureStatisticsData(entry.day)
             let chartColorsSet = localthis.liveChartSystem.StatschartColors(dType)
-            // console.log('average colours')
-            // console.log(chartColorsSet)
             dataTypeBucket.data = structureHolder
             dataTypeBucket.color = chartColorsSet
             chartDataH.chart.push(dataTypeBucket)
             // now prepare data format for chartjs
             chartData.prepared = this.liveChartSystem.prepareStatsVueChartJS(eInfo.devices, chartDataH)
-            let chartOptionsSet = this.liveChartSystem.getterChartOptions()
+            let setTimeTools = chartData.prepared.labels
+            let chartOptionsSet = this.liveChartSystem.updateChartoptions(setTimeTools, liveChartOptions) // this.liveChartSystem.getterChartOptions()
             chartData.options = chartOptionsSet
             const chartHolder = {}
             chartHolder[visIN] = {}
@@ -113,6 +114,7 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
     // summation of datatypes
     console.log('SUM chart')
     // could be more than one visualisation required,  devices, datatypes, timeseg or computation or event resolutions
+    let liveChartOptions = this.liveChartSystem.SumChartOptions()
     for (let dType of eInfo.datatypes) {
       for (let device of eInfo.devices) {
         for (let entry of dataIN[liveTime][device.device_mac][dType.cnrl]) {
@@ -120,14 +122,13 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
           if (entry.day) {
             structureHolder = this.liveChartSystem.structureSumData(entry.day)
             let chartColorsSet = localthis.liveChartSystem.StatschartColors(dType)
-            // console.log('average colours')
-            // console.log(chartColorsSet)
             dataTypeBucket.data = structureHolder
             dataTypeBucket.color = chartColorsSet
             chartDataH.chart.push(dataTypeBucket)
             // now prepare data format for chartjs
             chartData.prepared = this.liveChartSystem.prepareSumVueChartJS(eInfo.devices, chartDataH)
-            let chartOptionsSet = this.liveChartSystem.getterChartOptions()
+            let setTimeTools = chartData.prepared.labels
+            let chartOptionsSet = this.liveChartSystem.updateChartoptions(setTimeTools, liveChartOptions) // this.liveChartSystem.getterChartOptions()
             chartData.options = chartOptionsSet
             const chartHolder = {}
             chartHolder[visIN] = {}

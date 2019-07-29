@@ -120,8 +120,6 @@ export default {
     },
     saveStartBundle (bund) {
       // need up date startStatus Object
-      let updateStartStatus = {'active': true, 'name': 'yes'}
-      bund.startStatus = updateStartStatus
       this.safeMixin.startSettings('save', bund)
     },
     async SaveexperimentKbundles (mapEKb) {

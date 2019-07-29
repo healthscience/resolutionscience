@@ -68,8 +68,6 @@ StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, dev
       saveJSON.tidy = singleArray.tidycount
       saveJSON.timeseg = tseg
       saveJSON.category = category
-      // console.log('average save')
-      // console.log(saveJSON)
       this.liveTestStorage.saveaverageData(saveJSON)
     }
   }
@@ -161,11 +159,8 @@ StatisticsSystem.prototype.averageMonthlyStatistics = function () {
 *
 */
 StatisticsSystem.prototype.averageCurrentDailyStatistics = async function (startDate, device, compType, datatype, timeseg, category) {
-  console.log('sum avg avg')
   let dataBatch = await this.liveTestStorage.getAverageData(startDate, device, compType, datatype, timeseg, category)
   let numberEntries = dataBatch.length
-  console.log('no avgs')
-  console.log(numberEntries)
   // form single arrays
   let singleAvgArray = []
   for (let sav of dataBatch) {
@@ -176,13 +171,9 @@ StatisticsSystem.prototype.averageCurrentDailyStatistics = async function (start
   function add (a, b) {
     return a + b
   }
-  console.log('sum')
-  console.log(sum)
   let averageResult = sum / numberEntries
   let roundAverage = Math.round(averageResult)
   // where to save
-  console.log('avg averages')
-  console.log(roundAverage)
   return roundAverage
 }
 

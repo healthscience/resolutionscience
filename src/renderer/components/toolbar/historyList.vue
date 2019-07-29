@@ -160,6 +160,8 @@
           for (let ukb of this.historyData) {
             let makeInt = status.target.value
             if (ukb.kbid === makeInt) {
+              console.log('make live bundle')
+              console.log(ukb)
               this.$emit('setLiveBundle', ukb)
             }
           }
@@ -168,6 +170,7 @@
       startStatusSave (se) {
         // change start status and save or delete settings
         let startKID = se.target.id
+        this.$store.dispatch('actionUpdateBundleItem', startKID)
         let updateBundle = this.$store.getters.startBundlesList
         for (let iB of updateBundle) {
           if (iB.kbid === startKID) {

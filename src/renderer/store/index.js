@@ -111,6 +111,8 @@ export default new Vuex.Store({
       state.startBundles = inVerified
     },
     setStartKBundlesItem: (state, inVerified) => {
+      console.log('for compute list save')
+      console.log(inVerified)
       state.startBundles.push(inVerified)
     },
     setComputeStatus: (state, startPeriodTime) => {
@@ -144,15 +146,22 @@ export default new Vuex.Store({
       lss.active = true
       lss.name = 'yes'
       for (let ukb of state.startBundles) {
-        if (ukb.bid === inVerified) {
+        if (ukb.kbid === inVerified) {
           ukb.startStatus = lss
         }
       }
     },
     setBundlestartTime: (state, inVerified) => {
       // TEMP add cateogry data
-      state.bundle.categories = []
+      // state.bundle.categories = []
       state.bundle.time.startperiod = inVerified
+    },
+    setSciCompute: (state, inVerified) => {
+      console.log('set sci compute')
+      console.log(inVerified)
+      let sciCompute = {}
+      sciCompute.cnrl = inVerified
+      state.bundle.scienceLive = sciCompute
     },
     setExperimentCNRL: (state, inVerified) => {
       if (inVerified.view === true) {
@@ -218,6 +227,10 @@ export default new Vuex.Store({
     actionUpdateStartTime: (context, update) => {
     // update settings to show at startup per bundle item
       context.commit('setBundlestartTime', update)
+    },
+    actionUpdateSciCompute: (context, update) => {
+    // update settings to show at startup per bundle item
+      context.commit('setSciCompute', update)
     },
     actionUpdateExperiment: (context, update) => {
     // update settings to show at startup per bundle item

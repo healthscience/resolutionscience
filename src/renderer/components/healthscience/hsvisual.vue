@@ -10,7 +10,7 @@
         </select>
         <div id="add-button">
           <button v-model="liveexerimentList" class="button-expadd" href="" id="add-exp-button" @click.prevent="experADD($event)">Add</button>
-          <div v-if="saveExpKid.active === true" id="confirm-add-experiment">{{ saveExpKid.text }}</div>
+          <div v-if="saveExpKid.active === true" transition="fade" id="confirm-add-experiment">{{ saveExpKid.text }}</div>
         </div>
 
       </div>
@@ -205,6 +205,9 @@
       experADD (expA) {
         // need to keep permanent store of experiments to Ecomponents linked (save, delete, update also)
         this.$emit('experimentMap', this.selectedExperiment)
+        setTimeout(function () {
+          this.saveExpKid.active = false
+        }, 3000) // hide the message after 3 seconds
       }
     }
   }
@@ -299,5 +302,18 @@ li {
 .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
 .tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
 .tg .tg-0lax{text-align:left;vertical-align:top}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s
+}
+
+.fade-enter,
+.fade-leave-to
+/* .fade-leave-active in <2.1.8 */
+
+{
+  opacity: 0
+}
 
 </style>

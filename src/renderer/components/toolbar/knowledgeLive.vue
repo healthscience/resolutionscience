@@ -266,13 +266,15 @@
       },
       async makeLiveKnowledge (lBund) {
         // set live Bundle for context
+        // first close the computelist
+        this.hist.active = false
+        this.hist.name = 'View compute list'
         this.bundleuuid = lBund.kbid
         this.$store.dispatch('actionLiveBundle', lBund)
         const nowTime = moment()
         let updatestartPeriodTime = moment.utc(nowTime).startOf('day')
         this.$store.dispatch('actionUpdateStartTime', updatestartPeriodTime)
-        this.liveData.scienceLive = {}
-        this.liveData.scienceLive.cnrl = lBund.cnrl
+        this.$store.dispatch('actionUpdateSciCompute', lBund.cnrl)
         this.entityPrepareStatus.active = true
         let visDataBack = await this.learnStart(lBund)
         // remove compute in progress Message

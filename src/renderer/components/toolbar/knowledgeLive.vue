@@ -205,6 +205,8 @@
         this.$store.dispatch('actionStartKBundlesItem', liveBundle)
         // set message to UI IN-progress
         this.entityPrepareStatus.active = true
+        console.log('knowleget box bundle')
+        console.log(liveBundle)
         let visDataBack = await this.learnStart(liveBundle)
         this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
@@ -318,6 +320,7 @@
         this.categoryStatus(categoriesBuild)
       },
       clearKnowledgeBox () {
+        // but set category and compute variables
         this.liveData.languageLive = ''
         this.liveData.devicesLive = []
         this.liveData.datatypesLive = []
@@ -325,6 +328,11 @@
         this.liveData.resolutionLive = ''
         this.liveData.timeLive = []
         this.liveData.categoryLive = []
+        // set defaults
+        let sciStartEmpty = {}
+        sciStartEmpty.prime = {'text': 'empty'}
+        this.liveData.scienceLive = sciStartEmpty
+        this.liveData.categoryLive.push({'active': false, 'cnrl': 'none', 'text': 'none'}) // categoryEmpty
       },
       languageStatus (lIN) {
         this.liveData.languageLive = lIN

@@ -115,6 +115,7 @@ DataComponent.prototype.setCategories = function (ctIN) {
 *
 */
 DataComponent.prototype.sourceData = async function (apiINFO) {
+  console.log(apiINFO)
   this.apiInfoLive = apiINFO
   let systemBundle = {}
   systemBundle.apiInfo = apiINFO

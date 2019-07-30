@@ -111,8 +111,6 @@ export default new Vuex.Store({
       state.startBundles = inVerified
     },
     setStartKBundlesItem: (state, inVerified) => {
-      console.log('for compute list save')
-      console.log(inVerified)
       state.startBundles.push(inVerified)
     },
     setComputeStatus: (state, startPeriodTime) => {

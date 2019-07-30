@@ -188,7 +188,7 @@
         ok.active = !ok.active
         if (ok.active === true) {
           ok.name = 'Close Knowledge'
-          this.$emit('clearKbox')
+          // this.$emit('clearKbox')
         } else {
           ok.name = 'OPEN KNOWLEDGE'
         }

@@ -4,7 +4,7 @@
     <main>
       <div class="left-side">
         <span id="welcome">
-          <header>Welcome, the DIY Science toolkit allows you</header>
+          <header>Welcome, the DIY HealthScience toolkit allows you</header>
           <p>1. learn & particpate in Experiments</p>
           <p>2. contribute science</p>
           <p>3. build your own dashboards</p>
@@ -15,7 +15,7 @@
 
       <div class="right-side">
         <div class="doc">
-          <div class="title">Peer to Peer Science</div>
+          <div class="title">Peer to Peer Science with Rigour</div>
           <p>version v0.02f</p>
           <br><br>
           <div id="network-status">

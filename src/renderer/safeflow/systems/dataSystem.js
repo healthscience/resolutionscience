@@ -386,7 +386,6 @@ DataSystem.prototype.getRawSumData = async function (bundleIN) {
 *
 */
 DataSystem.prototype.getRawAverageData = async function (bundleIN) {
-  console.log(bundleIN)
   const localthis = this
   // how many sensor ie data sets are being asked for?
   // loop over and return Statistics Data and return to callback

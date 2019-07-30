@@ -35,7 +35,7 @@
         {
           name: 'View experiments',
           id: 'learn-experiments',
-          active: false
+          active: true
         },
         liveDataCollection: {},
         liveOptions: {},

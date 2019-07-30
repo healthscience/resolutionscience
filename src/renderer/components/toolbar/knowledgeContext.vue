@@ -188,6 +188,7 @@
         ok.active = !ok.active
         if (ok.active === true) {
           ok.name = 'Close Knowledge'
+          this.$emit('clearKbox')
         } else {
           ok.name = 'OPEN KNOWLEDGE'
         }
@@ -410,5 +411,10 @@
   padding-left: 10px;
   padding-top: 10px;
   border: 0px solid black;
+}
+
+#open-knowledge.active {
+  background-color:#8ec16d;
+  color: purple;
 }
 </style>

@@ -157,8 +157,6 @@ export default new Vuex.Store({
       state.bundle.time.startperiod = inVerified
     },
     setSciCompute: (state, inVerified) => {
-      console.log('set sci compute')
-      console.log(inVerified)
       let sciCompute = {}
       sciCompute.cnrl = inVerified
       state.bundle.scienceLive = sciCompute

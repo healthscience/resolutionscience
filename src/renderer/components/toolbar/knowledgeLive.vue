@@ -63,7 +63,7 @@
       </div>
       <div id="learn-close"></div>
     </div>
-    <knowledge-Context :kContext="kContext"></knowledge-Context>
+    <knowledge-Context :kContext="kContext" @clearKbox="clearKnowledgeBox"></knowledge-Context>
     <div id="history" v-if="hist.active">
       <history-List :historyData="historyData" @setLiveBundle="makeLiveKnowledge"></history-List>
     </div>
@@ -276,6 +276,8 @@
         this.$store.dispatch('actionUpdateStartTime', updatestartPeriodTime)
         this.$store.dispatch('actionUpdateSciCompute', lBund.cnrl)
         this.entityPrepareStatus.active = true
+        // set the active knowledge boxes
+        this.setKnowledgtBox(lBund)
         let visDataBack = await this.learnStart(lBund)
         // remove compute in progress Message
         this.$store.dispatch('actionstopComputeStatus', lBund.kbid)
@@ -284,6 +286,45 @@
         this.liveOptions = visDataBack.liveOptions
         this.kContext = visDataBack.kContext
         this.liveTimeV = visDataBack.kContext.liveTime
+      },
+      setKnowledgtBox (liveKbid) {
+        // first clear existing knowledge in box
+        this.clearKnowledgeBox()
+        console.log('kbid setting live K box')
+        console.log(liveKbid)
+        this.languageStatus(liveKbid.language)
+        this.deviceStatus(liveKbid.startStatus)
+        for (let dI of liveKbid.devices) {
+          this.liveDevice(dI)
+        }
+        for (let dtI of liveKbid.datatypes) {
+          this.datatypeStatus(dtI)
+        }
+        this.scienceStatus(liveKbid.science)
+        console.log('time')
+        console.log(liveKbid.time)
+        let timeBuild = {}
+        timeBuild.active = true
+        timeBuild.text = liveKbid.time.timeseg[0]
+        this.timeStatus(timeBuild)
+        let resolutionBuild = {}
+        resolutionBuild.active = true
+        resolutionBuild.text = liveKbid.resolution
+        this.resolutionStatus(resolutionBuild)
+        let categoriesBuild = {}
+        categoriesBuild.active = true
+        categoriesBuild.cnrl = liveKbid.categories[0].cnrl
+        categoriesBuild.text = liveKbid.categories[0].text
+        this.categoryStatus(categoriesBuild)
+      },
+      clearKnowledgeBox () {
+        this.liveData.languageLive = ''
+        this.liveData.devicesLive = []
+        this.liveData.datatypesLive = []
+        this.liveData.scienceLive = ''
+        this.liveData.resolutionLive = ''
+        this.liveData.timeLive = []
+        this.liveData.categoryLive = []
       },
       languageStatus (lIN) {
         this.liveData.languageLive = lIN
@@ -334,6 +375,7 @@
         return true
       },
       scienceStatus (sIN) {
+        console.log(sIN)
         this.liveData.scienceLive = sIN
       },
       timeStatus (tIN) {

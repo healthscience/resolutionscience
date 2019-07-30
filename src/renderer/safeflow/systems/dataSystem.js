@@ -163,8 +163,6 @@ DataSystem.prototype.getLiveDatatypes = function (dtIN) {
 *
 */
 DataSystem.prototype.datatypeQueryMapping = async function (systemBundle) {
-  console.log('query mapper')
-  console.log(systemBundle)
   let rawHolder = {}
   // review the apiInfo  map to function that will make acutal API call (should abstrac to build rest or crypto storage query string programmatically)
   // first is the data from the PAST or FUTURE ie simulated?

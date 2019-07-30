@@ -424,6 +424,9 @@
           })
         }
         let result = arrayRemove(array, remove)
+        if (result.length === 0) {
+          result.push({'active': false, 'cnrl': 'none', 'text': 'none'})
+        }
         this.liveData.categoryLive = result
         return true
       },

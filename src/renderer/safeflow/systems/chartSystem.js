@@ -436,8 +436,8 @@ ChartSystem.prototype.StatschartColors = function (datatypeItem) {
     colorHolder.borderColor = '#050d2d'
   } else if (datatypeItem.cnrl === 'cnrl-8856389322') {
     colorHolder.datatype = 'cnrl-8856389322'
-    colorHolder.backgroundColor = '#ed7d7d'
-    colorHolder.borderColor = '#ea1212'
+    colorHolder.backgroundColor = '#444b57'
+    colorHolder.borderColor = '#444b57'
   }
   return colorHolder
 }
@@ -605,8 +605,8 @@ ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
     } else if (results.chart[0].color.datatype === 'cnrl-8856389322') {
       this.labelback = results.chart[0].data.labels
       this.sum = results.chart[0].data.datasets
-      this.colorback2 = results.chart[0].color.backgroundColor
-      this.colorlineback2 = results.chart[0].color.borderColor
+      this.colorback = results.chart[0].color.backgroundColor
+      this.colorlineback = results.chart[0].color.borderColor
     }
   }
 
@@ -645,7 +645,7 @@ ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
           {
             type: 'line',
             label: 'Device 1',
-            borderColor: '#ea1212',
+            borderColor: this.colorback,
             backgroundColor: 'rgba(255, 99, 132, 0.2)',
             fill: true,
             data: localthis.sum,
@@ -653,7 +653,7 @@ ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
           }, {
             type: 'line',
             label: 'Device 2',
-            borderColor: '#050d2d',
+            borderColor: this.colorback2,
             backgroundColor: '#050d2d',
             fill: false,
             data: localthis.sum2,
@@ -670,7 +670,7 @@ ChartSystem.prototype.prepareSumVueChartJS = function (deviceList, results) {
           {
             type: 'line',
             label: 'Device 1',
-            borderColor: '#ea1212',
+            borderColor: this.colorback,
             backgroundColor: 'rgba(255, 99, 132, 0.2)',
             fill: true,
             data: localthis.sum,

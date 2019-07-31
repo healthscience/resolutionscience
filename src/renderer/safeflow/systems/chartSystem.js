@@ -485,8 +485,8 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
       this.heartback = []
       this.labelback = results.chart[0].data.labels
       this.avg = results.chart[0].data.datasets
-      this.colorback2 = results.chart[0].color.backgroundColor
-      this.colorlineback2 = results.chart[0].color.borderColor
+      this.colorback = results.chart[0].color.backgroundColor
+      this.colorlineback = results.chart[0].color.borderColor
     }
   }
 
@@ -525,7 +525,7 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
           {
             type: 'line',
             label: 'Device 1',
-            borderColor: '#ea1212',
+            borderColor: this.colorback,
             backgroundColor: 'rgba(255, 99, 132, 0.2)',
             fill: true,
             data: localthis.avg,
@@ -533,7 +533,7 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
           }, {
             type: 'line',
             label: 'Device 2',
-            borderColor: '#050d2d',
+            borderColor: this.colorback2,
             backgroundColor: '#050d2d',
             fill: false,
             data: localthis.avg2,
@@ -550,7 +550,7 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
           {
             type: 'line',
             label: 'Device 1',
-            borderColor: '#ea1212',
+            borderColor: this.colorback,
             backgroundColor: 'rgba(255, 99, 132, 0.2)',
             fill: true,
             data: localthis.avg,

@@ -9,8 +9,8 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import ChartSystem from './chartSystem.js'
-import TableSystem from './tableSystem.js'
+import ChartSystem from './charts/chartSystem.js'
+import TableSystem from './table/tableSystem.js'
 const util = require('util')
 const events = require('events')
 
@@ -60,7 +60,10 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
       structureHolder = {}
       dataTypeBucket = {}
     }
-    let liveChartOptions = this.liveChartSystem.prepareChartOptions()
+    // prepare title, y axis text and scaling
+    let titleOut = 'Device ' + eInfo.devices[0].device_name
+    let scaling = 80
+    let liveChartOptions = this.liveChartSystem.prepareChartOptions(titleOut, eInfo.datatypes, scaling)
     // package all the info. to pass to vue
     chartData.prepared = this.liveChartSystem.prepareVueChartJS(chartDataH.chart)
     // prepare chart options

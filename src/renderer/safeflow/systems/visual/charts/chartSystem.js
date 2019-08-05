@@ -55,7 +55,7 @@ ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle,
         } else if (datatypeIN.cnrl === 'cnrl-8856388712') {
           datay.push(liveData.steps)
         } else if (datatypeIN.cnrl === 'cnrl-3339949442') {
-          datay.push(parseInt(liveData.data.sensordatavalues[0].value, 10))
+          datay.push(parseInt(liveData.data.sensordatavalues[3].value, 10))
         }
       }
       dataholder.labels = datalabel
@@ -195,8 +195,30 @@ ChartSystem.prototype.getterChartOptions = function () {
 * @method prepareChartOptions
 *
 */
-ChartSystem.prototype.prepareChartOptions = function (results) {
+ChartSystem.prototype.prepareChartOptions = function (title, datatypes, scale) {
+  console.log(datatypes)
   var localthis = this
+  // prepare y axis dependent up how many datatypes plot
+  let yAxisPrep = []
+  for (let dti of datatypes) {
+    let yItem = {
+      type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+      display: true,
+      position: 'left',
+      id: 'bpm',
+      ticks: {
+        beginAtZero: true,
+        steps: 10,
+        stepValue: 5,
+        max: scale
+      },
+      scaleLabel: {
+        display: true,
+        labelString: dti.text
+      }
+    }
+    yAxisPrep.push(yItem)
+  }
   let options = {
     responsive: true,
     spanGaps: true,
@@ -207,7 +229,7 @@ ChartSystem.prototype.prepareChartOptions = function (results) {
     stacked: false,
     title: {
       display: true,
-      text: 'Device Data Charting'
+      text: title
     },
     scales: {
       xAxes: [{
@@ -225,39 +247,7 @@ ChartSystem.prototype.prepareChartOptions = function (results) {
           reverse: true
         }
       }],
-      yAxes: [{
-        type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-        display: true,
-        position: 'left',
-        id: 'bpm',
-        ticks: {
-          beginAtZero: true,
-          steps: 10,
-          stepValue: 5,
-          max: 180
-        },
-        scaleLabel: {
-          display: true,
-          labelString: 'Beats Per Minute Heart Rate'
-        }
-      },
-      {
-        type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-        display: true,
-        position: 'right',
-        id: 'steps',
-        // grid line settings
-        gridLines: {
-          drawOnChartArea: false // only want the grid lines for one axis to show up
-        },
-        ticks: {
-          beginAtZero: true
-        },
-        scaleLabel: {
-          display: true,
-          labelString: 'Number of Steps'
-        }
-      }]
+      yAxes: yAxisPrep
     },
     annotation: {
       events: ['click'],

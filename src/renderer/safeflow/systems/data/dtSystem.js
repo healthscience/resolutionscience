@@ -102,6 +102,7 @@ DTSystem.prototype.datatypeCheckAPI = function (packagingDTs, lDTs) {
   let tableCount = 0
   // match to source API query
   for (let dtt of packagingDTs.tableStructure) {
+    // is there table structure embedd in the storageStructure?
     for (let idt of lDTs) {
       const result = dtt.filter(item => item.cnrl === idt.cnrl)
       if (result.length > 0) {

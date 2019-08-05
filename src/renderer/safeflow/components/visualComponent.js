@@ -9,7 +9,7 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import VisSystem from '../systems/visSystem.js'
+import VisSystem from '../systems/visual/visSystem.js'
 const util = require('util')
 const events = require('events')
 

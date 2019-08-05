@@ -54,6 +54,8 @@ ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle,
           datay.push(liveData.heart_rate)
         } else if (datatypeIN.cnrl === 'cnrl-8856388712') {
           datay.push(liveData.steps)
+        } else if (datatypeIN.cnrl === 'cnrl-3339949442') {
+          datay.push(parseInt(liveData.data.sensordatavalues[0].value, 10))
         }
       }
       dataholder.labels = datalabel
@@ -65,6 +67,8 @@ ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle,
     }
   }
   // }
+  console.log('chart structure complte')
+  console.log(visCHolder)
   return visCHolder
 }
 
@@ -160,6 +164,8 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
       datasets: datachart
     }
   }
+  console.log('prepare for CharsJS')
+  console.log(datacollection)
   return datacollection
 }
 

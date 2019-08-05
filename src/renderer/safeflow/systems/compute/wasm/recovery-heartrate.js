@@ -9,8 +9,8 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import TimeUtilities from '../timeUtility.js'
-import TestStorageAPI from '../dataprotocols/teststorage/testStorage.js'
+import TimeUtilities from '../../timeUtility.js'
+import TestStorageAPI from '../../data/dataprotocols/teststorage/testStorage.js'
 const util = require('util')
 const events = require('events')
 

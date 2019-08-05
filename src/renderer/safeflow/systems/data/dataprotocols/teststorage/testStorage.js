@@ -9,7 +9,7 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import TimeUtilities from '../../../systems/timeUtility.js'
+import TimeUtilities from '../../../../systems/timeUtility.js'
 const util = require('util')
 const events = require('events')
 const axios = require('axios')
@@ -116,6 +116,21 @@ TestStorageAPI.prototype.getSumData = async function (queryTime, deviceID, compT
 */
 TestStorageAPI.prototype.getAverageData = async function (queryTime, deviceID, compType, datatype, timeseg, category) {
   let jsondata = await axios.get(this.baseAPI + '/average/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID + '/' + compType + '/' + datatype + '/' + timeseg + '/' + category)
+  // console.log(jsondata)
+  return jsondata.data
+}
+
+/**
+*  Get existing air quality data
+* @method getAirQualityData
+*
+*/
+TestStorageAPI.prototype.getAirQualityData = async function (luftdatenID, queryTimeStart, queryTimeEnd) {
+  luftdatenID = 3652817
+  console.log(luftdatenID)
+  console.log(queryTimeStart)
+  console.log(queryTimeEnd)
+  let jsondata = await axios.get(this.baseAPI + '/luftdatenGet/' + this.tempPubkey + '/' + this.tempToken + '/' + luftdatenID + '/' + queryTimeStart + '/' + queryTimeEnd)
   // console.log(jsondata)
   return jsondata.data
 }

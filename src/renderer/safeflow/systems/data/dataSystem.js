@@ -10,7 +10,7 @@
 * @version    $Id$
 */
 
-import CNRLmaster from '../cnrl/cnrlMaster.js'
+import CNRLmaster from '../../cnrl/cnrlMaster.js'
 import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
 const util = require('util')
 const events = require('events')
@@ -97,36 +97,35 @@ DataSystem.prototype.saveExpKbundles = async function (bundle) {
 DataSystem.prototype.systemDevice = async function (callbackC) {
   // make query to network for context data per devices
   let localthis = this
-  await this.liveTestStorage.getDeviceData().then(function (result) {
-    localthis.activeContext = result
-    // filter over to pair same types of devices and put in newest order and add active to newest of all devices or selected by user as starting device to display
-    // extract the device macs per devicename
-    let deviceModels = []
-    for (let devM of result) {
-      deviceModels.push(devM.device_model)
-    }
-    let unique = deviceModels.filter((v, i, a) => a.indexOf(v) === i)
-    // form array of list mac address from each model
-    let currentDevices = []
-    // let paired = {}
-    for (let mod of unique) {
-      localthis.devicePairs[mod] = []
-      let devww = result.filter(devv => devv.device_model === mod)
-      // look at time start and keep youngest start date
-      let mapd = devww.map(o => parseInt(o.device_validfrom))
-      let maxValueOfY = Math.max.apply(this, mapd)
-      // match this time to device mac
-      for (let perD of devww) {
-        // keep record of devices of same type
-        localthis.devicePairs[mod].push(perD)
-        if (parseInt(perD.device_validfrom) === maxValueOfY) {
-          let deviceMatch = perD
-          currentDevices.push(deviceMatch)
-        }
+  let result = await this.liveTestStorage.getDeviceData()
+  localthis.activeContext = result
+  // filter over to pair same types of devices and put in newest order and add active to newest of all devices or selected by user as starting device to display
+  // extract the device macs per devicename
+  let deviceModels = []
+  for (let devM of result) {
+    deviceModels.push(devM.device_model)
+  }
+  let unique = deviceModels.filter((v, i, a) => a.indexOf(v) === i)
+  // form array of list mac address from each model
+  let currentDevices = []
+  // let paired = {}
+  for (let mod of unique) {
+    localthis.devicePairs[mod] = []
+    let devww = result.filter(devv => devv.device_model === mod)
+    // look at time start and keep youngest start date
+    let mapd = devww.map(o => parseInt(o.device_validfrom))
+    let maxValueOfY = Math.max.apply(this, mapd)
+    // match this time to device mac
+    for (let perD of devww) {
+      // keep record of devices of same type
+      localthis.devicePairs[mod].push(perD)
+      if (parseInt(perD.device_validfrom) === maxValueOfY) {
+        let deviceMatch = perD
+        currentDevices.push(deviceMatch)
       }
     }
-    callbackC(currentDevices)
-  })
+  }
+  callbackC(currentDevices)
 }
 
 /**
@@ -167,28 +166,34 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle) {
   // review the apiInfo  map to function that will make acutal API call (should abstrac to build rest or crypto storage query string programmatically)
   // first is the data from the PAST or FUTURE ie simulated?
   if (systemBundle.startperiod === 'simulateData') {
+    // need whole new system for product future data
   } else {
     for (let dtItem of systemBundle.apiInfo.apiquery) {
       if (dtItem.api === 'computedata/<publickey>/<token>/<queryTime>/<deviceID>/') {
         console.log('compute data query')
-        await this.getRawData(systemBundle).then(function (sourcerawData) {
-          rawHolder = {}
-          rawHolder[systemBundle.startperiod] = sourcerawData
-        })
-      } else if (dtItem.api === 'sum/<publickey>/<token>/<queryTime>/<deviceID>/') {
-        console.log('sum data query')
-        let sourcerawData = await this.getRawSumData(systemBundle)
+        let sourcerawData = await this.getRawData(systemBundle)
         rawHolder = {}
         rawHolder[systemBundle.startperiod] = sourcerawData
+      } else if (dtItem.api === 'luftdatenGet/<publickey>/<token>/<queryTime>/<deviceID>/') {
+        console.log('air quality data query')
+        let AirsourcerawData = await this.getAirqualityData(systemBundle)
+        rawHolder = {}
+        rawHolder[systemBundle.startperiod] = AirsourcerawData
+      } else if (dtItem.api === 'sum/<publickey>/<token>/<queryTime>/<deviceID>/') {
+        console.log('sum data query')
+        let SumsourcerawData = await this.getRawSumData(systemBundle)
+        rawHolder = {}
+        rawHolder[systemBundle.startperiod] = SumsourcerawData
       } else if (dtItem.api === 'average/<publickey>/<token>/<queryTime>/<deviceID>/') {
         console.log('average data query')
-        await this.getRawAverageData(systemBundle).then(function (sourcerawData) {
-          rawHolder = {}
-          rawHolder[systemBundle.startperiod] = sourcerawData
-        })
+        let AvgsourcerawData = await this.getRawAverageData(systemBundle)
+        rawHolder = {}
+        rawHolder[systemBundle.startperiod] = AvgsourcerawData
       }
     }
   }
+  console.log('raw holder')
+  console.log(rawHolder)
   return rawHolder
 }
 
@@ -216,6 +221,123 @@ DataSystem.prototype.getRawData = async function (SBqueryIN) {
     }
   }
   return dataBack
+}
+
+/**
+* get airquality data
+* @method getAirqualityData
+*
+*/
+DataSystem.prototype.getAirqualityData = async function (bundleIN) {
+  console.log('air quality bundle')
+  console.log(bundleIN)
+  const localthis = this
+  // how many sensor ie data sets are being asked for?
+  // loop over and return Statistics Data and return to callback
+  let airData = {}
+  for (let di of bundleIN.deviceList) {
+    // also need to loop for datatype and map to storage API function that matches
+    for (let dtl of bundleIN.dtAsked) {
+      // loop over datatypes
+      console.log(bundleIN)
+      let startTime = bundleIN.querytime.startperiod
+      let endTime = startTime + 86400
+      let statsData = await localthis.liveTestStorage.getAirQualityData(di, startTime, endTime).catch(function (err) {
+        console.log(err)
+      })
+      airData[di] = {}
+      airData[di][dtl.cnrl] = []
+      airData[di][dtl.cnrl] = statsData
+    }
+  }
+  return airData
+}
+
+/**
+* get raw ie source average data for a data type
+* @method getRawSumData
+*
+*/
+DataSystem.prototype.getRawSumData = async function (bundleIN) {
+  const localthis = this
+  // how many sensor ie data sets are being asked for?
+  // loop over and return Statistics Data and return to callback
+  let averageData = {}
+  let averageArray = []
+  let averageHolder = {}
+  for (let di of bundleIN.deviceList) {
+    // also need to loop for datatype and map to storage API function that matches
+    for (let dtl of bundleIN.dtAsked) {
+      // loop over datatypes
+      for (let tsg of bundleIN.timeseg) {
+        // loop over time segments
+        await localthis.liveTestStorage.getSumData(bundleIN.startperiod, di, bundleIN.scienceAsked.prime.cnrl, dtl.cnrl, tsg).then(function (statsData) {
+          averageHolder = {}
+          averageHolder[tsg] = statsData
+          averageArray.push(averageHolder)
+          averageData[di] = {}
+          averageData[di][dtl.cnrl] = {}
+          averageData[di][dtl.cnrl] = averageArray
+        }).catch(function (err) {
+          console.log(err)
+        })
+      }
+    }
+  }
+  return averageData
+}
+
+/**
+* get raw ie source average data for a data type
+* @method getRawAverageData
+*
+*/
+DataSystem.prototype.getRawAverageData = async function (bundleIN) {
+  const localthis = this
+  // how many sensor ie data sets are being asked for?
+  // loop over and return Statistics Data and return to callback
+  let averageData = {}
+  // let averageArray = []
+  let averageHolder = {}
+  for (let di of bundleIN.deviceList) {
+    // also need to loop for datatype and map to storage API function that matches
+    for (let dtl of bundleIN.dtAsked) {
+      // loop over datatypes
+      for (let tsg of bundleIN.timeseg) {
+        // loop over time segments
+        let statsData = await localthis.liveTestStorage.getAverageData(bundleIN.startperiod, di, bundleIN.scienceAsked.prime.cnrl, dtl.cnrl, tsg, bundleIN.categories[0].cnrl).catch(function (err) {
+          console.log(err)
+        })
+        averageHolder = {}
+        averageHolder[tsg] = statsData
+        // averageArray.push(averageHolder)
+        averageData[di] = {}
+        averageData[di][dtl.cnrl] = []
+        averageData[di][dtl.cnrl].push(averageHolder)
+      }
+    }
+  }
+  return averageData
+}
+
+/**
+* get recovery heart rate data
+* @method getHRrecovery
+*
+*/
+DataSystem.prototype.getHRrecovery = async function (bundleIN, dtAsked) {
+  const localthis = this
+  this.recoverHR = {}
+  const deviceLiveFilter = bundleIN.deviceList
+  for (let di of deviceLiveFilter) {
+    await localthis.liveTestStorage.getHRrecoveryData(bundleIN.timePeriod, di, dtAsked).then(function (statsData) {
+      localthis.recoverHR[di] = statsData
+      statsData = []
+    }).catch(function (err) {
+      console.log(err)
+    })
+  }
+  return this.recoverHR
 }
 
 /**
@@ -344,93 +466,6 @@ DataSystem.prototype.extractDTcolumn = function (sourceDT, arrayIN) {
     }
   }
   return singleArray
-}
-
-/**
-* get raw ie source average data for a data type
-* @method getRawSumData
-*
-*/
-DataSystem.prototype.getRawSumData = async function (bundleIN) {
-  const localthis = this
-  // how many sensor ie data sets are being asked for?
-  // loop over and return Statistics Data and return to callback
-  let averageData = {}
-  let averageArray = []
-  let averageHolder = {}
-  for (let di of bundleIN.deviceList) {
-    // also need to loop for datatype and map to storage API function that matches
-    for (let dtl of bundleIN.dtAsked) {
-      // loop over datatypes
-      for (let tsg of bundleIN.timeseg) {
-        // loop over time segments
-        await localthis.liveTestStorage.getSumData(bundleIN.startperiod, di, bundleIN.scienceAsked.prime.cnrl, dtl.cnrl, tsg).then(function (statsData) {
-          averageHolder = {}
-          averageHolder[tsg] = statsData
-          averageArray.push(averageHolder)
-          averageData[di] = {}
-          averageData[di][dtl.cnrl] = {}
-          averageData[di][dtl.cnrl] = averageArray
-        }).catch(function (err) {
-          console.log(err)
-        })
-      }
-    }
-  }
-  return averageData
-}
-
-/**
-* get raw ie source average data for a data type
-* @method getRawAverageData
-*
-*/
-DataSystem.prototype.getRawAverageData = async function (bundleIN) {
-  const localthis = this
-  // how many sensor ie data sets are being asked for?
-  // loop over and return Statistics Data and return to callback
-  let averageData = {}
-  // let averageArray = []
-  let averageHolder = {}
-  for (let di of bundleIN.deviceList) {
-    // also need to loop for datatype and map to storage API function that matches
-    for (let dtl of bundleIN.dtAsked) {
-      // loop over datatypes
-      for (let tsg of bundleIN.timeseg) {
-        // loop over time segments
-        let statsData = await localthis.liveTestStorage.getAverageData(bundleIN.startperiod, di, bundleIN.scienceAsked.prime.cnrl, dtl.cnrl, tsg, bundleIN.categories[0].cnrl).catch(function (err) {
-          console.log(err)
-        })
-        averageHolder = {}
-        averageHolder[tsg] = statsData
-        // averageArray.push(averageHolder)
-        averageData[di] = {}
-        averageData[di][dtl.cnrl] = []
-        averageData[di][dtl.cnrl].push(averageHolder)
-      }
-    }
-  }
-  return averageData
-}
-
-/**
-* get recovery heart rate data
-* @method getHRrecovery
-*
-*/
-DataSystem.prototype.getHRrecovery = async function (bundleIN, dtAsked) {
-  const localthis = this
-  this.recoverHR = {}
-  const deviceLiveFilter = bundleIN.deviceList
-  for (let di of deviceLiveFilter) {
-    await localthis.liveTestStorage.getHRrecoveryData(bundleIN.timePeriod, di, dtAsked).then(function (statsData) {
-      localthis.recoverHR[di] = statsData
-      statsData = []
-    }).catch(function (err) {
-      console.log(err)
-    })
-  }
-  return this.recoverHR
 }
 
 /**

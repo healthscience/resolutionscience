@@ -9,8 +9,8 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import ChartSystem from '../systems/chartSystem.js'
-import TableSystem from '../systems/tableSystem.js'
+import ChartSystem from './chartSystem.js'
+import TableSystem from './tableSystem.js'
 const util = require('util')
 const events = require('events')
 
@@ -33,6 +33,10 @@ util.inherits(VisSystem, events.EventEmitter)
 *
 */
 VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
+  console.log('vis system start')
+  console.log(eInfo)
+  console.log(chartBundle)
+  console.log(dataIN)
   var localthis = this
   let visIN = eInfo.visID[0]
   let liveTime = eInfo.time.startperiod

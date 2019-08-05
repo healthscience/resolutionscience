@@ -9,7 +9,7 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import ComputeSystem from '../systems/computeSystem.js'
+import ComputeSystem from '../systems/compute/computeSystem.js'
 const util = require('util')
 const events = require('events')
 

@@ -9,9 +9,9 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import TimeUtilities from '../timeUtility.js'
-import TestStorageAPI from '../dataprotocols/teststorage/testStorage.js'
-import DataSystem from '../dataSystem.js'
+import TimeUtilities from '../../timeUtility.js'
+import TestStorageAPI from '../../data/dataprotocols/teststorage/testStorage.js'
+import DataSystem from '../../data/dataSystem.js'
 const util = require('util')
 const events = require('events')
 
@@ -72,55 +72,6 @@ StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, dev
     }
   }
   return true
-}
-
-/**
-* prepare single digial number array
-* @method tidySinglearray
-*
-*/
-StatisticsSystem.prototype.tidySinglearray = function (arrBatchobj, dtIN) {
-  // statistical avg. smart contract/crypt ID ref & verfied wasm/network/trubit assume done
-  let sourceDT = this.extractDT(dtIN.cnrl)
-  let tidyHolder = {}
-  let intData
-  let singleArray = []
-  let tidyCount = 0
-  for (let sing of arrBatchobj) {
-    if (sourceDT === 'cnrl-8856388711') {
-      intData = parseInt(sing.heart_rate, 10)
-      if (intData !== 255 && intData > 0) {
-        singleArray.push(intData)
-      } else {
-        tidyCount++
-      }
-    } else if (sourceDT === 'cnrl-8856388712') {
-      intData = parseInt(sing.steps, 10)
-      if (intData > 0) {
-        singleArray.push(intData)
-      } else {
-        tidyCount++
-      }
-    }
-  }
-  tidyHolder.tidycount = tidyCount
-  tidyHolder.tidyarray = singleArray
-  return tidyHolder
-}
-
-/**
-* This should be part of dataSYSTEM temp
-* @method extractDT
-*
-*/
-StatisticsSystem.prototype.extractDT = function (dtPrim) {
-  let sourceDT = ''
-  if (dtPrim === 'cnrl-8856388724') {
-    sourceDT = 'cnrl-8856388711'
-  } else if (dtPrim === 'cnrl-8856388322') {
-    sourceDT = 'cnrl-8856388712'
-  }
-  return sourceDT
 }
 
 /**

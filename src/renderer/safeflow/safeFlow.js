@@ -9,10 +9,10 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import DTsystem from './systems/dtSystem.js'
+import DTsystem from './systems/data/dtSystem.js'
 import CNRLmaster from './cnrl/cnrlMaster.js'
 import TimeUtilities from './systems/timeUtility.js'
-import DataSystem from './systems/dataSystem.js'
+import DataSystem from './systems/data/dataSystem.js'
 import EntitiesManager from './entitiesManager.js'
 const util = require('util')
 const events = require('events')

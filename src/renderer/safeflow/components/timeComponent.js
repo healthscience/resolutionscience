@@ -9,7 +9,7 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import TimeSystem from '../systems/timeSystem.js'
+import TimeSystem from '../systems/data/timeSystem.js'
 const util = require('util')
 const events = require('events')
 

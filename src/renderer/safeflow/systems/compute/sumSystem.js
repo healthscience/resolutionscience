@@ -1,26 +1,26 @@
 'use strict'
 /**
-*  averageSystem
+*  sumSystem
 *
 *
-* @class averageSystem
+* @class sumSystem
 * @package    safeFlow
 * @copyright  Copyright (c) 2019 James Littlejohn
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import TimeUtilities from './timeUtility.js'
-import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
-import AvgStatisticsSystem from './wasm/average-statistics.js'
+import TimeUtilities from '../timeUtility.js'
+import TestStorageAPI from '../data/dataprotocols/teststorage/testStorage.js'
+import StatisticsSystem from './wasm/sum-statistics.js'
 
 const util = require('util')
 const events = require('events')
 
-var AverageSystem = function (setIN) {
+var SumSystem = function (setIN) {
   events.EventEmitter.call(this)
   this.liveTimeUtil = new TimeUtilities()
   this.liveTestStorage = new TestStorageAPI(setIN)
-  this.avgliveStatistics = new AvgStatisticsSystem(setIN)
+  this.liveSumStatistics = new StatisticsSystem(setIN)
   this.lastComputeTime = {}
 }
 
@@ -28,23 +28,23 @@ var AverageSystem = function (setIN) {
 * inherits core emitter class within this class
 * @method inherits
 */
-util.inherits(AverageSystem, events.EventEmitter)
+util.inherits(SumSystem, events.EventEmitter)
 
 /**
 * verify the computation file
 * @method verifyComputeWASM
 *
 */
-AverageSystem.prototype.verifyComputeWASM = function (wasmFile) {
+SumSystem.prototype.verifyComputeWASM = function (wasmFile) {
   // check the hash verifes to hash aggred in CNRL contract
 }
 
 /**
 *  average compute system assess inputs and control compute
-* @method averageSystem
+* @method sumSystem
 *
 */
-AverageSystem.prototype.averageSystemStart = async function (EIDinfo, compInfo, timeInfo) {
+SumSystem.prototype.sumSystem = async function (EIDinfo, compInfo, timeInfo) {
   let updateStatus = {}
   updateStatus = await this.computeControlFlow(EIDinfo, compInfo, timeInfo)
   return updateStatus
@@ -54,13 +54,12 @@ AverageSystem.prototype.averageSystemStart = async function (EIDinfo, compInfo, 
 * @method computeControlFlow
 *
 */
-AverageSystem.prototype.computeControlFlow = async function (EIDinfo, compInfo, timeInfo) {
+SumSystem.prototype.computeControlFlow = async function (EIDinfo, compInfo, timeInfo) {
   let cFlowStatus = {}
   // what time segments have been asked for?
   let timeBundle = this.readTimeInfo(EIDinfo, compInfo, timeInfo)
   for (let dttb of timeBundle) {
     if (dttb) {
-      console.log('yes update source DT times to be computed')
       cFlowStatus = await this.sourceDTtimeUpdate(dttb, EIDinfo, compInfo, timeInfo)
     } else {
       // no source DT info required.
@@ -80,7 +79,7 @@ AverageSystem.prototype.computeControlFlow = async function (EIDinfo, compInfo, 
 * @method readTimeInfo
 *
 */
-AverageSystem.prototype.readTimeInfo = function (EIDinfo, compInfo, timeInfo) {
+SumSystem.prototype.readTimeInfo = function (EIDinfo, compInfo, timeInfo) {
   let timeState = []
   for (let dvc of EIDinfo.devices) {
     // need to loop for datatype and time seg // datatype or source Datatypes that use to compute dt asked for?
@@ -101,14 +100,14 @@ AverageSystem.prototype.readTimeInfo = function (EIDinfo, compInfo, timeInfo) {
 * @method sourceDTtimeUpdate
 *
 */
-AverageSystem.prototype.sourceDTtimeUpdate = async function (timeBundle, EIDinfo, compInfo, timeInfo) {
+SumSystem.prototype.sourceDTtimeUpdate = async function (timeBundle, EIDinfo, compInfo, timeInfo) {
   let computeStatus = {}
   for (let dvc of EIDinfo.devices) {
     // need to loop for datatype and time seg // datatype or source Datatypes that use to compute dt asked for?
     for (let dtl of compInfo.sourceapiquery) {
       // what is status of compute?
       if (timeBundle.time.status === 'update-required' && timeBundle.time.timeseg === 'day') {
-        computeStatus = await this.avgliveStatistics.prepareAvgCompute(timeBundle.time.computeTime, dvc, dtl, timeBundle.time.timeseg, EIDinfo.cid, compInfo, timeBundle.cnrl, EIDinfo.categories[0].cnrl)
+        computeStatus = await this.liveSumStatistics.prepareSumCompute(timeBundle.time.computeTime, dvc, dtl, timeBundle.time.timeseg, EIDinfo.cid, compInfo, timeBundle.cnrl)
       } else {
         // for each time segment week, month, year use existing daily averageSave
         console.log('NEW---time segs additions required')
@@ -118,4 +117,4 @@ AverageSystem.prototype.sourceDTtimeUpdate = async function (timeBundle, EIDinfo
   return computeStatus
 }
 
-export default AverageSystem
+export default SumSystem

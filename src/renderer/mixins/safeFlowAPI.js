@@ -24,7 +24,9 @@ export default {
       this.chartmessage.active = true
       this.liveBundle = lBundle
       this.activeEntity = lBundle.kbid
+      // set the visualisation require (need to be more complex ie. type, type chart colors etc)
       this.activevis = this.$store.getters.liveVis[0]
+      // make the Entity
       await this.safeMixin.scienceEntities(lBundle)
       // this.learnListening()
       let entityGetter = await this.safeMixin.entityGetter(this.activeEntity, this.activevis)

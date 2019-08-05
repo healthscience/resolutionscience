@@ -10,7 +10,7 @@
 * @version    $Id$
 */
 
-import CNRLmaster from '../cnrl/cnrlMaster.js'
+import CNRLmaster from '../../cnrl/cnrlMaster.js'
 import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
 const util = require('util')
 const events = require('events')

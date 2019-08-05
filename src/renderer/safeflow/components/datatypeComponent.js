@@ -9,7 +9,7 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import DTsystem from '../systems/dtSystem.js'
+import DTsystem from '../systems/data/dtSystem.js'
 const util = require('util')
 const events = require('events')
 

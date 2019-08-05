@@ -6,8 +6,8 @@
 </template>
 
 <script>
-  import oracleSummary from '@/components/toolbar/oracleSummary.vue'
-  import oracleTrends from '@/components/toolbar/oracleTrends.vue'
+  import oracleSummary from '@/components/oracle/oracleSummary.vue'
+  import oracleTrends from '@/components/oracle/oracleTrends.vue'
 
   export default {
     name: 'oracle-status',

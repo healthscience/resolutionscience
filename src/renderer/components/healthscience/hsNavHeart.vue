@@ -18,7 +18,7 @@
 
 <script>
   import SAFEflow from '../../safeflow/safeFlow.js'
-  import oracleView from '@/components/toolbar/oracleView.vue'
+  import oracleView from '@/components/oracle/oracleView.vue'
   import experimentList from '@/components/toolbar/experimentList.vue'
   import { sBus } from '../../main.js'
 

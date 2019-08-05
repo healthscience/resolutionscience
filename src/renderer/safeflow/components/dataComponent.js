@@ -9,7 +9,7 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import DataSystem from '../systems/dataSystem.js'
+import DataSystem from '../systems/data/dataSystem.js'
 const util = require('util')
 const events = require('events')
 
@@ -116,6 +116,7 @@ DataComponent.prototype.setCategories = function (ctIN) {
 */
 DataComponent.prototype.sourceData = async function (apiINFO) {
   console.log(apiINFO)
+  console.log(this.did)
   this.apiInfoLive = apiINFO
   let systemBundle = {}
   systemBundle.apiInfo = apiINFO
@@ -124,6 +125,7 @@ DataComponent.prototype.sourceData = async function (apiINFO) {
   systemBundle.dtAsked = this.datatypeList
   systemBundle.deviceList = this.deviceList
   systemBundle.timeseg = this.timeSegs
+  systemBundle.querytime = this.did.time
   systemBundle.categories = this.did.categories
   let dataRback = await this.liveDataSystem.datatypeQueryMapping(systemBundle)
   this.dataRaw.push(dataRback)
@@ -131,6 +133,8 @@ DataComponent.prototype.sourceData = async function (apiINFO) {
   this.TidyData()
   // is there a categories filter to apply?
   this.CategoriseData()
+  console.log('post tidy')
+  console.log(this.liveData)
   return true
 }
 

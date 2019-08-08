@@ -10,6 +10,7 @@
 * @version    $Id$
 */
 import ChartSystem from './charts/chartSystem.js'
+import ChartOptions from './charts/chartOptions.js'
 import TableSystem from './table/tableSystem.js'
 const util = require('util')
 const events = require('events')
@@ -17,6 +18,7 @@ const events = require('events')
 var VisSystem = function () {
   events.EventEmitter.call(this)
   this.liveChartSystem = new ChartSystem()
+  this.liveChartOptions = new ChartOptions()
   this.liveTableSystem = new TableSystem()
   this.visSystemData = []
 }
@@ -62,13 +64,15 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
     }
     // prepare title, y axis text and scaling
     let titleOut = 'Device ' + eInfo.devices[0].device_name
-    let scaling = 80
-    let liveChartOptions = this.liveChartSystem.prepareChartOptions(titleOut, eInfo.datatypes, scaling)
+    let scaling = 200
+    let liveChartOptions = this.liveChartOptions.prepareChartOptions(titleOut, eInfo.datatypes, scaling)
+    console.log('chart opotions')
+    console.log(liveChartOptions)
     // package all the info. to pass to vue
     chartData.prepared = this.liveChartSystem.prepareVueChartJS(chartDataH.chart)
     // prepare chart options
     let setTimeTools = chartData.prepared.labels
-    let chartOptionsSet = this.liveChartSystem.updateChartoptions(setTimeTools, liveChartOptions) // this.liveChartSystem.getterChartOptions()
+    let chartOptionsSet = this.liveChartOptions.updateChartoptions(setTimeTools, liveChartOptions) // this.liveChartSystem.getterChartOptions()
     chartData.options = chartOptionsSet
     const chartHolder = {}
     chartHolder[visIN] = {}
@@ -93,7 +97,7 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
             // now prepare data format for chartjs
             chartData.prepared = this.liveChartSystem.prepareStatsVueChartJS(eInfo.devices, chartDataH)
             let setTimeTools = chartData.prepared.labels
-            let chartOptionsSet = this.liveChartSystem.updateChartoptions(setTimeTools, liveChartOptions) // this.liveChartSystem.getterChartOptions()
+            let chartOptionsSet = this.liveChartOptions.updateChartoptions(setTimeTools, liveChartOptions) // this.liveChartSystem.getterChartOptions()
             chartData.options = chartOptionsSet
             const chartHolder = {}
             chartHolder[visIN] = {}
@@ -131,7 +135,7 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
             // now prepare data format for chartjs
             chartData.prepared = this.liveChartSystem.prepareSumVueChartJS(eInfo.devices, chartDataH)
             let setTimeTools = chartData.prepared.labels
-            let chartOptionsSet = this.liveChartSystem.updateChartoptions(setTimeTools, liveChartOptions) // this.liveChartSystem.getterChartOptions()
+            let chartOptionsSet = this.liveChartOptions.updateChartoptions(setTimeTools, liveChartOptions) // this.liveChartSystem.getterChartOptions()
             chartData.options = chartOptionsSet
             const chartHolder = {}
             chartHolder[visIN] = {}

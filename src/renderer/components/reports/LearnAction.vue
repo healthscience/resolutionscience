@@ -2,13 +2,13 @@
   <div id="learn-action">
     <header>ACTION</header>
     <div id="self-action">
-      SELF:
+      SELF: Manual setting of notifications on mobile.
     </div>
     <div id="HealthSpanPractitioner-action">
-      HEALTHSPAN-PRACTICTIONER:
+      HEALTHSPAN-PRACTICTIONER: Not registered
     </div>
     <div id="cale-action">
-      CALE:
+      CALE: Still learning.
     </div>
     <div id="dapp-action">
       Set Notification to mobile device: Y / N

@@ -25,7 +25,10 @@
           <header>LuftdatenAPI</header>
           <div id="luftdaten-api">
             <header>Air Quality Monitoring</header>
-            <header>Add sensor ID</header>
+            Please enter Luftdaten device ID:
+            <input v-model="luftdatenDevice" placeholder="luftdaten device ID">
+            <button v-model="luftdatenDevice" class="button-expadd" href="" id="connect-ld-button" @click.prevent="luftDatenConnect($event)">Connect</button>
+            <div v-if="luftdatenDeviceConnect > 0" id="luftdaten-Live">Connected Device: {{ luftdatenDeviceConnect }}</div>
           </div>
         </li>
         <li class="datastore-item">
@@ -106,7 +109,9 @@
     data: () => ({
       viewPkey: false,
       firstTimetokenseen: false,
-      repeatTimetokenseen: true
+      repeatTimetokenseen: true,
+      luftdatenDevice: 0,
+      luftdatenDeviceConnect: 0
     }),
     created () {
       this.checkforToken()
@@ -131,6 +136,13 @@
         this.firstTimetokenseen = evSeen
         this.repeatTimetokenseen = true
         this.viewPkey = true
+      },
+      luftDatenConnect (codeIn) {
+        console.log('connect luftdaten')
+        console.log(codeIn)
+        console.log(this.luftdatenDevice)
+        this.luftdatenDeviceConnect = this.luftdatenDevice
+        console.log(this.luftdatenDeviceConnect)
       }
     }
   }

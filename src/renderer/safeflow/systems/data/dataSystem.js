@@ -12,6 +12,7 @@
 
 import CNRLmaster from '../../cnrl/cnrlMaster.js'
 import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
+import LiveSimulatedDataSystem from './simulateddataSystem.js'
 const util = require('util')
 const events = require('events')
 
@@ -19,7 +20,7 @@ var DataSystem = function (setIN) {
   events.EventEmitter.call(this)
   this.liveCNRL = new CNRLmaster()
   this.liveTestStorage = new TestStorageAPI(setIN)
-  this.defaultStorage = 'cnrl-33221101'
+  this.liveSimulatedData = new LiveSimulatedDataSystem(setIN)
   this.devicePairs = []
   this.dataRaw = []
 }
@@ -94,7 +95,7 @@ DataSystem.prototype.saveExpKbundles = async function (bundle) {
 * @method systemDevice
 *
 */
-DataSystem.prototype.systemDevice = async function (callbackC) {
+DataSystem.prototype.systemDevice = async function () {
   // make query to network for context data per devices
   let localthis = this
   let result = await this.liveTestStorage.getDeviceData()
@@ -125,7 +126,7 @@ DataSystem.prototype.systemDevice = async function (callbackC) {
       }
     }
   }
-  callbackC(currentDevices)
+  return currentDevices
 }
 
 /**
@@ -162,33 +163,42 @@ DataSystem.prototype.getLiveDatatypes = function (dtIN) {
 *
 */
 DataSystem.prototype.datatypeQueryMapping = async function (systemBundle) {
+  console.log('datatypeQueryMapping')
+  console.log(systemBundle)
   let rawHolder = {}
-  // review the apiInfo  map to function that will make acutal API call (should abstrac to build rest or crypto storage query string programmatically)
-  // first is the data from the PAST or FUTURE ie simulated?
-  if (systemBundle.startperiod === 'simulateData') {
-    // need whole new system for product future data
-  } else {
-    for (let dtItem of systemBundle.apiInfo.apiquery) {
-      if (dtItem.api === 'computedata/<publickey>/<token>/<queryTime>/<deviceID>/') {
-        console.log('compute data query')
-        let sourcerawData = await this.getRawData(systemBundle)
-        rawHolder = {}
-        rawHolder[systemBundle.startperiod] = sourcerawData
-      } else if (dtItem.api === 'luftdatenGet/<publickey>/<token>/<queryTime>/<deviceID>/') {
-        console.log('air quality data query')
-        let AirsourcerawData = await this.getAirqualityData(systemBundle)
-        rawHolder = {}
-        rawHolder[systemBundle.startperiod] = AirsourcerawData
-      } else if (dtItem.api === 'sum/<publickey>/<token>/<queryTime>/<deviceID>/') {
-        console.log('sum data query')
-        let SumsourcerawData = await this.getRawSumData(systemBundle)
-        rawHolder = {}
-        rawHolder[systemBundle.startperiod] = SumsourcerawData
-      } else if (dtItem.api === 'average/<publickey>/<token>/<queryTime>/<deviceID>/') {
-        console.log('average data query')
-        let AvgsourcerawData = await this.getRawAverageData(systemBundle)
-        rawHolder = {}
-        rawHolder[systemBundle.startperiod] = AvgsourcerawData
+  rawHolder[systemBundle.startperiod] = {}
+  // loop over the each devices API data source info.
+  for (let devI of systemBundle.deviceList) {
+    rawHolder[systemBundle.startperiod][devI] = {}
+    for (let apiPD of systemBundle.apiInfo) {
+      // review the apiInfo  map to function that will make acutal API call (should abstrac to build rest or crypto storage query string programmatically)
+      // first is the data from the PAST or FUTURE ie simulated?
+      if (systemBundle.startperiod === 'simulateData') {
+        // need whole new system for product future data
+      } else {
+        for (let dtItem of apiPD[devI].apiquery) {
+          if (dtItem.api === 'computedata/<publickey>/<token>/<queryTime>/<deviceID>/') {
+            console.log('compute data query')
+            let sourcerawData = await this.getRawData(devI, systemBundle.startperiod)
+            let filterColumn = this.filterDataType(dtItem, sourcerawData)
+            console.log(filterColumn)
+            rawHolder[systemBundle.startperiod][devI][dtItem.cnrl] = sourcerawData
+          } else if (dtItem.api === 'luftdatenGet/<publickey>/<token>/<queryTime>/<deviceID>/') {
+            console.log('air quality data query')
+            let AirsourcerawData = await this.getAirqualityData(devI, systemBundle.startperiod)
+            let filterColumnAQ = this.filterDataTypeSub(dtItem, AirsourcerawData)
+            console.log(filterColumnAQ)
+            rawHolder[systemBundle.startperiod][devI][dtItem.cnrl] = AirsourcerawData
+          } else if (dtItem.api === 'sum/<publickey>/<token>/<queryTime>/<deviceID>/') {
+            console.log('sum data query')
+            let SumsourcerawData = await this.getRawSumData(systemBundle)
+            rawHolder[systemBundle.startperiod][devI][dtItem.cnrl] = SumsourcerawData
+          } else if (dtItem.api === 'average/<publickey>/<token>/<queryTime>/<deviceID>/') {
+            console.log('average data query')
+            let AvgsourcerawData = await this.getRawAverageData(systemBundle)
+            rawHolder[systemBundle.startperiod][devI][dtItem.cnrl] = AvgsourcerawData
+          }
+        }
       }
     }
   }
@@ -202,24 +212,10 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle) {
 * @method getRawData
 *
 */
-DataSystem.prototype.getRawData = async function (SBqueryIN) {
-  let dataBack = {}
-  // check for number of devices, sensor/datatypes are asked for
-  const deviceQuery = SBqueryIN.deviceList
-  const dataTypesList = SBqueryIN.apiInfo.apiquery
-  // form loop to make data calls
-  for (let di of deviceQuery) {
-    dataBack[di] = {}
-    for (let dtQ of dataTypesList) {
-      // observation has fixed input but technically should loop over this on basis of timeSegs
-      let result = await this.liveTestStorage.getComputeData(SBqueryIN.startperiod, di).catch(function (err) {
-        console.log(err)
-      })
-      let dtCNRL = dtQ.cnrl
-      dataBack[di][dtCNRL] = result
-      result = []
-    }
-  }
+DataSystem.prototype.getRawData = async function (device, startTime) {
+  let dataBack = await this.liveTestStorage.getComputeData(startTime, device).catch(function (err) {
+    console.log(err)
+  })
   return dataBack
 }
 
@@ -228,29 +224,13 @@ DataSystem.prototype.getRawData = async function (SBqueryIN) {
 * @method getAirqualityData
 *
 */
-DataSystem.prototype.getAirqualityData = async function (bundleIN) {
+DataSystem.prototype.getAirqualityData = async function (device, startTime) {
   console.log('air quality bundle')
-  console.log(bundleIN)
-  const localthis = this
-  // how many sensor ie data sets are being asked for?
-  // loop over and return Statistics Data and return to callback
-  let airData = {}
-  for (let di of bundleIN.deviceList) {
-    // also need to loop for datatype and map to storage API function that matches
-    for (let dtl of bundleIN.dtAsked) {
-      // loop over datatypes
-      console.log(bundleIN)
-      let startTime = bundleIN.querytime.startperiod
-      let endTime = startTime + 86400
-      let statsData = await localthis.liveTestStorage.getAirQualityData(di, startTime, endTime).catch(function (err) {
-        console.log(err)
-      })
-      airData[di] = {}
-      airData[di][dtl.cnrl] = []
-      airData[di][dtl.cnrl] = statsData
-    }
-  }
-  return airData
+  let endTime = startTime + 86400
+  let statsData = await this.liveTestStorage.getAirQualityData(device, startTime, endTime).catch(function (err) {
+    console.log(err)
+  })
+  return statsData
 }
 
 /**
@@ -469,6 +449,72 @@ DataSystem.prototype.extractDTcolumn = function (sourceDT, arrayIN) {
 }
 
 /**
+* extract out the data type colum and timestamp
+* @method filterDataType
+*
+*/
+DataSystem.prototype.filterDataType = function (sourceDT, arrayIN) {
+  let singleArray = []
+  for (let sing of arrayIN) {
+    let dataPair = {}
+    let timestamp = sing['timestamp']
+    dataPair.timestamp = timestamp
+    dataPair[sourceDT.column] = sing[sourceDT.column]
+    singleArray.push(dataPair)
+  }
+  return singleArray
+}
+
+/**
+* extract out the data type colum and timestamp
+* @method filterDataTypeSub
+*
+*/
+DataSystem.prototype.filterDataTypeSub = function (sourceDT, arrayIN) {
+  console.log('filt sub')
+  console.log(sourceDT)
+  let singleArray = []
+  // check if sub data structure
+  let subData = this.subStructure(arrayIN)
+  if (subData.length > 0) {
+    arrayIN = subData
+  }
+  for (let sing of arrayIN) {
+    let dataPair = {}
+    let timestamp = sing['timestamp']
+    dataPair.timestamp = timestamp
+    if (sing[sourceDT.column]) {
+      dataPair[sourceDT.column] = sing[sourceDT.column]
+      singleArray.push(dataPair)
+    }
+  }
+  return singleArray
+}
+
+/**
+*  check for sub table structure
+* @method subStructure
+*
+*/
+DataSystem.prototype.subStructure = function (dataStructure) {
+  let subStructure = []
+  for (let tcI of dataStructure) {
+    // console.log(tcI)
+    if (tcI['sensors']) {
+      // console.log('yes sub structure')
+      for (let sdata of tcI.sensors) {
+        let sdHolder = {}
+        sdHolder['timestamp'] = tcI['timestamp']
+        sdHolder[sdata.value_type] = sdata.value
+        // form timestamp, sensor
+        subStructure.push(sdHolder)
+      }
+    }
+  }
+  return subStructure
+}
+
+/**
 * lookup categorisation rules and apply
 * @method categorySorter
 *
@@ -565,17 +611,6 @@ DataSystem.prototype.extractSensors = function (sensorsIN) {
     }
   }
   return datatypeList
-}
-
-/**
-*  Loop Utility
-* @method loopUtility
-*
-*/
-DataSystem.prototype.loopUtility = function (dataIN) {
-  // console.log('extract no. devices and no. dataType ie sensor data kinds')
-  let dataLoop = []
-  return dataLoop
 }
 
 /**

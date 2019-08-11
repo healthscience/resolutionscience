@@ -56,7 +56,6 @@ export default new Vuex.Store({
     },
     setBoth: (state, inVerified) => {
       state.system = inVerified
-      state.system.cnrl = 'cnrl-33221101'
     },
     setPublickey: (state, inVerified) => {
       state.system.publickey = inVerified
@@ -259,6 +258,10 @@ export default new Vuex.Store({
     actionstopComputeStatus: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL
       context.commit('stopComputeStatus', update)
+    },
+    actionDeviceDataAPI: (context, update) => {
+    // filter a list of Kentity bundles given the Experiment CNRL
+      context.commit('setDevice', update)
     }
   },
   modules,

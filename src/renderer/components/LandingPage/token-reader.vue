@@ -71,7 +71,8 @@
       text: '',
       keybuttonseen: false,
       feedbackM: '',
-      warningM: ''
+      warningM: '',
+      devices: []
     }),
     methods: {
       setAccess () {
@@ -113,20 +114,21 @@
         // set via store and then pick up in historyData
         this.$store.dispatch('actionExperimentKBundles', mappedExpKbundles)
       },
-      deviceContext () {
+      async deviceContext () {
         // make call to set start deviceContext for this pubkey
-        var localthis = this
-        function callbackC (dataH) {
-          localthis.devices = dataH
-          localthis.$store.commit('setDevice', dataH)
-          localthis.dataType()
-          localthis.cnrlScience()
-          localthis.startExperiments()
-          localthis.startExpMappedKbundles()
-          localthis.startKSetting()
-        }
         const deviceFlag = 'device'
-        this.liveSafeFlow.toolkitContext(deviceFlag, callbackC)
+        let deviceAPI = await this.liveSafeFlow.toolkitContext(deviceFlag)
+        console.log('device data back')
+        console.log(deviceAPI)
+        this.devices = deviceAPI
+        // this.devices[0].cnrl = 'cnrl-33221101'
+        // this.devices[1].cnrl = 'cnrl-33221101'
+        this.$store.dispatch('actionDeviceDataAPI', deviceAPI)
+        this.dataType()
+        this.cnrlScience()
+        this.startExperiments()
+        this.startExpMappedKbundles()
+        this.startKSetting()
       },
       dataType () {
         // make call to set start dataType for the device sensors

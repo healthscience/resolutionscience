@@ -144,6 +144,7 @@ DataComponent.prototype.sourceData = async function (apiINFO) {
 *
 */
 DataComponent.prototype.TidyData = function () {
+  // loop over dts and tidy as needed
   if (this.apiInfoLive.tidyList.length !== 0) {
     let tidyHolder = {}
     let dBundle = {}

@@ -442,13 +442,61 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.resolution = { 'text': 'parts per million', 'active': false }
     dataCNRLbundle.namespace = ''
     dataCNRLbundle.index = []
+  } else if (refIN === 'cnrl-3339949443') {
+    dataCNRLbundle.type = 'datatype'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-3339949443', 'text': 'p10', 'active': false }
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.tableStructure = []
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.categories.push()
+    dataCNRLbundle.categorycodes.push({})
+    dataCNRLbundle.resolution = { 'text': 'parts per million', 'active': false }
+    dataCNRLbundle.namespace = ''
+    dataCNRLbundle.index = []
+  } else if (refIN === 'cnrl-3339949444') {
+    dataCNRLbundle.type = 'datatype'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-3339949444', 'text': 'temperature', 'active': false }
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.tableStructure = []
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.categories.push()
+    dataCNRLbundle.categorycodes.push({})
+    dataCNRLbundle.resolution = { 'text': 'celsius', 'active': false }
+    dataCNRLbundle.namespace = ''
+    dataCNRLbundle.index = []
+  } else if (refIN === 'cnrl-3339949445') {
+    dataCNRLbundle.type = 'datatype'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-3339949445', 'text': 'humidity', 'active': false }
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.tableStructure = []
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.categories.push()
+    dataCNRLbundle.categorycodes.push({})
+    dataCNRLbundle.resolution = { 'text': 'moisture per ', 'active': false }
+    dataCNRLbundle.namespace = ''
+    dataCNRLbundle.index = []
+  } else if (refIN === 'cnrl-3339949446') {
+    dataCNRLbundle.type = 'datatype'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-3339949446', 'text': 'air-pressure', 'active': false }
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.tableStructure = []
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.categories.push()
+    dataCNRLbundle.categorycodes.push({})
+    dataCNRLbundle.resolution = { 'text': 'atmosphere pressing on earth', 'active': false }
+    dataCNRLbundle.namespace = ''
+    dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-2356388731') {
     dataCNRLbundle.type = 'compute'
     dataCNRLbundle.livingpaper = 'http://www.healthscience.network/observation'
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-2356388731', 'text': 'Observations', 'active': false }
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
-    dataCNRLbundle.datatypes = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856388712', 'text': 'steps', 'active': false}, {'cnrl': 'cnrl-8856388711', 'text': 'beats per minute', 'active': false}, {'cnrl': 'cnrl-3339949442', 'text': 'p2.5', 'active': false}, {'cnrl': 'cnrl-3993714611', 'text': 'p10', 'active': false}]
+    dataCNRLbundle.datatypes = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856388712', 'text': 'steps', 'active': false}, {'cnrl': 'cnrl-8856388711', 'text': 'beats per minute', 'active': false}, {'cnrl': 'cnrl-3339949442', 'text': 'p2.5', 'active': false}, {'cnrl': 'cnrl-3339949443', 'text': 'p10', 'active': false}, {'cnrl': 'cnrl-3339949444', 'text': 'temperature', 'active': false}, {'cnrl': 'cnrl-3339949445', 'text': 'humidity', 'active': false}, {'cnrl': 'cnrl-3339949446', 'text': 'air-pressure', 'active': false}]
     dataCNRLbundle.categories.push({'cnrl': 'cnrl-8356388727', 'text': 'Sleep', 'active': false})
     dataCNRLbundle.resolution = {}
     dataCNRLbundle.wasmhash = 'none'
@@ -497,6 +545,18 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.wasmhash = '2356388733'
     dataCNRLbundle.wasmfile = 'safe://wasm/cnrl-2356388733'
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388733'
+  } else if (refIN === 'cnrl-33221100') {
+    // CNRL implementation REST API
+    dataCNRLbundle.type = 'dtpackaging'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-33221100', 'text': 'test-RESTAPI', 'active': false }
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.apistructure = ['contextdata/<publickey>/', 'contexttype/<publickey>/']
+    dataCNRLbundle.tableStructure[0] = [{'cnrl': '', 'text': 'device_mac', 'active': false}, {'cnrl': '', 'text': 'firmware', 'active': false}]
+    dataCNRLbundle.tableStructure[1] = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-', 'text': 'science', 'active': false}, {'cnrl': 'cnrl-', 'text': 'datatype', 'active': false}, {'cnrl': 'cnrl-', 'text': 'timeseg', 'active': false}, {'cnrl': 'cnrl-', 'text': 'value', 'active': false}, {'cnrl': 'cnrl-', 'text': 'device_mac', 'active': false}, {'cnrl': 'cnrl-', 'text': 'clean', 'active': false}, {'cnrl': 'cnrl-', 'text': 'tidy', 'active': false}]
+    dataCNRLbundle.namespace = 'http://165.227.244.213:8881/'
+    dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-33221101') {
     // CNRL implementation REST API
     dataCNRLbundle.type = 'dtpackaging'
@@ -504,14 +564,24 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-33221101', 'text': 'mongo-RESTAPI', 'active': false }
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
-    dataCNRLbundle.apistructure = ['computedata/<publickey>/<token>/<queryTime>/<deviceID>/', 'contextdata/<publickey>/', 'contexttype/<publickey>/', 'average/<publickey>/<token>/<queryTime>/<deviceID>/', 'sum/<publickey>/<token>/<queryTime>/<deviceID>/', 'luftdatenGet/<publickey>/<token>/<queryTime>/<deviceID>/']
+    dataCNRLbundle.apistructure = ['computedata/<publickey>/<token>/<queryTime>/<deviceID>/', 'contextdata/<publickey>/', 'contexttype/<publickey>/', 'average/<publickey>/<token>/<queryTime>/<deviceID>/', 'sum/<publickey>/<token>/<queryTime>/<deviceID>/']
     dataCNRLbundle.tableStructure[0] = [{'cnrl': '', 'text': '_id', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': '', 'text': 'device_mac', 'active': false}, {'cnrl': 'cnrl-', 'text': 'device_id', 'active': false}, {'cnrl': 'cnrl-', 'text': 'user_id', 'active': false}, {'cnrl': 'cnrl-3356388733', 'text': 'raw_intensity', 'active': false}, {'cnrl': 'cnrl-8856388712', 'text': 'steps', 'active': false}, {'cnrl': 'cnrl-3356388722', 'text': 'raw_kind', 'active': false}, {'cnrl': 'cnrl-8856388711', 'text': 'heart_rate', 'active': false}, {'cnrl': 'cnrl-', 'text': 'publickey', 'active': false}, {'cnrl': '', 'text': 'compref', 'active': false}]
     dataCNRLbundle.tableStructure[1] = [{'cnrl': '', 'text': 'device_mac', 'active': false}, {'cnrl': '', 'text': 'firmware', 'active': false}]
     dataCNRLbundle.tableStructure[2] = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-', 'text': 'science', 'active': false}, {'cnrl': 'cnrl-', 'text': 'datatype', 'active': false}, {'cnrl': 'cnrl-', 'text': 'timeseg', 'active': false}, {'cnrl': 'cnrl-', 'text': 'value', 'active': false}, {'cnrl': 'cnrl-', 'text': 'device_mac', 'active': false}, {'cnrl': 'cnrl-', 'text': 'clean', 'active': false}, {'cnrl': 'cnrl-', 'text': 'tidy', 'active': false}]
     dataCNRLbundle.tableStructure[3] = [{'cnrl': 'cnrl-8856388724', 'text': 'average-bpm', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856388322', 'text': 'average-steps', 'active': false}]
     dataCNRLbundle.tableStructure[4] = [{'cnrl': 'cnrl-8856388924', 'text': 'sum-bpm', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856389322', 'text': 'sum-steps', 'active': false}]
-    let subColumn = [{'cnrl': 'cnrl-3339949442', 'text': 'p2.5', 'active': false}, {'cnrl': 'cnrl-3993714611', 'text': 'p10', 'active': false}]
-    dataCNRLbundle.tableStructure[5] = [{'cnrl': 'cnrl-', 'text': 'publickey', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-3339949442', 'text': 'data', 'active': false, 'sub': subColumn}]
+    dataCNRLbundle.namespace = 'http://165.227.244.213:8881/'
+    dataCNRLbundle.index = []
+  } else if (refIN === 'cnrl-33221102') {
+    // CNRL implementation REST API
+    dataCNRLbundle.type = 'dtpackaging'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-33221102', 'text': 'mongo-RESTAPI', 'active': false }
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.apistructure = ['luftdatenGet/<publickey>/<token>/<queryTime>/<deviceID>/']
+    let subColumn = [{'cnrl': 'cnrl-3339949442', 'text': 'SDS_P2', 'active': false}, {'cnrl': 'cnrl-3339949443', 'text': 'SDS_P1', 'active': false}, {'cnrl': 'cnrl-3339949444', 'text': 'temperature', 'active': false}, {'cnrl': 'cnrl-3339949445', 'text': 'humidity', 'active': false}, {'cnrl': 'cnrl-3339949446', 'text': 'air-pressure', 'active': false}]
+    dataCNRLbundle.tableStructure[0] = [{'cnrl': 'cnrl-', 'text': 'publickey', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'sensors', 'text': 'sensordata', 'active': false, 'data': subColumn}, {'cnrl': 'data', 'text': 'sourcestructure', 'active': false}]
     dataCNRLbundle.namespace = 'http://165.227.244.213:8881/'
     dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-773355992211') {

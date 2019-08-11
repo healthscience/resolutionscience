@@ -68,10 +68,8 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
     // start workflow for setting up entity, compute and vis/sim etc.
     this.liveSEntities[cid] = new Entity(ecsIN, setIN)
     // default input set on setting up of component
-    await this.controlFlow(ecsIN).then(function (cFlow) {
-      console.log('CONTROLFLOW--new--COMPLETE')
-      // console.log(cFlow)
-    })
+    await this.controlFlow(ecsIN)
+    // console.log(cFlow)
   }
   return true
 }

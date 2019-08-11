@@ -50,20 +50,16 @@ safeFlow.prototype.LKNtime = function () {
 */
 safeFlow.prototype.toolkitContext = async function (flag, callBK) {
   // first time start of device, datatype context for toolkitContext
-  const localthis = this
+  let apiData = []
   if (flag === 'device') {
-    await this.liveDataSystem.systemDevice(callBK).then(function (result) {
-    })
+    apiData = await this.liveDataSystem.systemDevice()
   } else if (flag === 'dataType') {
-    await this.liveDataSystem.getDataTypes().then(function (result) {
-      // convert sensor names to datatypes
-      let startDatatypes = localthis.liveCNRL.sensorMappingDatatype(result)
-      // console.log(startDatatypes)
-      callBK(startDatatypes)
-      return true
-    })
+    let result = await this.liveDataSystem.getDataTypes()
+    // convert sensor names to datatypes
+    apiData = await this.liveCNRL.sensorMappingDatatype(result)
+    // console.log(apiData)
   }
-  return true
+  return apiData
 }
 
 /**
@@ -132,12 +128,14 @@ safeFlow.prototype.scienceEntities = async function (contextIN) {
 *
 */
 safeFlow.prototype.setpeerContext = function (bundleIN) {
+  console.log('setpeer context')
+  console.log(bundleIN)
   // prepare ECS input format and hold context
   // does an existing bundle exist?
   let ecsIN = {}
   ecsIN.kbid = bundleIN.kbid
   ecsIN.cid = bundleIN.cnrl
-  ecsIN.storageAPI = this.defaultStorage
+  ecsIN.storageAPI = 0
   ecsIN.visID = bundleIN.visualisation
   // convert all the time to millisecons format
   let timeBundle = {}

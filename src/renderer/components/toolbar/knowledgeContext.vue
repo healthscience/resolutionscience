@@ -240,23 +240,7 @@
         this.kwords = lanuageCNRL
       },
       deviceContext () {
-        var localthis = this
-        function callbackC (dataH) {
-          localthis.devices = dataH
-          // setting dataType Smartcontract CNRL id  (needs to be extract and mapp to storageAPI)
-          localthis.devices[0].cnrl = 'cnrl-33221101'
-          localthis.devices[1].cnrl = 'cnrl-33221101'
-          localthis.$store.commit('setDevice', dataH)
-        }
-        const deviceSet = localthis.$store.getters.liveContext.device
-        // has the device context been set already?  Assume no for NOW
-        if (deviceSet.length > 678) {
-          this.devices = deviceSet
-        } else {
-          // make call to set start dataContext for this pubkey
-          const flag = 'device'
-          this.safeMixin.toolkitContext(flag, callbackC)
-        }
+        this.devices = this.$store.getters.liveContext.device
       },
       dataTypeDevice () {
         let devDTHolder = []

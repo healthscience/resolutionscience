@@ -83,7 +83,7 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
   } else if (eInfo.cid === 'cnrl-2356388732') {
     console.log('average Chart vis start')
     // could be more than one visualisation required,  devices, datatypes, timeseg or computation or event resolutions
-    let liveChartOptions = this.liveChartSystem.AverageChartOptions()
+    let liveChartOptions = this.liveChartOptions.AverageChartOptions()
     for (let dType of eInfo.datatypes) {
       for (let device of eInfo.devices) {
         for (let entry of dataIN[liveTime][device.device_mac][dType.cnrl]) {
@@ -121,7 +121,7 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
     // summation of datatypes
     console.log('SUM chart')
     // could be more than one visualisation required,  devices, datatypes, timeseg or computation or event resolutions
-    let liveChartOptions = this.liveChartSystem.SumChartOptions()
+    let liveChartOptions = this.liveChartOptions.SumChartOptions()
     for (let dType of eInfo.datatypes) {
       for (let device of eInfo.devices) {
         for (let entry of dataIN[liveTime][device.device_mac][dType.cnrl]) {

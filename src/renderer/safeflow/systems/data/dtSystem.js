@@ -32,62 +32,72 @@ util.inherits(DTSystem, events.EventEmitter)
 * @method DTStartMatch
 *
 */
-DTSystem.prototype.DTStartMatch = function (dAPI, lDTs, catDTs) {
-  let packagingDTs = this.liveCNRL.lookupContract(dAPI)
-  // is the data type primary?
-  let sourceDTextract = this.mapSourceDTs(lDTs)
-  let sourceDTmapAPI = this.datatypeCheckAPI(packagingDTs, sourceDTextract)
-  let SpackagingDTs = {}
-  let TidyDataLogic = []
-  // is this a derived source?
-  if (packagingDTs.source !== 'cnrl-primary') {
-    // look up source data packaging
-    SpackagingDTs = this.liveCNRL.lookupContract(packagingDTs.source)
-    // tidy data info available?
-    if (packagingDTs.tidy === true) {
-      // investiage the source contract
-      // does the live DT require any tidying?
-      for (let tldt of SpackagingDTs.tidyList) {
-        for (let dtl of sourceDTextract) {
-          if (dtl.cnrl === tldt.cnrl) {
-            TidyDataLogic = SpackagingDTs.tidyList
-          } else {
-            // TidyDataLogic = []
+DTSystem.prototype.DTStartMatch = function (devicesIN, lDTs, catDTs) {
+  let datatypePerdevice = []
+  let catDTmapAPI = []
+  console.log(catDTmapAPI)
+  // loop over devices and match to API etc
+  for (let dliv of devicesIN) {
+    let packagingDTs = this.liveCNRL.lookupContract(dliv.cnrl)
+    console.log('api cnrl')
+    console.log(packagingDTs)
+    // is the data type primary?
+    let sourceDTextract = this.mapSourceDTs(lDTs)
+    let sourceDTmapAPI = this.datatypeCheckAPI(packagingDTs, sourceDTextract)
+    let SpackagingDTs = {}
+    let TidyDataLogic = []
+    // is this a derived source?
+    if (packagingDTs.source !== 'cnrl-primary') {
+      // look up source data packaging
+      SpackagingDTs = this.liveCNRL.lookupContract(packagingDTs.source)
+      // tidy data info available?
+      if (packagingDTs.tidy === true) {
+        // investiage the source contract
+        // does the live DT require any tidying?
+        for (let tldt of SpackagingDTs.tidyList) {
+          for (let dtl of sourceDTextract) {
+            if (dtl.cnrl === tldt.cnrl) {
+              TidyDataLogic = SpackagingDTs.tidyList
+            } else {
+              // TidyDataLogic = []
+            }
           }
         }
       }
+    } else {
+      // extract tidy logic info.
+      TidyDataLogic = packagingDTs.tidyList
     }
-  } else {
-    // extract tidy logic info.
-    TidyDataLogic = packagingDTs.tidyList
-  }
-  let DTmapAPI = this.datatypeCheckAPI(packagingDTs, lDTs)
-  // if null check if category dt, ie derived from two or more dataTypeSensor
-  let checkDTcategory = []
-  let extractCatDT = []
-  let catDTmapAPI = []
-  console.log(catDTmapAPI)
-  if (catDTs.length > 0 && catDTs[0].cnrl !== 'none') {
-    checkDTcategory = this.categoryCheck(catDTs[0], SpackagingDTs)
-    // now check the API query for this dataType
-    // todo extract data type ie loop over category matches, same or all different?
-    // lookup the dataType
-    let catDT = []
-    extractCatDT = this.liveCNRL.lookupContract(checkDTcategory[0].column)
-    catDT.push(extractCatDT.prime)
-    catDTmapAPI = this.datatypeCheckAPI(packagingDTs, catDT)
-  } else {
-    checkDTcategory = []
-  }
+    let DTmapAPI = this.datatypeCheckAPI(packagingDTs, lDTs)
+    // if null check if category dt, ie derived from two or more dataTypeSensor
+    let checkDTcategory = []
+    let extractCatDT = []
+    if (catDTs.length > 0 && catDTs[0].cnrl !== 'none') {
+      checkDTcategory = this.categoryCheck(catDTs[0], SpackagingDTs)
+      // now check the API query for this dataType
+      // todo extract data type ie loop over category matches, same or all different?
+      // lookup the dataType
+      let catDT = []
+      extractCatDT = this.liveCNRL.lookupContract(checkDTcategory[0].column)
+      catDT.push(extractCatDT.prime)
+      catDTmapAPI = this.datatypeCheckAPI(packagingDTs, catDT)
+    } else {
+      checkDTcategory = []
+    }
 
-  let apiInfo = {}
-  apiInfo.apiquery = DTmapAPI // [...DTmapAPI, ...catDTmapAPI]
-  apiInfo.sourceapiquery = sourceDTmapAPI
-  apiInfo.sourceDTs = sourceDTextract
-  apiInfo.categorycodes = checkDTcategory
-  apiInfo.datatypes = lDTs
-  apiInfo.tidyList = TidyDataLogic
-  return apiInfo
+    let apiHolder = {}
+    apiHolder[dliv.device_mac] = {}
+    let apiInfo = {}
+    apiInfo.apiquery = DTmapAPI // [...DTmapAPI, ...catDTmapAPI]
+    apiInfo.sourceapiquery = sourceDTmapAPI
+    apiInfo.sourceDTs = sourceDTextract
+    apiInfo.categorycodes = checkDTcategory
+    apiInfo.datatypes = lDTs
+    apiInfo.tidyList = TidyDataLogic
+    apiHolder[dliv.device_mac] = apiInfo
+    datatypePerdevice.push(apiHolder)
+  }
+  return datatypePerdevice
 }
 
 /**
@@ -96,6 +106,9 @@ DTSystem.prototype.DTStartMatch = function (dAPI, lDTs, catDTs) {
 *
 */
 DTSystem.prototype.datatypeCheckAPI = function (packagingDTs, lDTs) {
+  console.log('api m to DT check')
+  console.log(packagingDTs)
+  console.log(lDTs)
   let apiMatch = []
   let apiKeep = {}
   // given datatypes select find match to the query string
@@ -103,6 +116,15 @@ DTSystem.prototype.datatypeCheckAPI = function (packagingDTs, lDTs) {
   // match to source API query
   for (let dtt of packagingDTs.tableStructure) {
     // is there table structure embedd in the storageStructure?
+    console.log('tatable colum strucgture')
+    console.log(dtt)
+    // check to see if table contains sub structure
+    let subStructure = this.subStructure(dtt)
+    console.log('substructure returned')
+    console.log(subStructure)
+    if (subStructure.length > 0) {
+      dtt = subStructure
+    }
     for (let idt of lDTs) {
       const result = dtt.filter(item => item.cnrl === idt.cnrl)
       if (result.length > 0) {
@@ -121,6 +143,24 @@ DTSystem.prototype.datatypeCheckAPI = function (packagingDTs, lDTs) {
     tableCount++
   }
   return apiKeep
+}
+
+/**
+*  check for sub table structure
+* @method subStructure
+*
+*/
+DTSystem.prototype.subStructure = function (tableStructure) {
+  console.log('sub table structure')
+  console.log(tableStructure)
+  let subStructure = []
+  for (let tcI of tableStructure) {
+    if (tcI.cnrl === 'sensors') {
+      console.log('yes sub structure')
+      subStructure = tcI.data
+    }
+  }
+  return subStructure
 }
 
 /**

@@ -153,9 +153,6 @@
       })
     },
     computed: {
-      bundleCounter: function () {
-        return this.$store.state.bundleCounter
-      }
     },
     mounted () {
       let sciStartEmpty = {}

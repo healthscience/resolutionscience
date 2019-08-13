@@ -33,14 +33,12 @@ util.inherits(DTSystem, events.EventEmitter)
 *
 */
 DTSystem.prototype.DTStartMatch = function (devicesIN, lDTs, catDTs) {
-  let datatypePerdevice = []
+  let datatypePerdevice = {}
   let catDTmapAPI = []
   console.log(catDTmapAPI)
   // loop over devices and match to API etc
   for (let dliv of devicesIN) {
     let packagingDTs = this.liveCNRL.lookupContract(dliv.cnrl)
-    console.log('api cnrl')
-    console.log(packagingDTs)
     // is the data type primary?
     let sourceDTextract = this.mapSourceDTs(lDTs)
     let sourceDTmapAPI = this.datatypeCheckAPI(packagingDTs, sourceDTextract)
@@ -95,7 +93,7 @@ DTSystem.prototype.DTStartMatch = function (devicesIN, lDTs, catDTs) {
     apiInfo.datatypes = lDTs
     apiInfo.tidyList = TidyDataLogic
     apiHolder[dliv.device_mac] = apiInfo
-    datatypePerdevice.push(apiHolder)
+    datatypePerdevice = apiHolder
   }
   return datatypePerdevice
 }
@@ -106,9 +104,6 @@ DTSystem.prototype.DTStartMatch = function (devicesIN, lDTs, catDTs) {
 *
 */
 DTSystem.prototype.datatypeCheckAPI = function (packagingDTs, lDTs) {
-  console.log('api m to DT check')
-  console.log(packagingDTs)
-  console.log(lDTs)
   let apiMatch = []
   let apiKeep = {}
   // given datatypes select find match to the query string
@@ -116,12 +111,8 @@ DTSystem.prototype.datatypeCheckAPI = function (packagingDTs, lDTs) {
   // match to source API query
   for (let dtt of packagingDTs.tableStructure) {
     // is there table structure embedd in the storageStructure?
-    console.log('tatable colum strucgture')
-    console.log(dtt)
     // check to see if table contains sub structure
     let subStructure = this.subStructure(dtt)
-    console.log('substructure returned')
-    console.log(subStructure)
     if (subStructure.length > 0) {
       dtt = subStructure
     }
@@ -151,12 +142,9 @@ DTSystem.prototype.datatypeCheckAPI = function (packagingDTs, lDTs) {
 *
 */
 DTSystem.prototype.subStructure = function (tableStructure) {
-  console.log('sub table structure')
-  console.log(tableStructure)
   let subStructure = []
   for (let tcI of tableStructure) {
     if (tcI.cnrl === 'sensors') {
-      console.log('yes sub structure')
       subStructure = tcI.data
     }
   }
@@ -198,6 +186,9 @@ DTSystem.prototype.mapSourceDTs = function (lDTs) {
 *
 */
 DTSystem.prototype.categoryCheck = function (cdt, catSource) {
+  console.log('extract cat codes')
+  console.log(cdt)
+  console.log(catSource)
   let catMatch = []
   for (let catS of catSource.categorycodes) {
     for (let sc of catS.categories) {

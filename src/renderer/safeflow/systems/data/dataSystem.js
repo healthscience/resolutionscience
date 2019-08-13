@@ -170,34 +170,29 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle) {
   // loop over the each devices API data source info.
   for (let devI of systemBundle.deviceList) {
     rawHolder[systemBundle.startperiod][devI] = {}
-    for (let apiPD of systemBundle.apiInfo) {
-      // review the apiInfo  map to function that will make acutal API call (should abstrac to build rest or crypto storage query string programmatically)
-      // first is the data from the PAST or FUTURE ie simulated?
-      if (systemBundle.startperiod === 'simulateData') {
-        // need whole new system for product future data
-      } else {
-        for (let dtItem of apiPD[devI].apiquery) {
-          if (dtItem.api === 'computedata/<publickey>/<token>/<queryTime>/<deviceID>/') {
-            console.log('compute data query')
-            let sourcerawData = await this.getRawData(devI, systemBundle.startperiod)
-            let filterColumn = this.filterDataType(dtItem, sourcerawData)
-            console.log(filterColumn)
-            rawHolder[systemBundle.startperiod][devI][dtItem.cnrl] = sourcerawData
-          } else if (dtItem.api === 'luftdatenGet/<publickey>/<token>/<queryTime>/<deviceID>/') {
-            console.log('air quality data query')
-            let AirsourcerawData = await this.getAirqualityData(devI, systemBundle.startperiod)
-            let filterColumnAQ = this.filterDataTypeSub(dtItem, AirsourcerawData)
-            console.log(filterColumnAQ)
-            rawHolder[systemBundle.startperiod][devI][dtItem.cnrl] = AirsourcerawData
-          } else if (dtItem.api === 'sum/<publickey>/<token>/<queryTime>/<deviceID>/') {
-            console.log('sum data query')
-            let SumsourcerawData = await this.getRawSumData(systemBundle)
-            rawHolder[systemBundle.startperiod][devI][dtItem.cnrl] = SumsourcerawData
-          } else if (dtItem.api === 'average/<publickey>/<token>/<queryTime>/<deviceID>/') {
-            console.log('average data query')
-            let AvgsourcerawData = await this.getRawAverageData(systemBundle)
-            rawHolder[systemBundle.startperiod][devI][dtItem.cnrl] = AvgsourcerawData
-          }
+    // first is the data from the PAST or FUTURE ie simulated?
+    if (systemBundle.startperiod === 'simulateData') {
+      // need whole new system for product future data
+    } else {
+      for (let dtItem of systemBundle.apiInfo[devI].apiquery) {
+        if (dtItem.api === 'computedata/<publickey>/<token>/<queryTime>/<deviceID>/') {
+          console.log('compute data query')
+          let sourcerawData = await this.getRawData(devI, systemBundle.startperiod)
+          // let filterColumn = this.filterDataType(dtItem, sourcerawData)
+          rawHolder[systemBundle.startperiod][devI][dtItem.cnrl] = sourcerawData
+        } else if (dtItem.api === 'luftdatenGet/<publickey>/<token>/<queryTime>/<deviceID>/') {
+          console.log('air quality data query')
+          let AirsourcerawData = await this.getAirqualityData(devI, systemBundle.startperiod)
+          let filterColumnAQ = this.filterDataTypeSub(dtItem, AirsourcerawData)
+          rawHolder[systemBundle.startperiod][devI][dtItem.cnrl] = filterColumnAQ
+        } else if (dtItem.api === 'sum/<publickey>/<token>/<queryTime>/<deviceID>/') {
+          console.log('sum data query')
+          let SumsourcerawData = await this.getRawSumData(systemBundle)
+          rawHolder[systemBundle.startperiod][devI][dtItem.cnrl] = SumsourcerawData
+        } else if (dtItem.api === 'average/<publickey>/<token>/<queryTime>/<deviceID>/') {
+          console.log('average data query')
+          let AvgsourcerawData = await this.getRawAverageData(systemBundle)
+          rawHolder[systemBundle.startperiod][devI][dtItem.cnrl] = AvgsourcerawData
         }
       }
     }
@@ -325,15 +320,44 @@ DataSystem.prototype.getHRrecovery = async function (bundleIN, dtAsked) {
 * @method tidyRawData
 *
 */
-DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
-  let liveStarttime = dataASK.timePeriod
-  // let filterMat = null
-  // build object structureReturn
+DataSystem.prototype.tidyRawData = function (bundleIN, dataRaw) {
+  console.log('start tidy system')
+  console.log(bundleIN)
+  console.log(dataRaw)
+  // loop over devices dts and tidy as needed
+  let startTime = bundleIN.startperiod
   let tidyHolder = {}
-  tidyHolder[liveStarttime] = {}
-  // one, two or more sources needing tidying???
-  // data structure in  Object indexed by startTime, object IndexbyDevice, Array[]of object -> heart_rate steps  {plus other source data}
-  // let cleanData = []
+  tidyHolder[startTime] = {}
+  let tidyDataB = {}
+  let dInfo = []
+  for (let dev of bundleIN.deviceList) {
+    tidyHolder[startTime][dev] = []
+    dInfo = bundleIN.apiInfo[dev].tidyList
+    if (dInfo.length !== 0) {
+      // let tidyHolder = {}
+      let dtTidy = dInfo
+      let rawDataarray = dataRaw[startTime][dev]
+      let tidyBack = this.tidyFilter(dtTidy, bundleIN.dtAsked, rawDataarray)
+      tidyDataB = tidyBack
+    } else {
+      console.log('NOtidy required')
+      tidyDataB = dataRaw
+    }
+    console.log('tidyholder')
+    console.log(tidyDataB)
+    tidyHolder[startTime][dev] = tidyDataB
+  }
+  return tidyHolder
+}
+
+/**
+* Tidy filter
+* @method tidyFilter
+*
+*/
+DataSystem.prototype.tidyFilter = function (tidyInfo, dtList, dataRaw) {
+  // build object structureReturn
+  let tidyHolderF = {}
   const manFilter = (e, tItem) => {
     let filterMat = null
     for (var i = 0; i < tItem.codes.length; i++) {
@@ -346,36 +370,24 @@ DataSystem.prototype.tidyRawData = function (dataASK, dataRaw) {
     if (filterMat === true) {
       return e
     } else {
-      e['heart_rate'] = null
+      e = {...e, heart_rate: null}
       return e
     }
   }
-  for (let devI of dataASK.deviceList) {
-    // do the two data types match?  If yes, filter if not raw =s tidydata
-    tidyHolder[liveStarttime][devI] = {}
-    for (let dateMatch of dataRaw) {
-      if (dateMatch[liveStarttime]) {
-        for (let dtList of dataASK.datatypeList) {
-          // loop over rawData until the start date matchtes
-          for (let tItem of dataASK.tidyList) {
-            if (dtList.cnrl === tItem.cnrl) {
-              let tidyDT = tItem.cnrl
-              if (dateMatch[liveStarttime][devI][tidyDT]) {
-                let fullData = dateMatch[liveStarttime][devI][tidyDT]
-                const newfullData = fullData.map(n => manFilter(n, tItem))
-                tidyHolder[liveStarttime][devI][tidyDT] = newfullData
-              } else {
-                console.log('LOOP tidy NO tidying required')
-              }
-            } else {
-              tidyHolder[liveStarttime][devI][dtList.cnrl] = dateMatch[liveStarttime][devI][dtList.cnrl]
-            }
-          }
-        }
+  for (let dttI of tidyInfo) {
+    // loop over rawData until the start date matchtes
+    for (let dtI of dtList) {
+      if (dataRaw[dtI.cnrl]) {
+        let tidyDT = dtI.cnrl
+        let rItem = dataRaw[dtI.cnrl]
+        const newfullData = rItem.map(n => manFilter(n, dttI))
+        tidyHolderF[tidyDT] = newfullData
+      } else {
+        tidyHolderF[dtI.cnrl] = dataRaw[dtI.cnrl]
       }
     }
   }
-  return tidyHolder
+  return tidyHolderF
 }
 
 /**
@@ -449,6 +461,32 @@ DataSystem.prototype.extractDTcolumn = function (sourceDT, arrayIN) {
 }
 
 /**
+* fiter controller of data types
+* @method dtFilterController
+*
+*/
+DataSystem.prototype.dtFilterController = function (systemBundle, liveData) {
+  console.log('dtFilterController')
+  console.log(systemBundle)
+  console.log(liveData)
+  let filterHolder = {}
+  filterHolder[systemBundle.startperiod] = {}
+  // loop over the each devices API data source info.
+  for (let devI of systemBundle.deviceList) {
+    filterHolder[systemBundle.startperiod][devI] = {}
+    for (let dtItem of systemBundle.apiInfo[devI].apiquery) {
+      let sourcerawData = liveData[systemBundle.startperiod][devI][dtItem.cnrl]
+      console.log(sourcerawData)
+      let filterColumn = this.filterDataType(dtItem, sourcerawData)
+      filterHolder[systemBundle.startperiod][devI][dtItem.cnrl] = filterColumn
+    }
+  }
+  console.log('filter datatype finished')
+  console.log(filterHolder)
+  return filterHolder
+}
+
+/**
 * extract out the data type colum and timestamp
 * @method filterDataType
 *
@@ -459,7 +497,13 @@ DataSystem.prototype.filterDataType = function (sourceDT, arrayIN) {
     let dataPair = {}
     let timestamp = sing['timestamp']
     dataPair.timestamp = timestamp
-    dataPair[sourceDT.column] = sing[sourceDT.column]
+    let valueC = 0
+    if (sing[sourceDT.column] === null) {
+      valueC = null
+    } else {
+      valueC = parseInt(sing[sourceDT.column], 10)
+    }
+    dataPair[sourceDT.column] = valueC
     singleArray.push(dataPair)
   }
   return singleArray
@@ -471,8 +515,6 @@ DataSystem.prototype.filterDataType = function (sourceDT, arrayIN) {
 *
 */
 DataSystem.prototype.filterDataTypeSub = function (sourceDT, arrayIN) {
-  console.log('filt sub')
-  console.log(sourceDT)
   let singleArray = []
   // check if sub data structure
   let subData = this.subStructure(arrayIN)
@@ -519,37 +561,49 @@ DataSystem.prototype.subStructure = function (dataStructure) {
 * @method categorySorter
 *
 */
-DataSystem.prototype.categorySorter = function (dataASK, tidyData) {
-  // loop over and apply startBundles
-  // TODO a CNRL utility that can look at Datapackaing contract, data type contracts and drill down to column codes for logic screen of source data
-  let catLogic = this.liveCNRL.lookupContract(dataASK.categoryList[0].cnrl)
-  let DrillDownCNRLcontract = this.liveCNRL.drillDowntoLogic(catLogic.dtsource[0])
-  let filterCat = DrillDownCNRLcontract.code
-  let liveStarttime = dataASK.timePeriod
-  // build object structureReturn
+DataSystem.prototype.categorySorter = function (dataASK, rawData) {
+  let startTime = dataASK.startperiod
   let catHolder = {}
-  catHolder[liveStarttime] = {}
-  // one, two or more sources needing tidying???
-  // data structure in  Object indexed by startTime, object IndexbyDevice, Array[]of object -> heart_rate steps  {plus other source data}
-  let catData = []
-  // need to import error codes from device/mobile app
-  // let errorCodes = [255]
-  for (let devI of dataASK.deviceList) {
-    // loop over rawData until the start date matchtes
-    for (let dateMatch of tidyData) {
-      if (dateMatch[liveStarttime]) {
-        for (let dti of dataASK.datatypeList) {
-          catData = dateMatch[liveStarttime][devI][dti.cnrl].filter(function (item) {
-            // these data table column names could be dynamic ie programable.
-            return item.raw_kind === filterCat
-          })
-          catHolder[liveStarttime][devI] = {}
-          catHolder[liveStarttime][devI][dti.cnrl] = catData
-        }
+  catHolder[startTime] = {}
+  const excludeCodes = (e, tItem, column) => {
+    for (let fCode of tItem) {
+      let codeP = parseInt(fCode.code, 10)
+      let colP = parseInt(e[column], 10)
+      if (colP === codeP) {
+        return true
       }
     }
   }
+  let catData = []
+  for (let dev of dataASK.deviceList) {
+    catHolder[startTime][dev] = []
+    // extract the column query name
+    console.log('cat loigic')
+    console.log(dataASK.apiInfo[dev].categorycodes)
+    if (dataASK.apiInfo[dev].categorycodes.length !== 0) {
+      let catColumnQueryName = this.extractColumnName(dataASK.apiInfo[dev].categorycodes)
+      console.log('yes, categories required')
+      for (let dti of dataASK.apiInfo[dev].apiquery) {
+        catData = rawData[startTime][dev][dti.cnrl].filter(n => excludeCodes(n, dataASK.apiInfo[dev].categorycodes, catColumnQueryName))
+        catHolder[startTime][dev][dti.cnrl] = catData
+      }
+    } else {
+      console.log('no categorisation required')
+      catHolder = rawData
+    }
+  }
   return catHolder
+}
+
+/**
+* give back name of cat code name
+* @method extractColumnName
+*
+*/
+DataSystem.prototype.extractColumnName = function (cCodes) {
+  let columnName = ''
+  columnName = this.liveCNRL.lookupContract(cCodes[0].column)
+  return columnName.prime.text
 }
 
 /**

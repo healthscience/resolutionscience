@@ -25,9 +25,10 @@ var DataComponent = function (DID, setIN) {
   this.CNRLscience = {}
   this.datatypeList = []
   this.categoryList = []
-  this.dataRaw = []
-  this.tidyData = []
-  this.categoryData = []
+  this.dataRaw = {}
+  this.tidyData = {}
+  this.categoryData = {}
+  this.reduceData = {}
   this.dataType = []
   this.timeSegs = []
   this.setStartTime(this.did.time.startperiod)
@@ -128,36 +129,14 @@ DataComponent.prototype.sourceData = async function (apiINFO) {
   systemBundle.querytime = this.did.time
   systemBundle.categories = this.did.categories
   let dataRback = await this.liveDataSystem.datatypeQueryMapping(systemBundle)
-  this.dataRaw.push(dataRback)
-  // is there any data tidying required
-  this.TidyData()
+  this.dataRaw = dataRback
   // is there a categories filter to apply?
-  this.CategoriseData()
-  console.log('post tidy')
+  this.CategoriseData(apiINFO)
+  // is there any data tidying required
+  this.TidyData(apiINFO)
+  this.FilterDownDT(apiINFO)
+  console.log('fliter DT, post tidy and category')
   console.log(this.liveData)
-  return true
-}
-
-/**
-*
-* @method TidyData
-*
-*/
-DataComponent.prototype.TidyData = function () {
-  // loop over dts and tidy as needed
-  if (this.apiInfoLive.tidyList.length !== 0) {
-    let tidyHolder = {}
-    let dBundle = {}
-    dBundle.timePeriod = this.livedate
-    dBundle.deviceList = this.deviceList
-    dBundle.datatypeList = this.datatypeList
-    dBundle.tidyList = this.apiInfoLive.tidyList
-    tidyHolder = this.liveDataSystem.tidyRawData(dBundle, this.dataRaw)
-    this.tidyData.push(tidyHolder)
-  } else {
-    console.log('NOtidy required')
-    this.tidyData = this.dataRaw
-  }
   return true
 }
 
@@ -166,21 +145,70 @@ DataComponent.prototype.TidyData = function () {
 * @method CategoriseData
 *
 */
-DataComponent.prototype.CategoriseData = function () {
-  let catTidyHolder = {}
-  let cBundle = {}
-  cBundle.timePeriod = this.livedate
-  cBundle.deviceList = this.deviceList
-  cBundle.datatypeList = this.datatypeList
-  cBundle.categoryList = this.categoryList
-  if (this.categoryList.length > 0 && this.categoryList[0].cnrl !== 'none') {
-    catTidyHolder = this.liveDataSystem.categorySorter(cBundle, this.tidyData)
-    this.categoryData.push(catTidyHolder)
-  } else {
-    catTidyHolder = this.tidyData
-  }
+DataComponent.prototype.CategoriseData = function (catInfo) {
+  // loop over and categorise dt if required
+  console.log('categorise data')
+  let catDataG = {}
+  let systemBundle = {}
+  systemBundle.apiInfo = catInfo
+  systemBundle.startperiod = this.livedate
+  systemBundle.scienceAsked = this.CNRLscience
+  systemBundle.dtAsked = this.datatypeList
+  systemBundle.deviceList = this.deviceList
+  systemBundle.timeseg = this.timeSegs
+  systemBundle.querytime = this.did.time
+  systemBundle.categories = this.did.categories
+  // console.log(systemBundle)
+  catDataG = this.liveDataSystem.categorySorter(systemBundle, this.dataRaw)
+  this.categoryData = catDataG
+}
+
+/**
+*
+* @method TidyData
+*
+*/
+DataComponent.prototype.TidyData = function (apiINFO) {
+  console.log('tidystart')
+  let tidyDataG = {}
+  let systemBundle = {}
+  systemBundle.apiInfo = apiINFO
+  systemBundle.startperiod = this.livedate
+  systemBundle.scienceAsked = this.CNRLscience
+  systemBundle.dtAsked = this.datatypeList
+  systemBundle.deviceList = this.deviceList
+  systemBundle.timeseg = this.timeSegs
+  systemBundle.querytime = this.did.time
+  systemBundle.categories = this.did.categories
+  // console.log(systemBundle)
+  tidyDataG = this.liveDataSystem.tidyRawData(systemBundle, this.categoryData)
+  this.tidyData = tidyDataG
   // set liveData based on/if category data asked for
   this.assessDataStatus()
+  return true
+}
+
+/**
+*
+* @method FilterDownDT
+*
+*/
+DataComponent.prototype.FilterDownDT = function (apiINFO) {
+  console.log('tidystart')
+  let tidyDataG = {}
+  let systemBundle = {}
+  systemBundle.apiInfo = apiINFO
+  systemBundle.startperiod = this.livedate
+  systemBundle.scienceAsked = this.CNRLscience
+  systemBundle.dtAsked = this.datatypeList
+  systemBundle.deviceList = this.deviceList
+  systemBundle.timeseg = this.timeSegs
+  systemBundle.querytime = this.did.time
+  systemBundle.categories = this.did.categories
+  // console.log(systemBundle)
+  tidyDataG = this.liveDataSystem.dtFilterController(systemBundle, this.liveData)
+  this.liveData = tidyDataG
+  return true
 }
 
 /**

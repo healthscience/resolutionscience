@@ -316,7 +316,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-3356388722') {
     dataCNRLbundle.type = 'datatype'
-    dataCNRLbundle.prime = { 'cnrl': 'cnrl-3356388722', 'text': 'RAW_KIND', 'active': false }
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-3356388722', 'text': 'raw_kind', 'active': false }
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
     dataCNRLbundle.tableStructure = []

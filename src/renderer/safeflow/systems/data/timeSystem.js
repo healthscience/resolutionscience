@@ -35,6 +35,10 @@ util.inherits(TimeSystem, events.EventEmitter)
 *
 */
 TimeSystem.prototype.discoverTimeStatus = async function (EIDinfo, compInfo, rawIN) {
+  console.log('discover time')
+  console.log(EIDinfo)
+  console.log(compInfo)
+  console.log(rawIN)
   // establish start date or last compute date, deal with segmentation if required.
   let timeStart = await this.updatedDTCStatus(EIDinfo, compInfo, rawIN)
   return timeStart

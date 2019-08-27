@@ -194,7 +194,7 @@ DataComponent.prototype.TidyData = function (apiINFO) {
 *
 */
 DataComponent.prototype.FilterDownDT = function (apiINFO) {
-  console.log('tidystart')
+  console.log('filteDown')
   let tidyDataG = {}
   let systemBundle = {}
   systemBundle.apiInfo = apiINFO
@@ -206,8 +206,10 @@ DataComponent.prototype.FilterDownDT = function (apiINFO) {
   systemBundle.querytime = this.did.time
   systemBundle.categories = this.did.categories
   // console.log(systemBundle)
-  tidyDataG = this.liveDataSystem.dtFilterController(systemBundle, this.liveData)
-  this.liveData = tidyDataG
+  if (this.liveData.primary !== 'prime') {
+    tidyDataG = this.liveDataSystem.dtFilterController(systemBundle, this.liveData)
+    this.liveData = tidyDataG
+  }
   return true
 }
 

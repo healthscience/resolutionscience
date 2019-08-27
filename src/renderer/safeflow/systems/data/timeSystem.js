@@ -35,10 +35,6 @@ util.inherits(TimeSystem, events.EventEmitter)
 *
 */
 TimeSystem.prototype.discoverTimeStatus = async function (EIDinfo, compInfo, rawIN) {
-  console.log('discover time')
-  console.log(EIDinfo)
-  console.log(compInfo)
-  console.log(rawIN)
   // establish start date or last compute date, deal with segmentation if required.
   let timeStart = await this.updatedDTCStatus(EIDinfo, compInfo, rawIN)
   return timeStart
@@ -50,40 +46,44 @@ TimeSystem.prototype.discoverTimeStatus = async function (EIDinfo, compInfo, raw
 *
 */
 TimeSystem.prototype.updatedDTCStatus = async function (EIDinfo, compInfo, rawIN) {
+  console.log('update timestart per dt')
+  console.log(EIDinfo)
+  console.log(compInfo)
+  console.log(rawIN)
   let statusHolder = {}
-  let lastComputetime = ''
+  let lastComputetime = []
   let liveTime = EIDinfo.time.startperiod
   // need to discover prime data type (and) source DT's start time is neccessary
   for (let dev of EIDinfo.devices) {
-    for (let dtl of compInfo.datatypes) {
+    for (let dtl of compInfo[dev.device_mac].datatypes) {
       let devMac = dev.device_mac
-      statusHolder[liveTime] = {}
-      statusHolder[liveTime][devMac] = {}
-      statusHolder[liveTime][devMac][dtl.cnrl] = []
-      // need to select the latest data object from array
-      let lastDataObject = rawIN.slice(-1)[0]
-      for (let tsega of lastDataObject[liveTime][devMac][dtl.cnrl]) {
+      for (let tsega of EIDinfo.time.timeseg) {
+        statusHolder[liveTime] = {}
+        statusHolder[liveTime][devMac] = {}
+        statusHolder[liveTime][devMac][dtl.cnrl] = {}
+        // need to select the latest data object from array
+        let lastDataItem = rawIN[liveTime][devMac][dtl.cnrl][tsega].slice(-1)[0]
         // need to check if prime data type be computed before?
         if (tsega !== undefined || tsega.length > 0) {
-          if (tsega.day) {
-            lastComputetime = this.timeOrderLast(tsega.day)
-            let catStatus2 = await this.categoriseStatusperTimeseg(EIDinfo, lastComputetime, dev, 'day')
-            statusHolder[liveTime][devMac][dtl.cnrl].push(catStatus2)
+          if (tsega === 'day') {
+            lastComputetime = this.timeOrderLast(lastDataItem)
+            let catStatus2 = await this.categoriseStatusperTimeseg(EIDinfo, lastComputetime, devMac, 'day')
+            statusHolder[liveTime][devMac][dtl.cnrl][tsega] = catStatus2
           }
-          if (tsega.week) {
+          if (tsega === 'week') {
             lastComputetime = tsega.week.slice(-1)
             let catStatus3 = await this.categoriseStatusperTimeseg(EIDinfo, lastComputetime, dev, 'week')
-            statusHolder[liveTime][devMac][dtl.cnrl].push(catStatus3)
+            statusHolder[liveTime][devMac][dtl.cnrl][tsega] = catStatus3
           }
-          if (tsega.month) {
+          if (tsega === 'month') {
             lastComputetime = tsega.week.slice(-1)
             let catStatus4 = await this.categoriseStatusperTimeseg(EIDinfo, lastComputetime, dev, 'month')
-            statusHolder[liveTime][devMac][dtl.cnrl].push(catStatus4)
+            statusHolder[liveTime][devMac][dtl.cnrl][tsega] = catStatus4
           }
-          if (tsega.year) {
+          if (tsega === 'year') {
             lastComputetime = tsega.week.slice(-1)
             let catStatus5 = await this.categoriseStatusperTimeseg(EIDinfo, lastComputetime, dev, 'year')
-            statusHolder[liveTime][devMac][dtl.cnrl].push(catStatus5)
+            statusHolder[liveTime][devMac][dtl.cnrl][tsega] = catStatus5
           }
         }
       }
@@ -98,9 +98,15 @@ TimeSystem.prototype.updatedDTCStatus = async function (EIDinfo, compInfo, rawIN
 *
 */
 TimeSystem.prototype.timeOrderLast = function (dataAIN) {
+  console.log('timeorder lader')
+  console.log(dataAIN)
   let lastTime = ''
   // order array by time
-  lastTime = dataAIN.slice(-1)
+  if (dataAIN !== undefined) {
+    lastTime = dataAIN.timestamp
+  } else {
+    lastTime = 0
+  }
   return lastTime
 }
 
@@ -109,24 +115,25 @@ TimeSystem.prototype.timeOrderLast = function (dataAIN) {
 * @method categoriseStatusperTimeseg
 *
 */
-TimeSystem.prototype.categoriseStatusperTimeseg = async function (EIDinfo, statusIN, dev, timeSeg) {
+TimeSystem.prototype.categoriseStatusperTimeseg = async function (EIDinfo, lastComputeIN, dev, timeSeg) {
   let catHolder = {}
   let realTime = EIDinfo.time.realtime
   let updateCompStatus = ''
   let liveLastTime = 0
   let startTimeFound = ''
   let timeArray = []
-  if (statusIN.length > 0) {
-    liveLastTime = statusIN[0].timestamp
-  }
-  if (statusIN.length === 0) {
+  // if (lastComputeIN.length > 0) {
+  // liveLastTime = lastComputeIN
+  // }
+  if (lastComputeIN === 0) {
     updateCompStatus = 'update-required'
     startTimeFound = await this.sourceDTstartTime(dev)
     // form array for compute structure???
     timeArray = this.updateAverageDates(startTimeFound, EIDinfo.time.startperiod)
   } else if (liveLastTime < realTime) {
-    startTimeFound = statusIN[0].timestamp
     updateCompStatus = 'update-required'
+    startTimeFound = lastComputeIN
+    timeArray = this.updateAverageDates(startTimeFound, EIDinfo.time.startperiod)
   } else {
     updateCompStatus = 'uptodate'
   }
@@ -144,7 +151,7 @@ TimeSystem.prototype.categoriseStatusperTimeseg = async function (EIDinfo, statu
 */
 TimeSystem.prototype.sourceDTstartTime = async function (devIN) {
   let timeDevHolder = ''
-  let dateDevice = await this.checkForDataPerDevice(devIN.device_mac)
+  let dateDevice = await this.checkForDataPerDevice(devIN)
   timeDevHolder = dateDevice[0].lastComputeTime
   return timeDevHolder
 }
@@ -172,13 +179,15 @@ TimeSystem.prototype.checkForDataPerDevice = async function (device) {
   let deviceStatus = {}
   let dataStatus = []
   // does any input source data exist?
-  await this.liveTestStorage.getFirstData(device).then(function (firstD) {
-    deviceStatus.lastComputeTime = firstD[0].timestamp
-    deviceStatus[device] = false
-    dataStatus.push(deviceStatus)
-  }).catch(function (err) {
+  let firstD = await this.liveTestStorage.getFirstData(device).catch(function (err) {
     console.log(err)
   })
+  console.log('firstD')
+  console.log(firstD)
+  deviceStatus.lastComputeTime = firstD[0].timestamp
+  deviceStatus[device] = false
+  dataStatus.push(deviceStatus)
+
   return dataStatus
 }
 

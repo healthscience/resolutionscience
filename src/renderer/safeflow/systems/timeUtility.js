@@ -328,7 +328,7 @@ TimeUtilities.prototype.longDataArray = function (calInfo) {
       while (accDaily < (calInfo.currentday - 2)) {
         this.dayCounter = this.dayCounter + millsSecDay
         accDaily++
-        if (this.dayCounter > calInfo.uptoDateTime) {
+        if (this.dayCounter < calInfo.uptoDateTime) {
           calendarTimeList.push(this.dayCounter)
         }
       }

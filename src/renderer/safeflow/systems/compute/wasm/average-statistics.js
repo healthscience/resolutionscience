@@ -11,7 +11,6 @@
 */
 import TimeUtilities from '../../timeUtility.js'
 import TestStorageAPI from '../../data/dataprotocols/teststorage/testStorage.js'
-import DataSystem from '../../data/dataSystem.js'
 const util = require('util')
 const events = require('events')
 
@@ -19,7 +18,6 @@ var StatisticsSystem = function (setIN) {
   events.EventEmitter.call(this)
   this.liveTimeUtil = new TimeUtilities()
   this.liveTestStorage = new TestStorageAPI(setIN)
-  this.liveDataSystem = new DataSystem(setIN)
 }
 
 /**
@@ -38,49 +36,14 @@ StatisticsSystem.prototype.statisticsSystem = function () {
 }
 
 /**
-*  prepare dates for average compute
-* @method prepareAvgCompute
-*
-*/
-StatisticsSystem.prototype.prepareAvgCompute = async function (computeTimes, device, datatype, tseg, compRef, compInfo, sourceDT, category) {
-  // computeTimes = [1535846400000, 1535932800000, 1536019200000]
-  // computeTimes = []
-  // let lastItem = computeTimes.slice(-1)[0]
-  // computeTimes.push(1535846400000)
-  for (let qt of computeTimes) {
-    let queryTime = qt / 1000
-    // The datatype asked should be MAPPED to storage API via source Datatypes that make up e.g. average-bpm
-    // CNRL should be consulted to find which function calls the API for the source data
-    let dataBatch = await this.liveTestStorage.getComputeData(queryTime, device.device_mac, datatype)
-    if (dataBatch.length > 0) {
-      let singleArray = this.liveDataSystem.tidyRawDataSingle(dataBatch, datatype, compInfo)
-      // need to check for categories TODO
-      let saveReady = this.averageStatistics(singleArray)
-      // prepare JSON object for POST
-      let saveJSON = {}
-      saveJSON.publickey = ''
-      saveJSON.timestamp = queryTime
-      saveJSON.compref = compRef
-      saveJSON.datatype = sourceDT
-      saveJSON.value = saveReady.average
-      saveJSON.device_mac = device.device_mac
-      saveJSON.clean = saveReady.count
-      saveJSON.tidy = singleArray.tidycount
-      saveJSON.timeseg = tseg
-      saveJSON.category = category
-      this.liveTestStorage.saveaverageData(saveJSON)
-    }
-  }
-  return true
-}
-
-/**
 * statical average
 * @method averageStatistics
 *
 */
 StatisticsSystem.prototype.averageStatistics = function (dataArray) {
   // statistical avg. smart contract/crypt ID ref & verfied wasm/network/trubit assume done
+  console.log('single array avg')
+  console.log(dataArray)
   let AvgHolder = {}
   let numberEntries = dataArray.length
   // accumulate sum the daily data
@@ -110,6 +73,13 @@ StatisticsSystem.prototype.averageMonthlyStatistics = function () {
 *
 */
 StatisticsSystem.prototype.averageCurrentDailyStatistics = async function (startDate, device, compType, datatype, timeseg, category) {
+  console.log('average averfage stats')
+  console.log(startDate)
+  console.log(device)
+  console.log(compType)
+  console.log(datatype)
+  console.log(timeseg)
+  console.log(category)
   let dataBatch = await this.liveTestStorage.getAverageData(startDate, device, compType, datatype, timeseg, category)
   let numberEntries = dataBatch.length
   // form single arrays

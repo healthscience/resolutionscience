@@ -188,9 +188,8 @@ TestStorageAPI.prototype.saveExpKbundles = async function (jsonIN) {
 */
 TestStorageAPI.prototype.saveaverageData = async function (jsonIN) {
   jsonIN.publickey = this.tempPubkey
-  await axios.post(this.baseAPI + '/averageSave/' + this.tempPubkey + '/' + this.tempToken + '/' + jsonIN.device_mac, jsonIN)
-    .then(function (response) {
-    })
+  let response = await axios.post(this.baseAPI + '/averageSave/' + this.tempPubkey + '/' + this.tempToken + '/' + jsonIN.device_mac, jsonIN)
+  console.log(response)
 }
 
 /**

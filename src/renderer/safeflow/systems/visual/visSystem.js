@@ -84,33 +84,26 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
     console.log('average Chart vis start')
     // could be more than one visualisation required,  devices, datatypes, timeseg or computation or event resolutions
     let liveChartOptions = this.liveChartOptions.AverageChartOptions()
-    for (let dType of eInfo.datatypes) {
-      for (let device of eInfo.devices) {
-        for (let entry of dataIN[liveTime][device.device_mac][dType.cnrl]) {
-          // pass on to appropriate structure, day, week, in context of resolution etc.
-          if (entry.day) {
-            structureHolder = this.liveChartSystem.structureStatisticsData(entry.day)
-            let chartColorsSet = localthis.liveChartSystem.StatschartColors(dType)
-            dataTypeBucket.data = structureHolder
-            dataTypeBucket.color = chartColorsSet
-            chartDataH.chart.push(dataTypeBucket)
-            // now prepare data format for chartjs
-            chartData.prepared = this.liveChartSystem.prepareStatsVueChartJS(eInfo.devices, chartDataH)
-            let setTimeTools = chartData.prepared.labels
-            let chartOptionsSet = this.liveChartOptions.updateChartoptions(setTimeTools, liveChartOptions) // this.liveChartSystem.getterChartOptions()
-            chartData.options = chartOptionsSet
-            const chartHolder = {}
-            chartHolder[visIN] = {}
-            chartHolder[visIN][liveTime] = {}
-            chartHolder[visIN][liveTime]['day'] = chartData
-            chartGroupHolder.push(chartHolder)
-            structureHolder = {}
-            dataTypeBucket = {}
-          }
-        }
-      }
+    for (let dtv of eInfo.datatypes) {
+      structureHolder = this.liveChartSystem.structureAverageData(dtv, eInfo, chartBundle, dataIN)
+      let chartColorsSet = localthis.liveChartSystem.StatschartColors(dtv)
+      dataTypeBucket.data = structureHolder
+      dataTypeBucket.color = chartColorsSet
+      chartDataH.chart.push(dataTypeBucket)
+      // now prepare data format for chartjs
+      chartData.prepared = this.liveChartSystem.prepareStatsVueChartJS(eInfo.devices, chartDataH)
+      let setTimeTools = chartData.prepared.labels
+      let chartOptionsSet = this.liveChartOptions.updateChartoptions(setTimeTools, liveChartOptions) // this.liveChartSystem.getterChartOptions()
+      chartData.options = chartOptionsSet
+      const chartHolder = {}
+      chartHolder[visIN] = {}
+      chartHolder[visIN][liveTime] = {}
+      chartHolder[visIN][liveTime]['day'] = chartData
+      chartGroupHolder.push(chartHolder)
+      structureHolder = {}
+      dataTypeBucket = {}
+      this.visSystemData = chartGroupHolder
     }
-    this.visSystemData = chartGroupHolder
   } else if (eInfo.cid === 'cnrl-2356388733') {
     console.log('HR recovery chart???')
     const chartHolder = {}

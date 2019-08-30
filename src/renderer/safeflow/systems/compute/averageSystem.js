@@ -101,6 +101,12 @@ AverageSystem.prototype.computeControlFlow = async function (systemBundle) {
 *
 */
 AverageSystem.prototype.updateComputeControl = async function (timeBundle, dvc, dtl, ts, systemBundle) {
+  console.log('compute statust contorl')
+  console.log(timeBundle)
+  console.log(dvc)
+  console.log(dtl)
+  console.log(ts)
+  console.log(systemBundle)
   let computeStatus = {}
   if (timeBundle.status === 'update-required') {
     computeStatus = await this.prepareAvgCompute(timeBundle.computeTime, dvc, dtl, ts, systemBundle)

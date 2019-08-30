@@ -68,8 +68,36 @@
       <history-List :historyData="historyData" @setLiveBundle="makeLiveKnowledge"></history-List>
     </div>
     <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
-    <hsvisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime" :saveExpKid="saveStatusEK"></hsvisual>
-    <hsfuturevisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime" :saveExpKid="saveStatusEK"></hsfuturevisual>
+    <!-- <hsvisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime" :saveExpKid="saveStatusEK"></hsvisual> -->
+    <!-- <pastfuture></pastfuture> -->
+    <div id="add-experiment">
+      Add to experiment. Please select:
+      <select v-model="liveexerimentList" @change="addToExperiment($event)">
+        <option class="science-compute" v-for="expi in liveexerimentList" v-bind:value="expi.cnrl">
+          {{ expi.contract.prime.text }}
+        </option>
+      </select>
+      <div id="add-button">
+        <button v-model="liveexerimentList" class="button-expadd" href="" id="add-exp-button" @click.prevent="experADD($event)">Add</button>
+        <transition name="fade" >
+          <div v-if="saveStatusEK.active === true" id="confirm-add-experiment">{{ saveStatusEK.text }}</div>
+        </transition>
+      </div>
+    </div>
+    <multipane class="custom-resizer" layout="vertical">
+      <multipane-resizer></multipane-resizer>
+      <div class="pane" :style="{ width: '50%', maxWidth: '100%' }">
+        <div>
+          <hsvisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime"></hsvisual>
+        </div>
+      </div>
+      <multipane-resizer></multipane-resizer>
+      <div class="pane" :style="{ flexGrow: 1, width: '10%', maxWidth: '100%' }">
+        <div>
+          <hsfuturevisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime"></hsfuturevisual>
+        </div>
+      </div>
+    </multipane>
   </div>
 </template>
 
@@ -80,6 +108,8 @@
   import progressMessage from '@/components/toolbar/inProgress'
   import hsvisual from '@/components/healthscience/hsvisual'
   import hsfuturevisual from '@/components/healthscience/hsfuturevisual'
+  import pastfuture from '@/components/healthscience/pastfuture'
+  import { Multipane, MultipaneResizer } from 'vue-multipane'
   import { kBus } from '../../main.js'
   const moment = require('moment')
   const crypto = require('crypto')
@@ -93,13 +123,21 @@
       KnowledgeContext,
       progressMessage,
       hsvisual,
-      hsfuturevisual
+      hsfuturevisual,
+      Multipane,
+      MultipaneResizer,
+      pastfuture
     },
     props: {
       liveData: {
         type: Object
       },
       KLexperimentData: null
+    },
+    computed: {
+      liveexerimentList: function () {
+        return this.$store.state.experimentList
+      }
     },
     data () {
       return {
@@ -129,7 +167,12 @@
         liveOptions: {},
         liveNavTime: [],
         liveTimeV: '',
-        saveStatusEK: {}
+        saveStatusEK: {},
+        saveExpKid:
+        {
+          active: false,
+          text: ''
+        }
       }
     },
     created () {
@@ -154,8 +197,6 @@
       kBus.$on('setVDataCategory', (ckData) => {
         this.categoryStatus(ckData)
       })
-    },
-    computed: {
     },
     mounted () {
       let sciStartEmpty = {}
@@ -274,13 +315,16 @@
         this.hist.name = 'View compute list'
         this.bundleuuid = lBund.kbid
         this.$store.dispatch('actionLiveBundle', lBund)
+        // update bundle start time
         const nowTime = moment()
         let updatestartPeriodTime = moment.utc(nowTime).startOf('day')
+        lBund.time.realtime = updatestartPeriodTime
         this.$store.dispatch('actionUpdateStartTime', updatestartPeriodTime)
         this.$store.dispatch('actionUpdateSciCompute', lBund.cnrl)
         this.entityPrepareStatus.active = true
         // set the active knowledge boxes
         this.setKnowledgtBox(lBund)
+        // let updatelBund =
         let visDataBack = await this.learnStart(lBund)
         // remove compute in progress Message
         this.$store.dispatch('actionstopComputeStatus', lBund.kbid)
@@ -443,6 +487,17 @@
       },
       setNaveTime () {
         this.liveNavTime = this.timeNav('datatime-index')
+      },
+      addToExperiment (exB) {
+        this.selectedExperiment = exB.target.value
+      },
+      experADD (expA) {
+        // need to keep permanent store of experiments to Ecomponents linked (save, delete, update also)
+        const localthis = this
+        this.$emit('experimentMap', this.selectedExperiment)
+        setTimeout(function () {
+          localthis.saveStatusEK.active = false
+        }, 3000) // hide the message after 3 seconds
       }
     }
   }
@@ -478,7 +533,7 @@
 }
 
 #experiments {
-  border: 2px solid orange;
+  border: 2px solid green;
   margin-top: 2em;
 }
 
@@ -489,5 +544,66 @@
 
 #live-knowledge-elements {
   background-color: #FBF4A9;
+}
+
+#add-exp-button {
+  font-size: 1.4em;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{width:40px;font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.25s ease-out;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
+.custom-resizer {
+  width: 100%;
+  height: 800px;
+}
+
+.custom-resizer > .pane {
+  text-align: left;
+  padding: 15px;
+  overflow: hidden;
+  background: #eee;
+  border: 1px solid #ccc;
+}
+
+.custom-resizer > .pane ~ .pane {
+}
+
+.custom-resizer > .multipane-resizer {
+  margin: 0; left: 0;
+  position: relative;
+
+  &:before {
+    display: block;
+    content: "";
+    width: 3px;
+    height: 40px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -20px;
+    margin-left: -1.5px;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+  }
+
+  &:hover {
+    &:before {
+      border-color: #999;
+    }
+  }
 }
 </style>

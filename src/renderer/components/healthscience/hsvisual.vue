@@ -1,23 +1,6 @@
 <template>
-  <div id="visual-view">
+  <div id="visual-view">PAST
     <div id="diy-science">
-      <div id="add-experiment">
-        Add to experiment. Please select:
-        <select v-model="liveexerimentList" @change="addToExperiment($event)">
-          <option class="science-compute" v-for="expi in liveexerimentList" v-bind:value="expi.cnrl">
-            {{ expi.contract.prime.text }}
-          </option>
-        </select>
-        <div id="add-button">
-          <button v-model="liveexerimentList" class="button-expadd" href="" id="add-exp-button" @click.prevent="experADD($event)">Add</button>
-          <transition name="fade" >
-            <div v-if="saveExpKid.active === true" id="confirm-add-experiment">{{ saveExpKid.text }}</div>
-          </transition>
-        </div>
-
-      </div>
-      <div id="oracles">oracles</div>
-      <div id="tends">trends</div>
       <div id="visulation-select">
         <ul>
           <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis1)" v-bind:class="{ 'active': vis1.active}">{{ vis1.name }}</a></li>
@@ -50,6 +33,7 @@
           {{ displayTime }}
         </div>
         <div id="calendar-selector">
+          <date-picker v-model="value" :lang="lang"></date-picker>
         </div>
       </div>
     </div>
@@ -66,6 +50,7 @@
   import ToolbarTools from '@/components/toolbar/statisticstools'
   import tableBuild from '@/components/table/tableBuilder'
   import simulationView from '@/components/simulation/simulation-life'
+  import DatePicker from 'vue2-datepicker'
   // const moment = require('moment')
 
   export default {
@@ -75,7 +60,8 @@
       Reactivestats,
       ToolbarTools,
       tableBuild,
-      simulationView
+      simulationView,
+      DatePicker
     },
     props: {
       datacollection: {
@@ -87,12 +73,7 @@
       navTime: {
         type: Array
       },
-      displayTime: '',
-      saveExpKid:
-      {
-        active: false,
-        text: ''
-      }
+      displayTime: ''
     },
     data () {
       return {
@@ -129,13 +110,37 @@
         visSimview: false,
         timeVis: [],
         selectedExperiment: '',
-        confirmAddE: '---'
+        confirmAddE: '---',
+        time1: '',
+        time2: '',
+        time3: '',
+        // custom lang
+        lang: {
+          days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+          months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+          pickers: ['next 7 days', 'next 30 days', 'previous 7 days', 'previous 30 days'],
+          placeholder: {
+            date: 'Select Date',
+            dateRange: 'Select Date Range'
+          }
+        },
+        // custom range shortcuts
+        shortcuts: [
+          {
+            text: 'Today',
+            onClick: () => {
+              this.time3 = [ new Date(), new Date() ]
+            }
+          }
+        ],
+        timePickerOptions: {
+          start: '00:00',
+          step: '00:30',
+          end: '23:30'
+        }
       }
     },
     computed: {
-      liveexerimentList: function () {
-        return this.$store.state.experimentList
-      }
     },
     created () {
     },
@@ -204,26 +209,15 @@
       setTimeData (seg) {
         // back and forward and time
         this.$emit('updateLearn', seg)
-      },
-      addToExperiment (exB) {
-        this.selectedExperiment = exB.target.value
-      },
-      experADD (expA) {
-        // need to keep permanent store of experiments to Ecomponents linked (save, delete, update also)
-        const localthis = this
-        this.$emit('experimentMap', this.selectedExperiment)
-        setTimeout(function () {
-          localthis.saveExpKid.active = false
-        }, 3000) // hide the message after 3 seconds
       }
     }
   }
 </script>
 
 <style>
-#diy-science {
-  border: 2px solid orange;
-  margin: 2em;
+#visual-view {
+  border: 2px solid green;
+  margin: 0.01em;
   width: 98%;
 }
 
@@ -278,7 +272,7 @@ li {
 .is-future {
   font-size: 1.6em;
   margin-left: 12px;
-  color: orange;
+  color: green;
 }
 
 #close-average {
@@ -297,25 +291,4 @@ li {
 #add-button {
   display: inline-block;
 }
-
-#add-exp-button {
-  font-size: 1.4em;
-  padding-left: 8px;
-  padding-right: 8px;
-}
-
-.tg  {border-collapse:collapse;border-spacing:0;}
-.tg td{width:40px;font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
-.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
-.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
-.tg .tg-0lax{text-align:left;vertical-align:top}
-
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.25s ease-out;
-}
-
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-}
-
 </style>

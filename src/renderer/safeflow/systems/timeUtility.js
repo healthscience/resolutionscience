@@ -221,6 +221,9 @@ TimeUtilities.prototype.calendarUtility = function () {
 *
 */
 TimeUtilities.prototype.timeDayArrayBuilder = function (liveTime, lastTime) {
+  console.log('time array builder')
+  console.log(liveTime)
+  console.log(lastTime)
   let TimeHolder = {}
   let timeArray = []
   let yearEndmnoth = 11
@@ -305,6 +308,8 @@ TimeUtilities.prototype.timeDayArrayBuilder = function (liveTime, lastTime) {
   let lastMonthStartTime = timeArray.slice(-1).pop()
   TimeHolder.currentML = lastMonthStartTime.longDateformat
   let calendarList = this.longDataArray(TimeHolder)
+  console.log('array time')
+  console.log(calendarList)
   return calendarList
 }
 
@@ -315,6 +320,7 @@ TimeUtilities.prototype.timeDayArrayBuilder = function (liveTime, lastTime) {
 */
 TimeUtilities.prototype.longDataArray = function (calInfo) {
   // build date array for year
+  console.log(calInfo)
   let calendarTimeList = []
   let yearArray = calInfo.calendar
   this.dayCounter = 0
@@ -325,22 +331,31 @@ TimeUtilities.prototype.longDataArray = function (calInfo) {
     let millsSecDay = 86400000
     this.dayCounter = scMonth.longDateformat
     if (calInfo.currentML === this.dayCounter) {
+      console.log('logic 1')
       // last month, stop at current live days
       while (accDaily < (calInfo.currentday - 2)) {
+        console.log('logic 1 whiel1')
         this.dayCounter = this.dayCounter + millsSecDay
         accDaily++
-        if (this.dayCounter < calInfo.uptoDateTime) {
+        console.log(this.dayCounter)
+        console.log(calInfo.uptoDateTime)
+        if (this.dayCounter > calInfo.uptoDateTime) {
+          console.log('logic 1 push')
           calendarTimeList.push(this.dayCounter)
         }
       }
     } else {
+      console.log('logic 2')
       while (accDaily < daysInmonth) {
+        console.log('logic 2 wile')
         this.dayCounter = this.dayCounter + millsSecDay
         accDaily++
         calendarTimeList.push(this.dayCounter)
       }
     }
   }
+  console.log('calande array list')
+  console.log(calendarTimeList)
   return calendarTimeList
 }
 

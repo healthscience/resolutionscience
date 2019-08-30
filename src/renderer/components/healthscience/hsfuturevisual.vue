@@ -1,6 +1,17 @@
 <template>
   <div id="visual-future-view">FUTURE
     <div id="diy-future-science">
+      <div id="visulation-select">
+        <ul>
+          <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis1)" v-bind:class="{ 'active': vis1.active}">{{ vis1.name }}</a></li>
+          <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis2)" v-bind:class="{ 'active': vis2.active}">{{ vis2.name }}</a></li>
+          <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis3)" v-bind:class="{ 'active': vis3.active}">{{ vis3.name }}</a></li>
+          <li id="tool-bar">
+            <header>Tools</header>
+            <a class="" href="" id="toolbarholder" @click.prevent="toolsSwitch(toolbar)" v-bind:class="{ 'active': toolbar.active}">{{ toolbar.text }}</a>
+          </li>
+        </ul>
+      </div>
       <div v-if="visChartview" id="charts-live">
         <reactive :chartData="datacollection" :options="options" :width="1200" :height="600"></reactive>
       </div>
@@ -9,6 +20,21 @@
       </div>
       <div v-if="visSimview" id="sim-view">
         <simulation-View></simulation-View>
+      </div>
+    </div>
+    <div id="time-context">
+      <div id="select-time">
+        <ul>
+          <li v-for="tv in navTime" class="context-time">
+            <button class="button is-primary" @click.prevent="setTimeData(tv)">{{ tv.text }}</button>
+          </li>
+        </ul>
+      </div>
+      <div id="view-time">
+        {{ displayTime }}
+      </div>
+      <div id="calendar-selector">
+        <date-picker v-model="value" :lang="lang"></date-picker>
       </div>
     </div>
   </div>
@@ -24,6 +50,7 @@
   import ToolbarTools from '@/components/toolbar/statisticstools'
   import tableBuild from '@/components/table/tableBuilder'
   import simulationView from '@/components/simulation/simulation-life'
+  import DatePicker from 'vue2-datepicker'
   // const moment = require('moment')
 
   export default {
@@ -33,7 +60,8 @@
       Reactivestats,
       ToolbarTools,
       tableBuild,
-      simulationView
+      simulationView,
+      DatePicker
     },
     props: {
       datacollection: {
@@ -179,9 +207,9 @@
 </script>
 
 <style>
-#diy-science {
+#visual-future-view {
   border: 2px solid orange;
-  margin: 2em;
+  margin: 0.01em;
   width: 98%;
 }
 

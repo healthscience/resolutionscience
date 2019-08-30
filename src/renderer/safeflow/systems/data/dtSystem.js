@@ -157,12 +157,10 @@ DTSystem.prototype.subStructure = function (tableStructure) {
 *
 */
 DTSystem.prototype.mapSourceDTs = function (lDTs) {
-  console.log('map source')
   let sourceDTextract = []
   for (let iDT of lDTs) {
     // look up datatype contract to see if derived?
     let dtSourceContract = this.liveCNRL.lookupContract(iDT.cnrl)
-    console.log(dtSourceContract)
     if (dtSourceContract.source === 'cnrl-derived') {
       // loop over source DT's
       for (let sDT of dtSourceContract.dtsource) {
@@ -190,9 +188,6 @@ DTSystem.prototype.mapSourceDTs = function (lDTs) {
 *
 */
 DTSystem.prototype.categoryCheck = function (cdt, catSource) {
-  console.log('extract cat codes')
-  console.log(cdt)
-  console.log(catSource)
   let catMatch = []
   for (let catS of catSource.categorycodes) {
     for (let sc of catS.categories) {

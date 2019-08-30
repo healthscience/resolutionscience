@@ -73,7 +73,9 @@
     "vue-babylonjs": "^1.0.0-beta.6",
     "vue-chartjs": "^2.6.3",
     "vue-electron": "^1.0.6",
+    "vue-multipane": "^0.9.5",
     "vue-router": "^2.5.3",
+    "vue2-datepicker": "^2.12.0",
     "vuex": "^2.3.1"
   },
   "devDependencies": {

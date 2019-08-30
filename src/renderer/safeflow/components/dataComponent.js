@@ -17,7 +17,7 @@ var DataComponent = function (DID, setIN) {
   events.EventEmitter.call(this)
   this.did = DID
   this.liveData = []
-  this.livedate = this.did.timeperiod
+  this.livedate = 0
   this.liveDatatype = ''
   this.liveDataSystem = new DataSystem(setIN)
   this.timeList = []
@@ -116,8 +116,6 @@ DataComponent.prototype.setCategories = function (ctIN) {
 *
 */
 DataComponent.prototype.sourceData = async function (apiINFO) {
-  console.log(apiINFO)
-  console.log(this.did)
   this.apiInfoLive = apiINFO
   let systemBundle = {}
   systemBundle.apiInfo = apiINFO
@@ -135,8 +133,6 @@ DataComponent.prototype.sourceData = async function (apiINFO) {
   // is there any data tidying required
   this.TidyData(apiINFO)
   this.FilterDownDT(apiINFO)
-  console.log('fliter DT, post tidy and category')
-  console.log(this.liveData)
   return true
 }
 

@@ -98,8 +98,6 @@ TimeSystem.prototype.updatedDTCStatus = async function (EIDinfo, compInfo, rawIN
 *
 */
 TimeSystem.prototype.timeOrderLast = function (dataAIN) {
-  // console.log('timeorder lader')
-  // console.log(dataAIN)
   let lastTime = ''
   // order array by time
   if (dataAIN !== undefined) {
@@ -116,25 +114,25 @@ TimeSystem.prototype.timeOrderLast = function (dataAIN) {
 *
 */
 TimeSystem.prototype.categoriseStatusperTimeseg = async function (EIDinfo, lastComputeIN, dev, timeSeg) {
+  console.log('eid info')
+  console.log(EIDinfo)
   let catHolder = {}
   let realTime = EIDinfo.time.realtime
   let updateCompStatus = ''
-  let liveLastTime = 0
   let startTimeFound = ''
   let timeArray = []
-  // if (lastComputeIN.length > 0) {
-  // liveLastTime = lastComputeIN
-  // }
   if (lastComputeIN === 0) {
+    console.log('logic 1')
     updateCompStatus = 'update-required'
     startTimeFound = await this.sourceDTstartTime(dev)
     // form array for compute structure???
     timeArray = this.updateAverageDates(startTimeFound, EIDinfo.time.startperiod)
-  } else if (liveLastTime < realTime) {
+  } else if (lastComputeIN < realTime) {
+    console.log('logic 2')
     updateCompStatus = 'update-required'
-    startTimeFound = lastComputeIN
-    timeArray = this.updateAverageDates(startTimeFound, EIDinfo.time.startperiod)
+    timeArray = this.updateAverageDates(lastComputeIN, EIDinfo.time.startperiod)
   } else {
+    console.log('logic 3')
     updateCompStatus = 'uptodate'
   }
   catHolder.lastComputeTime = startTimeFound

@@ -52,7 +52,7 @@
         <div id="open-on-start" class="live-element">
           <div id="start-learn-container">
             <div id="start-status">
-              <header>Save knowledge</header>
+              <header>Save compute</header>
               <a href="" v-bind:id="lh.kbid" v-bind:value="lh.kbid" @click.prevent="startStatusSave($event)" v-bind:class="{ 'active': lh.startStatus.active}">{{ lh.startStatus.name }}</a>
             </div>
           </div>
@@ -155,13 +155,13 @@
         }
       },
       async makeKLive (status) {
-        // loop over arry of bundles and match bid number and make active
+        // loop over array of bundles and match bid number and make active
         if (status.target.checked === true) {
           for (let ukb of this.historyData) {
             let makeInt = status.target.value
             if (ukb.kbid === makeInt) {
-              console.log('make live bundle')
-              console.log(ukb)
+              // console.log('make live bundle')
+              // console.log(ukb)
               this.$emit('setLiveBundle', ukb)
             }
           }

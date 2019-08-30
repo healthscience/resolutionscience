@@ -140,7 +140,7 @@ safeFlow.prototype.setpeerContext = function (bundleIN) {
   // convert all the time to millisecons format
   let timeBundle = {}
   timeBundle.time = bundleIN.time
-  timeBundle.realtime = bundleIN.realtime
+  timeBundle.realtime = bundleIN.time.realtime
   ecsIN.time = this.liveTimeUtil.timeConversionUtility(timeBundle)
   ecsIN.science = bundleIN.science
   ecsIN.resolution = bundleIN.resolution
@@ -148,6 +148,8 @@ safeFlow.prototype.setpeerContext = function (bundleIN) {
   ecsIN.datatypes = bundleIN.datatypes
   ecsIN.categories = bundleIN.categories
   ecsIN.language = bundleIN.language
+  console.log('end peer')
+  console.log(ecsIN)
   return ecsIN
 }
 

@@ -46,10 +46,10 @@ TimeSystem.prototype.discoverTimeStatus = async function (EIDinfo, compInfo, raw
 *
 */
 TimeSystem.prototype.updatedDTCStatus = async function (EIDinfo, compInfo, rawIN) {
-  console.log('update timestart per dt')
-  console.log(EIDinfo)
-  console.log(compInfo)
-  console.log(rawIN)
+  // console.log('update timestart per dt')
+  // console.log(EIDinfo)
+  // console.log(compInfo)
+  // console.log(rawIN)
   let statusHolder = {}
   let lastComputetime = []
   let liveTime = EIDinfo.time.startperiod
@@ -98,8 +98,8 @@ TimeSystem.prototype.updatedDTCStatus = async function (EIDinfo, compInfo, rawIN
 *
 */
 TimeSystem.prototype.timeOrderLast = function (dataAIN) {
-  console.log('timeorder lader')
-  console.log(dataAIN)
+  // console.log('timeorder lader')
+  // console.log(dataAIN)
   let lastTime = ''
   // order array by time
   if (dataAIN !== undefined) {
@@ -182,8 +182,8 @@ TimeSystem.prototype.checkForDataPerDevice = async function (device) {
   let firstD = await this.liveTestStorage.getFirstData(device).catch(function (err) {
     console.log(err)
   })
-  console.log('firstD')
-  console.log(firstD)
+  // console.log('firstD')
+  // console.log(firstD)
   deviceStatus.lastComputeTime = firstD[0].timestamp
   deviceStatus[device] = false
   dataStatus.push(deviceStatus)

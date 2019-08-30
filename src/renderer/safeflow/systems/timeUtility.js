@@ -36,8 +36,9 @@ TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
   let timeConversion = {}
   this.liveStarttime = timeBundle.time.startperiod
   this.realtime = timeBundle.realtime
-  timeConversion = this.updateUItime(timeBundle.time.timeseg)
+  timeConversion = this.updateUItime(timeBundle.time.timevis)
   timeConversion.timeseg = timeBundle.time.timeseg
+  timeConversion.timevis = timeBundle.time.timevis
   let realTimems = moment(timeBundle.realtime).valueOf()
   timeConversion.realtime = Math.round(realTimems / 1000)
   return timeConversion

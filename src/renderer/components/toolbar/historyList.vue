@@ -52,7 +52,7 @@
         <div id="open-on-start" class="live-element">
           <div id="start-learn-container">
             <div id="start-status">
-              <header>View on Start</header>
+              <header>Save knowledge</header>
               <a href="" v-bind:id="lh.kbid" v-bind:value="lh.kbid" @click.prevent="startStatusSave($event)" v-bind:class="{ 'active': lh.startStatus.active}">{{ lh.startStatus.name }}</a>
             </div>
           </div>

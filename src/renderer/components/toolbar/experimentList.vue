@@ -80,7 +80,7 @@
         let expCNRL = status.target.id
         // are any of the other experiments OPEN?  If so keep them open
         if (status.target.checked === true) {
-          // loop over arry of bundles and match bid number and make active
+          // bundle make active
           let expState = {}
           expState.cnrl = expCNRL
           expState.view = true

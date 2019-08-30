@@ -1,7 +1,7 @@
 <template>
-  <div id="visual-view">
-    <div id="diy-science">PAST
-      <div id="experiment-summary">
+  <div id="visual-future-view">
+    <div id="diy-future-science">FUTURE
+      <div id="experiment-future-summary">
           <div id="experiment-toolbar">
             <ul>
               <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis1)" v-bind:class="{ 'active': vis1.active}">{{ vis1.name }}</a></li>
@@ -52,7 +52,7 @@
   // const moment = require('moment')
 
   export default {
-    name: 'expvisual-liveview',
+    name: 'expvisual-future-liveview',
     components: {
       Reactive,
       Reactivestats,
@@ -185,8 +185,8 @@
 </script>
 
 <style>
-#diy-science {
-  border: 2px solid green;
+#diy-future-science {
+  border: 2px solid orange;
   margin: 2em;
   width: 98%;
 }
@@ -199,14 +199,6 @@ ul {
 li {
   display: inline-block;
   margin: 0 10px;
-}
-
-#heart-chart {
-  width: 1200px;
-}
-
-#heart-chart ul li {
-  font-size: 1.1em;
 }
 
 .is-primary {

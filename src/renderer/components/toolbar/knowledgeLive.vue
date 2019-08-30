@@ -69,6 +69,7 @@
     </div>
     <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
     <hsvisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime" :saveExpKid="saveStatusEK"></hsvisual>
+    <hsfuturevisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime" :saveExpKid="saveStatusEK"></hsfuturevisual>
   </div>
 </template>
 
@@ -78,6 +79,7 @@
   import historyList from '@/components/toolbar/historyList.vue'
   import progressMessage from '@/components/toolbar/inProgress'
   import hsvisual from '@/components/healthscience/hsvisual'
+  import hsfuturevisual from '@/components/healthscience/hsfuturevisual'
   import { kBus } from '../../main.js'
   const moment = require('moment')
   const crypto = require('crypto')
@@ -90,7 +92,8 @@
       historyList,
       KnowledgeContext,
       progressMessage,
-      hsvisual
+      hsvisual,
+      hsfuturevisual
     },
     props: {
       liveData: {
@@ -178,7 +181,7 @@
         let updateTbundle = {}
         updateTbundle.timeseg = this.liveData.timeLive
         updateTbundle.startperiod = startPeriodTime
-        updateTbundle.timevis = ['day']
+        updateTbundle.timevis = this.liveData.timeLive // ['day']
         // has any category been selected?
         let categoryLive = []
         categoryLive = this.liveData.categoryLive
@@ -249,7 +252,8 @@
         }
         let timeAsk = []
         timeAsk.push(uSeg.text)
-        updateTbundle.time.timeseg = timeAsk
+        updateTbundle.time.timeseg = this.liveData.timeLive
+        updateTbundle.time.timevis = timeAsk // timeAsk
         updateTbundle.time.startperiod = 'relative'
         // pass on to learn safeFlow
         this.entityPrepareStatus.active = true

@@ -1,23 +1,8 @@
 <template>
-  <div id="visual-view">
-    <div id="diy-science">PAST
-      <div id="experiment-summary">
-          <div id="experiment-toolbar">
-            <ul>
-              <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis1)" v-bind:class="{ 'active': vis1.active}">{{ vis1.name }}</a></li>
-              <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis2)" v-bind:class="{ 'active': vis2.active}">{{ vis2.name }}</a></li>
-              <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis3)" v-bind:class="{ 'active': vis3.active}">{{ vis3.name }}</a></li>
-              <li id="tool-bar">
-                <header>Tools</header>
-                <a class="" href="" id="toolbarholder" @click.prevent="toolsSwitch(toolbar)" v-bind:class="{ 'active': toolbar.active}">{{ toolbar.text }}</a>
-              </li>
-            </ul>
-            <div id="edit-experiment">Edit
-          </div>
-        </div>
-      </div>
+  <div id="visual-future-view">FUTURE
+    <div id="diy-future-science">
       <div v-if="visChartview" id="charts-live">
-        <!-- <reactive :chartData="datacollection" :options="options" :width="800" :height="400"></reactive> -->
+        <reactive :chartData="datacollection" :options="options" :width="1200" :height="600"></reactive>
       </div>
       <div v-if="visTableview" id="table-view">
         <table-Build></table-Build>
@@ -25,25 +10,15 @@
       <div v-if="visSimview" id="sim-view">
         <simulation-View></simulation-View>
       </div>
-      <div id="time-context">
-        <!--<div id="select-time">
-          <ul>
-            <li v-for="tv in timeVis" class="context-time">
-              <button class="button is-primary" @click.prevent="setTimeData(tv)">{{ tv.text }}</button>
-            </li>
-          </ul>
-        </div> -->
-        <div id="view-time">
-          {{ displayTime }}
-        </div>
-        <div id="calendar-selector">
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script>
+  // import SAFEflow from '../../safeflow/safeFlow.js'
+  // import LineChart from '@/components/charts/LineChart'
+  // import BarChart from '@/components/charts/BarChart'
+  // import BubbleChart from '@/components/charts/BubbleChart'
   import Reactive from '@/components/charts/Reactive'
   import Reactivestats from '@/components/charts/Reactivestats'
   import ToolbarTools from '@/components/toolbar/statisticstools'
@@ -52,7 +27,7 @@
   // const moment = require('moment')
 
   export default {
-    name: 'expvisual-liveview',
+    name: 'visual-future-liveview',
     components: {
       Reactive,
       Reactivestats,
@@ -61,14 +36,21 @@
       simulationView
     },
     props: {
-      entityCNRL: '',
       datacollection: {
         type: Object
       },
       options: {
         type: Object
       },
-      displayTime: ''
+      navTime: {
+        type: Array
+      },
+      displayTime: '',
+      saveExpKid:
+      {
+        active: false,
+        text: ''
+      }
     },
     data () {
       return {
@@ -96,23 +78,28 @@
           text: 'off'
         },
         toolbarData: {},
+        recoveryData: {},
+        datastatistics: null,
+        liveChartoptions: null,
         visChartview: true,
+        liveTime: '',
         visTableview: false,
         visSimview: false,
-        timeVis: []
+        timeVis: [],
+        selectedExperiment: '',
+        confirmAddE: '---'
       }
     },
     computed: {
+      liveexerimentList: function () {
+        return this.$store.state.experimentList
+      }
     },
     created () {
-      // this.timeNavSegments()
     },
     mounted () {
     },
     methods: {
-      timeNavSegments () {
-        // this.timeVis = this.liveSafeFlow.cnrlTimeIndex('datatime-index')
-      },
       selectVis (visIN) {
         if (visIN.id === 'vis-sc-1') {
           if (visIN.active === true) {
@@ -159,11 +146,11 @@
         if (ts.active === true) {
           this.toolbar.text = 'on'
           // need to add annotation to chart OPTIONS
-          this.$emit('toolsStatus', true)
+          // this.$emit('toolsStatus', true)
         } else {
           this.toolbar.text = 'off'
           // remove the annotation from the chart OPTIONS
-          this.$emit('toolsStatus', false)
+          // this.$emit('toolsStatus', false)
         }
       },
       recoveryStatus () {
@@ -177,8 +164,15 @@
         this.$emit('updateLearn', seg)
       },
       addToExperiment (exB) {
+        this.selectedExperiment = exB.target.value
       },
       experADD (expA) {
+        // need to keep permanent store of experiments to Ecomponents linked (save, delete, update also)
+        const localthis = this
+        this.$emit('experimentMap', this.selectedExperiment)
+        setTimeout(function () {
+          localthis.saveExpKid.active = false
+        }, 3000) // hide the message after 3 seconds
       }
     }
   }
@@ -186,7 +180,7 @@
 
 <style>
 #diy-science {
-  border: 2px solid green;
+  border: 2px solid orange;
   margin: 2em;
   width: 98%;
 }
@@ -258,10 +252,28 @@ li {
   font-size: 1.4em;
 }
 
+#add-button {
+  display: inline-block;
+}
+
+#add-exp-button {
+  font-size: 1.4em;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
 .tg  {border-collapse:collapse;border-spacing:0;}
 .tg td{width:40px;font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
 .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
 .tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
 .tg .tg-0lax{text-align:left;vertical-align:top}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.25s ease-out;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
 
 </style>

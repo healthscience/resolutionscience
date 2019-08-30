@@ -118,8 +118,8 @@
         // make call to set start deviceContext for this pubkey
         const deviceFlag = 'device'
         let deviceAPI = await this.liveSafeFlow.toolkitContext(deviceFlag)
-        console.log('device data back')
-        console.log(deviceAPI)
+        // console.log('device data back')
+        // console.log(deviceAPI)
         this.devices = deviceAPI
         // this.devices[0].cnrl = 'cnrl-33221101'
         // this.devices[1].cnrl = 'cnrl-33221101'

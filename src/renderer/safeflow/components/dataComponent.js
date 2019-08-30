@@ -180,7 +180,7 @@ DataComponent.prototype.TidyData = function (apiINFO) {
   systemBundle.timeseg = this.timeSegs
   systemBundle.querytime = this.did.time
   systemBundle.categories = this.did.categories
-  // console.log(systemBundle)
+  console.log(systemBundle)
   tidyDataG = this.liveDataSystem.tidyRawData(systemBundle, this.categoryData)
   this.tidyData = tidyDataG
   // set liveData based on/if category data asked for

@@ -360,6 +360,11 @@ DataSystem.prototype.tidyRawData = function (bundleIN, dataRaw) {
 */
 DataSystem.prototype.tidyFilter = function (tidyInfo, dtList, ts, dataRaw) {
   // build object structureReturn
+  console.log('tidyfileter start')
+  console.log(tidyInfo)
+  console.log(dtList)
+  console.log(ts)
+  console.log(dataRaw)
   let tidyHolderF = {}
   const manFilter = (e, tItem) => {
     let filterMat = null
@@ -402,6 +407,7 @@ DataSystem.prototype.tidyFilter = function (tidyInfo, dtList, ts, dataRaw) {
 */
 DataSystem.prototype.tidyFilterRemove = function (tidyInfo, dtList, ts, dataRaw) {
   // build object structureReturn
+  console.log('tidyfiler remove')
   let tidyHolderF = {}
   const manFilter = (e, tItem) => {
     let filterMat = null

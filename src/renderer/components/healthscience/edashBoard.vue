@@ -9,8 +9,11 @@
     <learn-Action></learn-Action>
     <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
     <ul>
+      <expfuturevisual :entityCNRL="{}" :dataFcollection="{}" :optionsF="{}" :displayTimeF="{}"></expfuturevisual>
+      <expvisual :entityCNRL="{}" :datacollection="{}" :options="{}" :displayTime="{}"></expvisual>
       <li v-for="(vEnt, index) in makeKbundles">
-        <expvisual :entityCNRL="vEnt.cnrl" :datacollection="vEnt.liveDataCollection" :options="vEnt.liveOptions" :displayTime="vEnt.liveTimeV"></expvisual>
+        <!-- <expfuturevisual :entityCNRL="vEnt.cnrl" :dataFcollection="{}" :optionsF="{}" :displayTimeF="{}"></expfuturevisual>
+        <expvisual :entityCNRL="vEnt.cnrl" :datacollection="vEnt.liveDataCollection" :options="vEnt.liveOptions" :displayTime="vEnt.liveTimeV"></expvisual>-->
       </li>
     </ul>
   </div>
@@ -22,12 +25,14 @@
   import learnReport from '@/components/reports/LearnReport'
   import learnAction from '@/components/reports/LearnAction'
   import expvisual from '@/components/healthscience/expVisual'
+  import expfuturevisual from '@/components/healthscience/expfutureVisual'
 
   export default {
     name: 'visual-liveview',
     components: {
       progressMessage,
       expvisual,
+      expfuturevisual,
       learnReport,
       learnAction
     },

@@ -12,6 +12,7 @@
 import TimeUtilities from '../timeUtility.js'
 import TestStorageAPI from '../data/dataprotocols/teststorage/testStorage.js'
 import StatisticsSystem from './wasm/sum-statistics.js'
+import DataSystem from '../data/dataSystem.js'
 
 const util = require('util')
 const events = require('events')
@@ -21,6 +22,7 @@ var SumSystem = function (setIN) {
   this.liveTimeUtil = new TimeUtilities()
   this.liveTestStorage = new TestStorageAPI(setIN)
   this.liveSumStatistics = new StatisticsSystem(setIN)
+  this.liveDataSystem = new DataSystem(setIN)
   this.lastComputeTime = {}
 }
 
@@ -44,9 +46,22 @@ SumSystem.prototype.verifyComputeWASM = function (wasmFile) {
 * @method sumSystem
 *
 */
-SumSystem.prototype.sumSystem = async function (EIDinfo, compInfo, timeInfo) {
+SumSystem.prototype.sumSystemStart = async function (EIDinfo, compInfo, timeInfo) {
   let updateStatus = {}
-  updateStatus = await this.computeControlFlow(EIDinfo, compInfo, timeInfo)
+  let systemBundle = {}
+  // prepare deviceList format
+  let devList = this.liveDataSystem.getLiveDevices(EIDinfo.devices)
+  systemBundle.primary = 'derived'
+  systemBundle.timeInfo = timeInfo
+  systemBundle.apiInfo = compInfo
+  systemBundle.startperiod = EIDinfo.time.startperiod
+  systemBundle.scienceAsked = EIDinfo.science
+  systemBundle.dtAsked = EIDinfo.datatypes
+  systemBundle.deviceList = devList
+  systemBundle.timeseg = EIDinfo.time.timeseg
+  systemBundle.querytime = EIDinfo.time
+  systemBundle.categories = EIDinfo.categories
+  updateStatus = await this.computeControlFlow(systemBundle)
   return updateStatus
 }
 
@@ -54,67 +69,96 @@ SumSystem.prototype.sumSystem = async function (EIDinfo, compInfo, timeInfo) {
 * @method computeControlFlow
 *
 */
-SumSystem.prototype.computeControlFlow = async function (EIDinfo, compInfo, timeInfo) {
+SumSystem.prototype.computeControlFlow = async function (systemBundle) {
   let cFlowStatus = {}
-  // what time segments have been asked for?
-  let timeBundle = this.readTimeInfo(EIDinfo, compInfo, timeInfo)
-  for (let dttb of timeBundle) {
-    if (dttb) {
-      cFlowStatus = await this.sourceDTtimeUpdate(dttb, EIDinfo, compInfo, timeInfo)
-    } else {
-      // no source DT info required.
+  let timeState = {}
+  for (let dvc of systemBundle.deviceList) {
+    // need to loop for datatype and time seg // datatype or source Datatypes that use to compute dt asked for?
+    for (let dtl of systemBundle.apiInfo[dvc].apiquery) {
+      // check status of compute?  uptodate, needs updating or first time compute?
+      for (let ts of systemBundle.timeseg) {
+        timeState = systemBundle.timeInfo[systemBundle.startperiod][dvc][dtl.cnrl][ts]
+        // cFlowStatus = await this.updateComputeControl(timeState, dvc, dtl, ts, systemBundle)
+      }
     }
   }
-  // now compute other time periods segments
-  if (timeBundle.seg === true) {
-    console.log('week monthly yearly averages or even rolling')
-  }
-  if (timeBundle.range === true) {
-    console.log('select range of times to perform compute on')
+  // now loop over the source datatypes for this compute
+  for (let dvc of systemBundle.deviceList) {
+    // need to loop for datatype and time seg // datatype or source Datatypes that use to compute dt asked for?
+    for (let dtl of systemBundle.apiInfo[dvc].sourceapiquery) {
+      // check status of compute?  uptodate, needs updating or first time compute?
+      for (let ts of systemBundle.timeseg) {
+        // timeState = systemBundle.timeInfo[systemBundle.startperiod][dvc][dtl.cnrl][ts]
+        cFlowStatus = await this.updateComputeControl(timeState, dvc, dtl, ts, systemBundle)
+      }
+    }
   }
   return cFlowStatus
 }
 
 /**
-* @method readTimeInfo
+* @method updateComputeControl
 *
 */
-SumSystem.prototype.readTimeInfo = function (EIDinfo, compInfo, timeInfo) {
-  let timeState = []
-  for (let dvc of EIDinfo.devices) {
-    // need to loop for datatype and time seg // datatype or source Datatypes that use to compute dt asked for?
-    for (let dtl of compInfo.apiquery) {
-      // check status of compute?  uptodate, needs updating or first time compute?
-      for (let checkComp of timeInfo[EIDinfo.time.startperiod][dvc.device_mac][dtl.cnrl]) {
-        let dtTimeBundle = {}
-        dtTimeBundle.cnrl = dtl.cnrl
-        dtTimeBundle.time = checkComp
-        timeState.push(dtTimeBundle)
-      }
-    }
+SumSystem.prototype.updateComputeControl = async function (timeBundle, dvc, dtl, ts, systemBundle) {
+  let computeStatus = {}
+  if (timeBundle.status === 'update-required') {
+    computeStatus = await this.prepareSumCompute(timeBundle.computeTime, dvc, dtl, ts, systemBundle)
+  } else {
+    console.log('no updated require, go and get existing results')
   }
-  return timeState
+  return computeStatus
 }
 
 /**
-* @method sourceDTtimeUpdate
+*  prepare dates for average compute
+* @method prepareSumCompute
 *
 */
-SumSystem.prototype.sourceDTtimeUpdate = async function (timeBundle, EIDinfo, compInfo, timeInfo) {
-  let computeStatus = {}
-  for (let dvc of EIDinfo.devices) {
-    // need to loop for datatype and time seg // datatype or source Datatypes that use to compute dt asked for?
-    for (let dtl of compInfo.sourceapiquery) {
-      // what is status of compute?
-      if (timeBundle.time.status === 'update-required' && timeBundle.time.timeseg === 'day') {
-        computeStatus = await this.liveSumStatistics.prepareSumCompute(timeBundle.time.computeTime, dvc, dtl, timeBundle.time.timeseg, EIDinfo.cid, compInfo, timeBundle.cnrl)
-      } else {
-        // for each time segment week, month, year use existing daily averageSave
-        console.log('NEW---time segs additions required')
-      }
+SumSystem.prototype.prepareSumCompute = async function (computeTimes, device, datatype, ts, systemBundle) {
+  // computeTimes = [1535846400000, 1535932800000, 1536019200000]
+  // computeTimes = []
+  // let lastItem = computeTimes.slice(-1)[0]
+  // computeTimes.push(1535846400000)
+  for (let qt of computeTimes) {
+    let queryTime = qt / 1000
+    // The datatype asked should be MAPPED to storage API via source Datatypes that make up e.g. average-bpm
+    let dataBatch = await this.liveTestStorage.getComputeData(queryTime, device)
+    // console.log(dataBatch)
+    systemBundle.startperiod = queryTime
+    let formHolder = {}
+    formHolder[queryTime] = {}
+    formHolder[queryTime][device] = {}
+    formHolder[queryTime][device][datatype.cnrl] = {}
+    formHolder[queryTime][device][datatype.cnrl][ts] = dataBatch
+    // [systemBundle.startperiod][devI][dtItem.cnrl][ts]
+    if (dataBatch.length > 0) {
+      let singleArray = this.liveDataSystem.categorySorter(systemBundle, formHolder)
+      let tidyData = this.liveDataSystem.tidyRawData(systemBundle, singleArray)
+      let filterDTs = this.liveDataSystem.dtFilterController(systemBundle, tidyData)
+      // let flatArray = this.liveDataSystem.flatFilter()
+      // need to check for categories TODO
+      let saveReady = this.liveSumStatistics.sumStatistics(filterDTs)
+      console.log('averg result')
+      let batchSize = dataBatch.length
+      let saveJSON = {}
+      saveJSON.publickey = ''
+      saveJSON.timestamp = queryTime
+      saveJSON.compref = systemBundle.scienceAsked.prime.cnrl
+      saveJSON.datatype = systemBundle.apiInfo[device].datatypes[0].cnrl
+      saveJSON.value = saveReady.sum
+      saveJSON.device_mac = device
+      saveJSON.clean = saveReady.count
+      saveJSON.tidy = batchSize - saveReady.count
+      saveJSON.size = batchSize
+      saveJSON.timeseg = ts
+      saveJSON.category = systemBundle.categories[0].cnrl
+      console.log('asve JSON')
+      console.log(saveJSON)
+      this.liveTestStorage.savesumData(saveJSON)
     }
   }
-  return computeStatus
+  return true
 }
 
 export default SumSystem

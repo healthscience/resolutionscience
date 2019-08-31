@@ -42,7 +42,7 @@ ComputeSystem.prototype.computationSystem = async function (EIDinfo, compInfo, t
   } else if (EIDinfo.cid === 'cnrl-2356388733') {
     computeStatus = await this.recoverySystem(EIDinfo, compInfo, timeInfo)
   } else if (EIDinfo.cid === 'cnrl-2356388737') {
-    computeStatus = await this.liveSum.sumSystem(EIDinfo, compInfo, timeInfo)
+    computeStatus = await this.liveSum.sumSystemStart(EIDinfo, compInfo, timeInfo)
   }
   return computeStatus
 }

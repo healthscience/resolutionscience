@@ -82,7 +82,6 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
     this.visSystemData = chartGroupHolder
   } else if (eInfo.cid === 'cnrl-2356388732') {
     console.log('average Chart vis start')
-    // could be more than one visualisation required,  devices, datatypes, timeseg or computation or event resolutions
     let liveChartOptions = this.liveChartOptions.AverageChartOptions()
     for (let dtv of eInfo.datatypes) {
       structureHolder = this.liveChartSystem.structureAverageData(dtv, eInfo, chartBundle, dataIN)
@@ -104,17 +103,32 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
       dataTypeBucket = {}
       this.visSystemData = chartGroupHolder
     }
-  } else if (eInfo.cid === 'cnrl-2356388733') {
-    console.log('HR recovery chart???')
-    const chartHolder = {}
-    chartHolder[visIN] = {}
-    chartHolder[visIN].status = 'report-component'
-    this.visSystemData = chartHolder
   } else if (eInfo.cid === 'cnrl-2356388737') {
     // summation of datatypes
     console.log('SUM chart')
     // could be more than one visualisation required,  devices, datatypes, timeseg or computation or event resolutions
     let liveChartOptions = this.liveChartOptions.SumChartOptions()
+    for (let dtv of eInfo.datatypes) {
+      structureHolder = this.liveChartSystem.structureSumData(dtv, eInfo, chartBundle, dataIN)
+      let chartColorsSet = localthis.liveChartSystem.StatschartColors(dtv)
+      dataTypeBucket.data = structureHolder
+      dataTypeBucket.color = chartColorsSet
+      chartDataH.chart.push(dataTypeBucket)
+      // now prepare data format for chartjs
+      chartData.prepared = this.liveChartSystem.prepareSumVueChartJS(eInfo.devices, chartDataH)
+      let setTimeTools = chartData.prepared.labels
+      let chartOptionsSet = this.liveChartOptions.updateChartoptions(setTimeTools, liveChartOptions) // this.liveChartSystem.getterChartOptions()
+      chartData.options = chartOptionsSet
+      const chartHolder = {}
+      chartHolder[visIN] = {}
+      chartHolder[visIN][liveTime] = {}
+      chartHolder[visIN][liveTime]['day'] = chartData
+      chartGroupHolder.push(chartHolder)
+      structureHolder = {}
+      dataTypeBucket = {}
+      this.visSystemData = chartGroupHolder
+    }
+    /* let liveChartOptions = this.liveChartOptions.SumChartOptions()
     for (let dType of eInfo.datatypes) {
       for (let device of eInfo.devices) {
         for (let entry of dataIN[liveTime][device.device_mac][dType.cnrl]) {
@@ -128,7 +142,7 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
             // now prepare data format for chartjs
             chartData.prepared = this.liveChartSystem.prepareSumVueChartJS(eInfo.devices, chartDataH)
             let setTimeTools = chartData.prepared.labels
-            let chartOptionsSet = this.liveChartOptions.updateChartoptions(setTimeTools, liveChartOptions) // this.liveChartSystem.getterChartOptions()
+            let chartOptionsSet = this.liveChartOptions.updateChartoptions(setTimeTools, liveChartOptions)
             chartData.options = chartOptionsSet
             const chartHolder = {}
             chartHolder[visIN] = {}
@@ -141,7 +155,13 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
         }
       }
     }
-    this.visSystemData = chartGroupHolder
+    this.visSystemData = chartGroupHolder */
+  } else if (eInfo.cid === 'cnrl-2356388733') {
+    console.log('HR recovery chart???')
+    const chartHolder = {}
+    chartHolder[visIN] = {}
+    chartHolder[visIN].status = 'report-component'
+    this.visSystemData = chartHolder
   }
   return this.visSystemData
 }

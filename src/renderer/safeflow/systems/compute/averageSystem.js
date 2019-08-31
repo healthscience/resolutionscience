@@ -101,12 +101,6 @@ AverageSystem.prototype.computeControlFlow = async function (systemBundle) {
 *
 */
 AverageSystem.prototype.updateComputeControl = async function (timeBundle, dvc, dtl, ts, systemBundle) {
-  console.log('compute statust contorl')
-  console.log(timeBundle)
-  console.log(dvc)
-  console.log(dtl)
-  console.log(ts)
-  console.log(systemBundle)
   let computeStatus = {}
   if (timeBundle.status === 'update-required') {
     computeStatus = await this.prepareAvgCompute(timeBundle.computeTime, dvc, dtl, ts, systemBundle)
@@ -122,11 +116,6 @@ AverageSystem.prototype.updateComputeControl = async function (timeBundle, dvc, 
 *
 */
 AverageSystem.prototype.prepareAvgCompute = async function (computeTimes, device, datatype, ts, systemBundle) {
-  console.log('prepare comp')
-  console.log(device)
-  console.log(datatype)
-  console.log(ts)
-  console.log(systemBundle)
   // computeTimes = [1535846400000, 1535932800000, 1536019200000]
   // computeTimes = []
   // let lastItem = computeTimes.slice(-1)[0]

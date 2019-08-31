@@ -236,7 +236,6 @@ DataSystem.prototype.getRawSumData = async function (bundleIN) {
   // how many sensor ie data sets are being asked for?
   // loop over and return Statistics Data and return to callback
   let averageData = {}
-  let averageArray = []
   let averageHolder = {}
   for (let di of bundleIN.deviceList) {
     // also need to loop for datatype and map to storage API function that matches
@@ -247,10 +246,9 @@ DataSystem.prototype.getRawSumData = async function (bundleIN) {
         await localthis.liveTestStorage.getSumData(bundleIN.startperiod, di, bundleIN.scienceAsked.prime.cnrl, dtl.cnrl, tsg).then(function (statsData) {
           averageHolder = {}
           averageHolder[tsg] = statsData
-          averageArray.push(averageHolder)
           averageData[di] = {}
           averageData[di][dtl.cnrl] = {}
-          averageData[di][dtl.cnrl] = averageArray
+          averageData[di][dtl.cnrl] = averageHolder
         }).catch(function (err) {
           console.log(err)
         })
@@ -457,8 +455,9 @@ DataSystem.prototype.extractDTcolumn = function (sourceDT, arrayIN) {
 *
 */
 DataSystem.prototype.dtFilterController = function (systemBundle, liveData) {
-  // console.log('dtFilterController')
-  // console.log(systemBundle)
+  console.log('dtFilterController')
+  console.log(systemBundle)
+  console.log(liveData)
   let filterHolder = {}
   let filterType = ''
   filterHolder[systemBundle.startperiod] = {}
@@ -474,8 +473,9 @@ DataSystem.prototype.dtFilterController = function (systemBundle, liveData) {
       dtSourceR = systemBundle.apiInfo[devI].apiquery
       filterType = 'primary'
     }
-    // console.log('fiter type')
-    // console.log(fitlerType)
+    console.log('fiter type')
+    console.log(filterType)
+    console.log(dtSourceR)
     for (let dtItem of dtSourceR) {
       filterHolder[systemBundle.startperiod][devI][dtItem.cnrl] = {}
       for (let ts of systemBundle.timeseg) {

@@ -42,8 +42,6 @@ StatisticsSystem.prototype.statisticsSystem = function () {
 */
 StatisticsSystem.prototype.averageStatistics = function (dataArray) {
   // statistical avg. smart contract/crypt ID ref & verfied wasm/network/trubit assume done
-  console.log('single array avg')
-  console.log(dataArray)
   let AvgHolder = {}
   let numberEntries = dataArray.length
   // accumulate sum the daily data
@@ -73,13 +71,6 @@ StatisticsSystem.prototype.averageMonthlyStatistics = function () {
 *
 */
 StatisticsSystem.prototype.averageCurrentDailyStatistics = async function (startDate, device, compType, datatype, timeseg, category) {
-  console.log('average averfage stats')
-  console.log(startDate)
-  console.log(device)
-  console.log(compType)
-  console.log(datatype)
-  console.log(timeseg)
-  console.log(category)
   let dataBatch = await this.liveTestStorage.getAverageData(startDate, device, compType, datatype, timeseg, category)
   let numberEntries = dataBatch.length
   // form single arrays

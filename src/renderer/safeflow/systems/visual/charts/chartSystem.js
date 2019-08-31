@@ -33,10 +33,6 @@ util.inherits(ChartSystem, events.EventEmitter)
 */
 ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle, cData) {
   let lastDataObject = cData
-  console.log(datatypeIN)
-  console.log(eInfo)
-  console.log(cBundle)
-  console.log(cData)
   let datalabel = []
   let visCHolder = {}
   let datay = []
@@ -192,11 +188,6 @@ ChartSystem.prototype.prepareLabelchart = function (labelIN) {
 *
 */
 ChartSystem.prototype.structureAverageData = function (datatypeIN, eInfo, cBundle, dataIN) {
-  console.log('structure averageData')
-  console.log(datatypeIN)
-  console.log(eInfo)
-  console.log(cBundle)
-  console.log(dataIN)
   let liveDate = eInfo.time.startperiod
   let visCHolder = {}
   visCHolder[liveDate] = {}
@@ -226,20 +217,29 @@ ChartSystem.prototype.structureAverageData = function (datatypeIN, eInfo, cBundl
 * @method structureumData
 *
 */
-ChartSystem.prototype.structureSumData = function (dataIN) {
-  let dataholder = {}
+ChartSystem.prototype.structureSumData = function (datatypeIN, eInfo, cBundle, dataIN) {
+  let liveDate = eInfo.time.startperiod
+  let visCHolder = {}
+  visCHolder[liveDate] = {}
   let datalabel = []
   let dataC = []
-  // loop through and build two sperate arrays
-  for (let dc of dataIN) {
-    let millTimeprepare = dc.timestamp * 1000
-    let mString = moment(millTimeprepare).toDate() // .format('YYYY-MM-DD hh:mm')
-    datalabel.push(mString)
-    dataC.push(dc.value)
+  if (dataIN[liveDate]) {
+    for (let devI of eInfo.devices) {
+      visCHolder[liveDate][devI.device_mac] = {}
+      // let dataholder = {}
+      for (let ts of eInfo.time.timeseg) {
+        for (let liveData of dataIN[liveDate][devI.device_mac][datatypeIN.cnrl][ts]) {
+          let millTimeprepare = liveData.timestamp * 1000
+          let mString = moment(millTimeprepare).toDate() // .format('YYYY-MM-DD hh:mm')
+          datalabel.push(mString)
+          dataC.push(liveData.value)
+        }
+      }
+    }
   }
-  dataholder.labels = datalabel
-  dataholder.datasets = dataC
-  return dataholder
+  visCHolder.labels = datalabel
+  visCHolder.datasets = dataC
+  return visCHolder
 }
 
 /**

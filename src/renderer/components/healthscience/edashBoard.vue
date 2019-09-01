@@ -87,6 +87,7 @@
         for (let expEB of liveBundles) {
           for (let iee of currentEntities) {
             if (expEB === iee.kbid) {
+              // need to update time live for bundle TODO
               chartDataReady = await this.learnStart(iee)
               entityArray.push(chartDataReady)
             }

@@ -10,11 +10,17 @@
 * @version    $Id$
 */
 import DataSystem from '../systems/data/dataSystem.js'
+import TidyDataSystem from '../systems/data/tidydataSystem.js'
+import FilterDataSystem from '../systems/data/filterdataSystem.js'
+import CategoryDataSystem from '../systems/data/categorydataSystem.js'
 const util = require('util')
 const events = require('events')
 
 var DataComponent = function (DID, setIN) {
   events.EventEmitter.call(this)
+  this.liveTidyData = new TidyDataSystem(setIN)
+  this.liveFilterData = new FilterDataSystem(setIN)
+  this.liveCategoryData = new CategoryDataSystem(setIN)
   this.did = DID
   this.liveData = []
   this.livedate = 0
@@ -116,6 +122,8 @@ DataComponent.prototype.setCategories = function (ctIN) {
 *
 */
 DataComponent.prototype.sourceData = async function (apiINFO) {
+  // console.log('dataCOMP')
+  // console.log(apiINFO)
   this.apiInfoLive = apiINFO
   let systemBundle = {}
   systemBundle.apiInfo = apiINFO
@@ -143,7 +151,7 @@ DataComponent.prototype.sourceData = async function (apiINFO) {
 */
 DataComponent.prototype.CategoriseData = function (catInfo) {
   // loop over and categorise dt if required
-  console.log('categorise data')
+  // console.log('categorise data')
   let catDataG = {}
   let systemBundle = {}
   systemBundle.apiInfo = catInfo
@@ -155,7 +163,7 @@ DataComponent.prototype.CategoriseData = function (catInfo) {
   systemBundle.querytime = this.did.time
   systemBundle.categories = this.did.categories
   // console.log(systemBundle)
-  catDataG = this.liveDataSystem.categorySorter(systemBundle, this.dataRaw)
+  catDataG = this.liveCategoryData.categorySorter(systemBundle, this.dataRaw)
   this.categoryData = catDataG
 }
 
@@ -165,7 +173,7 @@ DataComponent.prototype.CategoriseData = function (catInfo) {
 *
 */
 DataComponent.prototype.TidyData = function (apiINFO) {
-  console.log('tidystart')
+  // console.log('tidystartCOMP')
   let tidyDataG = {}
   let systemBundle = {}
   systemBundle.apiInfo = apiINFO
@@ -176,8 +184,8 @@ DataComponent.prototype.TidyData = function (apiINFO) {
   systemBundle.timeseg = this.timeSegs
   systemBundle.querytime = this.did.time
   systemBundle.categories = this.did.categories
-  console.log(systemBundle)
-  tidyDataG = this.liveDataSystem.tidyRawData(systemBundle, this.categoryData)
+  // console.log(systemBundle)
+  tidyDataG = this.liveTidyData.tidyRawData(systemBundle, this.categoryData)
   this.tidyData = tidyDataG
   // set liveData based on/if category data asked for
   this.assessDataStatus()
@@ -190,7 +198,7 @@ DataComponent.prototype.TidyData = function (apiINFO) {
 *
 */
 DataComponent.prototype.FilterDownDT = function (apiINFO) {
-  console.log('filteDown')
+  // console.log('filteDown')
   let tidyDataG = {}
   let systemBundle = {}
   systemBundle.apiInfo = apiINFO
@@ -203,7 +211,7 @@ DataComponent.prototype.FilterDownDT = function (apiINFO) {
   systemBundle.categories = this.did.categories
   // console.log(systemBundle)
   if (this.liveData.primary !== 'prime') {
-    tidyDataG = this.liveDataSystem.dtFilterController(systemBundle, this.liveData)
+    tidyDataG = this.liveFilterData.dtFilterController(systemBundle, this.liveData)
     this.liveData = tidyDataG
   }
   return true

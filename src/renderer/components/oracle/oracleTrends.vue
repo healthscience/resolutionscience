@@ -39,7 +39,7 @@
     methods: {
       tremdsStart () {
         this.experimentTrends = this.$store.getters.liveExperimentList
-        this.trendIcon = [{'text': 'Daily Step Planning?', 'url': greenBetter, 'alt': 'better trend'}, {'text': 'Active step advisor', 'url': orangeNeutral, 'alt': 'neutral trend'}, {'text': 'Recovery heart rate?', 'url': greenBetter, 'alt': 'better trend'}, {'text': 'Air quality', 'url': orangeNeutral, 'alt': 'neutral trend'}, {'text': 'Intermitting fasting?', 'url': greenBetter, 'alt': 'better trend'}, {'text': 'Stem cell recovery help?', 'url': orangeNeutral, 'alt': 'neutral trend'}, {'text': 'CALE update', 'url': orangeNeutral, 'alt': 'neutral trend'}]
+        this.trendIcon = [{'text': 'Daily Step Planning?', 'url': orangeNeutral, 'alt': 'better trend'}, {'text': 'Sleep', 'url': orangeNeutral, 'alt': 'neutral trend'}, {'text': 'Recovery heart rate?', 'url': orangeNeutral, 'alt': 'better trend'}, {'text': 'Air quality', 'url': orangeNeutral, 'alt': 'neutral trend'}, {'text': 'Intermitting fasting?', 'url': orangeNeutral, 'alt': 'better trend'}, {'text': 'Stem cell recovery help?', 'url': orangeNeutral, 'alt': 'neutral trend'}, {'text': 'CALE update', 'url': orangeNeutral, 'alt': 'neutral trend'}, {'text': 'Mitochondrial therapy', 'url': orangeNeutral, 'alt': 'neutral trend'}]
         // this.trendIcon = [{'url': 'green-better.png', 'alt': 'better trend'}, {'url': 'orange-neutral.png', 'alt': 'neutral trend'}]
       }
     }
@@ -48,14 +48,14 @@
 
 <style>
 .trend-item {
-  border: 1px solid orange;
+  border: 1px solid lightgrey;
   display: inline-block;
   padding: 0em;
   margin: 1.1em;
 }
 
 .smaller-trends-icons {
-  width: 40px;
-  height: 40px;
+  width: 20px;
+  height: 20px;
 }
 </style>

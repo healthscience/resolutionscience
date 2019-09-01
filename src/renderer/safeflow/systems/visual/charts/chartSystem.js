@@ -43,7 +43,6 @@ ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle,
   //  for (let dataI of lastDataObject) {
   if (lastDataObject[liveDate]) {
     for (let devI of eInfo.devices) {
-      console.log(devI)
       visCHolder[liveDate][devI.device_mac] = {}
       let dataholder = {}
       for (let ts of eInfo.time.timeseg) {
@@ -67,9 +66,6 @@ ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle,
       datay = []
     }
   }
-  // }
-  console.log('chart structure complte')
-  console.log(visCHolder)
   return visCHolder
 }
 
@@ -165,8 +161,6 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
       datasets: datachart
     }
   }
-  console.log('prepare for CharsJS')
-  console.log(datacollection)
   return datacollection
 }
 

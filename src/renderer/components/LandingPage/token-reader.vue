@@ -24,7 +24,7 @@
 </template>
 
 <script>
-  import SAFEflow from '../../safeflow/safeFlow.js'
+  import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
   import Passwordk from 'vue-password-strength-meter'
   // import { sBus } from '../../main.js'
 
@@ -42,21 +42,10 @@
     },
     created () {
     },
+    mixins: [liveMixinSAFEflow],
     mounted () {
     },
     computed: {
-      safeFlow: function () {
-        return this.$store.state.safeFlow
-      },
-      system: function () {
-        return this.$store.state.system
-      },
-      context: function () {
-        return this.$store.state.context
-      },
-      science: function () {
-        return this.$store.state.science
-      }
     },
     data: () => ({
       keyObject: {},
@@ -75,79 +64,9 @@
       devices: []
     }),
     methods: {
-      setAccess () {
-        var localthis = this
-        let startContext = this.$store.getters.liveContext
-        let startDataaccess = this.$store.getters.liveSystem
-        if (startDataaccess.token.length !== 0 && startContext.length !== 0) {
-          const systemSet = this.$store.getters.liveSystem
-          this.liveSafeFlow = new SAFEflow(systemSet)
-          localthis.$store.commit('setSafeflow', this.liveSafeFlow)
-          localthis.deviceContext()
-        } else if (this.context) {
-          this.devices = this.context.device
-          this.sensors = this.context.datatype
-        } else {
-          // no token
-        }
-      },
-      startExperiments () {
-        let liveExper = []
-        let experimentList = this.liveSafeFlow.cnrlExperimentIndex()
-        for (let exl of experimentList) {
-          let expCNRL = this.liveSafeFlow.cnrlLookup(exl)
-          let experBundle = {}
-          experBundle.cnrl = exl
-          experBundle.status = false
-          experBundle.contract = expCNRL
-          liveExper.push(experBundle)
-        }
-        this.$store.dispatch('actionExperimentList', liveExper)
-      },
-      async startKSetting () {
-        let startKset = await this.liveSafeFlow.startSettings('retreive')
-        // set via store and then pick up in historyData
-        this.$store.dispatch('actionStartKBundles', startKset)
-      },
-      async startExpMappedKbundles () {
-        let mappedExpKbundles = await this.liveSafeFlow.experimentKbundles('retreive')
-        // set via store and then pick up in historyData
-        this.$store.dispatch('actionExperimentKBundles', mappedExpKbundles)
-      },
-      async deviceContext () {
-        // make call to set start deviceContext for this pubkey
-        const deviceFlag = 'device'
-        let deviceAPI = await this.liveSafeFlow.toolkitContext(deviceFlag)
-        // console.log('device data back')
-        // console.log(deviceAPI)
-        this.devices = deviceAPI
-        // this.devices[0].cnrl = 'cnrl-33221101'
-        // this.devices[1].cnrl = 'cnrl-33221101'
-        this.$store.dispatch('actionDeviceDataAPI', deviceAPI)
-        this.dataType()
-        this.cnrlScience()
-        this.startExperiments()
-        this.startExpMappedKbundles()
-        this.startKSetting()
-      },
-      dataType () {
-        // make call to set start dataType for the device sensors
-        var localthis = this
-        function callbackT (dataH) {
-          localthis.sensors = dataH
-          localthis.$store.commit('setDatatype', dataH)
-        }
-        const dataTypeFlag = 'dataType'
-        this.liveSafeFlow.toolkitContext(dataTypeFlag, callbackT)
-      },
-      cnrlScience () {
-        // call the CNRL api and get network science active
-        let startScience = this.liveSafeFlow.cnrlScienceStart()
-        this.$store.commit('setCNRLscience', startScience)
-      },
       loadTextFromFile (ev) {
         // prompt for Password
-        var localthis = this
+        const localthis = this
         const file = ev.target.files[0]
         const reader = new FileReader()
         reader.onloadend = function () {
@@ -158,7 +77,7 @@
           localthis.$store.commit('setBoth', tokenJSON)
           localthis.verifyfeedbackM = 'Data token live'
           localthis.viewPkeybuttons = true
-          localthis.setAccess()
+          localthis.connectAPIS()
         }
         reader.readAsText(file)
 
@@ -174,6 +93,77 @@
       },
       viewtToken () {
         this.tokenTView = 'TestToken = ' + this.token.token
+      },
+      connectAPIS () {
+        console.log('what data api need connecting')
+        // get list of all API cnrl contracts connected
+        let apiCRNLdefault = 'cnrl-33221100'
+        console.log(apiCRNLdefault)
+        // look up contract and get API info for default
+        let defaultAPI = this.GETcnrlLookup(apiCRNLdefault)
+        console.log(defaultAPI)
+        // what data APIs are connected?
+        let dataAPIconnected = ['cnrl-33221101', 'cnrl-33221102']
+        console.log(dataAPIconnected)
+        // query peer ledger to extract experiments, computes i.e. KBLedger latest
+        this.startExpMappedKbundles()
+        this.startKSetting()
+        // build the UI data type components
+        this.startExperiments()
+        // this.deviceContext
+        // this.datatypeContext
+        // this.cnrlScience()
+      },
+      async startExpMappedKbundles () {
+        let mappedExpKbundles = await this.mappedKBLexp()
+        // set via store and then pick up in historyData
+        this.$store.dispatch('actionExperimentKBundles', mappedExpKbundles)
+      },
+      async startKSetting () {
+        let startKset = await this.latestKBL()
+        // set via store and then pick up in historyData
+        this.$store.dispatch('actionStartKBundles', startKset)
+      },
+      startExperiments () {
+        let liveExper = []
+        let experimentList = this.GETexperimentsList()
+        for (let exl of experimentList) {
+          let expCNRL = this.GETcnrlLookup(exl)
+          let experBundle = {}
+          experBundle.cnrl = exl
+          experBundle.status = false
+          experBundle.contract = expCNRL
+          liveExper.push(experBundle)
+        }
+        this.$store.dispatch('actionExperimentList', liveExper)
+      },
+      async deviceContext () {
+        console.log('get devcies')
+        // make call to set start deviceContext for this pubkey
+        const deviceFlag = 'device'
+        let deviceAPI = await this.toolkitContext(deviceFlag)
+        // console.log('device data back')
+        // console.log(deviceAPI)
+        this.devices = deviceAPI
+        // this.devices[0].cnrl = 'cnrl-33221101'
+        // this.devices[1].cnrl = 'cnrl-33221101'
+        this.$store.dispatch('actionDeviceDataAPI', deviceAPI)
+        this.dataType()
+      },
+      dataTypeContext () {
+        // make call to set start dataType for the device sensors
+        var localthis = this
+        function callbackT (dataH) {
+          localthis.sensors = dataH
+          localthis.$store.commit('setDatatype', dataH)
+        }
+        const dataTypeFlag = 'dataType'
+        this.liveSafeFlow.toolkitContext(dataTypeFlag, callbackT)
+      },
+      cnrlScience () {
+        // call the CNRL api and get network science active
+        let startScience = this.liveSafeFlow.cnrlScienceStart()
+        this.$store.commit('setCNRLscience', startScience)
       }
     }
   }

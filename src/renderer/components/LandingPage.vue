@@ -16,7 +16,7 @@
       <div class="right-side">
         <div class="doc">
           <div class="title">Peer to Peer Science with Rigour</div>
-          <p>version v0.02f</p>
+          <p>version v0.031</p>
           <br><br>
           <div id="network-status">
             Status: Peer Autonomous - Network: NOT CONNECTED
@@ -56,6 +56,9 @@
           </p>
         </form>
       </div>
+      <div id="safe-network">
+        <button @click.prevent="connectSAFE" class="button is-primary">Connect to SAFE (fleming) Test Network</button> coming soon
+      </div>
     </div>
   </div>
 </template>
@@ -66,6 +69,7 @@
   import Password from 'vue-password-strength-meter'
   import FileReader from './LandingPage/file-reader.vue'
   import keythereum from 'keythereum'
+  import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
 
   export default {
     name: 'landing-page',
@@ -78,12 +82,6 @@
     created () {
     },
     computed: {
-      system: function () {
-        return this.$store.state.system
-      },
-      safeFlow: function () {
-        return this.$store.state.safeFlow
-      }
     },
     data: () => ({
       password: null,
@@ -93,6 +91,7 @@
       feedbackM: '',
       warningM: ''
     }),
+    mixins: [liveMixinSAFEflow],
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
@@ -139,6 +138,9 @@
         // console.log('event called to remove create')
         // console.log(evIN)
         this.newKeystartseen = false
+      },
+      connectSAFE () {
+        console.log('connect to safe network please')
       }
     }
   }

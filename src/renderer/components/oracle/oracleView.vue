@@ -1,5 +1,5 @@
 <template>
-  <div id="oracle-view">ORACLE
+  <div id="oracle-view">ORACLE ON HEALTH SCIENCE
     <oracle-Summary></oracle-Summary>
     <oracle-Trends></oracle-Trends>
   </div>

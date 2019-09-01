@@ -152,12 +152,12 @@ EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
   // loop over visualisation available and pick out match
   for (let lvc of this.liveSEntities[eid].liveVisualC.visualData) {
     if (lvc[visStyle] === undefined) {
-      console.log('no existing chart data')
+      // console.log('no existing chart data')
       messageVisBundle = {}
       messageVisBundle.chartMessage = 'computation in progress/ Nothing to chart'
       GroupVisBundle = messageVisBundle
     } else if (lvc[visStyle].status === 'report-component') {
-      console.log('HR learn report instead of chart')
+      // console.log('HR learn report instead of chart')
       messageVisBundle = {}
       messageVisBundle.chartMessage = 'vis-report'
       messageVisBundle.liveChartOptions = {}
@@ -166,7 +166,7 @@ EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
       messageVisBundle.hrcReport = this.liveSEntities[eid].liveDataC.dataRaw
       GroupVisBundle = messageVisBundle
     } else if (lvc['vis-sc-1']) {
-      console.log('existing data to chart')
+      // console.log('existing data to chart')
       // for (let vi of lvc[visStyle][timeLive]) {
       if (lvc[visStyle][timeLive].day) {
         messageVisBundle = {}

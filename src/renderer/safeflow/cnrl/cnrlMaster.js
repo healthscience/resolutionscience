@@ -552,10 +552,10 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-33221100', 'text': 'test-RESTAPI', 'active': false }
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
-    dataCNRLbundle.apistructure = ['contextdata/<publickey>/', 'contexttype/<publickey>/']
-    dataCNRLbundle.tableStructure[0] = [{'cnrl': '', 'text': 'device_mac', 'active': false}, {'cnrl': '', 'text': 'firmware', 'active': false}]
-    dataCNRLbundle.tableStructure[1] = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-', 'text': 'science', 'active': false}, {'cnrl': 'cnrl-', 'text': 'datatype', 'active': false}, {'cnrl': 'cnrl-', 'text': 'timeseg', 'active': false}, {'cnrl': 'cnrl-', 'text': 'value', 'active': false}, {'cnrl': 'cnrl-', 'text': 'device_mac', 'active': false}, {'cnrl': 'cnrl-', 'text': 'clean', 'active': false}, {'cnrl': 'cnrl-', 'text': 'tidy', 'active': false}]
-    dataCNRLbundle.namespace = 'http://165.227.244.213:8881/'
+    dataCNRLbundle.apistructure = ['kbledger/<publickey>/', 'experimentKBundles/<publickey>/']
+    dataCNRLbundle.tableStructure[0] = [{'cnrl': 'cnrl-8856388713', 'text': 'previoushash', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-', 'text': 'data', 'active': false}, {'cnrl': 'cnrl-', 'text': 'datatype', 'active': false}, {'cnrl': 'cnrl-', 'text': 'compute', 'active': false}, {'cnrl': 'cnrl-', 'text': 'results', 'active': false}, {'cnrl': 'cnrl-', 'text': 'token', 'active': false}]
+    dataCNRLbundle.tableStructure[1] = [{'cnrl': '', 'text': '', 'active': false}]
+    dataCNRLbundle.namespace = 'http://165.227.244.213:8882/'
     dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-33221101') {
     // CNRL implementation REST API
@@ -570,7 +570,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.tableStructure[2] = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-', 'text': 'science', 'active': false}, {'cnrl': 'cnrl-', 'text': 'datatype', 'active': false}, {'cnrl': 'cnrl-', 'text': 'timeseg', 'active': false}, {'cnrl': 'cnrl-', 'text': 'value', 'active': false}, {'cnrl': 'cnrl-', 'text': 'device_mac', 'active': false}, {'cnrl': 'cnrl-', 'text': 'clean', 'active': false}, {'cnrl': 'cnrl-', 'text': 'tidy', 'active': false}]
     dataCNRLbundle.tableStructure[3] = [{'cnrl': 'cnrl-8856388724', 'text': 'average-bpm', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856388322', 'text': 'average-steps', 'active': false}]
     dataCNRLbundle.tableStructure[4] = [{'cnrl': 'cnrl-8856388924', 'text': 'sum-bpm', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856389322', 'text': 'sum-steps', 'active': false}]
-    dataCNRLbundle.namespace = 'http://165.227.244.213:8881/'
+    dataCNRLbundle.namespace = 'http://165.227.244.213:8882/'
     dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-33221102') {
     // CNRL implementation REST API
@@ -702,7 +702,23 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-848388553323'
     dataCNRLbundle.index = []
     dataCNRLbundle.kentities = ['PxaTn6JAP8fUowppmNvLniqmFYV9VQMDVVcP5n7BqTm']
+  } else if (refIN === 'cnrl-848388553329') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'experiment'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-848388553329', 'text': 'Mitochondrial therapy', 'active': false }
+    dataCNRLbundle.livingpaper = {'link': 'https://docs.google.com/document/'}
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.tableStructure = []
+    dataCNRLbundle.categorycodes.push()
+    dataCNRLbundle.categorycodes.push()
+    dataCNRLbundle.resolution = {}
+    dataCNRLbundle.namespace = 'safe://cnrl/cnrl-848388553329'
+    dataCNRLbundle.index = []
+    dataCNRLbundle.kentities = ['']
   }
+
   return dataCNRLbundle
 }
 
@@ -750,7 +766,7 @@ CNRLmaster.prototype.indexDatapackaging = function () {
 CNRLmaster.prototype.indexExperiments = function () {
   // index datatype live in network by cnrl // id
   let indexExperimentslive = []
-  indexExperimentslive.push('cnrl-848388553323', 'cnrl-888355992223', 'cnrl-888355992224', 'cnrl-888388992224', 'cnrl-888388232224', 'cnrl-888388233324', 'cnrl-888388443324')
+  indexExperimentslive.push('cnrl-848388553323', 'cnrl-888355992223', 'cnrl-888355992224', 'cnrl-888388992224', 'cnrl-888388232224', 'cnrl-888388233324', 'cnrl-888388443324', 'cnrl-848388553329')
   return indexExperimentslive
 }
 

@@ -43,23 +43,23 @@ VisualComponent.prototype.setVisLive = function (updateEID) {
 *
 */
 VisualComponent.prototype.filterVisual = function (visIN, vData) {
-  console.log('filter vis')
-  console.log(visIN)
-  console.log(vData)
+  // console.log('filter vis')
+  // console.log(visIN)
+  // console.log(vData)
   // which of three types of visualisations?
   let status = false
   // todo need to check if one or many visualisation types required? ONe for now
   if (this.EIDinfo.visID[0] === 'vis-sc-1') {
-    console.log('charts asked for')
+    // console.log('charts asked for')
     this.visualData = this.liveVisSystem.visSystem(this.EIDinfo, visIN, vData)
     status = true
   } else if (visIN.vid === 'vis-sc-2') {
-    console.log('table asked for')
+    // console.log('table asked for')
     this.visualData = this.liveVisSystem.tableSystem(visIN, vData)
     status = true
   } else if (visIN.vid === 'vis-sc-3') {
     status = true
-    console.log('simulation asked for')
+    // console.log('simulation asked for')
     // this.visualData = this.liveVisSystem.simSystem()
   }
   return status

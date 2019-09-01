@@ -12,6 +12,10 @@
       <button @click.prevent="verifyKeypw" class="button is-primary">Verify key ownership</button>
     </div>
     <div id="keypw-feedback">{{ verifyfeedbackM }}</div>
+    <div v-if="repeatTimetokenseen" id="enter-token">
+      Please navigate token file:
+      <token-reader @load="text = $event" :viewPkey="viewPkey"> </token-reader>
+    </div>
   </div>
 </template>
 
@@ -19,12 +23,15 @@
   import Passwordk from 'vue-password-strength-meter'
   // import FileReader from './LandingPage/file-reader.vue'
   import keythereum from 'keythereum'
+  import fs from 'fs'
+  import TokenReader from '../LandingPage/token-reader.vue'
 
   export default {
     name: 'unlockkey-page',
     components: {
       Passwordk,
-      FileReader
+      FileReader,
+      TokenReader
     },
     data: () => ({
       pkaddress: '',
@@ -36,8 +43,12 @@
       text: '',
       keybuttonseen: false,
       feedbackM: '',
-      warningM: ''
+      warningM: '',
+      repeatTimetokenseen: false,
+      viewPkey: ''
     }),
+    created () {
+    },
     methods: {
       loadTextFromFile (ev) {
         // prompt for Password
@@ -66,15 +77,30 @@
           this.fileinputSeen = false
           this.pwinputSeen = false
           this.verifyfeedbackM = 'Key has been self-verifed.'
-          // set public key startTime
-          // const tokenJSONsetP = {}
-          // tokenJSONsetP.publickey = this.pkaddress
-          // remove create key via events
-
+          // connect to the data network / (test network)
+          // SAFEnetwork
+          // TESTnetwork temp
+          this.checkforToken()
           this.$store.commit('setPublickey', this.pkaddress)
         } else {
           // password failed
           this.verifyfeedbackM = 'Password not correct.'
+        }
+      },
+      checkforToken () {
+        // does a token file exist?
+        const path = process.cwd() + '/keystore/healthscience-token.json'
+        try {
+          if (fs.existsSync(path)) {
+            // file exists start open decrypt
+            console.log('token in right place')
+            this.repeatTimetokenseen = true
+          } else {
+            console.log('file err found')
+            this.firstTimetokenseen = true
+          }
+        } catch (err) {
+          console.error(err)
         }
       }
     }

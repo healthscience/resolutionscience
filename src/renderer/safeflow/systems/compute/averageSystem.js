@@ -117,9 +117,9 @@ AverageSystem.prototype.updateComputeControl = async function (timeBundle, dvc, 
 */
 AverageSystem.prototype.prepareAvgCompute = async function (computeTimes, device, datatype, ts, systemBundle) {
   // computeTimes = [1535846400000, 1535932800000, 1536019200000]
-  // computeTimes = []
-  // let lastItem = computeTimes.slice(-1)[0]
-  // computeTimes.push(1535846400000)
+  let lastItem = computeTimes.slice(-1)[0]
+  computeTimes = []
+  computeTimes.push(lastItem)
   for (let qt of computeTimes) {
     let queryTime = qt / 1000
     // The datatype asked should be MAPPED to storage API via source Datatypes that make up e.g. average-bpm
@@ -133,6 +133,7 @@ AverageSystem.prototype.prepareAvgCompute = async function (computeTimes, device
     formHolder[queryTime][device][datatype.cnrl][ts] = dataBatch
     // [systemBundle.startperiod][devI][dtItem.cnrl][ts]
     if (dataBatch.length > 0) {
+      // systemBundle.primary = 'primary'
       let singleArray = this.liveDataSystem.categorySorter(systemBundle, formHolder)
       let tidyData = this.liveDataSystem.tidyRawData(systemBundle, singleArray)
       let filterDTs = this.liveDataSystem.dtFilterController(systemBundle, tidyData)

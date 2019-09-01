@@ -17,7 +17,6 @@
 </template>
 
 <script>
-  import SAFEflow from '../../safeflow/safeFlow.js'
   import oracleView from '@/components/oracle/oracleView.vue'
   import experimentList from '@/components/toolbar/experimentList.vue'
   import { sBus } from '../../main.js'
@@ -30,7 +29,6 @@
     },
     data () {
       return {
-        liveSafeFlow: null,
         exper:
         {
           name: 'View experiments',
@@ -55,23 +53,16 @@
       }
     },
     computed: {
-      system: function () {
-        return this.$store.state.system
-      }
     },
     mounted () {
     },
     created () {
-      this.setAccess()
       this.experimentsStart()
       sBus.$on('saveLBundle', (cData) => {
         console.log('NOT USED')
       })
     },
     methods: {
-      setAccess () {
-        this.liveSafeFlow = new SAFEflow(this.system)
-      },
       viewExperiment (exper) {
         exper.active = !exper.active
         // query CNRL to get live EXPERIMENTS
@@ -81,10 +72,6 @@
         } else {
           exper.name = 'View experiments'
         }
-      },
-      makeLiveExperiment () {
-        // make experiment dashboard ie. all visualisation, setting and ptop status numbers etc.
-        console.log('live experiment dashboard')
       },
       experimentsStart () {
         this.liveExper = []

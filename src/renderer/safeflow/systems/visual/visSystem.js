@@ -35,10 +35,6 @@ util.inherits(VisSystem, events.EventEmitter)
 *
 */
 VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
-  console.log('vis system start')
-  console.log(eInfo)
-  console.log(chartBundle)
-  console.log(dataIN)
   var localthis = this
   let visIN = eInfo.visID[0]
   let liveTime = eInfo.time.startperiod
@@ -51,7 +47,6 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
   chartDataH.options = {}
   chartDataH.prepared = {}
   if (eInfo.cid === 'cnrl-2356388731') {
-    console.log('observation data')
     for (let dtv of eInfo.datatypes) {
       structureHolder = this.liveChartSystem.structureChartData(dtv, eInfo, chartBundle, dataIN)
       // prepare the colors for the charts
@@ -66,8 +61,6 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
     let titleOut = 'Device ' + eInfo.devices[0].device_name
     let scaling = 200
     let liveChartOptions = this.liveChartOptions.prepareChartOptions(titleOut, eInfo.datatypes, scaling)
-    console.log('chart opotions')
-    console.log(liveChartOptions)
     // package all the info. to pass to vue
     chartData.prepared = this.liveChartSystem.prepareVueChartJS(chartDataH.chart)
     // prepare chart options
@@ -81,7 +74,6 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
     chartGroupHolder.push(chartHolder)
     this.visSystemData = chartGroupHolder
   } else if (eInfo.cid === 'cnrl-2356388732') {
-    console.log('average Chart vis start')
     let liveChartOptions = this.liveChartOptions.AverageChartOptions()
     for (let dtv of eInfo.datatypes) {
       structureHolder = this.liveChartSystem.structureAverageData(dtv, eInfo, chartBundle, dataIN)
@@ -105,7 +97,6 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
     }
   } else if (eInfo.cid === 'cnrl-2356388737') {
     // summation of datatypes
-    console.log('SUM chart')
     // could be more than one visualisation required,  devices, datatypes, timeseg or computation or event resolutions
     let liveChartOptions = this.liveChartOptions.SumChartOptions()
     for (let dtv of eInfo.datatypes) {
@@ -157,7 +148,6 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
     }
     this.visSystemData = chartGroupHolder */
   } else if (eInfo.cid === 'cnrl-2356388733') {
-    console.log('HR recovery chart???')
     const chartHolder = {}
     chartHolder[visIN] = {}
     chartHolder[visIN].status = 'report-component'

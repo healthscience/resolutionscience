@@ -9,7 +9,9 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
+// import SAFEapi from './systems/data/dataprotocols/safenetwork/index.js'
 import DTsystem from './systems/data/dtSystem.js'
+import KBLedger from './cnrl/kbledger.js'
 import CNRLmaster from './cnrl/cnrlMaster.js'
 import TimeUtilities from './systems/timeUtility.js'
 import DataSystem from './systems/data/dataSystem.js'
@@ -19,7 +21,9 @@ const events = require('events')
 
 var safeFlow = function (setIN) {
   events.EventEmitter.call(this)
+  // this.SAFElive = new SAFEapi()
   this.defaultStorage = setIN.cnrl
+  this.liveKBL = new KBLedger(setIN)
   this.liveCNRL = new CNRLmaster()
   this.liveTimeUtil = new TimeUtilities()
   this.liveEManager = new EntitiesManager()
@@ -89,7 +93,8 @@ safeFlow.prototype.experimentKbundles = async function (flag, bundle) {
   if (flag === 'save') {
     startStatusData = await this.liveDataSystem.saveExpKbundles(bundle)
   } else if (flag === 'retreive') {
-    startStatusData = await this.liveDataSystem.getExpKbundles()
+    // this.liveKBL
+    startStatusData = await this.liveKBL.latestKBs()
   }
   return startStatusData
 }
@@ -112,8 +117,8 @@ safeFlow.prototype.cnrlScienceStart = function () {
 safeFlow.prototype.scienceEntities = async function (contextIN) {
   // add a new entity via manager
   // first prepare input in ECS format
-  console.log('start---scienceEntitiees')
-  console.log(contextIN)
+  // console.log('start---scienceEntitiees')
+  // console.log(contextIN)
   let ecsIN = this.setpeerContext(contextIN)
   await this.liveEManager.addScienceEntity(ecsIN, this.settings).then(function (bk) {
     // console.log('SAFEFLOW-new entitycomplete')
@@ -128,8 +133,8 @@ safeFlow.prototype.scienceEntities = async function (contextIN) {
 *
 */
 safeFlow.prototype.setpeerContext = function (bundleIN) {
-  console.log('setpeer context')
-  console.log(bundleIN)
+  // console.log('setpeer context')
+  // console.log(bundleIN)
   // prepare ECS input format and hold context
   // does an existing bundle exist?
   let ecsIN = {}
@@ -148,8 +153,8 @@ safeFlow.prototype.setpeerContext = function (bundleIN) {
   ecsIN.datatypes = bundleIN.datatypes
   ecsIN.categories = bundleIN.categories
   ecsIN.language = bundleIN.language
-  console.log('end peer')
-  console.log(ecsIN)
+  // console.log('end peer')
+  // console.log(ecsIN)
   return ecsIN
 }
 
@@ -245,9 +250,18 @@ safeFlow.prototype.cnrlDeviceDTs = function (cid) {
 *
 */
 safeFlow.prototype.cnrlScienceDTs = function (cid) {
-  console.log(cid)
   let cnrlContract = this.liveDTsystem.DTscienceStructure(cid)
   return cnrlContract
+}
+
+/**
+* authorise the SAFEnetwork
+* @method SAFEsendAuthRequest
+*
+*/
+safeFlow.prototype.SAFEsendAuthRequest = function () {
+  let authorisation = this.SAFEapi.sendAuthRequest()
+  return authorisation
 }
 
 export default safeFlow

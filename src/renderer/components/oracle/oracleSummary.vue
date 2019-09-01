@@ -1,5 +1,5 @@
 <template>
-  <div id="oracle-summary">Summary
+  <div id="oracle-summary">
     <!--<img id="healthspan-oracle" src="~@/assets/healthspan-summary-chart.png" alt="healthspan">-->
   </div>
 </template>

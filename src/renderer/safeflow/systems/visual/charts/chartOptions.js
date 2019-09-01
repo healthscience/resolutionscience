@@ -32,7 +32,6 @@ util.inherits(ChartOptions, events.EventEmitter)
 *
 */
 ChartOptions.prototype.prepareChartOptions = function (title, datatypes, scale) {
-  console.log(datatypes)
   var localthis = this
   // prepare y axis dependent up how many datatypes plot
   let yAxisPrep = []
@@ -66,8 +65,6 @@ ChartOptions.prototype.prepareChartOptions = function (title, datatypes, scale) 
     }
     yAxisPrep.push(yItem)
   }
-  console.log('leoop y yasix')
-  console.log(yAxisPrep)
   let options = {
     responsive: true,
     spanGaps: true,
@@ -204,8 +201,6 @@ ChartOptions.prototype.prepareChartOptions = function (title, datatypes, scale) 
       }]
     }
   }
-  console.log('opton full')
-  console.log(options)
   return options
 }
 

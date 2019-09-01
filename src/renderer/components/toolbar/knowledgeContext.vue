@@ -69,7 +69,7 @@
               </li>
             </ul>
             <div id="context-time">
-              <header>Time:</header>
+              <header>Time Period:</header>
                 <ul>
                   <li v-if="timeSeg" v-for="t in timeSeg" class="context-time">
                     <a href="" id="" @click.prevent="selectTime(t)" v-bind:class="{ 'active': t.active}">{{ t.text }}</a>

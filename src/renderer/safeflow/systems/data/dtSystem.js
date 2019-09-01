@@ -207,21 +207,6 @@ DTSystem.prototype.categoryCheck = function (cdt, catSource) {
 }
 
 /**
-*  // map data prime to source data types
-* @method DTStartFilter
-*
-*/
-DTSystem.prototype.DTStartFilter = function (dAPI, cnrl) {
-  // given datastore and CNRL science contract map the source API queries to datatypes or source Types
-  // let APIcnrl = this.DTtableStructure(dAPI)
-  // look up science computations contract if see what datatypes are listed (this assumes they are enter on setting up science contract???)
-  // let SciDTs = this.DTscienceStructure(cnrl)
-  // map the storage API data types to the science entity datatype
-  // let datatypeMatch = this.mapDTs(APIcnrl.datatypes, SciDTs.datatypes)
-  // let dtCategoryMatch = this.mapDTs(apiDTs.categories, sciSourceCatDTs)
-}
-
-/**
 * take in two data type arrays and return matching dts
 * @method mapDTs
 *

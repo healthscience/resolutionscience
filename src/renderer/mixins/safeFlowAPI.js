@@ -17,6 +17,9 @@ export default {
     }
   },
   methods: {
+    async SAFEnetworkAuthorisation () {
+      await this.safeMixin.SAFEsendAuthRequest()
+    },
     async learnStart (lBundle) {
       console.log('start Learning')
       let returnVISvue = {}
@@ -127,6 +130,22 @@ export default {
     async SaveexperimentKbundles (mapEKb) {
       let saveStatus = await this.safeMixin.experimentKbundles('save', mapEKb)
       return saveStatus
+    },
+    async mappedKBLexp () {
+      let lastestMappedLedger = await this.safeMixin.experimentKbundles('retreive')
+      return lastestMappedLedger
+    },
+    async latestKBL () {
+      let lastestLedger = await this.safeMixin.startSettings('retreive')
+      return lastestLedger
+    },
+    GETcnrlLookup (cnrl) {
+      let getContract = this.safeMixin.cnrlLookup(cnrl)
+      return getContract
+    },
+    GETexperimentsList () {
+      let expList = this.safeMixin.cnrlExperimentIndex()
+      return expList
     }
   }
 }

@@ -99,11 +99,15 @@
 
 <style>
 #experiment-item {
-  border: 2px solid blue;
+  border: 2px solid lightgrey;
   display: block;
   margin: 2em;
 }
 
+.live-element {
+  display: inline-block;
+  margin: 10px;
+}
 .live-eelement {
   float: left;
   margin-left: 2em;

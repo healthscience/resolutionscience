@@ -36,7 +36,7 @@
       </div>
       <div v-else id="live-context-science" class="live-element">Compute: not selected</div>
       <div id="context-time" class="live-element">
-        <header>Time:</header>
+        <header>Time Period:</header>
           <ul>
             <li v-for="ts in liveData.timeLive">
                <div class="live-item">{{ ts }}</div>
@@ -573,7 +573,7 @@
 
 .custom-resizer > .pane {
   text-align: left;
-  padding: 15px;
+  padding: 1px;
   overflow: hidden;
   background: #eee;
   border: 1px solid #ccc;

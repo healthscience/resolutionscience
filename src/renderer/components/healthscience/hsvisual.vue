@@ -217,8 +217,8 @@
 <style>
 #visual-view {
   border: 2px solid green;
-  margin: 0.01em;
-  width: 98%;
+  margin: 0.0em;
+  width: 100%;
 }
 
 ul {

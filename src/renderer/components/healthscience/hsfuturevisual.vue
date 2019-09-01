@@ -211,6 +211,7 @@
   border: 2px solid orange;
   margin: 0.01em;
   width: 98%;
+  background-color: #fff6e5;
 }
 
 ul {

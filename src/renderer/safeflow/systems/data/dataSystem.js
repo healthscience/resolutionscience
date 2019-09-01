@@ -95,11 +95,23 @@ DataSystem.prototype.saveExpKbundles = async function (bundle) {
 * @method systemDevice
 *
 */
-DataSystem.prototype.systemDevice = async function () {
+DataSystem.prototype.systemDevice = async function (dapi) {
   // make query to network for context data per devices
+  // map the dapi to the right function
+  let currentDevices = []
+  currentDevices = await this.getDevicesAPIcall(dapi.namespace)
+  console.log(currentDevices)
+  return currentDevices
+}
+
+/**
+* get devices API call
+* @method getDevicesAPIcall
+*
+*/
+DataSystem.prototype.getDevicesAPIcall = async function (api) {
   let localthis = this
-  let result = await this.liveTestStorage.getDeviceData()
-  localthis.activeContext = result
+  let result = await this.liveTestStorage.getDeviceData(api)
   // filter over to pair same types of devices and put in newest order and add active to newest of all devices or selected by user as starting device to display
   // extract the device macs per devicename
   let deviceModels = []
@@ -108,7 +120,7 @@ DataSystem.prototype.systemDevice = async function () {
   }
   let unique = deviceModels.filter((v, i, a) => a.indexOf(v) === i)
   // form array of list mac address from each model
-  let currentDevices = []
+  let currentDevices = {}
   // let paired = {}
   for (let mod of unique) {
     localthis.devicePairs[mod] = []
@@ -122,7 +134,7 @@ DataSystem.prototype.systemDevice = async function () {
       localthis.devicePairs[mod].push(perD)
       if (parseInt(perD.device_validfrom) === maxValueOfY) {
         let deviceMatch = perD
-        currentDevices.push(deviceMatch)
+        currentDevices = deviceMatch
       }
     }
   }

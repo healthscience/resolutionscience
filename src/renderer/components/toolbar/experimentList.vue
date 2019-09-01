@@ -2,7 +2,7 @@
   <div id="experiment-view">EXPERIMENTS  (+ new)
     <ul v-if="experimentData.length !== 0" >
       <li id="experiment-item" v-for="(exp, index) in experimentData">
-        <div id="live-experiment-elements">{{ index }}
+        <div id="live-experiment-elements">
           <div id="context-experiment" class="live-element">
             <header>Status:</header>
             <div class="live-item">

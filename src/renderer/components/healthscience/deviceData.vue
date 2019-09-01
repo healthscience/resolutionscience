@@ -1,6 +1,6 @@
 <template>
   <div id="device-list">
-  <header>DEVICES</header>
+  <header>DEVICES</header>{{ devicesLive }}
     <li v-for="dev in devicesLive" class="device-item">
       <header>{{ dev.device_name }} <a href="" @click.prevent="viewDeviceDetail(dev)" id="view-details">View details</a> </header>
       <div id="device-details" v-if="dev.active">
@@ -59,15 +59,6 @@
     mounted () {
     },
     computed: {
-      system: function () {
-        return this.$store.state.system
-      },
-      safeFlow: function () {
-        return this.$store.state.safeFlow
-      },
-      context: function () {
-        return this.$store.state.context
-      },
       devicesLive: function () {
         return this.$store.getters.liveContext.device
       }

@@ -48,9 +48,9 @@ TestStorageAPI.prototype.LKNtime = function () {
 * @method getDevicetData
 *
 */
-TestStorageAPI.prototype.getDeviceData = async function () {
+TestStorageAPI.prototype.getDeviceData = async function (api) {
   //  nosql query but headng towards a gRPC listener on stream socket
-  let jsondata = await axios.get(this.baseAPI + '/contextdata/' + this.tempPubkey + '/' + this.tempToken)
+  let jsondata = await axios.get(api + 'contextdata/' + this.tempPubkey + '/' + this.tempToken)
   return jsondata.data
 }
 

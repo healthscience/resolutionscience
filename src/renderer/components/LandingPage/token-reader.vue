@@ -103,16 +103,17 @@
         let defaultAPI = this.GETcnrlLookup(apiCRNLdefault)
         console.log(defaultAPI)
         // what data APIs are connected?
-        let dataAPIconnected = ['cnrl-33221101', 'cnrl-33221102']
+        let dataAPIconnected = ['cnrl-33221101'] // , 'cnrl-33221102']
         console.log(dataAPIconnected)
         // query peer ledger to extract experiments, computes i.e. KBLedger latest
         this.startExpMappedKbundles()
         this.startKSetting()
         // build the UI data type components
         this.startExperiments()
-        // this.deviceContext
-        // this.datatypeContext
-        // this.cnrlScience()
+        // loop over active api and extrac devcies, datatypes
+        this.deviceContext(dataAPIconnected)
+        // this.datatypeContext()
+        this.cnrlScienceCompute()
       },
       async startExpMappedKbundles () {
         let mappedExpKbundles = await this.mappedKBLexp()
@@ -137,18 +138,22 @@
         }
         this.$store.dispatch('actionExperimentList', liveExper)
       },
-      async deviceContext () {
+      async deviceContext (dataAPIconnected) {
         console.log('get devcies')
-        // make call to set start deviceContext for this pubkey
-        const deviceFlag = 'device'
-        let deviceAPI = await this.toolkitContext(deviceFlag)
-        // console.log('device data back')
-        // console.log(deviceAPI)
-        this.devices = deviceAPI
-        // this.devices[0].cnrl = 'cnrl-33221101'
-        // this.devices[1].cnrl = 'cnrl-33221101'
-        this.$store.dispatch('actionDeviceDataAPI', deviceAPI)
-        this.dataType()
+        let devicesList = []
+        for (let dapi of dataAPIconnected) {
+          // look up the contract
+          let apiDev = this.GETcnrlLookup(dapi)
+          // make call to set start deviceContext for this pubkey
+          const deviceFlag = 'device'
+          let deviceAPI = await this.GETtoolkitDevices(apiDev, deviceFlag)
+          // console.log('device data back')
+          // console.log(deviceAPI)
+          devicesList.push(deviceAPI)
+        }
+        this.devices = devicesList
+        console.log(this.devices)
+        this.$store.dispatch('actionDeviceDataAPI', devicesList)
       },
       dataTypeContext () {
         // make call to set start dataType for the device sensors
@@ -160,10 +165,10 @@
         const dataTypeFlag = 'dataType'
         this.liveSafeFlow.toolkitContext(dataTypeFlag, callbackT)
       },
-      cnrlScience () {
+      cnrlScienceCompute () {
         // call the CNRL api and get network science active
-        let startScience = this.liveSafeFlow.cnrlScienceStart()
-        this.$store.commit('setCNRLscience', startScience)
+        let startScienceCompute = this.GetcnrlScienceStart()
+        this.$store.commit('setCNRLscience', startScienceCompute)
       }
     }
   }

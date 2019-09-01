@@ -52,11 +52,11 @@ safeFlow.prototype.LKNtime = function () {
 * @method toolkitContext
 *
 */
-safeFlow.prototype.toolkitContext = async function (flag, callBK) {
+safeFlow.prototype.toolkitContext = async function (dapi, flag) {
   // first time start of device, datatype context for toolkitContext
   let apiData = []
   if (flag === 'device') {
-    apiData = await this.liveDataSystem.systemDevice()
+    apiData = await this.liveDataSystem.systemDevice(dapi)
   } else if (flag === 'dataType') {
     let result = await this.liveDataSystem.getDataTypes()
     // convert sensor names to datatypes

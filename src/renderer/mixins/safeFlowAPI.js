@@ -146,6 +146,14 @@ export default {
     GETexperimentsList () {
       let expList = this.safeMixin.cnrlExperimentIndex()
       return expList
+    },
+    GetcnrlScienceStart () {
+      let scienceCompute = this.safeMixin.cnrlScienceStart()
+      return scienceCompute
+    },
+    async GETtoolkitDevices (dapi, deviceFlag) {
+      let devices = await this.safeMixin.toolkitContext(dapi, deviceFlag)
+      return devices
     }
   }
 }

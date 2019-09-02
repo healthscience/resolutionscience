@@ -132,30 +132,17 @@ TimeUtilities.prototype.rangeCovert = function (rangeIN) {
 *
 */
 TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
-  console.log('timeConvert')
-  console.log(uT)
-  console.log('lstime')
-  console.log(lastTime)
   let convertLasttime = moment(lastTime).valueOf()
-  console.log('convert')
-  console.log(convertLasttime)
   let startTime = time
-  console.log('begin startie')
-  console.log(startTime)
   let timestamp
   if (uT === 'day') {
     // asking for one 24hr display
     startTime = time
-    console.log('starttime')
-    console.log(startTime)
   } else if (uT === '-day') {
-    console.log('minu one day')
     // move back one day in time
     if (startTime === 'relative') {
-      console.log('yes relatiove')
       let backstartTime = (convertLasttime - 86400000) // this.liveLasttime * 1000
       startTime = backstartTime
-      console.log(startTime)
     }
     startTime = (startTime - 86400000)
   } else if (uT === '+day') {
@@ -304,11 +291,13 @@ TimeUtilities.prototype.timeDayArrayBuilder = function (liveTime, lastTime) {
     let counter = 1
     let longDateformat
     for (let numM of monthsNumber) {
-      if (numM >= monthNo && numM <= monthNocurrent) {
-        if (counter === 1) {
-          longDateformat = baseMills
-        } else {
-          longDateformat = baseMills + (daysInmonth[numM] * secondsInday)
+      if (numM >= monthNo) {
+        if (numM <= monthNocurrent) {
+          if (counter === 1) {
+            longDateformat = baseMills
+          } else {
+            longDateformat = baseMills + (daysInmonth[numM] * secondsInday)
+          }
         }
         baseMills = longDateformat
         let dayCount = daysInmonth[numM]

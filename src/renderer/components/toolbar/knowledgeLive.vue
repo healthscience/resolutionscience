@@ -167,6 +167,7 @@
         liveOptions: {},
         liveNavTime: [],
         liveTimeV: '',
+        timeStateLast: '',
         saveStatusEK: {},
         saveExpKid:
         {
@@ -244,11 +245,14 @@
         console.log('knowleget box bundle')
         console.log(liveBundle)
         let visDataBack = await this.learnStart(liveBundle)
+        console.log('data back')
+        console.log(visDataBack)
         this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions
         this.kContext = visDataBack.kContext
-        this.liveTimeV = visDataBack.kContext.liveTime
+        // this.liveTimeV = visDataBack.kContext.liveTime
+        this.liveTimeV = visDataBack.displayTime
       },
       setTimeBundle () {
         const nowTime = moment()
@@ -259,6 +263,7 @@
         updateTbundle.timeseg = this.liveData.timeLive
         updateTbundle.startperiod = startPeriodTime
         updateTbundle.timevis = this.liveData.timeLive
+        // this.timeStateLast = startPeriodTime
         return updateTbundle
       },
       saveLearnHistory (lBundle) {
@@ -301,9 +306,12 @@
         updateTbundle.time.timeseg = this.liveData.timeLive
         updateTbundle.time.timevis = timeAsk // timeAsk
         updateTbundle.time.startperiod = 'relative'
+        updateTbundle.time.laststartperiod = this.liveTimeV
         // pass on to learn safeFlow
         this.entityPrepareStatus.active = true
         let visDataBack = await this.learnStart(updateTbundle)
+        console.log('vis data back')
+        console.log(visDataBack)
         // remove compute in progress Message
         this.$store.dispatch('actionstopComputeStatus', updateTbundle.kbid)
         this.entityPrepareStatus.active = false
@@ -331,13 +339,15 @@
         this.setKnowledgtBox(lBund)
         // let updatelBund =
         let visDataBack = await this.learnStart(lBund)
+        console.log('data back')
+        console.log(visDataBack)
         // remove compute in progress Message
         this.$store.dispatch('actionstopComputeStatus', lBund.kbid)
         this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions
         this.kContext = visDataBack.kContext
-        this.liveTimeV = visDataBack.kContext.liveTime
+        this.liveTimeV = visDataBack.displayTime
       },
       setKnowledgtBox (liveKbid) {
         // first clear existing knowledge in box

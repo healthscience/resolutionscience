@@ -34,9 +34,10 @@ util.inherits(TimeUtilities, events.EventEmitter)
 TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
   // pass range to get converted from moment format to miillseconds (stnd for safeflow)
   let timeConversion = {}
-  this.liveStarttime = timeBundle.time.startperiod
+  let liveStarttime = timeBundle.time.startperiod
+  let laststarttime = timeBundle.time.laststartperiod
   this.realtime = timeBundle.realtime
-  timeConversion = this.updateUItime(timeBundle.time.timevis)
+  timeConversion = this.updateUItime(timeBundle.time.timevis, liveStarttime, laststarttime)
   timeConversion.timeseg = timeBundle.time.timeseg
   timeConversion.timevis = timeBundle.time.timevis
   let realTimems = moment(timeBundle.realtime).valueOf()
@@ -71,16 +72,16 @@ TimeUtilities.prototype.computeTimeSegments = function (tSegs) {
 * @method updateUItime
 *
 */
-TimeUtilities.prototype.updateUItime = function (timeUI) {
+TimeUtilities.prototype.updateUItime = function (timeUI, time, lastTime) {
   let timeMills = {}
   // does a standard time types need converting or range or both?
   for (let ti of timeUI) {
     if (ti === 'SELECT') {
-      let rangeMills = this.rangeCovert(ti)
+      let rangeMills = this.rangeCovert(ti, time, lastTime)
       timeMills.range = rangeMills
     } else {
       let timePeriod = {}
-      timePeriod = this.timeConvert(ti)
+      timePeriod = this.timeConvert(ti, time, lastTime)
       timeMills.startperiod = timePeriod
     }
   }
@@ -130,24 +131,39 @@ TimeUtilities.prototype.rangeCovert = function (rangeIN) {
 * @method timeConvert
 *
 */
-TimeUtilities.prototype.timeConvert = function (uT) {
-  let startTime
+TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
+  console.log('timeConvert')
+  console.log(uT)
+  console.log('lstime')
+  console.log(lastTime)
+  let convertLasttime = moment(lastTime).valueOf()
+  console.log('convert')
+  console.log(convertLasttime)
+  let startTime = time
+  console.log('begin startie')
+  console.log(startTime)
   let timestamp
   if (uT === 'day') {
     // asking for one 24hr display
-    startTime = this.liveStarttime
+    startTime = time
+    console.log('starttime')
+    console.log(startTime)
   } else if (uT === '-day') {
+    console.log('minu one day')
     // move back one day in time
-    if (this.liveStarttime === 'relative') {
-      this.liveStarttime = this.liveLasttime * 1000
+    if (startTime === 'relative') {
+      console.log('yes relatiove')
+      let backstartTime = (convertLasttime - 86400000) // this.liveLasttime * 1000
+      startTime = backstartTime
+      console.log(startTime)
     }
-    startTime = (this.liveStarttime - 86400000)
+    startTime = (startTime - 86400000)
   } else if (uT === '+day') {
     // move forward day in time
-    if (this.liveStarttime === 'relative') {
-      this.liveStarttime = this.liveLasttime * 1000
+    if (startTime === 'relative') {
+      startTime = (convertLasttime + 86400000) // this.liveLasttime * 1000
     }
-    startTime = (this.liveStarttime + 86400000)
+    startTime = (startTime + 86400000)
     // console.log(this.realtime)
     let msRealtime = moment(this.realtime).valueOf()
     if (startTime > msRealtime) {

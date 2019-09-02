@@ -16,7 +16,6 @@ const util = require('util')
 const events = require('events')
 
 var DatadeviceSystem = function (setIN) {
-  console.log(setIN)
   events.EventEmitter.call(this)
   this.liveCNRL = new CNRLmaster()
   this.liveTestStorage = new TestStorageAPI(setIN)
@@ -51,8 +50,6 @@ DatadeviceSystem.prototype.getLiveDevices = function (devicesIN) {
 *
 */
 DatadeviceSystem.prototype.systemDevice = async function (dapi) {
-  console.log('sysetm device')
-  console.log(dapi)
   // MAP api to REST library functions for the API
   let result
   if (dapi.namespace === 'http://165.227.244.213:8882/' && dapi.device === 'contextdata/<publickey>/') {
@@ -62,7 +59,6 @@ DatadeviceSystem.prototype.systemDevice = async function (dapi) {
   }
   let currentDevices = []
   currentDevices = this.sortLiveDevices(result)
-  console.log(currentDevices)
   return currentDevices
 }
 
@@ -72,7 +68,6 @@ DatadeviceSystem.prototype.systemDevice = async function (dapi) {
 *
 */
 DatadeviceSystem.prototype.sortLiveDevices = function (result) {
-  console.log('sortLiveDevices')
   let localthis = this
   // filter over to pair same types of devices and put in newest order and add active to newest of all devices or selected by user as starting device to display
   // extract the device macs per devicename
@@ -100,7 +95,6 @@ DatadeviceSystem.prototype.sortLiveDevices = function (result) {
       }
     }
   }
-  console.log(currentDevices)
   return currentDevices
 }
 

@@ -36,6 +36,10 @@ util.inherits(TimeSystem, events.EventEmitter)
 */
 TimeSystem.prototype.discoverTimeStatus = async function (EIDinfo, compInfo, rawIN) {
   // establish start date or last compute date, deal with segmentation if required.
+  console.log('disover compute start time if neeeded')
+  console.log(EIDinfo)
+  console.log(compInfo)
+  console.log(rawIN)
   let timeStart = await this.updatedDTCStatus(EIDinfo, compInfo, rawIN)
   return timeStart
 }
@@ -162,9 +166,9 @@ TimeSystem.prototype.sourceDTstartTime = async function (devIN) {
 *
 */
 TimeSystem.prototype.updateAverageDates = function (lastCompTime, liveTime) {
-  // console.log('update average')
-  // console.log(lastCompTime)
-  // console.log(liveTime)
+  console.log('update average')
+  console.log(lastCompTime)
+  console.log(liveTime)
   let computeList = []
   const liveDate = liveTime * 1000
   const lastComputeDate = lastCompTime * 1000

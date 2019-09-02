@@ -38,8 +38,6 @@ DTSystem.prototype.DTStartMatch = function (devicesIN, lDTs, catDTs) {
   console.log(lDTs)
   console.log(catDTs)
   let datatypePerdevice = {}
-  let catDTmapAPI = []
-  console.log(catDTmapAPI)
   // loop over devices and match to API etc
   for (let dliv of devicesIN) {
     console.log(dliv.cnrl)
@@ -73,22 +71,10 @@ DTSystem.prototype.DTStartMatch = function (devicesIN, lDTs, catDTs) {
       // extract tidy logic info.
       TidyDataLogic = packagingDTs.tidyList
     }
+    // map DTs to API rest URL
     let DTmapAPI = this.datatypeCheckAPI(packagingDTs, lDTs)
-    // if null check if category dt, ie derived from two or more dataTypeSensor
-    let checkDTcategory = []
-    let extractCatDT = []
-    if (catDTs.length > 0 && catDTs[0].cnrl !== 'none') {
-      checkDTcategory = this.categoryCheck(catDTs[0], SpackagingDTs)
-      // now check the API query for this dataType
-      // todo extract data type ie loop over category matches, same or all different?
-      // lookup the dataType
-      let catDT = []
-      extractCatDT = this.liveCNRL.lookupContract(checkDTcategory[0].column)
-      catDT.push(extractCatDT.prime)
-      catDTmapAPI = this.datatypeCheckAPI(packagingDTs, catDT)
-    } else {
-      checkDTcategory = []
-    }
+    // do the same for categories dts
+    let categoryMapDTs = this.mapCategoryDataTypes(catDTs, packagingDTs, lDTs, SpackagingDTs)
 
     let apiHolder = {}
     apiHolder[dliv.device_mac] = {}
@@ -96,13 +82,38 @@ DTSystem.prototype.DTStartMatch = function (devicesIN, lDTs, catDTs) {
     apiInfo.apiquery = DTmapAPI // [...DTmapAPI, ...catDTmapAPI]
     apiInfo.sourceapiquery = sourceDTmapAPI
     apiInfo.sourceDTs = sourceDTextract
-    apiInfo.categorycodes = checkDTcategory
+    apiInfo.categorycodes = categoryMapDTs
     apiInfo.datatypes = lDTs
     apiInfo.tidyList = TidyDataLogic
     apiHolder[dliv.device_mac] = apiInfo
     datatypePerdevice = apiHolder
   }
   return datatypePerdevice
+}
+
+/**
+*  // map category datatypes
+* @method mapCategoryDataTypes
+*
+*/
+DTSystem.prototype.mapCategoryDataTypes = function (catDTs, packagingDTs, lDTs, SpackagingDTs) {
+  // if null check if category dt, ie derived from two or more dataTypeSensor
+  // let catDTmapAPI = []
+  let checkDTcategory = []
+  let extractCatDT = []
+  if (catDTs.length > 0 && catDTs[0].cnrl !== 'none') {
+    checkDTcategory = this.categoryCheck(catDTs[0], SpackagingDTs)
+    // now check the API query for this dataType
+    // todo extract data type ie loop over category matches, same or all different?
+    // lookup the dataType
+    let catDT = []
+    extractCatDT = this.liveCNRL.lookupContract(checkDTcategory[0].column)
+    catDT.push(extractCatDT.prime)
+    // catDTmapAPI = this.datatypeCheckAPI(packagingDTs, catDT)
+  } else {
+    checkDTcategory = []
+  }
+  return checkDTcategory
 }
 
 /**

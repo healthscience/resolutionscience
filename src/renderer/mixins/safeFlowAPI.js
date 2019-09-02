@@ -22,6 +22,7 @@ export default {
     },
     async learnStart (lBundle) {
       console.log('start Learning')
+      console.log(lBundle)
       let returnVISvue = {}
       this.chartmessage.text = 'Visualisation being prepared'
       this.chartmessage.active = true

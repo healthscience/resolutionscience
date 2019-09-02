@@ -42,8 +42,10 @@ DTSystem.prototype.DTStartMatch = function (devicesIN, lDTs, catDTs) {
   console.log(catDTmapAPI)
   // loop over devices and match to API etc
   for (let dliv of devicesIN) {
-    console.log(dliv)
+    console.log(dliv.cnrl)
     let packagingDTs = this.liveCNRL.lookupContract(dliv.cnrl)
+    console.log('packagingDTs')
+    console.log(packagingDTs)
     // is the data type primary?
     let sourceDTextract = this.mapSourceDTs(lDTs)
     let sourceDTmapAPI = this.datatypeCheckAPI(packagingDTs, sourceDTextract)

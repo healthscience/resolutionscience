@@ -235,7 +235,7 @@
         // let cnrlIDholderDev = []
         // repeat for datatyes coming from the mobile app CRNL contract
         for (let devCdt of this.devices) {
-          let deviceDTypes = this.GETcnrlDeviceDTs(devCdt.apicnrl)
+          let deviceDTypes = this.GETcnrlDeviceDTs(devCdt.cnrl)
           devDTHolder.push(deviceDTypes)
         }
         this.datatypes = devDTHolder[0].datatypes

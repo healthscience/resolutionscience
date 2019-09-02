@@ -153,7 +153,7 @@
           // console.log('device data back')
           // console.log(deviceAPI)
           // need to pair device to API source CNRL
-          deviceAPI.apicnrl = dapi
+          deviceAPI.cnrl = dapi
           devicesList.push(deviceAPI)
         }
         this.devices = devicesList

@@ -143,12 +143,17 @@
         let devicesList = []
         for (let dapi of dataAPIconnected) {
           // look up the contract
+          console.log('api')
+          console.log(dapi)
           let apiDev = this.GETcnrlLookup(dapi)
+          console.log(apiDev)
           // make call to set start deviceContext for this pubkey
           const deviceFlag = 'device'
           let deviceAPI = await this.GETtoolkitDevices(apiDev, deviceFlag)
           // console.log('device data back')
           // console.log(deviceAPI)
+          // need to pair device to API source CNRL
+          deviceAPI.apicnrl = dapi
           devicesList.push(deviceAPI)
         }
         this.devices = devicesList
@@ -157,13 +162,9 @@
       },
       dataTypeContext () {
         // make call to set start dataType for the device sensors
-        var localthis = this
-        function callbackT (dataH) {
-          localthis.sensors = dataH
-          localthis.$store.commit('setDatatype', dataH)
-        }
         const dataTypeFlag = 'dataType'
-        this.liveSafeFlow.toolkitContext(dataTypeFlag, callbackT)
+        let datatypeList = this.GETtoolkitDatatypes(dataTypeFlag)
+        this.$store.dispatch('actionSetDataTypes', datatypeList)
       },
       cnrlScienceCompute () {
         // call the CNRL api and get network science active

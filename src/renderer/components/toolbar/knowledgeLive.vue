@@ -216,13 +216,8 @@
         // pass on to SAFEflow to pass on entity manager
         this.activeEntity = this.liveData.scienceLive.prime.cnrl
         this.activevis = this.$store.getters.liveVis[0]
-        const nowTime = moment()
-        let realTime = moment.utc(nowTime)
-        let startPeriodTime = moment.utc(nowTime).startOf('day')
-        let updateTbundle = {}
-        updateTbundle.timeseg = this.liveData.timeLive
-        updateTbundle.startperiod = startPeriodTime
-        updateTbundle.timevis = this.liveData.timeLive // ['day']
+        // set the Time for bundle
+        let timeBundle = this.setTimeBundle()
         // has any category been selected?
         let categoryLive = []
         categoryLive = this.liveData.categoryLive
@@ -234,8 +229,8 @@
         liveBundle.datatypes = this.liveData.datatypesLive
         liveBundle.categories = categoryLive
         liveBundle.science = this.liveData.scienceLive
-        liveBundle.realtime = realTime
-        liveBundle.time = updateTbundle
+        // liveBundle.realtime = timeBundle
+        liveBundle.time = timeBundle
         liveBundle.resolution = this.liveData.resolutionLive
         liveBundle.visualisation = ['vis-sc-1']
         // create unquie ID for kbundle and use to save
@@ -254,7 +249,17 @@
         this.liveOptions = visDataBack.liveOptions
         this.kContext = visDataBack.kContext
         this.liveTimeV = visDataBack.kContext.liveTime
-        // this.liveData.datatypesLive = []
+      },
+      setTimeBundle () {
+        const nowTime = moment()
+        let realTime = moment.utc(nowTime)
+        let startPeriodTime = moment.utc(nowTime).startOf('day')
+        let updateTbundle = {}
+        updateTbundle.realtime = realTime
+        updateTbundle.timeseg = this.liveData.timeLive
+        updateTbundle.startperiod = startPeriodTime
+        updateTbundle.timevis = this.liveData.timeLive
+        return updateTbundle
       },
       saveLearnHistory (lBundle) {
         this.historyData.push(lBundle)

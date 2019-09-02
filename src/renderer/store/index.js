@@ -262,6 +262,10 @@ export default new Vuex.Store({
     actionDeviceDataAPI: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL
       context.commit('setDevice', update)
+    },
+    actionSetDataTypes: (context, update) => {
+    // filter a list of Kentity bundles given the Experiment CNRL
+      context.commit('setDatatype', update)
     }
   },
   modules,

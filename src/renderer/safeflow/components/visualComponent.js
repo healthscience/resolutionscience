@@ -17,7 +17,6 @@ var VisualComponent = function (EID) {
   events.EventEmitter.call(this)
   this.EIDinfo = EID
   this.liveVisSystem = new VisSystem()
-  this.visLive = ''
   this.visualData = {}
   // this.setVisLive()
 }
@@ -43,9 +42,6 @@ VisualComponent.prototype.setVisLive = function (updateEID) {
 *
 */
 VisualComponent.prototype.filterVisual = function (visIN, vData) {
-  // console.log('filter vis')
-  // console.log(visIN)
-  // console.log(vData)
   // which of three types of visualisations?
   let status = false
   // todo need to check if one or many visualisation types required? ONe for now

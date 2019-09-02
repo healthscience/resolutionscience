@@ -1,6 +1,6 @@
 <template>
   <div id="device-list">
-  <header>DEVICES</header>{{ devicesLive }}
+  <header>DEVICES</header>
     <li v-for="dev in devicesLive" class="device-item">
       <header>{{ dev.device_name }} <a href="" @click.prevent="viewDeviceDetail(dev)" id="view-details">View details</a> </header>
       <div id="device-details" v-if="dev.active">
@@ -10,16 +10,16 @@
             Mac: {{}}
           </div>
           <div id="hardware-firmware" class="device-detail-item" >
-            Fimrware Hash {{}} <a id="" href="">IPS location</a>
+            Fimrware Hash {{}} <a id="#" href="">IPS location</a>
           </div>
         </div>
         <div id="sensors" class="device-detail-item">
           <header>Sensors</header>
           <div id="sensor-type">
-            Accelerometer -> Steps -> DataType <a id="" href="http://healthscience.network/heartchain/cnrl-773355992211" >heartchain/activity/steps</a>
+            Accelerometer -> Steps -> DataType <a id="" href="#" >heartchain/activity/steps</a>
           </div>
           <div id="sensor-type">
-            LED -> BMP -> DataType <a id="" href="http://healthscience.network/heartchain/cnrl-773355992213" >heartchain/heart/bmp</a>
+            LED -> BMP -> DataType <a id="" href="#" >heartchain/heart/bmp</a>
           </div>
         </div>
         <div id="mobile" class="device-detail-item" >

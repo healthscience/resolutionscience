@@ -123,6 +123,10 @@ export default {
       navTimelist = this.safeMixin.cnrlTimeIndex(navT)
       return navTimelist
     },
+    GETcnrlLivingKnowledge (cnrlID) {
+      let knowledgeSpace = this.safeMixin.cnrlLivingKnowledge(cnrlID)
+      return knowledgeSpace
+    },
     saveStartBundle (bund) {
       // need up date startStatus Object
       this.safeMixin.startSettings('save', bund)
@@ -154,6 +158,20 @@ export default {
     async GETtoolkitDevices (dapi, deviceFlag) {
       let devices = await this.safeMixin.toolkitContext(dapi, deviceFlag)
       return devices
+    },
+    async GETtoolkitDatatypes (dapi, deviceFlag) {
+      let devices = await this.safeMixin.toolkitContext(dapi, deviceFlag)
+      return devices
+    },
+    GETcnrlDeviceDTs (cnrl) {
+      console.log('deviceDTS')
+      console.log(cnrl)
+      let datatypesPerDevice = this.safeMixin.cnrlDeviceDTs(cnrl)
+      return datatypesPerDevice
+    },
+    GETcnrlScienceDTs (sciIN) {
+      let scieDTs = this.safeMixin.cnrlScienceDTs(sciIN)
+      return scieDTs
     }
   }
 }

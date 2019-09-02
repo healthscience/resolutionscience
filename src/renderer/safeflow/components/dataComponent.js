@@ -21,11 +21,10 @@ var DataComponent = function (DID, setIN) {
   this.liveTidyData = new TidyDataSystem(setIN)
   this.liveFilterData = new FilterDataSystem(setIN)
   this.liveCategoryData = new CategoryDataSystem(setIN)
+  this.liveDataSystem = new DataSystem(setIN)
   this.did = DID
   this.liveData = []
   this.livedate = 0
-  this.liveDatatype = ''
-  this.liveDataSystem = new DataSystem(setIN)
   this.timeList = []
   this.deviceList = []
   this.CNRLscience = {}
@@ -34,8 +33,6 @@ var DataComponent = function (DID, setIN) {
   this.dataRaw = {}
   this.tidyData = {}
   this.categoryData = {}
-  this.reduceData = {}
-  this.dataType = []
   this.timeSegs = []
   this.setStartTime(this.did.time.startperiod)
   this.setDevicesLive()
@@ -43,7 +40,6 @@ var DataComponent = function (DID, setIN) {
   this.setDatatypesLive(this.did.datatypes)
   this.setTimeSegments(this.did.time.timeseg)
   this.setCategories(this.did.categories)
-  this.apiInfoLive = {}
 }
 
 /**

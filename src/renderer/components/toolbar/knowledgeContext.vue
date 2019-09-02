@@ -42,15 +42,7 @@
           <header>Device DataTypes - </header>
             <ul>
               <li id="data-type-live" v-for="dts in datatypes">
-                <a class="" href="" id="bmp-data" @click.prevent="selectDatatypes(dts)" v-bind:class="{ 'active': dts.active}">{{ dts.text }}</a>-->
-                <!-- <a class="" href="" id="sub-data" @click.prevent="subContext(dts)" v-bind:class="{ 'active': dts.active}"> >>> </a>
-                 <div id="sub-context-holder">
-                  <ul>
-                    <li v-for="subC in subcontext">
-                      <a class="" href="" id="" @click.prevent="subContext(sen)" v-bind:class="{ 'active': subC.active}"> {{ subC }} </a>
-                    </li>
-                  </ul>
-                </div> -->
+                <a class="" href="" id="bmp-data" @click.prevent="selectDatatypes(dts)" v-bind:class="{ 'active': dts.active}">{{ dts.text }}</a>
               </li>
             </ul>
         </div>
@@ -170,9 +162,6 @@
       })
     },
     computed: {
-      context: function () {
-        return this.$store.state.context
-      }
     },
     mounted () {
     },
@@ -200,12 +189,12 @@
       },
       timeContext () {
         // call the CNRL for time segment option live in SAFEnetwork
-        this.timeSeg = this.safeMixin.cnrlTimeIndex('time-index')
+        this.timeSeg = this.timeNav('time-index')
       },
       displayLanugage (cnrlID) {
         // loop over match and display words or display human body graphic
         this.kwords = []
-        let lanuageCNRL = this.safeMixin.cnrlLivingKnowledge(cnrlID)
+        let lanuageCNRL = this.GETcnrlLivingKnowledge(cnrlID)
         let wordsPlacer = {}
         wordsPlacer.word = lanuageCNRL.prime.word
         // wordsPlacer.wordconnect = lanuageCNRL.prime[1].word
@@ -219,7 +208,6 @@
       selectDevice (s) {
         s.active = !s.active
         kBus.$emit('setVDevice', s)
-        // display datatypes for this device source
         this.dataTypeDevice()
       },
       selectDatatypes (std) {
@@ -236,7 +224,7 @@
       },
       languageContext () {
         let refContext = 'human'
-        let lanuageCNRL = this.safeMixin.cnrlLivingKnowledge(refContext)
+        let lanuageCNRL = this.GETcnrlLivingKnowledge(refContext)
         this.kwords = lanuageCNRL
       },
       deviceContext () {
@@ -247,7 +235,7 @@
         // let cnrlIDholderDev = []
         // repeat for datatyes coming from the mobile app CRNL contract
         for (let devCdt of this.devices) {
-          let deviceDTypes = this.safeMixin.cnrlDeviceDTs(devCdt.cnrl)
+          let deviceDTypes = this.GETcnrlDeviceDTs(devCdt.apicnrl)
           devDTHolder.push(deviceDTypes)
         }
         this.datatypes = devDTHolder[0].datatypes
@@ -278,7 +266,7 @@
       updateSciDTs (sciIN) {
         this.activeEntity = sciIN
         // use cid to look up datatype for this scienceEntities
-        let sciDTypesSelect = this.safeMixin.cnrlScienceDTs(sciIN)
+        let sciDTypesSelect = this.GETcnrlScienceDTs(sciIN)
         sciDTypesSelect.cnrl = sciIN
         this.scidtypes = sciDTypesSelect.datatypes
         this.cdtypes = sciDTypesSelect.categories

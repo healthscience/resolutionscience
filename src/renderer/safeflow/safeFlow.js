@@ -15,6 +15,7 @@ import KBLedger from './cnrl/kbledger.js'
 import CNRLmaster from './cnrl/cnrlMaster.js'
 import TimeUtilities from './systems/timeUtility.js'
 import DataSystem from './systems/data/dataSystem.js'
+import DatadeviceSystem from './systems/data/datadeviceSystem.js'
 import EntitiesManager from './entitiesManager.js'
 const util = require('util')
 const events = require('events')
@@ -26,8 +27,9 @@ var safeFlow = function (setIN) {
   this.liveKBL = new KBLedger(setIN)
   this.liveCNRL = new CNRLmaster()
   this.liveTimeUtil = new TimeUtilities()
-  this.liveEManager = new EntitiesManager()
+  this.liveEManager = new EntitiesManager(this.liveKBL)
   this.liveDataSystem = new DataSystem(setIN)
+  this.livedeviceSystem = new DatadeviceSystem(setIN)
   this.liveDTsystem = new DTsystem(setIN)
   this.settings = setIN
   this.peerliveContext = {}
@@ -56,7 +58,7 @@ safeFlow.prototype.toolkitContext = async function (dapi, flag) {
   // first time start of device, datatype context for toolkitContext
   let apiData = []
   if (flag === 'device') {
-    apiData = await this.liveDataSystem.systemDevice(dapi)
+    apiData = await this.livedeviceSystem.systemDevice(dapi)
   } else if (flag === 'dataType') {
     let result = await this.liveDataSystem.getDataTypes()
     // convert sensor names to datatypes
@@ -93,7 +95,6 @@ safeFlow.prototype.experimentKbundles = async function (flag, bundle) {
   if (flag === 'save') {
     startStatusData = await this.liveDataSystem.saveExpKbundles(bundle)
   } else if (flag === 'retreive') {
-    // this.liveKBL
     startStatusData = await this.liveKBL.latestKBs()
   }
   return startStatusData
@@ -115,7 +116,6 @@ safeFlow.prototype.cnrlScienceStart = function () {
 *
 */
 safeFlow.prototype.scienceEntities = async function (contextIN) {
-  // add a new entity via manager
   // first prepare input in ECS format
   // console.log('start---scienceEntitiees')
   // console.log(contextIN)
@@ -135,12 +135,10 @@ safeFlow.prototype.scienceEntities = async function (contextIN) {
 safeFlow.prototype.setpeerContext = function (bundleIN) {
   // console.log('setpeer context')
   // console.log(bundleIN)
-  // prepare ECS input format and hold context
-  // does an existing bundle exist?
   let ecsIN = {}
   ecsIN.kbid = bundleIN.kbid
   ecsIN.cid = bundleIN.cnrl
-  ecsIN.storageAPI = 0
+  ecsIN.storageAPI = bundleIN.devices
   ecsIN.visID = bundleIN.visualisation
   // convert all the time to millisecons format
   let timeBundle = {}
@@ -241,6 +239,9 @@ safeFlow.prototype.cnrlLookup = function (cid) {
 */
 safeFlow.prototype.cnrlDeviceDTs = function (cid) {
   let cnrlContract = this.liveDTsystem.DTtableStructure(cid)
+  // now convert to CNRL speak
+  let convertedDTs = this.liveDTsystem.convertAPIdatatypeToCNRL(cnrlContract)
+  cnrlContract.datatypes = convertedDTs
   return cnrlContract
 }
 

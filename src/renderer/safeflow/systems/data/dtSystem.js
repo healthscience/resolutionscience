@@ -33,11 +33,16 @@ util.inherits(DTSystem, events.EventEmitter)
 *
 */
 DTSystem.prototype.DTStartMatch = function (devicesIN, lDTs, catDTs) {
+  console.log('dt match start system')
+  console.log(devicesIN)
+  console.log(lDTs)
+  console.log(catDTs)
   let datatypePerdevice = {}
   let catDTmapAPI = []
   console.log(catDTmapAPI)
   // loop over devices and match to API etc
   for (let dliv of devicesIN) {
+    console.log(dliv)
     let packagingDTs = this.liveCNRL.lookupContract(dliv.cnrl)
     // is the data type primary?
     let sourceDTextract = this.mapSourceDTs(lDTs)
@@ -234,9 +239,6 @@ DTSystem.prototype.DTtableStructure = function (dAPI) {
     // lookup source DT contracts and build
     let indivDT = this.liveCNRL.lookupContract(dtt.cnrl)
     apiDTs.push(indivDT.prime)
-    // if (dtt.cnrl.length > 0) {
-    // apiDTs.push(dtt)
-    // }
   }
   // does a sub or source structure contract exist?
   if (APIcnrl.source) {
@@ -270,6 +272,31 @@ DTSystem.prototype.DTscienceStructure = function (cnrl) {
   sciDTholder.datatypes = sciSourceDTs
   sciDTholder.categories = sciCategoryDTs
   return sciDTholder
+}
+
+/**
+*  // convert datatype API to CNRL contract Text and CNRL ID
+* @method convertAPIdatatypeToCNRL
+*
+*/
+DTSystem.prototype.convertAPIdatatypeToCNRL = function (dtapiList) {
+  let convertDTcnrl = []
+  for (let dta of dtapiList.datatypes) {
+    let conDT = this.liveCNRL.lookupContract(dta.cnrl)
+    let convertDT = this.matchConvert(conDT)
+    convertDTcnrl.push(convertDT)
+  }
+  return convertDTcnrl
+}
+
+/**
+*  // convert matcher
+* @method matchConvert
+*
+*/
+DTSystem.prototype.matchConvert = function (dtC) {
+  let matachedDTs = dtC.prime
+  return matachedDTs
 }
 
 export default DTSystem

@@ -91,57 +91,6 @@ DataSystem.prototype.saveExpKbundles = async function (bundle) {
 }
 
 /**
-* get the inital context for data required
-* @method systemDevice
-*
-*/
-DataSystem.prototype.systemDevice = async function (dapi) {
-  // make query to network for context data per devices
-  // map the dapi to the right function
-  let currentDevices = []
-  currentDevices = await this.getDevicesAPIcall(dapi.namespace)
-  console.log(currentDevices)
-  return currentDevices
-}
-
-/**
-* get devices API call
-* @method getDevicesAPIcall
-*
-*/
-DataSystem.prototype.getDevicesAPIcall = async function (api) {
-  let localthis = this
-  let result = await this.liveTestStorage.getDeviceData(api)
-  // filter over to pair same types of devices and put in newest order and add active to newest of all devices or selected by user as starting device to display
-  // extract the device macs per devicename
-  let deviceModels = []
-  for (let devM of result) {
-    deviceModels.push(devM.device_model)
-  }
-  let unique = deviceModels.filter((v, i, a) => a.indexOf(v) === i)
-  // form array of list mac address from each model
-  let currentDevices = {}
-  // let paired = {}
-  for (let mod of unique) {
-    localthis.devicePairs[mod] = []
-    let devww = result.filter(devv => devv.device_model === mod)
-    // look at time start and keep youngest start date
-    let mapd = devww.map(o => parseInt(o.device_validfrom))
-    let maxValueOfY = Math.max.apply(this, mapd)
-    // match this time to device mac
-    for (let perD of devww) {
-      // keep record of devices of same type
-      localthis.devicePairs[mod].push(perD)
-      if (parseInt(perD.device_validfrom) === maxValueOfY) {
-        let deviceMatch = perD
-        currentDevices = deviceMatch
-      }
-    }
-  }
-  return currentDevices
-}
-
-/**
 * get DataTypes
 * @method getDataTypes
 *
@@ -175,7 +124,8 @@ DataSystem.prototype.getLiveDatatypes = function (dtIN) {
 *
 */
 DataSystem.prototype.datatypeQueryMapping = async function (systemBundle) {
-  // console.log('datatypeQueryMapping')
+  console.log('datatypeQueryMapping')
+  console.log(systemBundle)
   let rawHolder = {}
   rawHolder[systemBundle.startperiod] = {}
   // loop over the each devices API data source info.
@@ -184,6 +134,7 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle) {
     // first is the data from the PAST or FUTURE ie simulated?
     if (systemBundle.startperiod === 'simulateData') {
       // need whole new system for product future data
+      // let futureData = this.this.liveSimulatedData.()
     } else {
       for (let dtItem of systemBundle.apiInfo[devI].apiquery) {
         if (dtItem.api === 'computedata/<publickey>/<token>/<queryTime>/<deviceID>/') {

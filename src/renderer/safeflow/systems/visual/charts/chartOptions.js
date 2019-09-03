@@ -39,12 +39,13 @@ ChartOptions.prototype.prepareChartOptions = function (title, datatypes, scale) 
   let idAxis = ''
   let counter = 0
   for (let dti of datatypes) {
+    console.log(dti.text)
     if (counter === 0) {
       leftorrigh = 'left'
-      idAxis = 'bpm'
+      idAxis = dti.text // 'temperature' // 'bpm'
     } else {
       leftorrigh = 'right'
-      idAxis = 'steps'
+      idAxis = dti.text // 'SDS_P1' // 'steps'
     }
     counter++
     let yItem = {

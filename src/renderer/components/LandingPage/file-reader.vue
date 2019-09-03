@@ -93,7 +93,6 @@
         try {
           if (fs.existsSync(path)) {
             // file exists start open decrypt
-            console.log('token in right place')
             this.repeatTimetokenseen = true
           } else {
             console.log('file err found')

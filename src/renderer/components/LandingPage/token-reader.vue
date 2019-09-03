@@ -97,14 +97,11 @@
       connectAPIS () {
         console.log('what data api need connecting')
         // get list of all API cnrl contracts connected
-        let apiCRNLdefault = 'cnrl-33221100'
-        console.log(apiCRNLdefault)
+        // let apiCRNLdefault = 'cnrl-33221100'
         // look up contract and get API info for default
-        let defaultAPI = this.GETcnrlLookup(apiCRNLdefault)
-        console.log(defaultAPI)
+        // let defaultAPI = this.GETcnrlLookup(apiCRNLdefault)
         // what data APIs are connected?
-        let dataAPIconnected = ['cnrl-33221101'] // , 'cnrl-33221102']
-        console.log(dataAPIconnected)
+        let dataAPIconnected = ['cnrl-33221101', 'cnrl-33221102']
         // query peer ledger to extract experiments, computes i.e. KBLedger latest
         this.startExpMappedKbundles()
         this.startKSetting()
@@ -143,8 +140,6 @@
         let devicesList = []
         for (let dapi of dataAPIconnected) {
           // look up the contract
-          console.log('api')
-          console.log(dapi)
           let apiDev = this.GETcnrlLookup(dapi)
           console.log(apiDev)
           // make call to set start deviceContext for this pubkey
@@ -156,9 +151,10 @@
           deviceAPI.cnrl = dapi
           devicesList.push(deviceAPI)
         }
-        this.devices = devicesList
-        console.log(this.devices)
-        this.$store.dispatch('actionDeviceDataAPI', devicesList)
+        // merg arrays
+        let flatd = [].concat(...devicesList)
+        this.devices = flatd
+        this.$store.dispatch('actionDeviceDataAPI', this.devices)
       },
       dataTypeContext () {
         // make call to set start dataType for the device sensors

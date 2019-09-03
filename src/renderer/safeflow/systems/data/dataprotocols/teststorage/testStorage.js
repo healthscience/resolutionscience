@@ -17,7 +17,7 @@ const axios = require('axios')
 var TestStorageAPI = function (setUP) {
   events.EventEmitter.call(this)
   this.liveTimeUtil = new TimeUtilities()
-  this.baseAPI = 'http://165.227.244.213:8882'
+  this.baseAPI = 'http://165.227.244.213:8881'
   this.liveData = {}
   this.datacollection = []
   this.tempPubkey = setUP.publickey
@@ -45,12 +45,23 @@ TestStorageAPI.prototype.LKNtime = function () {
 
 /**
 *  Get device context data from network per publickey
-* @method getDevicetData
+* @method getDeviceData
 *
 */
 TestStorageAPI.prototype.getDeviceData = async function (api) {
   //  nosql query but headng towards a gRPC listener on stream socket
   let jsondata = await axios.get(api + 'contextdata/' + this.tempPubkey + '/' + this.tempToken)
+  return jsondata.data
+}
+
+/**
+*  Get device context data from network per publickey
+* @method getDeviceLuftdatenData
+*
+*/
+TestStorageAPI.prototype.getDeviceLuftdatenData = async function (api) {
+  //  nosql query but headng towards a gRPC listener on stream socket
+  let jsondata = await axios.get(api + 'luftdatendevice/' + this.tempPubkey + '/' + this.tempToken)
   return jsondata.data
 }
 
@@ -127,9 +138,9 @@ TestStorageAPI.prototype.getAverageData = async function (queryTime, deviceID, c
 */
 TestStorageAPI.prototype.getAirQualityData = async function (luftdatenID, queryTimeStart, queryTimeEnd) {
   luftdatenID = 3652817
-  console.log(luftdatenID)
-  console.log(queryTimeStart)
-  console.log(queryTimeEnd)
+  // console.log(luftdatenID)
+  // console.log(queryTimeStart)
+  // console.log(queryTimeEnd)
   let jsondata = await axios.get(this.baseAPI + '/luftdatenGet/' + this.tempPubkey + '/' + this.tempToken + '/' + luftdatenID + '/' + queryTimeStart + '/' + queryTimeEnd)
   // console.log(jsondata)
   return jsondata.data

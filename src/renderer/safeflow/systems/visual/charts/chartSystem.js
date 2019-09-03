@@ -54,7 +54,15 @@ ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle,
           } else if (datatypeIN.cnrl === 'cnrl-8856388712') {
             datay.push(liveData.steps)
           } else if (datatypeIN.cnrl === 'cnrl-3339949442') {
-            datay.push(parseInt(liveData.data.sensordatavalues[3].value, 10))
+            datay.push(liveData.SDS_P2)
+          } else if (datatypeIN.cnrl === 'cnrl-3339949443') {
+            datay.push(liveData.SDS_P1)
+          } else if (datatypeIN.cnrl === 'cnrl-3339949444') {
+            datay.push(liveData.temperature)
+          } else if (datatypeIN.cnrl === 'cnrl-3339949445') {
+            datay.push(liveData.humidity)
+          } else if (datatypeIN.cnrl === 'cnrl-3339949446') {
+            datay.push(liveData['air-pressure'])
           }
         }
       }
@@ -85,6 +93,18 @@ ChartSystem.prototype.chartColors = function (datatypeItem) {
     colorHolder.datatype = 'bpm'
     colorHolder.backgroundColor = '#ed7d7d'
     colorHolder.borderColor = '#ea1212'
+  } else if (datatypeItem.cnrl === 'cnrl-3339949442') {
+    colorHolder.datatype = 'SDS_P2'
+    colorHolder.backgroundColor = '#ed7d7d'
+    colorHolder.borderColor = '#ea1212'
+  } else if (datatypeItem.cnrl === 'cnrl-3339949443') {
+    colorHolder.datatype = 'SDS_P1'
+    colorHolder.backgroundColor = '#ed7d7d'
+    colorHolder.borderColor = '#ea1212'
+  } else if (datatypeItem.cnrl === 'cnrl-3339949444') {
+    colorHolder.datatype = 'temperature'
+    colorHolder.backgroundColor = '#ed7d7d'
+    colorHolder.borderColor = '#ea1212'
   }
   return colorHolder
 }
@@ -108,7 +128,7 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
   let datachart = []
   for (let rItems of results) {
     let chartItem = {}
-    if (rItems.color.datatype === 'bpm') {
+    if (rItems.color.datatype === 'bpm' || rItems.color.datatype === 'temperature') {
       chartItem.type = 'line'
       chartItem.borderColor = rItems.color.borderColor
       chartItem.backgroundColor = rItems.color.backgroundColor

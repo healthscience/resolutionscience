@@ -33,9 +33,6 @@ util.inherits(FilterDataSystem, events.EventEmitter)
 *
 */
 FilterDataSystem.prototype.dtFilterController = function (systemBundle, liveData) {
-  // console.log('dtFilterController')
-  // console.log(systemBundle)
-  // console.log(liveData)
   let filterHolder = {}
   let filterType = ''
   filterHolder[systemBundle.startperiod] = {}
@@ -51,9 +48,6 @@ FilterDataSystem.prototype.dtFilterController = function (systemBundle, liveData
       dtSourceR = systemBundle.apiInfo[devI].apiquery
       filterType = 'primary'
     }
-    // console.log('fiter type')
-    // console.log(filterType)
-    // console.log(dtSourceR)
     for (let dtItem of dtSourceR) {
       filterHolder[systemBundle.startperiod][devI][dtItem.cnrl] = {}
       for (let ts of systemBundle.timeseg) {
@@ -67,8 +61,8 @@ FilterDataSystem.prototype.dtFilterController = function (systemBundle, liveData
       }
     }
   }
-  // console.log('filter datatype finished')
-  // console.log(filterHolder)
+  console.log('filter datatype finished')
+  console.log(filterHolder)
   return filterHolder
 }
 
@@ -88,7 +82,7 @@ FilterDataSystem.prototype.filterDataType = function (fTypeIN, sourceDT, arrayIN
       if (sing[sourceDT.column] === null) {
         valueC = null
       } else {
-        valueC = parseInt(sing[sourceDT.column], 10)
+        valueC = parseFloat(sing[sourceDT.column]) // parseInt(sing[sourceDT.column], 10)
       }
       dataPair[sourceDT.column] = valueC
       singleArray.push(dataPair)

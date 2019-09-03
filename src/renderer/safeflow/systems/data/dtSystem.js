@@ -79,7 +79,7 @@ DTSystem.prototype.DTStartMatch = function (devicesIN, lDTs, catDTs) {
     let apiHolder = {}
     apiHolder[dliv.device_mac] = {}
     let apiInfo = {}
-    apiInfo.apiquery = DTmapAPI // [...DTmapAPI, ...catDTmapAPI]
+    apiInfo.apiquery = DTmapAPI
     apiInfo.sourceapiquery = sourceDTmapAPI
     apiInfo.sourceDTs = sourceDTextract
     apiInfo.categorycodes = categoryMapDTs
@@ -122,6 +122,9 @@ DTSystem.prototype.mapCategoryDataTypes = function (catDTs, packagingDTs, lDTs, 
 *
 */
 DTSystem.prototype.datatypeCheckAPI = function (packagingDTs, lDTs) {
+  console.log('dy check api')
+  console.log(packagingDTs)
+  console.log(lDTs)
   let apiMatch = []
   let apiKeep = {}
   // given datatypes select find match to the query string
@@ -162,7 +165,7 @@ DTSystem.prototype.datatypeCheckAPI = function (packagingDTs, lDTs) {
 DTSystem.prototype.subStructure = function (tableStructure) {
   let subStructure = []
   for (let tcI of tableStructure) {
-    if (tcI.cnrl === 'sensors') {
+    if (tcI.cnrl === 'datasub') {
       subStructure = tcI.data
     }
   }
@@ -246,12 +249,21 @@ DTSystem.prototype.DTtableStructure = function (dAPI) {
   let subSourceAPI = {}
   let apiDTs = []
   // given datastore and CNRL science contract map the source API queries to datatypes or source Types
+  let indivDT = {}
   let APIcnrl = this.liveCNRL.lookupContract(dAPI)
   // loop over table structure and extract out the dataTypes
   for (let dtt of APIcnrl.tableStructure[0]) {
     // lookup source DT contracts and build
-    let indivDT = this.liveCNRL.lookupContract(dtt.cnrl)
-    apiDTs.push(indivDT.prime)
+    if (dtt.cnrl !== 'datasub') {
+      indivDT = this.liveCNRL.lookupContract(dtt.cnrl)
+      apiDTs.push(indivDT.prime)
+    } else {
+      // drill down a table level to access datatypes
+      for (let stt of dtt.data) {
+        indivDT = this.liveCNRL.lookupContract(stt.cnrl)
+        apiDTs.push(indivDT.prime)
+      }
+    }
   }
   // does a sub or source structure contract exist?
   if (APIcnrl.source) {

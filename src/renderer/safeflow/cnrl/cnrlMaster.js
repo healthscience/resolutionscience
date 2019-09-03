@@ -444,7 +444,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-3339949443') {
     dataCNRLbundle.type = 'datatype'
-    dataCNRLbundle.prime = { 'cnrl': 'cnrl-3339949443', 'text': 'p10', 'active': false }
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-3339949443', 'text': 'SDS_P1', 'active': false }
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
     dataCNRLbundle.tableStructure = []
@@ -555,7 +555,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.apistructure = ['kbledger/<publickey>/', 'experimentKBundles/<publickey>/']
     dataCNRLbundle.tableStructure[0] = [{'cnrl': 'cnrl-8856388713', 'text': 'previoushash', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-', 'text': 'data', 'active': false}, {'cnrl': 'cnrl-', 'text': 'datatype', 'active': false}, {'cnrl': 'cnrl-', 'text': 'compute', 'active': false}, {'cnrl': 'cnrl-', 'text': 'results', 'active': false}, {'cnrl': 'cnrl-', 'text': 'token', 'active': false}]
     dataCNRLbundle.tableStructure[1] = [{'cnrl': '', 'text': '', 'active': false}]
-    dataCNRLbundle.namespace = 'http://165.227.244.213:8882/'
+    dataCNRLbundle.namespace = 'http://165.227.244.213:8881/'
     dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-33221101') {
     // CNRL implementation REST API
@@ -571,7 +571,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.tableStructure[1] = [{'cnrl': '', 'text': 'device_mac', 'active': false}, {'cnrl': '', 'text': 'firmware', 'active': false}]
     dataCNRLbundle.tableStructure[2] = [{'cnrl': 'cnrl-8856388724', 'text': 'average-bpm', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856388322', 'text': 'average-steps', 'active': false}]
     dataCNRLbundle.tableStructure[3] = [{'cnrl': 'cnrl-8856388924', 'text': 'sum-bpm', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856389322', 'text': 'sum-steps', 'active': false}]
-    dataCNRLbundle.namespace = 'http://165.227.244.213:8882/'
+    dataCNRLbundle.namespace = 'http://165.227.244.213:8881/'
     dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-33221102') {
     // CNRL implementation REST API
@@ -580,11 +580,11 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-33221102', 'text': 'mongo-RESTAPI', 'active': false }
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
-    dataCNRLbundle.device = 'contextdata/<publickey>/'
+    dataCNRLbundle.device = 'luftdatendevice/<publickey>/'
     dataCNRLbundle.devicetableStructure = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-', 'text': 'compref', 'active': false}, {'cnrl': 'cnrl-', 'text': 'datatype', 'active': false}, {'cnrl': 'cnrl-', 'text': 'timeseg', 'active': false}, {'cnrl': 'cnrl-', 'text': 'value', 'active': false}, {'cnrl': 'cnrl-', 'text': 'device_mac', 'active': false}, {'cnrl': 'cnrl-', 'text': 'clean', 'active': false}, {'cnrl': 'cnrl-', 'text': 'tidy', 'active': false}]
     dataCNRLbundle.apistructure = ['luftdatenGet/<publickey>/<token>/<queryTime>/<deviceID>/']
     let subColumn = [{'cnrl': 'cnrl-3339949442', 'text': 'SDS_P2', 'active': false}, {'cnrl': 'cnrl-3339949443', 'text': 'SDS_P1', 'active': false}, {'cnrl': 'cnrl-3339949444', 'text': 'temperature', 'active': false}, {'cnrl': 'cnrl-3339949445', 'text': 'humidity', 'active': false}, {'cnrl': 'cnrl-3339949446', 'text': 'air-pressure', 'active': false}]
-    dataCNRLbundle.tableStructure[0] = [{'cnrl': 'cnrl-', 'text': 'publickey', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'sensors', 'text': 'sensordata', 'active': false, 'data': subColumn}, {'cnrl': 'data', 'text': 'sourcestructure', 'active': false}]
+    dataCNRLbundle.tableStructure[0] = [{'cnrl': 'cnrl-', 'text': 'publickey', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'datasub', 'text': 'sensordata', 'active': false, 'data': subColumn}]
     dataCNRLbundle.namespace = 'http://165.227.244.213:8881/'
     dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-773355992211') {

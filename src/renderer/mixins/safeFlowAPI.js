@@ -165,8 +165,6 @@ export default {
       return devices
     },
     GETcnrlDeviceDTs (cnrl) {
-      console.log('deviceDTS')
-      console.log(cnrl)
       let datatypesPerDevice = this.safeMixin.cnrlDeviceDTs(cnrl)
       return datatypesPerDevice
     },

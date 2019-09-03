@@ -52,10 +52,10 @@ DatadeviceSystem.prototype.getLiveDevices = function (devicesIN) {
 DatadeviceSystem.prototype.systemDevice = async function (dapi) {
   // MAP api to REST library functions for the API
   let result
-  if (dapi.namespace === 'http://165.227.244.213:8882/' && dapi.device === 'contextdata/<publickey>/') {
+  if (dapi.namespace === 'http://165.227.244.213:8881/' && dapi.device === 'contextdata/<publickey>/') {
     result = await this.liveTestStorage.getDeviceData(dapi.namespace)
-  } else if (dapi.namespace === 'http://165.227.244.213:8881/' && dapi.device === 'contextdata/<publickey>/') {
-    result = await this.liveTestStorage.getDeviceData(dapi.namespace)
+  } else if (dapi.namespace === 'http://165.227.244.213:8881/' && dapi.device === 'luftdatendevice/<publickey>/') {
+    result = await this.liveTestStorage.getDeviceLuftdatenData(dapi.namespace)
   }
   let currentDevices = []
   currentDevices = this.sortLiveDevices(result)
@@ -68,7 +68,7 @@ DatadeviceSystem.prototype.systemDevice = async function (dapi) {
 *
 */
 DatadeviceSystem.prototype.sortLiveDevices = function (result) {
-  let localthis = this
+  let devicePairs = []
   // filter over to pair same types of devices and put in newest order and add active to newest of all devices or selected by user as starting device to display
   // extract the device macs per devicename
   let deviceModels = []
@@ -77,10 +77,10 @@ DatadeviceSystem.prototype.sortLiveDevices = function (result) {
   }
   let unique = deviceModels.filter((v, i, a) => a.indexOf(v) === i)
   // form array of list mac address from each model
-  let currentDevices = {}
+  let currentDevices = []
   // let paired = {}
   for (let mod of unique) {
-    localthis.devicePairs[mod] = []
+    devicePairs[mod] = []
     let devww = result.filter(devv => devv.device_model === mod)
     // look at time start and keep youngest start date
     let mapd = devww.map(o => parseInt(o.device_validfrom))
@@ -88,10 +88,10 @@ DatadeviceSystem.prototype.sortLiveDevices = function (result) {
     // match this time to device mac
     for (let perD of devww) {
       // keep record of devices of same type
-      localthis.devicePairs[mod].push(perD)
+      devicePairs[mod].push(perD)
       if (parseInt(perD.device_validfrom) === maxValueOfY) {
         let deviceMatch = perD
-        currentDevices = deviceMatch
+        currentDevices.push(deviceMatch)
       }
     }
   }

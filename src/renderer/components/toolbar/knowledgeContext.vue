@@ -15,7 +15,7 @@
         <div id="context-devices" class="context-box">
           <header>Devices:</header>
             <ul>
-              <li v-for="dev in devices"> {{ dev[0] }}
+              <li v-for="dev in devices">
                 <a href="" id="" @click.prevent="selectDevice(dev)" v-bind:class="{ 'active': dev.active}">{{ dev.device_name }}</a>
               </li>
             </ul>
@@ -206,9 +206,10 @@
         // this.$emit('setVLanguage', l)
       },
       selectDevice (s) {
+        console.log(s)
         s.active = !s.active
         kBus.$emit('setVDevice', s)
-        this.dataTypeDevice()
+        this.dataTypeDevice(s)
       },
       selectDatatypes (std) {
         std.active = !std.active
@@ -230,14 +231,10 @@
       deviceContext () {
         this.devices = this.$store.getters.liveContext.device
       },
-      dataTypeDevice () {
+      dataTypeDevice (devC) {
         let devDTHolder = []
-        // let cnrlIDholderDev = []
-        // repeat for datatyes coming from the mobile app CRNL contract
-        for (let devCdt of this.devices) {
-          let deviceDTypes = this.GETcnrlDeviceDTs(devCdt.cnrl)
-          devDTHolder.push(deviceDTypes)
-        }
+        let deviceDTypes = this.GETcnrlDeviceDTs(devC.cnrl)
+        devDTHolder.push(deviceDTypes)
         this.datatypes = devDTHolder[0].datatypes
       },
       dataType () {

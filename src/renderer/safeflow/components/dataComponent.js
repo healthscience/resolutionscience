@@ -161,6 +161,8 @@ DataComponent.prototype.CategoriseData = function (catInfo) {
   // console.log(systemBundle)
   catDataG = this.liveCategoryData.categorySorter(systemBundle, this.dataRaw)
   this.categoryData = catDataG
+  console.log('cate data fin')
+  console.log(this.categoryData)
 }
 
 /**
@@ -224,6 +226,8 @@ DataComponent.prototype.assessDataStatus = function () {
   } else {
     this.liveData = this.tidyData
   }
+  console.log('assess fin')
+  console.log(this.liveData)
 }
 
 /**

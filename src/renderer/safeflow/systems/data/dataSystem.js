@@ -13,6 +13,8 @@
 import CNRLmaster from '../../cnrl/cnrlMaster.js'
 import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
 import LiveSimulatedDataSystem from './simulateddataSystem.js'
+import FilterDataSystem from './filterdataSystem.js'
+
 const util = require('util')
 const events = require('events')
 
@@ -21,6 +23,7 @@ var DataSystem = function (setIN) {
   this.liveCNRL = new CNRLmaster()
   this.liveTestStorage = new TestStorageAPI(setIN)
   this.liveSimulatedData = new LiveSimulatedDataSystem(setIN)
+  this.liveFilterData = new FilterDataSystem(setIN)
   this.devicePairs = []
   this.dataRaw = []
 }
@@ -147,8 +150,12 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle) {
         } else if (dtItem.api === 'luftdatenGet/<publickey>/<token>/<queryTime>/<deviceID>/') {
           // console.log('air quality data query')
           let AirsourcerawData = await this.getAirqualityData(devI, systemBundle.startperiod)
-          let filterColumnAQ = this.filterDataTypeSub(dtItem, AirsourcerawData)
-          rawHolder[systemBundle.startperiod][devI][dtItem.cnrl] = filterColumnAQ
+          console.log('air qua raw')
+          console.log(AirsourcerawData)
+          let filterColumnAQ = this.liveFilterData.filterDataTypeSub(dtItem, AirsourcerawData)
+          let dayAQHolder = {}
+          dayAQHolder.day = filterColumnAQ
+          rawHolder[systemBundle.startperiod][devI][dtItem.cnrl] = dayAQHolder
         } else if (dtItem.api === 'sum/<publickey>/<token>/<queryTime>/<deviceID>/') {
           // console.log('sum data query')
           let SumsourcerawData = await this.getRawSumData(systemBundle)

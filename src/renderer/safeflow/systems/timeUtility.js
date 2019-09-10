@@ -144,7 +144,7 @@ TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
       let backstartTime = (convertLasttime - 86400000) // this.liveLasttime * 1000
       startTime = backstartTime
     }
-    startTime = (startTime - 86400000)
+    // startTime = (startTime - 86400000)
   } else if (uT === '+day') {
     // move forward day in time
     if (startTime === 'relative') {

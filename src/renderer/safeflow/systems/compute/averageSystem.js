@@ -13,6 +13,9 @@ import TimeUtilities from '../timeUtility.js'
 import TestStorageAPI from '../data/dataprotocols/teststorage/testStorage.js'
 import AvgStatisticsSystem from './wasm/average-statistics.js'
 import DataSystem from '../data/dataSystem.js'
+import TidyDataSystem from '../data/tidydataSystem.js'
+import FilterDataSystem from '../data/filterdataSystem.js'
+import CategoryDataSystem from '../data/categorydataSystem.js'
 
 const util = require('util')
 const events = require('events')
@@ -23,6 +26,9 @@ var AverageSystem = function (setIN) {
   this.liveTestStorage = new TestStorageAPI(setIN)
   this.avgliveStatistics = new AvgStatisticsSystem(setIN)
   this.liveDataSystem = new DataSystem(setIN)
+  this.liveTidyData = new TidyDataSystem(setIN)
+  this.liveFilterData = new FilterDataSystem(setIN)
+  this.liveCategoryData = new CategoryDataSystem(setIN)
   this.lastComputeTime = {}
 }
 
@@ -134,9 +140,9 @@ AverageSystem.prototype.prepareAvgCompute = async function (computeTimes, device
     // [systemBundle.startperiod][devI][dtItem.cnrl][ts]
     if (dataBatch.length > 0) {
       // systemBundle.primary = 'primary'
-      let singleArray = this.liveDataSystem.categorySorter(systemBundle, formHolder)
-      let tidyData = this.liveDataSystem.tidyRawData(systemBundle, singleArray)
-      let filterDTs = this.liveDataSystem.dtFilterController(systemBundle, tidyData)
+      let singleArray = this.liveCategoryData.categorySorter(systemBundle, formHolder)
+      let tidyData = this.liveTidyData.tidyRawData(systemBundle, singleArray)
+      let filterDTs = this.liveFilterData.dtFilterController(systemBundle, tidyData)
       // let flatArray = this.liveDataSystem.flatFilter()
       // need to check for categories TODO
       let saveReady = this.avgliveStatistics.averageStatistics(filterDTs)

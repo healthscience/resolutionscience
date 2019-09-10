@@ -33,17 +33,10 @@ util.inherits(DTSystem, events.EventEmitter)
 *
 */
 DTSystem.prototype.DTStartMatch = function (devicesIN, lDTs, catDTs) {
-  console.log('dt match start system')
-  console.log(devicesIN)
-  console.log(lDTs)
-  console.log(catDTs)
   let datatypePerdevice = {}
   // loop over devices and match to API etc
   for (let dliv of devicesIN) {
-    console.log(dliv.cnrl)
     let packagingDTs = this.liveCNRL.lookupContract(dliv.cnrl)
-    console.log('packagingDTs')
-    console.log(packagingDTs)
     // is the data type primary?
     let sourceDTextract = this.mapSourceDTs(lDTs)
     let sourceDTmapAPI = this.datatypeCheckAPI(packagingDTs, sourceDTextract)
@@ -122,9 +115,6 @@ DTSystem.prototype.mapCategoryDataTypes = function (catDTs, packagingDTs, lDTs, 
 *
 */
 DTSystem.prototype.datatypeCheckAPI = function (packagingDTs, lDTs) {
-  console.log('dy check api')
-  console.log(packagingDTs)
-  console.log(lDTs)
   let apiMatch = []
   let apiKeep = {}
   // given datatypes select find match to the query string

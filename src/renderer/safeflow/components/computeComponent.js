@@ -16,6 +16,7 @@ const events = require('events')
 var ComputeComponent = function (EID, setIN) {
   events.EventEmitter.call(this)
   this.EIDinfo = EID
+  this.computeCNRLlist = []
   this.liveComputeSystem = new ComputeSystem(setIN)
   this.computeStatus = false
 }
@@ -25,6 +26,15 @@ var ComputeComponent = function (EID, setIN) {
 * @method inherits
 */
 util.inherits(ComputeComponent, events.EventEmitter)
+
+/**
+*  query CNRL for live compute IDs or import local list of computes per peer
+* @method computeList
+*
+*/
+ComputeComponent.prototype.computeList = async function () {
+  this.computeCNRLlist = this.liveComputeSystem.CNRLquery()
+}
 
 /**
 *

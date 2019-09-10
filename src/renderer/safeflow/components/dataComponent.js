@@ -226,8 +226,6 @@ DataComponent.prototype.assessDataStatus = function () {
   } else {
     this.liveData = this.tidyData
   }
-  console.log('assess fin')
-  console.log(this.liveData)
 }
 
 /**

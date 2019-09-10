@@ -61,8 +61,6 @@ FilterDataSystem.prototype.dtFilterController = function (systemBundle, liveData
       }
     }
   }
-  console.log('filter datatype finished')
-  console.log(filterHolder)
   return filterHolder
 }
 

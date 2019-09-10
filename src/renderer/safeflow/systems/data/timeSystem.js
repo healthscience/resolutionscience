@@ -46,10 +46,10 @@ TimeSystem.prototype.discoverTimeStatus = async function (EIDinfo, compInfo, raw
 *
 */
 TimeSystem.prototype.updatedDTCStatus = async function (EIDinfo, compInfo, rawIN) {
-  // console.log('update timestart per dt')
+  console.log('update timestart per dt')
   // console.log(EIDinfo)
-  // console.log(compInfo)
-  // console.log(rawIN)
+  console.log(compInfo)
+  console.log(rawIN)
   let statusHolder = {}
   let lastComputetime = []
   let liveTime = EIDinfo.time.startperiod
@@ -67,24 +67,41 @@ TimeSystem.prototype.updatedDTCStatus = async function (EIDinfo, compInfo, rawIN
         if (tsega !== undefined || tsega.length > 0) {
           if (tsega === 'day') {
             lastComputetime = this.timeOrderLast(lastDataItem)
-            let catStatus2 = await this.categoriseStatusperTimeseg(EIDinfo, lastComputetime, devMac, 'day')
-            statusHolder[liveTime][devMac][dtl.cnrl][tsega] = catStatus2
+            let catStatus2 = await this.assessCompute(EIDinfo, lastComputetime, liveTime, devMac, 'day')// await this.prepareDateArrays(EIDinfo, lastComputetime, devMac, 'day')
+            let computeOngoing = {}
+            if (catStatus2 === 'on-going') {
+              // map compute to data source API query
+              computeOngoing.lastComputeTime = catStatus2.firstdate
+              computeOngoing.status = catStatus2.computestatus
+              computeOngoing.timeseg = 'day'
+              computeOngoing.computeTime = this.assessOngoing(EIDinfo.cid, catStatus2.firstdate, liveTime)
+            } else if (catStatus2 === 'update-required') {
+              // just return first time data compute INFO
+              computeOngoing.lastComputeTime = catStatus2.firstdate
+              computeOngoing.status = catStatus2.computestatus
+              computeOngoing.timeseg = 'day'
+              computeOngoing.computeTime = this.assessOngoing(EIDinfo.cid, catStatus2.firstdate, liveTime)
+            } else {
+              // nothing to compute
+              computeOngoing.status = catStatus2.computestatus
+            }
+            statusHolder[liveTime][devMac][dtl.cnrl][tsega] = computeOngoing
           }
-          if (tsega === 'week') {
+          /* if (tsega === 'week') {
             lastComputetime = tsega.week.slice(-1)
-            let catStatus3 = await this.categoriseStatusperTimeseg(EIDinfo, lastComputetime, dev, 'week')
+            let catStatus3 = await this.prepareDateArrays(EIDinfo, lastComputetime, dev, 'week')
             statusHolder[liveTime][devMac][dtl.cnrl][tsega] = catStatus3
           }
           if (tsega === 'month') {
             lastComputetime = tsega.week.slice(-1)
-            let catStatus4 = await this.categoriseStatusperTimeseg(EIDinfo, lastComputetime, dev, 'month')
+            let catStatus4 = await this.prepareDateArrays(EIDinfo, lastComputetime, dev, 'month')
             statusHolder[liveTime][devMac][dtl.cnrl][tsega] = catStatus4
           }
           if (tsega === 'year') {
             lastComputetime = tsega.week.slice(-1)
-            let catStatus5 = await this.categoriseStatusperTimeseg(EIDinfo, lastComputetime, dev, 'year')
+            let catStatus5 = await this.prepareDateArrays(EIDinfo, lastComputetime, dev, 'year')
             statusHolder[liveTime][devMac][dtl.cnrl][tsega] = catStatus5
-          }
+          } */
         }
       }
     }
@@ -109,11 +126,52 @@ TimeSystem.prototype.timeOrderLast = function (dataAIN) {
 }
 
 /**
-* categorise status of each time seg asked for
-* @method categoriseStatusperTimeseg
+* assess the computation required
+* @method assessCompute
 *
 */
-TimeSystem.prototype.categoriseStatusperTimeseg = async function (EIDinfo, lastComputeIN, dev, timeSeg) {
+TimeSystem.prototype.assessCompute = async function (EIDinfo, lastTime, liveTime, device, timeseg) {
+  console.log('assess copute time sytem')
+  console.log(EIDinfo)
+  console.log(lastTime)
+  console.log(device)
+  console.log(timeseg)
+  let computeCheck = {}
+  // first time compute? Or not?
+  if (lastTime === 0) {
+    // console.log('logic 1')
+    let updateCompStatus = 'update-required'
+    let startTimeFound = await this.sourceDTstartTime(device)
+    computeCheck.computestatus = updateCompStatus
+    computeCheck.firstdate = startTimeFound
+  } else if (lastTime < liveTime) {
+    computeCheck.computestatus = 'on-going'
+    computeCheck.firstdate = liveTime
+  } else {
+    computeCheck.computestatus = 'uptodate'
+  }
+  return computeCheck
+}
+
+/**
+* assess the computation required
+* @method assessOngoing
+*
+*/
+TimeSystem.prototype.assessOngoing = function (lastComputeIN, liveTime) {
+  console.log('assess copute ONGoing')
+  console.log(lastComputeIN)
+  let timeArray = {}
+  timeArray = this.updateAverageDates(lastComputeIN, liveTime)
+  return timeArray
+}
+
+/**
+* categorise status of each time seg asked for
+* @method prepareDateArrays
+*
+*/
+TimeSystem.prototype.prepareDateArrays = async function (EIDinfo, lastComputeIN, dev, timeSeg) {
   let catHolder = {}
   let realTime = EIDinfo.time.realtime
   // console.log(realTime)
@@ -147,6 +205,7 @@ TimeSystem.prototype.categoriseStatusperTimeseg = async function (EIDinfo, lastC
 *
 */
 TimeSystem.prototype.sourceDTstartTime = async function (devIN) {
+  // need to map compute asked for to function that calls API for data
   let timeDevHolder = ''
   let dateDevice = await this.checkForDataPerDevice(devIN)
   timeDevHolder = dateDevice[0].lastComputeTime

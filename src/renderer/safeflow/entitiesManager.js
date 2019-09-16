@@ -11,7 +11,7 @@
 */
 import Entity from './scienceEntities.js'
 import TimeUtilities from './systems/timeUtility.js'
-import CNRLmaster from './cnrl/cnrlMaster.js'
+import CNRLmaster from './kbl-cnrl/cnrlMaster.js'
 // import KBLedger from './cnrl/kbledger.js'
 const util = require('util')
 const events = require('events')

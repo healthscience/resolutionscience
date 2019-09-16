@@ -10,7 +10,7 @@
 * @version    $Id$
 */
 
-import CNRLmaster from '../../cnrl/cnrlMaster.js'
+import CNRLmaster from '../../kbl-cnrl/cnrlMaster.js'
 import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
 import LiveSimulatedDataSystem from './simulateddataSystem.js'
 import FilterDataSystem from './filterdataSystem.js'
@@ -169,6 +169,27 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle) {
     }
   }
   return rawHolder
+}
+
+/**
+*  check if entity already has data raw tidy visual
+* @method checkForDataPerDevice
+*
+*/
+DataSystem.prototype.checkForDataPerDevice = async function (device) {
+  /* let deviceStatus = {}
+  let dataStatus = []
+  // does any input source data exist?
+  let firstD = await this.liveTestStorage.getFirstData(device).catch(function (err) {
+    console.log(err)
+  })
+  // console.log('firstD')
+  // console.log(firstD)
+  deviceStatus.lastComputeTime = firstD[0].timestamp
+  deviceStatus[device] = false
+  dataStatus.push(deviceStatus)
+
+  return dataStatus */
 }
 
 /**

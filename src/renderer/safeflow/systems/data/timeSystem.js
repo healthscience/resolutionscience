@@ -11,7 +11,8 @@
 */
 
 import TimeUtilities from '../timeUtility.js'
-import CNRLmaster from '../../cnrl/cnrlMaster.js'
+import CNRLmaster from '../../kbl-cnrl/cnrlMaster.js'
+import DataSystem from '../data/dataSystem.js'
 import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
 const util = require('util')
 const events = require('events')
@@ -20,6 +21,7 @@ var TimeSystem = function (setIN) {
   events.EventEmitter.call(this)
   this.liveTimeUtil = new TimeUtilities()
   this.liveCNRL = new CNRLmaster()
+  this.liveDataSystem = new DataSystem(setIN)
   this.liveTestStorage = new TestStorageAPI(setIN)
 }
 
@@ -141,7 +143,7 @@ TimeSystem.prototype.assessCompute = async function (EIDinfo, lastTime, liveTime
   if (lastTime === 0) {
     // console.log('logic 1')
     let updateCompStatus = 'update-required'
-    let startTimeFound = await this.sourceDTstartTime(device)
+    let startTimeFound = await this.sourceDTstartTime(EIDinfo, device)
     computeCheck.computestatus = updateCompStatus
     computeCheck.firstdate = startTimeFound
   } else if (lastTime < liveTime) {
@@ -160,9 +162,8 @@ TimeSystem.prototype.assessCompute = async function (EIDinfo, lastTime, liveTime
 */
 TimeSystem.prototype.assessOngoing = function (lastComputeIN, liveTime) {
   console.log('assess copute ONGoing')
-  console.log(lastComputeIN)
   let timeArray = {}
-  timeArray = this.updateAverageDates(lastComputeIN, liveTime)
+  timeArray = this.updateComputeDateArray(lastComputeIN, liveTime)
   return timeArray
 }
 
@@ -172,7 +173,7 @@ TimeSystem.prototype.assessOngoing = function (lastComputeIN, liveTime) {
 *
 */
 TimeSystem.prototype.prepareDateArrays = async function (EIDinfo, lastComputeIN, dev, timeSeg) {
-  let catHolder = {}
+/*  let catHolder = {}
   let realTime = EIDinfo.time.realtime
   // console.log(realTime)
   let updateCompStatus = ''
@@ -183,11 +184,11 @@ TimeSystem.prototype.prepareDateArrays = async function (EIDinfo, lastComputeIN,
     updateCompStatus = 'update-required'
     startTimeFound = await this.sourceDTstartTime(dev)
     // form array for compute structure???
-    timeArray = this.updateAverageDates(startTimeFound, EIDinfo.time.startperiod)
+    timeArray = this.updateComputeDateArray(startTimeFound, EIDinfo.time.startperiod)
   } else if (lastComputeIN < realTime) {
     // console.log('logic 2')
     updateCompStatus = 'update-required'
-    timeArray = this.updateAverageDates(lastComputeIN, EIDinfo.time.startperiod)
+    timeArray = this.updateComputeDateArray(lastComputeIN, EIDinfo.time.startperiod)
   } else {
     // console.log('logic 3')
     updateCompStatus = 'uptodate'
@@ -196,7 +197,7 @@ TimeSystem.prototype.prepareDateArrays = async function (EIDinfo, lastComputeIN,
   catHolder.status = updateCompStatus
   catHolder.timeseg = timeSeg
   catHolder.computeTime = timeArray
-  return catHolder
+  return catHolder */
 }
 
 /**
@@ -204,47 +205,37 @@ TimeSystem.prototype.prepareDateArrays = async function (EIDinfo, lastComputeIN,
 * @method sourceDTstartTime
 *
 */
-TimeSystem.prototype.sourceDTstartTime = async function (devIN) {
+TimeSystem.prototype.sourceDTstartTime = async function (EIDinfo, devIN) {
   // need to map compute asked for to function that calls API for data
   let timeDevHolder = ''
-  let dateDevice = await this.checkForDataPerDevice(devIN)
+  // pass over to data system to match function for API query
+  /* let systemBundle = {}
+  systemBundle.apiInfo = apiINFO
+  systemBundle.startperiod = this.livedate
+  systemBundle.scienceAsked = this.CNRLscience
+  systemBundle.dtAsked = this.datatypeList
+  systemBundle.deviceList = this.deviceList
+  systemBundle.timeseg = this.timeSegs
+  systemBundle.querytime = this.did.time
+  systemBundle.categories = this.did.categories */
+  let dateDevice = this.liveDataSystem.datatypeQueryMapping()
+  // let dateDevice = await this.checkForDataPerDevice(devIN)
   timeDevHolder = dateDevice[0].lastComputeTime
   return timeDevHolder
 }
 
 /**
 * what data needs to be tidied to update computation?
-* @method updateAverageDates
+* @method updateComputeDateArray
 *
 */
-TimeSystem.prototype.updateAverageDates = function (lastCompTime, liveTime) {
+TimeSystem.prototype.updateComputeDateArray = function (lastCompTime, liveTime) {
   let computeList = []
   const liveDate = liveTime * 1000
   const lastComputeDate = lastCompTime * 1000
   // use time utiity to form array fo dates require
   computeList = this.liveTimeUtil.timeDayArrayBuilder(liveDate, lastComputeDate)
   return computeList
-}
-
-/**
-*  check if entity already has data raw tidy visual
-* @method checkForDataPerDevice
-*
-*/
-TimeSystem.prototype.checkForDataPerDevice = async function (device) {
-  let deviceStatus = {}
-  let dataStatus = []
-  // does any input source data exist?
-  let firstD = await this.liveTestStorage.getFirstData(device).catch(function (err) {
-    console.log(err)
-  })
-  // console.log('firstD')
-  // console.log(firstD)
-  deviceStatus.lastComputeTime = firstD[0].timestamp
-  deviceStatus[device] = false
-  dataStatus.push(deviceStatus)
-
-  return dataStatus
 }
 
 /**

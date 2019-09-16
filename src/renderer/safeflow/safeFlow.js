@@ -11,8 +11,8 @@
 */
 // import SAFEapi from './systems/data/dataprotocols/safenetwork/index.js'
 import DTsystem from './systems/data/dtSystem.js'
-import KBLedger from './cnrl/kbledger.js'
-import CNRLmaster from './cnrl/cnrlMaster.js'
+import KBLedger from './kbl-cnrl/kbledger.js'
+import CNRLmaster from './kbl-cnrl/cnrlMaster.js'
 import TimeUtilities from './systems/timeUtility.js'
 import DataSystem from './systems/data/dataSystem.js'
 import DatadeviceSystem from './systems/data/datadeviceSystem.js'

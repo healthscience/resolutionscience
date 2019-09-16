@@ -9,7 +9,7 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import CNRLmaster from '../../cnrl/cnrlMaster.js'
+import CNRLmaster from '../../kbl-cnrl/cnrlMaster.js'
 import SumSystem from './sumSystem.js'
 import AverageSystem from './averageSystem.js'
 import RecoveryHeartrate from './wasm/recovery-heartrate.js'

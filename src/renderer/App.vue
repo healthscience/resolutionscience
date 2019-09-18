@@ -25,4 +25,9 @@
   font-size: 1.4em;
   padding-left: 8px;
 }
+
+.router-link-active {
+  background-color:#8ec16d;
+  color: purple;
+}
 </style>

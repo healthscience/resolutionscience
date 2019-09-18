@@ -1,6 +1,7 @@
 <template>
   <div id="device-list">
-  <header>DEVICES</header>
+  <header>DEVICES LIVE</header>
+  <ul>
     <li v-for="dev in devicesLive" class="device-item">
       <header>{{ dev.device_name }} <a href="" @click.prevent="viewDeviceDetail(dev)" id="view-details">View details</a> </header>
       <div id="device-details" v-if="dev.active">
@@ -10,7 +11,7 @@
             Mac: {{}}
           </div>
           <div id="hardware-firmware" class="device-detail-item" >
-            Fimrware Hash {{}} <a id="#" href="">IPS location</a>
+            Fimrware Hash {{}} <a id="#" href="">location</a>
           </div>
         </div>
         <div id="sensors" class="device-detail-item">
@@ -40,6 +41,7 @@
         <!--<a href="" id="" @click.prevent="" v-bind:class="{ 'active': dev.active}">{{ dev.device_name }}</a>-->
       </div>
     </li>
+  </ul>
   </div>
 </template>
 
@@ -80,8 +82,14 @@
   margin: 1em;
 }
 
+.device-item header {
+  font-size: 1.4em;
+}
+
 .device-item {
   display: block;
+  border: 1px solid lightgrey;
+  margin: 5px;
 }
 
 .device-detail-item {

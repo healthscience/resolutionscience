@@ -1,7 +1,8 @@
 <template>
   <div id="devices-sensors-data">
     <h1>Devices, Sensors & Data</h1>
-    <div id="help-data">
+    <device-list></device-list>
+    <div id="device-data">
       Connect to device data stores and verify account ownership.
     </div>
     <div id="device-data-status">
@@ -46,16 +47,21 @@
           </div>
         </li>
         <li class="datastore-item">
-          <header>Genetics</header>
-          <div id="openhumans-api">
-            <header>OpenhumansAPI</header>
-            <header>Verify token</header>
-          </div>
-        </li>
-        <li class="datastore-item">
           <header>SAFEnetwork</header>
           <div id="safe-api">
             <header>D-storage API</header>
+            <header>Self Verify</header>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div id="device-otherdata-status">
+      <header>OTHER STORES</header>
+      <ul>
+        <li class="datastore-item">
+          <header>Genetics</header>
+          <div id="openhumans-api">
+            <header>OpenhumansAPI</header>
             <header>Verify token</header>
           </div>
         </li>
@@ -88,7 +94,6 @@
           </div>
         </li>
       </ul>
-      <device-list></device-list>
     </div>
   </div>
 </template>
@@ -149,6 +154,9 @@
 </script>
 
 <style>
+#device-data {
+  margin-top: 20px;
+}
 #devices-sensors-data {
   margin: 2em;
 }

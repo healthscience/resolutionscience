@@ -95,8 +95,8 @@ ChartSystem.prototype.chartColors = function (datatypeItem) {
     colorHolder.borderColor = '#ea1212'
   } else if (datatypeItem.cnrl === 'cnrl-3339949442') {
     colorHolder.datatype = 'SDS_P2'
-    colorHolder.backgroundColor = '#ed7d7d'
-    colorHolder.borderColor = '#ea1212'
+    colorHolder.backgroundColor = '#080e4d'
+    colorHolder.borderColor = '#080e4d'
   } else if (datatypeItem.cnrl === 'cnrl-3339949443') {
     colorHolder.datatype = 'SDS_P1'
     colorHolder.backgroundColor = '#ed7d7d'
@@ -275,7 +275,7 @@ ChartSystem.prototype.StatschartColors = function (datatypeItem) {
   } else if (datatypeItem.cnrl === 'cnrl-8856388924') {
     colorHolder.datatype = 'cnrl-8856388924'
     colorHolder.backgroundColor = '#203487'
-    colorHolder.borderColor = '#050d2d'
+    colorHolder.borderColor = '#203487'
   } else if (datatypeItem.cnrl === 'cnrl-8856389322') {
     colorHolder.datatype = 'cnrl-8856389322'
     colorHolder.backgroundColor = '#444b57'

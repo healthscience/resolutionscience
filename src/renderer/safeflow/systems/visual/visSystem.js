@@ -59,12 +59,15 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
     }
     // prepare title, y axis text and scaling
     let titleOut = 'Device ' + eInfo.devices[0].device_name
-    let scaling = this.yAxisScaleSet(chartDataH)
-    let liveChartOptions = this.liveChartOptions.prepareChartOptions(titleOut, eInfo.datatypes, scaling)
     // package all the info. to pass to vue
     chartData.prepared = this.liveChartSystem.prepareVueChartJS(chartDataH.chart)
+    console.log('prepare')
+    console.log(chartData.prepared)
     // prepare chart options
+    let liveChartOptions = this.liveChartOptions.prepareChartOptions(titleOut, eInfo.datatypes, chartData.prepared.scale)
+    // prepared the labels
     let setTimeTools = chartData.prepared.labels
+    // update for annotation values needing set
     let chartOptionsSet = this.liveChartOptions.updateChartoptions(setTimeTools, liveChartOptions) // this.liveChartSystem.getterChartOptions()
     chartData.options = chartOptionsSet
     const chartHolder = {}
@@ -154,19 +157,6 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
     this.visSystemData = chartHolder
   }
   return this.visSystemData
-}
-
-/**
-*
-* @method yAxisScaleSet
-*
-*/
-VisSystem.prototype.yAxisScaleSet = function (data) {
-  console.log('set scale for y axis')
-  console.log(data)
-  // find avg. max and set 1.25 of this value?
-  let maxLevel = 20
-  return maxLevel
 }
 
 /**

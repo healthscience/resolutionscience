@@ -9,11 +9,11 @@
     <learn-Action></learn-Action>
     <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
     <ul>
-      <expfuturevisual :entityCNRL="{}" :dataFcollection="{}" :optionsF="{}" :displayTimeF="{}"></expfuturevisual>
-      <expvisual :entityCNRL="{}" :datacollection="{}" :options="{}" :displayTime="{}"></expvisual>
+      <!-- <expfuturevisual :entityCNRL="{}" :dataFcollection="{}" :optionsF="{}" :displayTimeF="{}"></expfuturevisual>
+      <expvisual :entityCNRL="{}" :datacollection="{}" :options="{}" :displayTime="{}"></expvisual> -->
       <li v-for="(vEnt, index) in makeKbundles">
-        <!-- <expfuturevisual :entityCNRL="vEnt.cnrl" :dataFcollection="{}" :optionsF="{}" :displayTimeF="{}"></expfuturevisual>
-        <expvisual :entityCNRL="vEnt.cnrl" :datacollection="vEnt.liveDataCollection" :options="vEnt.liveOptions" :displayTime="vEnt.liveTimeV"></expvisual>-->
+        <!-- <expfuturevisual :entityCNRL="vEnt.cnrl" :dataFcollection="{}" :optionsF="{}" :displayTimeF="{}"></expfuturevisual> -->
+        <expvisual :entityCNRL="vEnt.cnrl" :datacollection="vEnt.liveDataCollection" :options="vEnt.liveOptions" :displayTime="vEnt.liveTimeV"></expvisual>
       </li>
     </ul>
   </div>

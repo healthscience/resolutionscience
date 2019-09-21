@@ -33,7 +33,7 @@
           {{ displayTime }}
         </div>
         <div id="calendar-selector">
-          <date-picker v-model="value" :lang="lang"></date-picker>
+          <date-picker v-model="value" @change="calendarSelect($event)" :lang="lang"></date-picker>
         </div>
       </div>
     </div>
@@ -210,6 +210,15 @@
       setTimeData (seg) {
         // back and forward and time
         this.$emit('updateLearn', seg)
+      },
+      calendarSelect () {
+        console.log('calendar select')
+        console.log(this.value)
+        // convert to correct time format and update KBundle and build new visStyle
+        let bTime = {}
+        bTime.selectDate = this.value
+        bTime.text = 'selectd'
+        this.$emit('updateLearn', bTime)
       }
     }
   }

@@ -293,6 +293,8 @@
         }
       },
       async navTimeLearn (uSeg) {
+        console.log('time rlearn')
+        console.log(uSeg)
         let updateTbundle = {}
         // what KID is live?
         let bundList = this.$store.getters.startBundlesList
@@ -302,7 +304,14 @@
           }
         }
         let timeAsk = []
-        timeAsk.push(uSeg.text)
+        // did UI give nav segment or date from calendar?
+        if (uSeg.text === 'selectd') {
+          // convert time to correct format
+          timeAsk.push(uSeg.selectDate)
+        } else {
+          // time setTimeSegments
+          timeAsk.push(uSeg.text)
+        }
         updateTbundle.time.timeseg = this.liveData.timeLive
         updateTbundle.time.timevis = timeAsk // timeAsk
         updateTbundle.time.startperiod = 'relative'
@@ -318,7 +327,6 @@
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions
         this.kContext = visDataBack.kContext
-        // this.liveTimeV = visDataBack.kContext.liveTime
         this.liveTimeV = visDataBack.displayTime
       },
       async makeLiveKnowledge (lBund) {
@@ -504,12 +512,15 @@
         this.liveNavTime = this.timeNav('datatime-index')
       },
       addToExperiment (exB) {
+        console.log('add to expet')
         this.selectedExperiment = exB.target.value
       },
       experADD (expA) {
         // need to keep permanent store of experiments to Ecomponents linked (save, delete, update also)
+        console.log('add save to dashboard')
         const localthis = this
-        this.$emit('experimentMap', this.selectedExperiment)
+        this.saveMappingExpKB(this.selectedExperiment)
+        // this.$emit('experimentMap', this.selectedExperiment)
         setTimeout(function () {
           localthis.saveStatusEK.active = false
         }, 3000) // hide the message after 3 seconds

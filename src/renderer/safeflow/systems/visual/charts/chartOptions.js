@@ -33,39 +33,7 @@ util.inherits(ChartOptions, events.EventEmitter)
 */
 ChartOptions.prototype.prepareChartOptions = function (title, datatypes, scale) {
   var localthis = this
-  // prepare y axis dependent up how many datatypes plot
-  let yAxisPrep = []
-  let leftorrigh = ''
-  let idAxis = ''
-  let counter = 0
-  for (let dti of datatypes) {
-    console.log(dti.text)
-    if (counter === 0) {
-      leftorrigh = 'left'
-      idAxis = dti.text // 'temperature' // 'bpm'
-    } else {
-      leftorrigh = 'right'
-      idAxis = dti.text // 'SDS_P1' // 'steps'
-    }
-    counter++
-    let yItem = {
-      type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-      display: true,
-      position: leftorrigh,
-      id: idAxis,
-      ticks: {
-        beginAtZero: true,
-        steps: 10,
-        stepValue: 5,
-        max: scale
-      },
-      scaleLabel: {
-        display: true,
-        labelString: dti.text
-      }
-    }
-    yAxisPrep.push(yItem)
-  }
+  let yAxisOptions = this.prepareYoptions(datatypes, scale)
   let options = {
     responsive: true,
     spanGaps: true,
@@ -94,37 +62,7 @@ ChartOptions.prototype.prepareChartOptions = function (title, datatypes, scale) 
           reverse: true
         }
       }],
-      yAxes: yAxisPrep /* [{
-        type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-        display: true,
-        position: 'left',
-        id: 'bpm',
-        ticks: {
-          beginAtZero: true,
-          steps: 10,
-          stepValue: 5,
-          max: 180
-        },
-        scaleLabel: {
-          display: true,
-          labelString: 'Average BPM'
-        }
-      }, {
-        type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-        display: true,
-        position: 'right',
-        id: 'steps',
-        // grid line settings
-        gridLines: {
-          drawOnChartArea: false // only want the grid lines for one axis to show up
-        },
-        ticks: {
-          beginAtZero: true,
-          steps: 10,
-          stepValue: 5,
-          max: 180
-        }
-      }] */ // yAxisPrep
+      yAxes: yAxisOptions
     },
     annotation: {
       events: ['click'],
@@ -203,6 +141,48 @@ ChartOptions.prototype.prepareChartOptions = function (title, datatypes, scale) 
     }
   }
   return options
+}
+
+/**
+* prepare the y axis options
+* @method prepareYoptions
+*
+*/
+ChartOptions.prototype.prepareYoptions = function (datatypes, scale) {
+  // prepare y axis dependent up how many datatypes plot
+  let yAxisPrep = []
+  let leftorrigh = ''
+  let idAxis = ''
+  let counter = 0
+  for (let dti of datatypes) {
+    console.log(dti.text)
+    if (counter === 0) {
+      leftorrigh = 'left'
+      idAxis = dti.text // 'temperature' // 'bpm'
+    } else {
+      leftorrigh = 'right'
+      idAxis = dti.text // 'SDS_P1' // 'steps'
+    }
+    counter++
+    let yItem = {
+      type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+      display: true,
+      position: leftorrigh,
+      id: idAxis,
+      ticks: {
+        beginAtZero: true,
+        steps: 10,
+        stepValue: 5,
+        max: scale
+      },
+      scaleLabel: {
+        display: true,
+        labelString: dti.text
+      }
+    }
+    yAxisPrep.push(yItem)
+  }
+  return yAxisPrep
 }
 
 /**

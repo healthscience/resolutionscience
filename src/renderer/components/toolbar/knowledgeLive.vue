@@ -307,14 +307,15 @@
         // did UI give nav segment or date from calendar?
         if (uSeg.text === 'selectd') {
           // convert time to correct format
-          timeAsk.push(uSeg.selectDate)
+          timeAsk.push('day')
+          updateTbundle.time.startperiod = uSeg.selectDate
         } else {
           // time setTimeSegments
           timeAsk.push(uSeg.text)
+          updateTbundle.time.startperiod = 'relative'
         }
         updateTbundle.time.timeseg = this.liveData.timeLive
-        updateTbundle.time.timevis = timeAsk // timeAsk
-        updateTbundle.time.startperiod = 'relative'
+        updateTbundle.time.timevis = timeAsk
         updateTbundle.time.laststartperiod = this.liveTimeV
         // pass on to learn safeFlow
         this.entityPrepareStatus.active = true

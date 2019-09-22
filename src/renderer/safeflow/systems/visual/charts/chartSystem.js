@@ -149,13 +149,11 @@ ChartSystem.prototype.prepareVueChartJS = function (results) {
       chartItem.type = 'bar'
       chartItem.fillColor = rItems.color.borderColor // 'rgba(220, 220, 220, 2)'
       chartItem.borderWidth = 1
-      // chartItem.borderColor = rItems.color.borderColor
+      chartItem.borderColor = rItems.color.borderColor
       chartItem.backgroundColor = rItems.color.backgroundColor
     }
     chartItem.label = rItems.color.datatype
     chartItem.fill = false
-    console.log('data sets')
-    console.log(rItems.data.datasets)
     let scaling = this.yAxisScaleSet(rItems.data.datasets)
     chartItem.scale = scaling
     chartItem.data = rItems.data.datasets

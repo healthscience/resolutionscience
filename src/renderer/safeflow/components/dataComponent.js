@@ -23,6 +23,8 @@ var DataComponent = function (DID, setIN) {
   this.liveCategoryData = new CategoryDataSystem(setIN)
   this.liveDataSystem = new DataSystem(setIN)
   this.did = DID
+  console.log('did')
+  console.log(this.did)
   this.liveData = []
   this.livedate = 0
   this.timeList = []
@@ -117,7 +119,7 @@ DataComponent.prototype.setCategories = function (ctIN) {
 * @method RawData
 *
 */
-DataComponent.prototype.sourceData = async function (apiINFO) {
+DataComponent.prototype.sourceData = async function (apiINFO, rangeT) {
   // console.log('dataCOMP')
   // console.log(apiINFO)
   this.apiInfoLive = apiINFO
@@ -130,6 +132,10 @@ DataComponent.prototype.sourceData = async function (apiINFO) {
   systemBundle.timeseg = this.timeSegs
   systemBundle.querytime = this.did.time
   systemBundle.categories = this.did.categories
+  // need to check if one day or more or some segment of time is required?
+  // let sourceTimeProfile = this.liveDataSystem.timeProfiling(systemBundle)
+  console.log('time profile')
+  console.log(rangeT)
   let dataRback = await this.liveDataSystem.datatypeQueryMapping(systemBundle)
   this.dataRaw = dataRback
   // is there a categories filter to apply?

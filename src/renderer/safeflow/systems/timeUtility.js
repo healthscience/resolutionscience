@@ -9,9 +9,11 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-const moment = require('moment')
+import { extendMoment } from 'moment-range'
+const Moment = require('moment')
 const util = require('util')
 const events = require('events')
+const moment = extendMoment(Moment)
 
 var TimeUtilities = function (setUP) {
   events.EventEmitter.call(this)
@@ -33,6 +35,8 @@ util.inherits(TimeUtilities, events.EventEmitter)
 */
 TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
   // pass range to get converted from moment format to miillseconds (stnd for safeflow)
+  console.log('tim econertttt')
+  console.log(timeBundle)
   let timeConversion = {}
   let liveStarttime = timeBundle.time.startperiod
   let laststarttime = timeBundle.time.laststartperiod
@@ -42,6 +46,8 @@ TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
   timeConversion.timevis = timeBundle.time.timevis
   let realTimems = moment(timeBundle.realtime).valueOf()
   timeConversion.realtime = Math.round(realTimems / 1000)
+  let startConvertion = moment(timeBundle.time.startperiod).valueOf()
+  timeConversion.startperiod = Math.round(startConvertion / 1000)
   return timeConversion
 }
 
@@ -50,18 +56,18 @@ TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
 * @method computeTimeSegments
 *
 */
-TimeUtilities.prototype.computeTimeSegments = function (tSegs) {
-  let timeConversion = {}
+TimeUtilities.prototype.computeTimeSegments = function (startTime, tSegs) {
+  let timeConversion = 0
   // does a standard time types need converting or range or both?
   for (let ti of tSegs) {
     if (ti === 'SELECT') {
       let rangeMills = this.rangeCovert(ti)
       // console.log(rangeMills)
-      timeConversion.range = rangeMills
+      timeConversion = rangeMills
     } else {
       let timePeriod = {}
-      timePeriod = this.timeSegBuilder(ti)
-      timeConversion.startperiod = timePeriod
+      timePeriod = this.timeSegBuilder(startTime, ti)
+      timeConversion = timePeriod
     }
   }
   return timeConversion
@@ -93,21 +99,27 @@ TimeUtilities.prototype.updateUItime = function (timeUI, time, lastTime) {
 * @method timeSegBuilder
 *
 */
-TimeUtilities.prototype.timeSegBuilder = function (segIN) {
-  let startTime = 0
-  let endTime = 0
-  // when to start this?
-  for (let sg of segIN) {
-    if (sg === 'day') {
-      this.timeArrayBuilder(startTime, endTime)
-    } else if (sg === 'week') {
-
-    } else if (sg === 'month') {
-
-    } else if (sg === 'year') {
-
-    }
+TimeUtilities.prototype.timeSegBuilder = function (timeStart, sg) {
+  console.log('work out end date range')
+  console.log(timeStart)
+  console.log(sg)
+  let timeEnd = 0
+  console.log(sg)
+  if (sg === 'day') {
+    timeEnd = timeStart
+  } else if (sg === 'week') {
+    // add 7 days of ms time to start time
+    timeEnd = timeStart - (7 * 86400)
+  } else if (sg === 'month') {
+    // add 30 days of ms time to start time
+    timeEnd = timeStart - (30 * 86400)
+  } else if (sg === 'year') {
+    // add 365 days of ms time to start time
+    timeEnd = timeStart - (365 * 86400)
   }
+  console.log('range source data days')
+  console.log(timeEnd)
+  return timeEnd
 }
 
 /**
@@ -321,9 +333,8 @@ TimeUtilities.prototype.timeDayArrayBuilder = function (liveTime, lastTime) {
 *
 */
 TimeUtilities.prototype.longDataArray = function (calInfo) {
-  // build date array for year
-  // console.log('longdata array')
-  // console.log(calInfo)
+  console.log('longdata array')
+  console.log(calInfo)
   let calendarTimeList = []
   let yearArray = calInfo.calendar
   this.dayCounter = 0
@@ -334,9 +345,14 @@ TimeUtilities.prototype.longDataArray = function (calInfo) {
     let millsSecDay = 86400000
     this.dayCounter = scMonth.longDateformat
     if (calInfo.currentML === this.dayCounter) {
+      console.log('weuqalll')
+      console.log(accDaily)
       // last month, stop at current live days
       while (accDaily < (calInfo.currentday - 2)) {
+        console.log('equal two')
+        console.log(accDaily)
         this.dayCounter = this.dayCounter + millsSecDay
+        console.log(this.dayCounter)
         accDaily++
         if (this.dayCounter > calInfo.uptoDateTime) {
           calendarTimeList.push(this.dayCounter)
@@ -344,6 +360,8 @@ TimeUtilities.prototype.longDataArray = function (calInfo) {
       }
     } else {
       while (accDaily < daysInmonth) {
+        console.log('less days moth')
+        console.log(accDaily)
         this.dayCounter = this.dayCounter + millsSecDay
         accDaily++
         calendarTimeList.push(this.dayCounter)

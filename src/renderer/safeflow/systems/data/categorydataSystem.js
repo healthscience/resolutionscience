@@ -33,8 +33,8 @@ util.inherits(CategoryDataSystem, events.EventEmitter)
 *
 */
 CategoryDataSystem.prototype.categorySorter = function (dataASK, rawData) {
-  // console.log('category sorter start')
-  // console.log(dataASK)
+  console.log('category sorter start')
+  console.log(dataASK)
   // console.log(rawData)
   let catHolder = {}
   // is it source or derive categorisation?

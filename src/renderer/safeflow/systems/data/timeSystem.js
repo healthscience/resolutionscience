@@ -10,12 +10,15 @@
 * @version    $Id$
 */
 
+import { extendMoment } from 'moment-range'
 import TimeUtilities from '../timeUtility.js'
 import CNRLmaster from '../../kbl-cnrl/cnrlMaster.js'
 import DataSystem from '../data/dataSystem.js'
 import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
 const util = require('util')
 const events = require('events')
+const Moment = require('moment')
+const moment = extendMoment(Moment)
 
 var TimeSystem = function (setIN) {
   events.EventEmitter.call(this)
@@ -40,6 +43,35 @@ TimeSystem.prototype.discoverTimeStatus = async function (EIDinfo, compInfo, raw
   // establish start date or last compute date, deal with segmentation if required.
   let timeStart = await this.updatedDTCStatus(EIDinfo, compInfo, rawIN)
   return timeStart
+}
+
+/**
+*  assess what range of data day / range are required?
+* @method sourceTimeRange
+*
+*/
+TimeSystem.prototype.sourceTimeRange = function (startTime, TimeSeg) {
+  console.log('source range input')
+  console.log(startTime)
+  console.log(TimeSeg)
+  let beginD = this.assessSourceRange(startTime, TimeSeg)
+  console.log('end D')
+  console.log(beginD)
+  let timeSourceRange = this.momentRangeBuild(beginD, startTime) // this.updateComputeDateArray(beginD, startTime)
+  console.log('back from buid time array')
+  console.log(timeSourceRange)
+  return timeSourceRange
+}
+
+/**
+* single day or more data required?
+* @method assessSourceRange
+*
+*/
+TimeSystem.prototype.assessSourceRange = function (startT, timeSeg) {
+  console.log('assess source Range build ')
+  let endD = this.liveTimeUtil.computeTimeSegments(startT, timeSeg)
+  return endD
 }
 
 /**
@@ -69,7 +101,7 @@ TimeSystem.prototype.updatedDTCStatus = async function (EIDinfo, compInfo, rawIN
         if (tsega !== undefined || tsega.length > 0) {
           if (tsega === 'day') {
             lastComputetime = this.timeOrderLast(lastDataItem)
-            let catStatus2 = await this.assessCompute(EIDinfo, lastComputetime, liveTime, devMac, 'day')// await this.prepareDateArrays(EIDinfo, lastComputetime, devMac, 'day')
+            let catStatus2 = await this.assessCompute(EIDinfo, lastComputetime, liveTime, devMac, 'day')
             let computeOngoing = {}
             if (catStatus2 === 'on-going') {
               // map compute to data source API query
@@ -89,12 +121,18 @@ TimeSystem.prototype.updatedDTCStatus = async function (EIDinfo, compInfo, rawIN
             }
             statusHolder[liveTime][devMac][dtl.cnrl][tsega] = computeOngoing
           }
-          /* if (tsega === 'week') {
-            lastComputetime = tsega.week.slice(-1)
-            let catStatus3 = await this.prepareDateArrays(EIDinfo, lastComputetime, dev, 'week')
+          if (tsega === 'week') {
+            console.log('week time period')
+            let computeOngoing = {}
+            // convert to array of single days and 'add together those data sets
+            let catStatus3 = await this.assessCompute(EIDinfo, lastComputetime, liveTime, devMac, 'week')
+            computeOngoing.lastComputeTime = catStatus3.firstdate
+            computeOngoing.status = catStatus3.computestatus
+            computeOngoing.timeseg = 'week'
+            computeOngoing.computeTime = this.assessOngoing(EIDinfo.cid, catStatus3.firstdate, liveTime)
             statusHolder[liveTime][devMac][dtl.cnrl][tsega] = catStatus3
           }
-          if (tsega === 'month') {
+          /* if (tsega === 'month') {
             lastComputetime = tsega.week.slice(-1)
             let catStatus4 = await this.prepareDateArrays(EIDinfo, lastComputetime, dev, 'month')
             statusHolder[liveTime][devMac][dtl.cnrl][tsega] = catStatus4
@@ -133,11 +171,6 @@ TimeSystem.prototype.timeOrderLast = function (dataAIN) {
 *
 */
 TimeSystem.prototype.assessCompute = async function (EIDinfo, lastTime, liveTime, device, timeseg) {
-  console.log('assess copute time sytem')
-  console.log(EIDinfo)
-  console.log(lastTime)
-  console.log(device)
-  console.log(timeseg)
   let computeCheck = {}
   // first time compute? Or not?
   if (lastTime === 0) {
@@ -209,19 +242,27 @@ TimeSystem.prototype.sourceDTstartTime = async function (EIDinfo, devIN) {
   // need to map compute asked for to function that calls API for data
   let timeDevHolder = ''
   // pass over to data system to match function for API query
-  /* let systemBundle = {}
-  systemBundle.apiInfo = apiINFO
-  systemBundle.startperiod = this.livedate
-  systemBundle.scienceAsked = this.CNRLscience
-  systemBundle.dtAsked = this.datatypeList
-  systemBundle.deviceList = this.deviceList
-  systemBundle.timeseg = this.timeSegs
-  systemBundle.querytime = this.did.time
-  systemBundle.categories = this.did.categories */
   let dateDevice = this.liveDataSystem.datatypeQueryMapping()
   // let dateDevice = await this.checkForDataPerDevice(devIN)
   timeDevHolder = dateDevice[0].lastComputeTime
   return timeDevHolder
+}
+
+/**
+* use moment range to build time array
+* @method momentRangeBuild
+*
+*/
+TimeSystem.prototype.momentRangeBuild = function (lastCompTime, liveTime) {
+  console.log('range build')
+  console.log(lastCompTime)
+  console.log(liveTime)
+  let startTime = moment((lastCompTime * 1000)).valueOf()
+  let endTime = moment((liveTime * 1000)).valueOf()
+  let rangeBuild = moment.range(startTime, endTime)
+  console.log('momment raange does teh work')
+  console.log(rangeBuild)
+  console.log(Array.from(rangeBuild.by('day')))
 }
 
 /**
@@ -230,30 +271,15 @@ TimeSystem.prototype.sourceDTstartTime = async function (EIDinfo, devIN) {
 *
 */
 TimeSystem.prototype.updateComputeDateArray = function (lastCompTime, liveTime) {
+  console.log('build time array')
+  console.log(lastCompTime)
+  console.log(liveTime)
   let computeList = []
   const liveDate = liveTime * 1000
   const lastComputeDate = lastCompTime * 1000
   // use time utiity to form array fo dates require
   computeList = this.liveTimeUtil.timeDayArrayBuilder(liveDate, lastComputeDate)
   return computeList
-}
-
-/**
-* assess the segments required and put in place time formatting
-* @method convertSeg
-*
-*/
-TimeSystem.prototype.convertSeg = function (tSeg) {
-  let segMStime = {}
-  for (let ts of tSeg) {
-    if (ts === 'week' || ts === 'month' || ts === 'year') {
-      segMStime.seg = true
-    }
-    if (ts === 'select') {
-      segMStime.range = true
-    }
-  }
-  return segMStime
 }
 
 export default TimeSystem

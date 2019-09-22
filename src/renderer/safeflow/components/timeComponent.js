@@ -37,6 +37,21 @@ TimeComponent.prototype.setStartTime = function (startDate) {
 }
 
 /**
+*  what time segement is required?
+* @method timeProfiling
+*
+*/
+TimeComponent.prototype.timeProfiling = function () {
+  console.log('timeprofile')
+  console.log(this.did)
+  let startperiod = this.did.time.startperiod
+  let timeseg = this.did.time.timeseg
+  // as time system to assess the range of data days required?
+  let timeSource = this.liveTimeSystem.sourceTimeRange(startperiod, timeseg)
+  return timeSource
+}
+
+/**
 *  discover the start end range times for each data type selected
 * @method startTimeSystem
 *

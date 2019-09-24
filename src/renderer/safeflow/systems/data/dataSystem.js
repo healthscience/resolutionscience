@@ -122,56 +122,6 @@ DataSystem.prototype.getLiveDatatypes = function (dtIN) {
 }
 
 /**
-*  mapping datatypes to  API source
-* @method datatypeQueryMapping
-*
-*/
-DataSystem.prototype.datatypeQueryMapping = async function (systemBundle) {
-  console.log('datatypeQueryMapping')
-  console.log(systemBundle)
-  let rawHolder = {}
-  rawHolder[systemBundle.startperiod] = {}
-  // loop over the each devices API data source info.
-  for (let devI of systemBundle.deviceList) {
-    rawHolder[systemBundle.startperiod][devI] = {}
-    // first is the data from the PAST or FUTURE ie simulated?
-    if (systemBundle.startperiod === 'simulateData') {
-      // need whole new system for product future data
-      // let futureData = this.this.liveSimulatedData.()
-    } else {
-      for (let dtItem of systemBundle.apiInfo[devI].apiquery) {
-        if (dtItem.api === 'computedata/<publickey>/<token>/<queryTime>/<deviceID>/') {
-          // console.log('compute data query')
-          let sourcerawData = await this.getRawData(devI, systemBundle.startperiod)
-          // let filterColumn = this.filterDataType(dtItem, sourcerawData)
-          let dayHolder = {}
-          dayHolder.day = sourcerawData
-          rawHolder[systemBundle.startperiod][devI][dtItem.cnrl] = dayHolder
-        } else if (dtItem.api === 'luftdatenGet/<publickey>/<token>/<queryTime>/<deviceID>/') {
-          // console.log('air quality data query')
-          let AirsourcerawData = await this.getAirqualityData(devI, systemBundle.startperiod)
-          console.log('air qua raw')
-          console.log(AirsourcerawData)
-          let filterColumnAQ = this.liveFilterData.filterDataTypeSub(dtItem, AirsourcerawData)
-          let dayAQHolder = {}
-          dayAQHolder.day = filterColumnAQ
-          rawHolder[systemBundle.startperiod][devI][dtItem.cnrl] = dayAQHolder
-        } else if (dtItem.api === 'sum/<publickey>/<token>/<queryTime>/<deviceID>/') {
-          // console.log('sum data query')
-          let SumsourcerawData = await this.getRawSumData(systemBundle)
-          rawHolder[systemBundle.startperiod] = SumsourcerawData
-        } else if (dtItem.api === 'average/<publickey>/<token>/<queryTime>/<deviceID>/') {
-          // console.log('average data query')
-          let AvgsourcerawData = await this.getRawAverageData(systemBundle)
-          rawHolder[systemBundle.startperiod] = AvgsourcerawData
-        }
-      }
-    }
-  }
-  return rawHolder
-}
-
-/**
 *  check if entity already has data raw tidy visual
 * @method checkForDataPerDevice
 *
@@ -190,6 +140,51 @@ DataSystem.prototype.checkForDataPerDevice = async function (device) {
   dataStatus.push(deviceStatus)
 
   return dataStatus */
+}
+
+/**
+*  mapping datatypes to  API source
+* @method datatypeQueryMapping
+*
+*/
+DataSystem.prototype.datatypeQueryMapping = async function (systemBundle, time) {
+  let rawHolder = {}
+  // loop over the each devices API data source info.
+  for (let devI of systemBundle.deviceList) {
+    rawHolder[devI] = {}
+    // first is the data from the PAST or FUTURE ie simulated?
+    if (systemBundle.startperiod === 'simulateData') {
+      // need whole new system for product future data
+      // let futureData = this.this.liveSimulatedData.()
+    } else {
+      for (let dtItem of systemBundle.apiInfo[devI].apiquery) {
+        if (dtItem.api === 'computedata/<publickey>/<token>/<queryTime>/<deviceID>/') {
+          let sourcerawData = await this.getRawData(devI, time)
+          let dayHolder = {}
+          dayHolder.day = sourcerawData
+          rawHolder[devI][dtItem.cnrl] = dayHolder
+        } else if (dtItem.api === 'luftdatenGet/<publickey>/<token>/<queryTime>/<deviceID>/') {
+          // console.log('air quality data query')
+          let AirsourcerawData = await this.getAirqualityData(devI, time)
+          console.log('air qua raw')
+          console.log(AirsourcerawData)
+          let filterColumnAQ = this.liveFilterData.filterDataTypeSub(dtItem, AirsourcerawData)
+          let dayAQHolder = {}
+          dayAQHolder.day = filterColumnAQ
+          rawHolder[devI][dtItem.cnrl] = dayAQHolder
+        } else if (dtItem.api === 'sum/<publickey>/<token>/<queryTime>/<deviceID>/') {
+          // console.log('sum data query')
+          let SumsourcerawData = await this.getRawSumData(systemBundle)
+          rawHolder = SumsourcerawData
+        } else if (dtItem.api === 'average/<publickey>/<token>/<queryTime>/<deviceID>/') {
+          // console.log('average data query')
+          let AvgsourcerawData = await this.getRawAverageData(systemBundle)
+          rawHolder = AvgsourcerawData
+        }
+      }
+    }
+  }
+  return rawHolder
 }
 
 /**

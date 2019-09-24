@@ -32,34 +32,31 @@ util.inherits(TidyDataSystem, events.EventEmitter)
 * @method tidyRawData
 *
 */
-TidyDataSystem.prototype.tidyRawData = function (bundleIN, dataRaw) {
+TidyDataSystem.prototype.tidyRawData = function (bundleIN, dataRaw, time) {
   // first check if primary data source or derived (if derived dt source will be tidy on compute cycle)
-  // console.log('tidy raw start')
-  // console.log(bundleIN)
-  // console.log(dataRaw)
   let tidyHolder = {}
-  let startTime = bundleIN.startperiod
   // loop over devices dts and tidy as needed
-  tidyHolder[startTime] = {}
+  tidyHolder = {}
   let tidyBack = []
   let dInfo = []
   for (let dev of bundleIN.deviceList) {
-    tidyHolder[startTime][dev] = []
+    tidyHolder[dev] = []
     dInfo = bundleIN.apiInfo[dev].tidyList
     if (dInfo.length !== 0) {
       // loop over per time segment
       for (let ts of bundleIN.timeseg) {
+        console.log(ts)
         let dtTidy = dInfo
-        let rawDataarray = dataRaw[startTime][dev]
+        let rawDataarray = dataRaw[dev]
         let dtMatch = []
         if (bundleIN.primary !== 'derived') {
           dtMatch = bundleIN.dtAsked
-          tidyBack = this.tidyFilter(dtTidy, dtMatch, ts, rawDataarray)
+          tidyBack = this.tidyFilter(dtTidy, dtMatch, 'day', rawDataarray)
         } else {
           dtMatch = bundleIN.apiInfo[dev].sourceDTs
-          tidyBack = this.tidyFilterRemove(dtTidy, dtMatch, ts, rawDataarray)
+          tidyBack = this.tidyFilterRemove(dtTidy, dtMatch, 'day', rawDataarray)
         }
-        tidyHolder[startTime][dev] = tidyBack
+        tidyHolder[dev] = tidyBack
       }
     } else {
       // console.log('NOtidy required')
@@ -76,11 +73,6 @@ TidyDataSystem.prototype.tidyRawData = function (bundleIN, dataRaw) {
 */
 TidyDataSystem.prototype.tidyFilter = function (tidyInfo, dtList, ts, dataRaw) {
   // build object structureReturn
-  // console.log('dFilter start')
-  // console.log(tidyInfo)
-  // console.log(dtList)
-  // console.log(ts)
-  // console.log(dataRaw)
   let tidyHolderF = {}
   const manFilter = (e, tItem) => {
     let filterMat = null

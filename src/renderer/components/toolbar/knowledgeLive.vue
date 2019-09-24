@@ -230,8 +230,9 @@
         liveBundle.datatypes = this.liveData.datatypesLive
         liveBundle.categories = categoryLive
         liveBundle.science = this.liveData.scienceLive
-        // liveBundle.realtime = timeBundle
         liveBundle.time = timeBundle
+        console.log('ui time input')
+        console.log(liveBundle.time)
         liveBundle.resolution = this.liveData.resolutionLive
         liveBundle.visualisation = ['vis-sc-1']
         // create unquie ID for kbundle and use to save
@@ -242,11 +243,7 @@
         this.$store.dispatch('actionStartKBundlesItem', liveBundle)
         // set message to UI IN-progress
         this.entityPrepareStatus.active = true
-        console.log('knowleget box bundle')
-        console.log(liveBundle)
         let visDataBack = await this.learnStart(liveBundle)
-        console.log('data back')
-        console.log(visDataBack)
         this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions
@@ -263,7 +260,6 @@
         updateTbundle.timeseg = this.liveData.timeLive
         updateTbundle.startperiod = startPeriodTime
         updateTbundle.timevis = this.liveData.timeLive
-        // this.timeStateLast = startPeriodTime
         return updateTbundle
       },
       saveLearnHistory (lBundle) {
@@ -314,14 +310,14 @@
           timeAsk.push(uSeg.text)
           updateTbundle.time.startperiod = 'relative'
         }
+        console.log('time ask fromUI')
+        console.log(timeAsk)
         updateTbundle.time.timeseg = this.liveData.timeLive
         updateTbundle.time.timevis = timeAsk
         updateTbundle.time.laststartperiod = this.liveTimeV
         // pass on to learn safeFlow
         this.entityPrepareStatus.active = true
         let visDataBack = await this.learnStart(updateTbundle)
-        console.log('vis data back')
-        console.log(visDataBack)
         // remove compute in progress Message
         this.$store.dispatch('actionstopComputeStatus', updateTbundle.kbid)
         this.entityPrepareStatus.active = false
@@ -346,10 +342,7 @@
         this.entityPrepareStatus.active = true
         // set the active knowledge boxes
         this.setKnowledgtBox(lBund)
-        // let updatelBund =
         let visDataBack = await this.learnStart(lBund)
-        console.log('data back')
-        console.log(visDataBack)
         // remove compute in progress Message
         this.$store.dispatch('actionstopComputeStatus', lBund.kbid)
         this.entityPrepareStatus.active = false
@@ -361,8 +354,6 @@
       setKnowledgtBox (liveKbid) {
         // first clear existing knowledge in box
         this.clearKnowledgeBox()
-        console.log('kbid setting live K box')
-        console.log(liveKbid)
         this.languageStatus(liveKbid.language)
         this.deviceStatus(liveKbid.startStatus)
         for (let dI of liveKbid.devices) {
@@ -372,8 +363,6 @@
           this.datatypeStatus(dtI)
         }
         this.scienceStatus(liveKbid.science)
-        console.log('time')
-        console.log(liveKbid.time)
         let timeBuild = {}
         timeBuild.active = true
         timeBuild.text = liveKbid.time.timeseg[0]

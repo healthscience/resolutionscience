@@ -32,13 +32,13 @@ util.inherits(FilterDataSystem, events.EventEmitter)
 * @method dtFilterController
 *
 */
-FilterDataSystem.prototype.dtFilterController = function (systemBundle, liveData) {
+FilterDataSystem.prototype.dtFilterController = function (systemBundle, liveData, time) {
   let filterHolder = {}
   let filterType = ''
-  filterHolder[systemBundle.startperiod] = {}
+  filterHolder = {}
   // loop over the each devices API data source info.
   for (let devI of systemBundle.deviceList) {
-    filterHolder[systemBundle.startperiod][devI] = {}
+    filterHolder[devI] = {}
     // is the filter on derived source(s)?
     let dtSourceR = []
     if (systemBundle.primary === 'derived') {
@@ -49,12 +49,13 @@ FilterDataSystem.prototype.dtFilterController = function (systemBundle, liveData
       filterType = 'primary'
     }
     for (let dtItem of dtSourceR) {
-      filterHolder[systemBundle.startperiod][devI][dtItem.cnrl] = {}
+      filterHolder[devI][dtItem.cnrl] = {}
       for (let ts of systemBundle.timeseg) {
-        let sourcerawData = liveData[systemBundle.startperiod][devI][dtItem.cnrl][ts]
-        let filterColumn = this.filterDataType(filterType, dtItem, sourcerawData)
+        console.log(ts)
+        let sourcerawData = liveData[devI][dtItem.cnrl]['day']
+        let filterColumn = this.filterDataType(filterType, dtItem, sourcerawData, time)
         if (filterType === 'primary') {
-          filterHolder[systemBundle.startperiod][devI][dtItem.cnrl][ts] = filterColumn
+          filterHolder[devI][dtItem.cnrl]['day'] = filterColumn
         } else {
           filterHolder = filterColumn
         }
@@ -69,7 +70,7 @@ FilterDataSystem.prototype.dtFilterController = function (systemBundle, liveData
 * @method filterDataType
 *
 */
-FilterDataSystem.prototype.filterDataType = function (fTypeIN, sourceDT, arrayIN) {
+FilterDataSystem.prototype.filterDataType = function (fTypeIN, sourceDT, arrayIN, time) {
   let singleArray = []
   if (fTypeIN !== 'derived') {
     for (let sing of arrayIN) {

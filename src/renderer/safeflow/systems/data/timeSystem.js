@@ -51,16 +51,35 @@ TimeSystem.prototype.discoverTimeStatus = async function (EIDinfo, compInfo, raw
 *
 */
 TimeSystem.prototype.sourceTimeRange = function (startTime, TimeSeg) {
-  console.log('source range input')
+  console.log('range profile')
   console.log(startTime)
   console.log(TimeSeg)
   let beginD = this.assessSourceRange(startTime, TimeSeg)
-  console.log('end D')
-  console.log(beginD)
-  let timeSourceRange = this.momentRangeBuild(beginD, startTime) // this.updateComputeDateArray(beginD, startTime)
-  console.log('back from buid time array')
-  console.log(timeSourceRange)
-  return timeSourceRange
+  let timeSourceRange = this.momentRangeBuild(beginD, startTime)
+  let rangeFormat = this.formatTimeSafeFlow(timeSourceRange)
+  return rangeFormat
+}
+
+/**
+*  select data for UI
+* @method formatTimeSafeFlow
+*
+*/
+TimeSystem.prototype.formatTimeSafeFlow = function (liveDates) {
+  console.log('time fsafeflow')
+  console.log(liveDates)
+  let timeLive = []
+  for (let ld of liveDates) {
+    let tFormat = moment(ld).valueOf()
+    console.log(tFormat)
+    let shortFormat = tFormat / 1000
+    console.log('shrt')
+    console.log(shortFormat)
+    timeLive.push(shortFormat)
+  }
+  console.log('end')
+  console.log(timeLive)
+  return timeLive
 }
 
 /**
@@ -69,7 +88,6 @@ TimeSystem.prototype.sourceTimeRange = function (startTime, TimeSeg) {
 *
 */
 TimeSystem.prototype.assessSourceRange = function (startT, timeSeg) {
-  console.log('assess source Range build ')
   let endD = this.liveTimeUtil.computeTimeSegments(startT, timeSeg)
   return endD
 }
@@ -80,10 +98,6 @@ TimeSystem.prototype.assessSourceRange = function (startT, timeSeg) {
 *
 */
 TimeSystem.prototype.updatedDTCStatus = async function (EIDinfo, compInfo, rawIN) {
-  console.log('update timestart per dt')
-  // console.log(EIDinfo)
-  console.log(compInfo)
-  console.log(rawIN)
   let statusHolder = {}
   let lastComputetime = []
   let liveTime = EIDinfo.time.startperiod
@@ -194,7 +208,6 @@ TimeSystem.prototype.assessCompute = async function (EIDinfo, lastTime, liveTime
 *
 */
 TimeSystem.prototype.assessOngoing = function (lastComputeIN, liveTime) {
-  console.log('assess copute ONGoing')
   let timeArray = {}
   timeArray = this.updateComputeDateArray(lastComputeIN, liveTime)
   return timeArray
@@ -254,15 +267,12 @@ TimeSystem.prototype.sourceDTstartTime = async function (EIDinfo, devIN) {
 *
 */
 TimeSystem.prototype.momentRangeBuild = function (lastCompTime, liveTime) {
-  console.log('range build')
-  console.log(lastCompTime)
-  console.log(liveTime)
   let startTime = moment((lastCompTime * 1000)).valueOf()
   let endTime = moment((liveTime * 1000)).valueOf()
   let rangeBuild = moment.range(startTime, endTime)
-  console.log('momment raange does teh work')
-  console.log(rangeBuild)
-  console.log(Array.from(rangeBuild.by('day')))
+  let sourceTimes = Array.from(rangeBuild.by('day'))
+  // let convertTOSafeTimeMS = this.convertSFtime()
+  return sourceTimes
 }
 
 /**
@@ -271,9 +281,6 @@ TimeSystem.prototype.momentRangeBuild = function (lastCompTime, liveTime) {
 *
 */
 TimeSystem.prototype.updateComputeDateArray = function (lastCompTime, liveTime) {
-  console.log('build time array')
-  console.log(lastCompTime)
-  console.log(liveTime)
   let computeList = []
   const liveDate = liveTime * 1000
   const lastComputeDate = lastCompTime * 1000

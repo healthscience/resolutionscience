@@ -36,15 +36,17 @@ util.inherits(EntitiesManager, events.EventEmitter)
 *
 */
 EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
+  console.log('kbundle in to entity manager')
+  console.log(ecsIN)
   let cid = ecsIN.kbid
   let timeBundle = ecsIN.time // starting time ms
+  console.log('entyt time')
+  console.log(timeBundle)
   let visID = ecsIN.visID[0] // limited to one for now will free up TODO
   if (this.liveSEntities[cid]) {
     console.log('entity' + cid + 'already exists')
     // does the data exist for this visualisation and time?
     let checkDataExist = this.checkForVisualData(cid, timeBundle.startperiod, visID)
-    // console.log('check')
-    // console.log(checkDataExist)
     if (checkDataExist === true) {
       console.log('data already ready')
       this.liveSEntities[cid].liveDataC.setStartTime(timeBundle.startperiod)
@@ -55,6 +57,7 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
     } else {
       // new data call required for this visualisation time
       console.log('need to prepare new visualisation data')
+      console.log(timeBundle.timeseg)
       this.liveSEntities[cid].liveDataC.setStartTime(timeBundle.startperiod)
       this.liveSEntities[cid].liveDataC.setTimeList(timeBundle.startperiod)
       this.liveSEntities[cid].liveDataC.setTimeSegments(timeBundle.timeseg)
@@ -87,10 +90,14 @@ EntitiesManager.prototype.controlFlow = async function (cflowIN) {
   console.log('KBL---controlflow start')
   let cid = cflowIN.kbid
   console.log('EMANAGER0-----beginCONTROL-FLOW')
+  // set the MASTER TIME CLOCK for entity
+  this.liveSEntities[cid].liveTimeC.setMasterClock()
   this.liveSEntities[cid].liveDatatypeC.dataTypeMapping()
   let timeRange = this.liveSEntities[cid].liveTimeC.timeProfiling()
+  // set last active time for entity
+  // this.liveSEntities[cid].liveDataC.setLastBeginTime(timeRange)
   await this.liveSEntities[cid].liveDataC.sourceData(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, timeRange)
-  await this.liveSEntities[cid].liveTimeC.startTimeSystem(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveDataC.liveData)
+  await // this.liveSEntities[cid].liveTimeC.startTimeSystem(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveDataC.liveData)
   this.emit('computation', 'in-progress')
   this.computeStatus = await this.liveSEntities[cid].liveComputeC.filterCompute(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveTimeC.liveTime)
   this.emit('computation', 'finished')
@@ -98,7 +105,9 @@ EntitiesManager.prototype.controlFlow = async function (cflowIN) {
   // go direct and get raw data direct
     await this.liveSEntities[cid].liveDataC.directSourceUpdated(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive)
   }
-  this.liveSEntities[cid].liveVisualC.filterVisual(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveDataC.liveData)
+  // filter the data down to UI input
+  // let liveUIdata = this.filterLiveData(this.liveSEntities[cid].liveDataC.liveData, timeRange)
+  this.liveSEntities[cid].liveVisualC.filterVisual(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveDataC.liveData, timeRange)
   console.log('visCompenent--FINISHED')
   return true
 }

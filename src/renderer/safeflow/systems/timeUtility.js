@@ -34,20 +34,20 @@ util.inherits(TimeUtilities, events.EventEmitter)
 *
 */
 TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
-  // pass range to get converted from moment format to miillseconds (stnd for safeflow)
-  console.log('tim econertttt')
+  console.log('time convert')
   console.log(timeBundle)
+  // pass range to get converted from moment format to miillseconds (stnd for safeflow)
   let timeConversion = {}
-  let liveStarttime = timeBundle.time.startperiod
-  let laststarttime = timeBundle.time.laststartperiod
+  let liveStarttime = timeBundle.startperiod
+  let laststarttime = timeBundle.laststartperiod
   this.realtime = timeBundle.realtime
-  timeConversion = this.updateUItime(timeBundle.time.timevis, liveStarttime, laststarttime)
-  timeConversion.timeseg = timeBundle.time.timeseg
-  timeConversion.timevis = timeBundle.time.timevis
+  let UItimeConvertion = this.updateUItime(timeBundle.timevis, liveStarttime, laststarttime)
+  timeConversion.timeseg = timeBundle.timeseg
+  timeConversion.timevis = timeBundle.timevis
   let realTimems = moment(timeBundle.realtime).valueOf()
   timeConversion.realtime = Math.round(realTimems / 1000)
-  let startConvertion = moment(timeBundle.time.startperiod).valueOf()
-  timeConversion.startperiod = Math.round(startConvertion / 1000)
+  let startConvertion = UItimeConvertion.startperiod // moment(UItimeConvertion.timeperiod).valueOf()
+  timeConversion.startperiod = startConvertion // Math.round(startConvertion / 1000)
   return timeConversion
 }
 
@@ -100,11 +100,7 @@ TimeUtilities.prototype.updateUItime = function (timeUI, time, lastTime) {
 *
 */
 TimeUtilities.prototype.timeSegBuilder = function (timeStart, sg) {
-  console.log('work out end date range')
-  console.log(timeStart)
-  console.log(sg)
   let timeEnd = 0
-  console.log(sg)
   if (sg === 'day') {
     timeEnd = timeStart
   } else if (sg === 'week') {
@@ -117,7 +113,7 @@ TimeUtilities.prototype.timeSegBuilder = function (timeStart, sg) {
     // add 365 days of ms time to start time
     timeEnd = timeStart - (365 * 86400)
   }
-  console.log('range source data days')
+  console.log('new begin data range')
   console.log(timeEnd)
   return timeEnd
 }
@@ -144,23 +140,33 @@ TimeUtilities.prototype.rangeCovert = function (rangeIN) {
 *
 */
 TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
+  console.log('time convert')
+  console.log(uT)
+  console.log(time)
+  console.log(lastTime)
   let convertLasttime = moment(lastTime).valueOf()
   let startTime = time
   let timestamp
   if (uT === 'day') {
     // asking for one 24hr display
     startTime = time
+  } else if (uT === 'week') {
+    startTime = time
+  } else if (uT === 'month') {
+    startTime = time
+  } else if (uT === 'year') {
+    startTime = time
   } else if (uT === '-day') {
     // move back one day in time
     if (startTime === 'relative') {
-      let backstartTime = (convertLasttime - 86400000) // this.liveLasttime * 1000
+      let backstartTime = (convertLasttime - 86400000)
       startTime = backstartTime
     }
     // startTime = (startTime - 86400000)
   } else if (uT === '+day') {
     // move forward day in time
     if (startTime === 'relative') {
-      startTime = (convertLasttime + 86400000) // this.liveLasttime * 1000
+      startTime = (convertLasttime + 86400000)
     }
     startTime = (startTime + 86400000)
     // console.log(this.realtime)
@@ -168,11 +174,29 @@ TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
     if (startTime > msRealtime) {
       // pass on to simulated data
       startTime = 'simulateData'
-      // let simTime = startTime
-      // this.simulateData(simTime)
     } else {
       // console.log('forward one day')
     }
+  } else if (uT === '-week') {
+    console.log('-week')
+    console.log(startTime)
+    console.log(convertLasttime)
+    // return start of year timeout
+    if (startTime === 'relative') {
+      startTime = (convertLasttime - (7 * 86400000))
+    }
+    startTime = startTime * 1
+    // startTime = moment().startOf('week')
+  } else if (uT === '+week') {
+    console.log('+week')
+    console.log(startTime)
+    console.log(convertLasttime)
+    // return start of year head
+    if (startTime === 'relative') {
+      startTime = (convertLasttime + (7 * 86400000))
+    }
+    startTime = startTime * 1
+    // startTime = moment().startOf('week') + 1
   } else if (uT === '-year') {
     // return start of year timeout
     startTime = moment().startOf('year')
@@ -196,7 +220,8 @@ TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
   } else {
     timestamp = 'simulateData'
   }
-  this.liveLasttime = timestamp
+  console.log('new time stamp')
+  console.log(timestamp)
   return timestamp
 }
 
@@ -333,8 +358,6 @@ TimeUtilities.prototype.timeDayArrayBuilder = function (liveTime, lastTime) {
 *
 */
 TimeUtilities.prototype.longDataArray = function (calInfo) {
-  console.log('longdata array')
-  console.log(calInfo)
   let calendarTimeList = []
   let yearArray = calInfo.calendar
   this.dayCounter = 0
@@ -345,14 +368,9 @@ TimeUtilities.prototype.longDataArray = function (calInfo) {
     let millsSecDay = 86400000
     this.dayCounter = scMonth.longDateformat
     if (calInfo.currentML === this.dayCounter) {
-      console.log('weuqalll')
-      console.log(accDaily)
       // last month, stop at current live days
       while (accDaily < (calInfo.currentday - 2)) {
-        console.log('equal two')
-        console.log(accDaily)
         this.dayCounter = this.dayCounter + millsSecDay
-        console.log(this.dayCounter)
         accDaily++
         if (this.dayCounter > calInfo.uptoDateTime) {
           calendarTimeList.push(this.dayCounter)
@@ -360,8 +378,6 @@ TimeUtilities.prototype.longDataArray = function (calInfo) {
       }
     } else {
       while (accDaily < daysInmonth) {
-        console.log('less days moth')
-        console.log(accDaily)
         this.dayCounter = this.dayCounter + millsSecDay
         accDaily++
         calendarTimeList.push(this.dayCounter)

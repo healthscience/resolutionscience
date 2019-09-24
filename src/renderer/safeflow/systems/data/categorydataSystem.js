@@ -32,10 +32,7 @@ util.inherits(CategoryDataSystem, events.EventEmitter)
 * @method categorySorter
 *
 */
-CategoryDataSystem.prototype.categorySorter = function (dataASK, rawData) {
-  console.log('category sorter start')
-  console.log(dataASK)
-  // console.log(rawData)
+CategoryDataSystem.prototype.categorySorter = function (dataASK, rawData, time) {
   let catHolder = {}
   // is it source or derive categorisation?
   if (dataASK.primary === 'derived') {
@@ -43,8 +40,8 @@ CategoryDataSystem.prototype.categorySorter = function (dataASK, rawData) {
     // console.log('no categorisation required')
     catHolder = rawData
   } else {
-    let startTime = dataASK.startperiod
-    catHolder[startTime] = {}
+    let startTime = time
+    catHolder = {}
     const excludeCodes = (e, tItem, column) => {
       for (let fCode of tItem) {
         let codeP = parseInt(fCode.code, 10)
@@ -56,7 +53,7 @@ CategoryDataSystem.prototype.categorySorter = function (dataASK, rawData) {
     }
     let catData = []
     for (let dev of dataASK.deviceList) {
-      catHolder[startTime][dev] = []
+      catHolder[dev] = []
       // extract the column query name
       if (dataASK.apiInfo[dev].categorycodes.length !== 0) {
         let catColumnQueryName = this.extractColumnName(dataASK.apiInfo[dev].categorycodes)
@@ -64,10 +61,11 @@ CategoryDataSystem.prototype.categorySorter = function (dataASK, rawData) {
         // is it for primary or derive data types?
         for (let dti of dataASK.apiInfo[dev].apiquery) {
           for (let ts of dataASK.timeseg) {
-            catData = rawData[startTime][dev][dti.cnrl][ts].filter(n => excludeCodes(n, dataASK.apiInfo[dev].categorycodes, catColumnQueryName))
+            console.log(ts)
+            catData = rawData[startTime][dev][dti.cnrl]['day'].filter(n => excludeCodes(n, dataASK.apiInfo[dev].categorycodes, catColumnQueryName))
             let catTempHold = {}
             catTempHold[ts] = catData
-            catHolder[startTime][dev][dti.cnrl] = catTempHold
+            catHolder[dev][dti.cnrl] = catTempHold
           }
         }
       } else {

@@ -31,22 +31,27 @@ util.inherits(ChartSystem, events.EventEmitter)
 * @method structureChartData
 *
 */
-ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle, cData) {
-  let lastDataObject = cData
+ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle, cData, liveRange) {
+  let lastDataObject = {}
+  let liveDate = Object.keys(cData)
+  // does the data need merged i.e. spans more than one day?
+  if (eInfo.time.timeseg[0] === 'day') {
+    lastDataObject = cData
+  } else {
+    lastDataObject = this.rangeStructureData(cData)
+  }
   let datalabel = []
   let visCHolder = {}
   let datay = []
-  let liveDate = eInfo.time.startperiod
   visCHolder[liveDate] = {}
   this.chartPrep = {}
   // loop through and build two sperate arrays
-  //  for (let dataI of lastDataObject) {
-  if (lastDataObject[liveDate]) {
+  if (lastDataObject) {
     for (let devI of eInfo.devices) {
       visCHolder[liveDate][devI.device_mac] = {}
       let dataholder = {}
-      for (let ts of eInfo.time.timeseg) {
-        for (let liveData of lastDataObject[liveDate][devI.device_mac][datatypeIN.cnrl][ts]) {
+      for (let tis of liveRange) {
+        for (let liveData of lastDataObject[tis][devI.device_mac][datatypeIN.cnrl]['day']) {
           var mDateString = moment(liveData.timestamp * 1000).toDate()
           datalabel.push(mDateString)
           if (datatypeIN.cnrl === 'cnrl-8856388711') {
@@ -77,6 +82,14 @@ ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle,
   return visCHolder
 }
 
+/**
+*
+* @method rangeStructureData
+*
+*/
+ChartSystem.prototype.rangeStructureData = function (data) {
+  return data
+}
 /**
 *
 * @method yAxisScaleSet

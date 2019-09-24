@@ -150,13 +150,11 @@ ChartOptions.prototype.prepareChartOptions = function (title, datatypes, scale) 
 */
 ChartOptions.prototype.prepareYoptions = function (datatypes, scale) {
   // prepare y axis dependent up how many datatypes plot
-  console.log(scale)
   let yAxisPrep = []
   let leftorrigh = ''
   let idAxis = ''
   let counter = 0
   for (let dti of datatypes) {
-    console.log(dti.text)
     if (counter === 0) {
       leftorrigh = 'left'
       idAxis = dti.text // 'temperature' // 'bpm'

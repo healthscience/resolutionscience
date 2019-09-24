@@ -34,7 +34,7 @@ util.inherits(VisSystem, events.EventEmitter)
 * @method chartSystem
 *
 */
-VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
+VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN, liveRange) {
   var localthis = this
   let visIN = eInfo.visID[0]
   let liveTime = eInfo.time.startperiod
@@ -48,7 +48,7 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
   chartDataH.prepared = {}
   if (eInfo.cid === 'cnrl-2356388731') {
     for (let dtv of eInfo.datatypes) {
-      structureHolder = this.liveChartSystem.structureChartData(dtv, eInfo, chartBundle, dataIN)
+      structureHolder = this.liveChartSystem.structureChartData(dtv, eInfo, chartBundle, dataIN, liveRange)
       // prepare the colors for the charts
       let chartColorsSet = localthis.liveChartSystem.chartColors(dtv)
       dataTypeBucket.data = structureHolder
@@ -61,8 +61,6 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN) {
     let titleOut = 'Device ' + eInfo.devices[0].device_name
     // package all the info. to pass to vue
     chartData.prepared = this.liveChartSystem.prepareVueChartJS(chartDataH.chart)
-    console.log('prepare')
-    console.log(chartData.prepared)
     // prepare chart options
     let liveChartOptions = this.liveChartOptions.prepareChartOptions(titleOut, eInfo.datatypes, chartData.prepared.scale)
     // prepared the labels

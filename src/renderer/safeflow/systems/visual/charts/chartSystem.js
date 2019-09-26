@@ -34,6 +34,8 @@ util.inherits(ChartSystem, events.EventEmitter)
 ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle, cData, liveRange) {
   let lastDataObject = {}
   let liveDate = Object.keys(cData)
+  // console.log('al data')
+  // console.log(cData)
   // does the data need merged i.e. spans more than one day?
   if (eInfo.time.timeseg[0] === 'day') {
     lastDataObject = cData

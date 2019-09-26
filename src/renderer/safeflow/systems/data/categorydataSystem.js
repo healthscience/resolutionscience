@@ -32,10 +32,10 @@ util.inherits(CategoryDataSystem, events.EventEmitter)
 * @method categorySorter
 *
 */
-CategoryDataSystem.prototype.categorySorter = function (dataASK, rawData, time) {
+CategoryDataSystem.prototype.categorySorter = function (systemBundle, rawData, time) {
   let catHolder = {}
   // is it source or derive categorisation?
-  if (dataASK.primary === 'derived') {
+  if (systemBundle.primary === 'derived') {
     // no cat require return data unchanged
     // console.log('no categorisation required')
     catHolder = rawData
@@ -52,17 +52,17 @@ CategoryDataSystem.prototype.categorySorter = function (dataASK, rawData, time) 
       }
     }
     let catData = []
-    for (let dev of dataASK.deviceList) {
+    for (let dev of systemBundle.deviceList) {
       catHolder[dev] = []
       // extract the column query name
-      if (dataASK.apiInfo[dev].categorycodes.length !== 0) {
-        let catColumnQueryName = this.extractColumnName(dataASK.apiInfo[dev].categorycodes)
+      if (systemBundle.apiInfo[dev].categorycodes.length !== 0) {
+        let catColumnQueryName = this.extractColumnName(systemBundle.apiInfo[dev].categorycodes)
         // console.log('yes, categories required')
         // is it for primary or derive data types?
-        for (let dti of dataASK.apiInfo[dev].apiquery) {
-          for (let ts of dataASK.timeseg) {
+        for (let dti of systemBundle.apiInfo[dev].apiquery) {
+          for (let ts of systemBundle.timeseg) {
             console.log(ts)
-            catData = rawData[startTime][dev][dti.cnrl]['day'].filter(n => excludeCodes(n, dataASK.apiInfo[dev].categorycodes, catColumnQueryName))
+            catData = rawData[startTime][dev][dti.cnrl]['day'].filter(n => excludeCodes(n, systemBundle.apiInfo[dev].categorycodes, catColumnQueryName))
             let catTempHold = {}
             catTempHold[ts] = catData
             catHolder[dev][dti.cnrl] = catTempHold

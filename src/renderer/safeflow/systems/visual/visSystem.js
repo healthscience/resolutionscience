@@ -34,10 +34,10 @@ util.inherits(VisSystem, events.EventEmitter)
 * @method chartSystem
 *
 */
-VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN, liveRange) {
+VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN, timeComponent) {
   var localthis = this
   let visIN = eInfo.visID[0]
-  let liveTime = eInfo.time.startperiod
+  let liveTime = timeComponent.livedate.startperiod
   let structureHolder = {}
   let chartGroupHolder = []
   let chartData = {}
@@ -48,7 +48,7 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN, liveRange)
   chartDataH.prepared = {}
   if (eInfo.cid === 'cnrl-2356388731') {
     for (let dtv of eInfo.datatypes) {
-      structureHolder = this.liveChartSystem.structureChartData(dtv, eInfo, chartBundle, dataIN, liveRange)
+      structureHolder = this.liveChartSystem.structureChartData(dtv, eInfo, chartBundle, dataIN, timeComponent.timerange)
       // prepare the colors for the charts
       let chartColorsSet = localthis.liveChartSystem.chartColors(dtv)
       dataTypeBucket.data = structureHolder

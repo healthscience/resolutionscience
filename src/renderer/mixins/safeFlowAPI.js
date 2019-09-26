@@ -22,7 +22,7 @@ export default {
     },
     async learnStart (lBundle) {
       console.log('start Learning')
-      console.log(lBundle)
+      // console.log(lBundle)
       let returnVISvue = {}
       this.chartmessage.text = 'Visualisation being prepared'
       this.chartmessage.active = true
@@ -68,6 +68,7 @@ export default {
           this.options2.annotation.annotations[1].value = AvgDstart.avgdrhr
           visObjectVUE.kContext = this.liveanalysisStart
           visObjectVUE.displayTime = this.liveTimeV2
+          visObjectVUE.displayTimeF = this.setFutureUItime(entityGetter.displayTime)
           visObjectVUE.liveOptions = this.options2
           visObjectVUE.liveDataCollection = this.datacollection2
         }
@@ -81,6 +82,11 @@ export default {
         // localthis.simulationTime = entityGetter.time
       }
       return visObjectVUE
+    },
+    setFutureUItime (curTime) {
+      let futureTime = curTime + 86400
+      let fTimeFormatted = moment(futureTime * 1000).format('LLLL')
+      return fTimeFormatted
     },
     startComputeUpdate () {
       this.activedevice = this.$store.getters.liveContext

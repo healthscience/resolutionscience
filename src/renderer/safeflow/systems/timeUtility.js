@@ -34,14 +34,21 @@ util.inherits(TimeUtilities, events.EventEmitter)
 *
 */
 TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
-  console.log('time convert')
-  console.log(timeBundle)
   // pass range to get converted from moment format to miillseconds (stnd for safeflow)
+  console.log('time convertion start')
+  console.log(timeBundle)
   let timeConversion = {}
-  let liveStarttime = timeBundle.startperiod
-  let laststarttime = timeBundle.laststartperiod
+  let liveStarttime = 0
+  if (timeBundle.startperiod === 'relative') {
+    liveStarttime = timeBundle.startperiod
+  } else {
+    liveStarttime = moment(timeBundle.startperiod).valueOf() / 1000
+  }
+  let laststarttime = moment(timeBundle.laststartperiod).valueOf() / 1000
   this.realtime = timeBundle.realtime
   let UItimeConvertion = this.updateUItime(timeBundle.timevis, liveStarttime, laststarttime)
+  console.log('conertion back')
+  console.log(UItimeConvertion)
   timeConversion.timeseg = timeBundle.timeseg
   timeConversion.timevis = timeBundle.timevis
   let realTimems = moment(timeBundle.realtime).valueOf()
@@ -113,8 +120,6 @@ TimeUtilities.prototype.timeSegBuilder = function (timeStart, sg) {
     // add 365 days of ms time to start time
     timeEnd = timeStart - (365 * 86400)
   }
-  console.log('new begin data range')
-  console.log(timeEnd)
   return timeEnd
 }
 
@@ -124,6 +129,8 @@ TimeUtilities.prototype.timeSegBuilder = function (timeStart, sg) {
 *
 */
 TimeUtilities.prototype.rangeCovert = function (rangeIN) {
+  console.log('range conert')
+  console.log(rangeIN)
   let rangeMS = {}
   let startMinute = moment(rangeIN.startTime).startOf('minute')
   let startMS = moment(startMinute).valueOf()
@@ -131,6 +138,8 @@ TimeUtilities.prototype.rangeCovert = function (rangeIN) {
   let endMS = moment(endMinute).valueOf()
   rangeMS.startTime = startMS / 1000
   rangeMS.endTime = endMS / 1000
+  console.log('range out')
+  console.log(rangeMS)
   return rangeMS
 }
 
@@ -140,11 +149,11 @@ TimeUtilities.prototype.rangeCovert = function (rangeIN) {
 *
 */
 TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
-  console.log('time convert')
+  console.log('timeconvert')
   console.log(uT)
   console.log(time)
   console.log(lastTime)
-  let convertLasttime = moment(lastTime).valueOf()
+  let convertLasttime = lastTime
   let startTime = time
   let timestamp
   if (uT === 'day') {
@@ -159,16 +168,16 @@ TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
   } else if (uT === '-day') {
     // move back one day in time
     if (startTime === 'relative') {
-      let backstartTime = (convertLasttime - 86400000)
+      let backstartTime = (convertLasttime - 86400)
       startTime = backstartTime
     }
     // startTime = (startTime - 86400000)
   } else if (uT === '+day') {
     // move forward day in time
     if (startTime === 'relative') {
-      startTime = (convertLasttime + 86400000)
+      startTime = (convertLasttime + 86400)
     }
-    startTime = (startTime + 86400000)
+    startTime = (startTime + 86400)
     // console.log(this.realtime)
     let msRealtime = moment(this.realtime).valueOf()
     if (startTime > msRealtime) {
@@ -178,22 +187,16 @@ TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
       // console.log('forward one day')
     }
   } else if (uT === '-week') {
-    console.log('-week')
-    console.log(startTime)
-    console.log(convertLasttime)
     // return start of year timeout
     if (startTime === 'relative') {
-      startTime = (convertLasttime - (7 * 86400000))
+      startTime = (convertLasttime - (7 * 86400))
     }
     startTime = startTime * 1
     // startTime = moment().startOf('week')
   } else if (uT === '+week') {
-    console.log('+week')
-    console.log(startTime)
-    console.log(convertLasttime)
     // return start of year head
     if (startTime === 'relative') {
-      startTime = (convertLasttime + (7 * 86400000))
+      startTime = (convertLasttime + (7 * 86400))
     }
     startTime = startTime * 1
     // startTime = moment().startOf('week') + 1
@@ -216,11 +219,11 @@ TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
   //  get the micro time for start of time for query
   if (startTime !== 'simulateData') {
     let startQuerytime = moment(startTime).valueOf()
-    timestamp = startQuerytime / 1000
+    timestamp = startQuerytime
   } else {
     timestamp = 'simulateData'
   }
-  console.log('new time stamp')
+  console.log('rangeENNDDDDDD')
   console.log(timestamp)
   return timestamp
 }

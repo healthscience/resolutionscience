@@ -94,7 +94,7 @@
       <multipane-resizer></multipane-resizer>
       <div class="pane" :style="{ flexGrow: 1, width: '10%', maxWidth: '100%' }">
         <div>
-          <hsfuturevisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime"></hsfuturevisual>
+          <hsfuturevisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeVFuture" :navTime="liveNavTime"></hsfuturevisual>
         </div>
       </div>
     </multipane>
@@ -167,6 +167,7 @@
         liveOptions: {},
         liveNavTime: [],
         liveTimeV: '',
+        liveTimeVFuture: '',
         timeStateLast: '',
         saveStatusEK: {},
         saveExpKid:
@@ -231,8 +232,6 @@
         liveBundle.categories = categoryLive
         liveBundle.science = this.liveData.scienceLive
         liveBundle.time = timeBundle
-        console.log('ui time input')
-        console.log(liveBundle.time)
         liveBundle.resolution = this.liveData.resolutionLive
         liveBundle.visualisation = ['vis-sc-1']
         // create unquie ID for kbundle and use to save
@@ -244,12 +243,14 @@
         // set message to UI IN-progress
         this.entityPrepareStatus.active = true
         let visDataBack = await this.learnStart(liveBundle)
+        console.log('visDataBack ')
+        console.log(visDataBack)
         this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions
         this.kContext = visDataBack.kContext
-        // this.liveTimeV = visDataBack.kContext.liveTime
         this.liveTimeV = visDataBack.displayTime
+        this.liveTimeVFuture = visDataBack.displayTimeF
       },
       setTimeBundle () {
         const nowTime = moment()
@@ -310,8 +311,6 @@
           timeAsk.push(uSeg.text)
           updateTbundle.time.startperiod = 'relative'
         }
-        console.log('time ask fromUI')
-        console.log(timeAsk)
         updateTbundle.time.timeseg = this.liveData.timeLive
         updateTbundle.time.timevis = timeAsk
         updateTbundle.time.laststartperiod = this.liveTimeV
@@ -325,6 +324,7 @@
         this.liveOptions = visDataBack.liveOptions
         this.kContext = visDataBack.kContext
         this.liveTimeV = visDataBack.displayTime
+        this.liveTimeVFuture = visDataBack.displayTimeF
       },
       async makeLiveKnowledge (lBund) {
         // set live Bundle for context
@@ -350,6 +350,7 @@
         this.liveOptions = visDataBack.liveOptions
         this.kContext = visDataBack.kContext
         this.liveTimeV = visDataBack.displayTime
+        this.liveTimeVFuture = visDataBack.displayTimeF
       },
       setKnowledgtBox (liveKbid) {
         // first clear existing knowledge in box

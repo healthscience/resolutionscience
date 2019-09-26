@@ -26,7 +26,6 @@ var DataComponent = function (DID, setIN) {
   this.did = DID
   this.liveData = []
   this.livedate = 0
-  this.timeList = []
   this.deviceList = []
   this.CNRLscience = {}
   this.datatypeList = []
@@ -34,12 +33,9 @@ var DataComponent = function (DID, setIN) {
   this.dataRaw = {}
   this.tidyData = {}
   this.categoryData = {}
-  this.timeSegs = []
-  this.setStartTime(this.did.time.startperiod)
   this.setDevicesLive()
   this.setCNRLsciencemapping()
   this.setDatatypesLive(this.did.datatypes)
-  this.setTimeSegments(this.did.time.timeseg)
   this.setCategories(this.did.categories)
 }
 
@@ -48,34 +44,6 @@ var DataComponent = function (DID, setIN) {
 * @method inherits
 */
 util.inherits(DataComponent, events.EventEmitter)
-
-/**
-*  set the live date active in the UI
-* @method setStartTime
-*
-*/
-DataComponent.prototype.setStartTime = function (startDate) {
-  this.livedate = startDate
-  return true
-}
-
-/**
-*  keep list of timePeriods that data has been asked for
-* @method setTimeArray
-*
-*/
-DataComponent.prototype.setTimeList = function (liveDate) {
-  this.timeList.push(liveDate)
-}
-
-/**
-*  keep list of timePeriods that data has been asked for
-* @method setTimeSegments
-*
-*/
-DataComponent.prototype.setTimeSegments = function (liveTimeSegs) {
-  this.timeSegs = liveTimeSegs
-}
 
 /**
 *  set the datatype asked for
@@ -118,24 +86,28 @@ DataComponent.prototype.setCategories = function (ctIN) {
 * @method RawData
 *
 */
-DataComponent.prototype.sourceData = async function (apiINFO, rangeT) {
-  // console.log('dataCOMP')
-  // console.log(apiINFO)
+DataComponent.prototype.sourceData = async function (apiINFO, timeComponent) {
+  console.log('sourcdate funct')
+  console.log(timeComponent)
   this.apiInfoLive = apiINFO
   let systemBundle = {}
   systemBundle.apiInfo = apiINFO
-  systemBundle.startperiod = this.livedate
+  systemBundle.startperiod = timeComponent.livedate.startperiod
   systemBundle.scienceAsked = this.CNRLscience
   systemBundle.dtAsked = this.datatypeList
   systemBundle.deviceList = this.deviceList
-  systemBundle.timeseg = this.timeSegs
+  systemBundle.timeseg = timeComponent.livedate.timeseg
   systemBundle.querytime = this.did.time
   systemBundle.categories = this.did.categories
+  console.log('sourc dataaaaa')
+  console.log(systemBundle)
   // need to check if one day or more or some segment of time is required?
-  for (let rt of rangeT) {
+  for (let rt of timeComponent.timerange) {
+    console.log('time r')
+    console.log(rt)
     let convertTime = moment(rt).valueOf()
-    let timeStructure = convertTime // 1000
-    await this.DataControlFlow(systemBundle, apiINFO, timeStructure)
+    let timeStructure = convertTime
+    await this.DataControlFlow(systemBundle, timeStructure)
   }
   return true
 }
@@ -145,14 +117,16 @@ DataComponent.prototype.sourceData = async function (apiINFO, rangeT) {
 * @method DataControlFlow
 *
 */
-DataComponent.prototype.DataControlFlow = async function (systemBundle, apiINFO, time) {
+DataComponent.prototype.DataControlFlow = async function (systemBundle, time) {
   let dataRback = await this.liveDataSystem.datatypeQueryMapping(systemBundle, time)
   this.dataRaw[time] = dataRback
+  console.log('data comp live data')
+  console.log(this.dataRaw)
   // is there a categories filter to apply?
-  this.CategoriseData(apiINFO, time)
+  this.CategoriseData(systemBundle, time)
   // is there any data tidying required
-  this.TidyData(apiINFO, time)
-  this.FilterDownDT(apiINFO, time)
+  this.TidyData(systemBundle, time)
+  this.FilterDownDT(systemBundle, time)
   return true
 }
 
@@ -161,17 +135,8 @@ DataComponent.prototype.DataControlFlow = async function (systemBundle, apiINFO,
 * @method CategoriseData
 *
 */
-DataComponent.prototype.CategoriseData = function (catInfo, time) {
+DataComponent.prototype.CategoriseData = function (systemBundle, time) {
   let catDataG = {}
-  let systemBundle = {}
-  systemBundle.apiInfo = catInfo
-  systemBundle.startperiod = this.livedate
-  systemBundle.scienceAsked = this.CNRLscience
-  systemBundle.dtAsked = this.datatypeList
-  systemBundle.deviceList = this.deviceList
-  systemBundle.timeseg = this.timeSegs
-  systemBundle.querytime = this.did.time
-  systemBundle.categories = this.did.categories
   // console.log(systemBundle)
   catDataG = this.liveCategoryData.categorySorter(systemBundle, this.dataRaw[time], time)
   this.categoryData[time] = catDataG
@@ -182,19 +147,9 @@ DataComponent.prototype.CategoriseData = function (catInfo, time) {
 * @method TidyData
 *
 */
-DataComponent.prototype.TidyData = function (apiINFO, time) {
-  // console.log('tidystartCOMP')
+DataComponent.prototype.TidyData = function (systemBundlea, time) {
   let tidyDataG = {}
-  let systemBundle = {}
-  systemBundle.apiInfo = apiINFO
-  systemBundle.startperiod = this.livedate
-  systemBundle.scienceAsked = this.CNRLscience
-  systemBundle.dtAsked = this.datatypeList
-  systemBundle.deviceList = this.deviceList
-  systemBundle.timeseg = this.timeSegs
-  systemBundle.querytime = this.did.time
-  systemBundle.categories = this.did.categories
-  tidyDataG = this.liveTidyData.tidyRawData(systemBundle, this.categoryData[time], time)
+  tidyDataG = this.liveTidyData.tidyRawData(systemBundlea, this.categoryData[time], time)
   this.tidyData[time] = tidyDataG
   // set liveData based on/if category data asked for
   this.assessDataStatus(time)
@@ -206,21 +161,12 @@ DataComponent.prototype.TidyData = function (apiINFO, time) {
 * @method FilterDownDT
 *
 */
-DataComponent.prototype.FilterDownDT = function (apiINFO, time) {
+DataComponent.prototype.FilterDownDT = function (systemBundlea, time) {
   // console.log('filteDown')
   let tidyDataG = {}
-  let systemBundle = {}
-  systemBundle.apiInfo = apiINFO
-  systemBundle.startperiod = this.livedate
-  systemBundle.scienceAsked = this.CNRLscience
-  systemBundle.dtAsked = this.datatypeList
-  systemBundle.deviceList = this.deviceList
-  systemBundle.timeseg = this.timeSegs
-  systemBundle.querytime = this.did.time
-  systemBundle.categories = this.did.categories
   // console.log(systemBundle)
   if (this.liveData.primary !== 'prime') {
-    tidyDataG = this.liveFilterData.dtFilterController(systemBundle, this.liveData[time], time)
+    tidyDataG = this.liveFilterData.dtFilterController(systemBundlea, this.liveData[time], time)
     this.liveData[time] = tidyDataG
   }
   return true
@@ -254,6 +200,8 @@ DataComponent.prototype.directSourceUpdated = async function (straightBundle) {
   systemBundle.timeseg = this.timeSegs
   systemBundle.categories = this.did.categories
   this.liveData = await this.liveDataSystem.datatypeQueryMapping(systemBundle)
+  console.log('data comp live data')
+  console.log(this.liveData)
 }
 
 export default DataComponent

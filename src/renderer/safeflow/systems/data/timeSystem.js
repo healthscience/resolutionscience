@@ -51,7 +51,7 @@ TimeSystem.prototype.discoverTimeStatus = async function (EIDinfo, compInfo, raw
 *
 */
 TimeSystem.prototype.sourceTimeRange = function (startTime, TimeSeg) {
-  console.log('range profile')
+  console.log('update or set range')
   console.log(startTime)
   console.log(TimeSeg)
   let beginD = this.assessSourceRange(startTime, TimeSeg)
@@ -66,19 +66,12 @@ TimeSystem.prototype.sourceTimeRange = function (startTime, TimeSeg) {
 *
 */
 TimeSystem.prototype.formatTimeSafeFlow = function (liveDates) {
-  console.log('time fsafeflow')
-  console.log(liveDates)
   let timeLive = []
   for (let ld of liveDates) {
     let tFormat = moment(ld).valueOf()
-    console.log(tFormat)
     let shortFormat = tFormat / 1000
-    console.log('shrt')
-    console.log(shortFormat)
     timeLive.push(shortFormat)
   }
-  console.log('end')
-  console.log(timeLive)
   return timeLive
 }
 

@@ -35,8 +35,6 @@ util.inherits(TimeUtilities, events.EventEmitter)
 */
 TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
   // pass range to get converted from moment format to miillseconds (stnd for safeflow)
-  console.log('time convertion start')
-  console.log(timeBundle)
   let timeConversion = {}
   let liveStarttime = 0
   if (timeBundle.startperiod === 'relative') {
@@ -47,8 +45,6 @@ TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
   let laststarttime = moment(timeBundle.laststartperiod).valueOf() / 1000
   this.realtime = timeBundle.realtime
   let UItimeConvertion = this.updateUItime(timeBundle.timevis, liveStarttime, laststarttime)
-  console.log('conertion back')
-  console.log(UItimeConvertion)
   timeConversion.timeseg = timeBundle.timeseg
   timeConversion.timevis = timeBundle.timevis
   let realTimems = moment(timeBundle.realtime).valueOf()
@@ -129,8 +125,6 @@ TimeUtilities.prototype.timeSegBuilder = function (timeStart, sg) {
 *
 */
 TimeUtilities.prototype.rangeCovert = function (rangeIN) {
-  console.log('range conert')
-  console.log(rangeIN)
   let rangeMS = {}
   let startMinute = moment(rangeIN.startTime).startOf('minute')
   let startMS = moment(startMinute).valueOf()
@@ -138,8 +132,6 @@ TimeUtilities.prototype.rangeCovert = function (rangeIN) {
   let endMS = moment(endMinute).valueOf()
   rangeMS.startTime = startMS / 1000
   rangeMS.endTime = endMS / 1000
-  console.log('range out')
-  console.log(rangeMS)
   return rangeMS
 }
 
@@ -149,10 +141,6 @@ TimeUtilities.prototype.rangeCovert = function (rangeIN) {
 *
 */
 TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
-  console.log('timeconvert')
-  console.log(uT)
-  console.log(time)
-  console.log(lastTime)
   let convertLasttime = lastTime
   let startTime = time
   let timestamp
@@ -177,7 +165,7 @@ TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
     if (startTime === 'relative') {
       startTime = (convertLasttime + 86400)
     }
-    startTime = (startTime + 86400)
+    // startTime = (startTime + 86400)
     // console.log(this.realtime)
     let msRealtime = moment(this.realtime).valueOf()
     if (startTime > msRealtime) {
@@ -223,8 +211,6 @@ TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
   } else {
     timestamp = 'simulateData'
   }
-  console.log('rangeENNDDDDDD')
-  console.log(timestamp)
   return timestamp
 }
 

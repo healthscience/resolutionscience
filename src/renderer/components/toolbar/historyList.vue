@@ -1,9 +1,21 @@
 <template>
   <div id="history-view">
-    <header>Science & Compute List</header>
+  <header>Science & Compute List</header>
+  <div id="filter-history-list">
+    FILTERS - latest, per device, per compute, per datatype
+  </div>
   <ul>
     <li id="data-type-history" v-for="lh in historyData">
-      <div id="live-knowledge-elements">
+      <div id="list-knowledge-elements">
+        <div id="select-kbox" class="select-element">
+          <div id="select-kbox-container">
+            <div id="select-status">
+              <header>Select</header>
+              <input type="checkbox" v-bind:id="lh.cnrl" v-bind:value="lh.kbid" v-model="kboxSelect" @change="makeKLive($event)">
+              <label for="k-select"></label>
+            </div>
+          </div>
+        </div>
         <div id="history-context-science" class="live-element">
           <header>Compute</header>
           <div class="live-item">{{ lh.science.prime.text }}</div>
@@ -62,15 +74,6 @@
             <div id="dapp-status">
               <header>Publish Dapp</header>
               Y / N
-            </div>
-          </div>
-        </div>
-        <div id="select-kbox" class="live-element">
-          <div id="select-kbox-container">
-            <div id="select-status">
-              <header>Select</header>
-              <input type="checkbox" v-bind:id="lh.cnrl" v-bind:value="lh.kbid" v-model="kboxSelect" @change="makeKLive($event)">
-              <label for="k-select"></label>
             </div>
           </div>
         </div>
@@ -206,6 +209,11 @@
   margin-left: 1em;
 }
 
+.select-element {
+  float: left;
+  width: 40px;
+}
+
 .live-element {
   float: left;
   width: 140px;
@@ -213,7 +221,7 @@
 }
 
 .live-element header {
-  background-color: #EBE7E0;
+  background-color: #d7e6f5;
   border-bottom: 2px dotted #6F6B63;
   margin: 4px;
 }
@@ -235,7 +243,7 @@
   margin: 1em;
   border: 1px solid grey;
   padding: 1em;
-  background-color: #FCE8C1;
+  background-color: #f1e6f5;
 }
 
 #compute-control-panel {
@@ -279,4 +287,7 @@
   margin-left: 40px;
 }
 
+#list-knowledge-elements {
+  background-color: #EBE7E0;
+}
 </style>

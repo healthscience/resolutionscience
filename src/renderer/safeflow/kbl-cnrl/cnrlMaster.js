@@ -606,7 +606,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     // CNRL implementation contract e.g. from mobile phone sqlite table structure
     dataCNRLbundle.type = 'experiment'
     dataCNRLbundle.source = 'cnrl-primary'
-    dataCNRLbundle.prime = { 'cnrl': 'cnrl-888355992223', 'text': 'When do I sleep the best?', 'active': false }
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-888355992223', 'text': 'SLEEP - When do I sleep the best?', 'active': false }
     dataCNRLbundle.livingpaper = {'link': 'https://docs.google.com/document'}
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
@@ -636,7 +636,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     // CNRL implementation contract e.g. from mobile phone sqlite table structure
     dataCNRLbundle.type = 'experiment'
     dataCNRLbundle.source = 'cnrl-primary'
-    dataCNRLbundle.prime = { 'cnrl': 'cnrl-888388992224', 'text': 'Resting HR Recovery', 'active': false }
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-888388992224', 'text': 'EXERCISE - Resting HR Recovery', 'active': false }
     dataCNRLbundle.livingpaper = {'link': 'https://docs.google.com/document/d/11JWcbBrwgLIqPc7V7GpI_WbACuIS_4h630zdT66Re3s/edit'}
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
@@ -651,7 +651,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     // CNRL implementation contract e.g. from mobile phone sqlite table structure
     dataCNRLbundle.type = 'experiment'
     dataCNRLbundle.source = 'cnrl-primary'
-    dataCNRLbundle.prime = { 'cnrl': 'cnrl-888388232224', 'text': 'Intermitting fasting', 'active': false }
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-888388232224', 'text': 'EATING - Intermitting fasting', 'active': false }
     dataCNRLbundle.livingpaper = {'link': 'https://docs.google.com/document/'}
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
@@ -666,7 +666,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     // CNRL implementation contract e.g. from mobile phone sqlite table structure
     dataCNRLbundle.type = 'experiment'
     dataCNRLbundle.source = 'cnrl-primary'
-    dataCNRLbundle.prime = { 'cnrl': 'cnrl-888388233324', 'text': 'Air quality and weather', 'active': false }
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-888388233324', 'text': 'ENVIRONMENT - Air quality and weather', 'active': false }
     dataCNRLbundle.livingpaper = {'link': 'https://docs.google.com/document/'}
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
@@ -681,7 +681,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     // CNRL implementation contract e.g. from mobile phone sqlite table structure
     dataCNRLbundle.type = 'experiment'
     dataCNRLbundle.source = 'cnrl-primary'
-    dataCNRLbundle.prime = { 'cnrl': 'cnrl-888388443324', 'text': 'Stemcell patch recovery', 'active': false }
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-888388443324', 'text': 'EXERCISE - Stemcell patch recovery', 'active': false }
     dataCNRLbundle.livingpaper = {'link': 'https://docs.google.com/document/'}
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
@@ -696,7 +696,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     // CNRL implementation contract e.g. from mobile phone sqlite table structure
     dataCNRLbundle.type = 'experiment'
     dataCNRLbundle.source = 'cnrl-primary'
-    dataCNRLbundle.prime = { 'cnrl': 'cnrl-848388553323', 'text': 'Daily step planning', 'active': false }
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-848388553323', 'text': 'EXERCISE - Daily step planning', 'active': false }
     dataCNRLbundle.livingpaper = {'link': 'https://docs.google.com/document/'}
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
@@ -711,7 +711,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     // CNRL implementation contract e.g. from mobile phone sqlite table structure
     dataCNRLbundle.type = 'experiment'
     dataCNRLbundle.source = 'cnrl-primary'
-    dataCNRLbundle.prime = { 'cnrl': 'cnrl-848388553329', 'text': 'Mitochondrial therapy', 'active': false }
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-848388553329', 'text': 'REJUVENATION - Mitochondrial therapy', 'active': false }
     dataCNRLbundle.livingpaper = {'link': 'https://docs.google.com/document/'}
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
@@ -720,6 +720,21 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.categorycodes.push()
     dataCNRLbundle.resolution = {}
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-848388553329'
+    dataCNRLbundle.index = []
+    dataCNRLbundle.kentities = ['']
+  } else if (refIN === 'cnrl-848388554344') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'experiment'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-848388554344', 'text': 'EATING, Food, Nutrition', 'active': false }
+    dataCNRLbundle.livingpaper = {'link': 'https://docs.google.com/document/'}
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.tableStructure = []
+    dataCNRLbundle.categorycodes.push()
+    dataCNRLbundle.categorycodes.push()
+    dataCNRLbundle.resolution = {}
+    dataCNRLbundle.namespace = 'safe://cnrl/848388554344'
     dataCNRLbundle.index = []
     dataCNRLbundle.kentities = ['']
   }
@@ -771,7 +786,7 @@ CNRLmaster.prototype.indexDatapackaging = function () {
 CNRLmaster.prototype.indexExperiments = function () {
   // index datatype live in network by cnrl // id
   let indexExperimentslive = []
-  indexExperimentslive.push('cnrl-848388553323', 'cnrl-888355992223', 'cnrl-888355992224', 'cnrl-888388992224', 'cnrl-888388232224', 'cnrl-888388233324', 'cnrl-888388443324', 'cnrl-848388553329')
+  indexExperimentslive.push('cnrl-848388553323', 'cnrl-888388992224', 'cnrl-888388443324', 'cnrl-888355992223', 'cnrl-888388233324', 'cnrl-888388232224', 'cnrl-848388554344', 'cnrl-848388553329', 'cnrl-888355992224')
   return indexExperimentslive
 }
 

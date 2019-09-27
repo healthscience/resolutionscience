@@ -40,8 +40,6 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
   console.log(ecsIN)
   let cid = ecsIN.kbid
   let timeBundle = ecsIN.time // starting time ms
-  console.log('entyt time')
-  console.log(timeBundle)
   let visID = ecsIN.visID[0] // limited to one for now will free up TODO
   if (this.liveSEntities[cid]) {
     console.log('entity' + cid + 'already exists')
@@ -57,7 +55,6 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
     } else {
       // new data call required for this visualisation time
       console.log('need to prepare new visualisation data')
-      console.log(timeBundle.timeseg)
       this.liveSEntities[cid].liveTimeC.setStartPeriod(timeBundle.startperiod)
       this.liveSEntities[cid].liveTimeC.setTimeList(timeBundle.startperiod)
       this.liveSEntities[cid].liveTimeC.setTimeSegments(timeBundle.timeseg)
@@ -96,7 +93,7 @@ EntitiesManager.prototype.controlFlow = async function (cflowIN) {
   this.liveSEntities[cid].liveTimeC.timeProfiling()
   await this.liveSEntities[cid].liveDataC.sourceData(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveTimeC)
   this.emit('computation', 'in-progress')
-  this.computeStatus = await this.liveSEntities[cid].liveComputeC.filterCompute(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveTimeC.liveTime)
+  this.computeStatus = await this.liveSEntities[cid].liveComputeC.filterCompute(this.liveSEntities[cid].liveTimeC)
   this.emit('computation', 'finished')
   if (this.computeStatus === true) {
   // go direct and get raw data direct

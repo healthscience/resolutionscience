@@ -105,8 +105,6 @@ TestStorageAPI.prototype.getFirstData = async function (deviceID) {
 */
 TestStorageAPI.prototype.getComputeData = async function (queryTime, deviceID) {
   // need source, devices, data for betwween specific time period
-  console.log('compute data')
-  console.log(queryTime)
   let jsondata = await axios.get(this.baseAPI + '/computedata/' + this.tempPubkey + '/' + this.tempToken + '/' + queryTime + '/' + deviceID)
   return jsondata.data
 }

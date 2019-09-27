@@ -53,6 +53,7 @@ AverageSystem.prototype.verifyComputeWASM = function (wasmFile) {
 *
 */
 AverageSystem.prototype.averageSystemStart = async function (EIDinfo, compInfo, timeInfo) {
+  console.log('avg sstyem')
   let updateStatus = {}
   let systemBundle = {}
   // prepare deviceList format
@@ -60,11 +61,11 @@ AverageSystem.prototype.averageSystemStart = async function (EIDinfo, compInfo, 
   systemBundle.primary = 'derived'
   systemBundle.timeInfo = timeInfo
   systemBundle.apiInfo = compInfo
-  systemBundle.startperiod = EIDinfo.time.startperiod
+  systemBundle.startperiod = timeInfo.livedate.startperiod
   systemBundle.scienceAsked = EIDinfo.science
   systemBundle.dtAsked = EIDinfo.datatypes
   systemBundle.deviceList = devList
-  systemBundle.timeseg = EIDinfo.time.timeseg
+  systemBundle.timeseg = timeInfo.livedate.timeseg
   systemBundle.querytime = EIDinfo.time
   systemBundle.categories = EIDinfo.categories
   updateStatus = await this.computeControlFlow(systemBundle)
@@ -76,18 +77,25 @@ AverageSystem.prototype.averageSystemStart = async function (EIDinfo, compInfo, 
 *
 */
 AverageSystem.prototype.computeControlFlow = async function (systemBundle) {
+  console.log(systemBundle)
   let cFlowStatus = {}
   let timeState = {}
   for (let dvc of systemBundle.deviceList) {
+    console.log(dvc)
     // need to loop for datatype and time seg // datatype or source Datatypes that use to compute dt asked for?
     for (let dtl of systemBundle.apiInfo[dvc].apiquery) {
+      console.log(dtl.cnrl)
       // check status of compute?  uptodate, needs updating or first time compute?
       for (let ts of systemBundle.timeseg) {
-        timeState = systemBundle.timeInfo[systemBundle.startperiod][dvc][dtl.cnrl][ts]
-        // cFlowStatus = await this.updateComputeControl(timeState, dvc, dtl, ts, systemBundle)
+        console.log('time')
+        console.log(ts)
+        timeState = systemBundle.timeInfo[dvc].apiquery[dtl.cnrl][ts]
+        timeState = ''
       }
     }
   }
+  console.log('timesate')
+  console.log(timeState)
   // now loop over the source datatypes for this compute
   for (let dvc of systemBundle.deviceList) {
     // need to loop for datatype and time seg // datatype or source Datatypes that use to compute dt asked for?
@@ -99,6 +107,8 @@ AverageSystem.prototype.computeControlFlow = async function (systemBundle) {
       }
     }
   }
+  console.log('end ddd')
+  console.log(cFlowStatus)
   return cFlowStatus
 }
 
@@ -107,8 +117,10 @@ AverageSystem.prototype.computeControlFlow = async function (systemBundle) {
 *
 */
 AverageSystem.prototype.updateComputeControl = async function (timeBundle, dvc, dtl, ts, systemBundle) {
+  console.log('update compute control')
   let computeStatus = {}
   if (timeBundle.status === 'update-required') {
+    console.log('update avg start')
     computeStatus = await this.prepareAvgCompute(timeBundle.computeTime, dvc, dtl, ts, systemBundle)
   } else {
     console.log('no updated require, go and get existing results')
@@ -122,6 +134,12 @@ AverageSystem.prototype.updateComputeControl = async function (timeBundle, dvc, 
 *
 */
 AverageSystem.prototype.prepareAvgCompute = async function (computeTimes, device, datatype, ts, systemBundle) {
+  console.log('prepare avg compute')
+  console.log(computeTimes)
+  console.log(device)
+  console.log(datatype)
+  console.log(ts)
+  console.log(systemBundle)
   // computeTimes = [1535846400000, 1535932800000, 1536019200000]
   let lastItem = computeTimes.slice(-1)[0]
   computeTimes = []

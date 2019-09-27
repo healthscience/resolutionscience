@@ -1,63 +1,69 @@
 <template>
   <div id="live-view">
     <div id="live-knowledge-elements">
-      <div v-if="liveData.languageLive" id="context-language" class="live-element">
-        Language: <div class="live-item">{{ liveData.languageLive.word }}</div>
-      </div>
-      <div v-else id="live-context-language" class="live-element">Please set</div>
-      <div id="live-context-devices" class="live-element">
-        <header>Devices:</header>
-          <ul>
-            <li v-for="dev in liveData.devicesLive">
-               <div class="live-item">{{ dev.device_name }}</div>
-            </li>
-          </ul>
-      </div>
-      <div id="live-context-datatypes" class="live-element">
-        <header>DataTypes - </header>
-          <ul>
-            <li id="bmp-data-sensor" v-for="dts in liveData.datatypesLive">
-              <div class="live-item">{{ dts.text }}</div>
-            </li>
-            <li>
-              <header>Category</header>
-                <div id="live-context-category" class="live-element">
-                  <ul>
-                    <li id="cat-items" v-for="catL in liveData.categoryLive">
-                      <div class="live-item">{{ catL.text }}</div>
-                    </li>
-                  </ul>
-                </div>
-            </li>
-          </ul>
-      </div>
-      <div v-if="liveData.scienceLive.prime" id="live-context-science" class="live-element">
-        Compute - <div class="live-item">{{ liveData.scienceLive.prime.text || 'none' }}</div>
-      </div>
-      <div v-else id="live-context-science" class="live-element">Compute: not selected</div>
-      <div id="context-time" class="live-element">
-        <header>Time Period:</header>
-          <ul>
-            <li v-for="ts in liveData.timeLive">
-               <div class="live-item">{{ ts }}</div>
-            </li>
-          </ul>
-      </div>
-      <div id="context-resolution" class="live-element">
-        <header>Resolution:</header>
-          <div class="live-item">{{ liveData.resolutionLive }}</div>
-      </div>
-      <div id="live-learn" class="live-element">
-        <div id="live-learn-container">
-          <div id="learn">
-            <button class="" href="" id="learn-button" @click.prevent="filterLearn(learn)">{{ learn.name }}</button>
+      <div id="live-knowledge-holder">
+        <div v-if="liveData.languageLive" id="context-language" class="live-element">
+          Language: <div class="live-item">{{ liveData.languageLive.word }}</div>
+          <div id="learn-close"></div>
+        </div>
+        <div v-else id="live-context-language" class="live-element">Please set</div>
+        <div id="live-context-devices" class="live-element">
+          <header>Devices:</header>
+            <ul>
+              <li v-for="dev in liveData.devicesLive">
+                 <div class="live-item">{{ dev.device_name }}</div>
+              </li>
+            </ul>
+        </div>
+        <div id="live-context-datatypes" class="live-element">
+          <header>DataTypes - </header>
+            <ul>
+              <li id="bmp-data-sensor" v-for="dts in liveData.datatypesLive">
+                <div class="live-item">{{ dts.text }}</div>
+              </li>
+              <li>
+                <header>Category</header>
+                  <div id="live-context-category" class="live-element">
+                    <ul>
+                      <li id="cat-items" v-for="catL in liveData.categoryLive">
+                        <div class="live-item">{{ catL.text }}</div>
+                      </li>
+                    </ul>
+                  </div>
+              </li>
+            </ul>
+        </div>
+        <div v-if="liveData.scienceLive.prime" id="live-context-science" class="live-element">
+          <header>Compute -</header> 
+          <div class="live-item">{{ liveData.scienceLive.prime.text || 'none' }}</div>
+        </div>
+        <div v-else id="live-context-science" class="live-element">Compute: not selected</div>
+        <div id="context-time" class="live-element">
+          <header>Time Period:</header>
+            <ul>
+              <li v-for="ts in liveData.timeLive">
+                 <div class="live-item">{{ ts }}</div>
+              </li>
+            </ul>
+        </div>
+        <div id="context-resolution" class="live-element">
+          <header>Resolution:</header>
+            <div class="live-item">{{ liveData.resolutionLive }}</div>
+        </div>
+        <div id="live-learn" class="live-element">
+          <div id="live-learn-container">
+            <div id="learn">
+              <button class="" href="" id="learn-button" @click.prevent="filterLearn(learn)">{{ learn.name }}</button>
+            </div>
           </div>
         </div>
       </div>
-      <div id="history-learn" class="live-element">
-        <div id="history-learn-container">
-          <div id="history-view">
-            <a href="" id="history-button" @click.prevent="viewHistory(hist)" v-bind:class="{ 'active': hist.active}">{{ hist.name }}</a>
+      <div id="history-box">
+        <div id="history-learn" class="live-element2">
+          <div id="history-learn-container">
+            <div id="history-view">
+              <a href="" id="history-button" @click.prevent="viewHistory(hist)" v-bind:class="{ 'active': hist.active}">{{ hist.name }}</a>
+            </div>
           </div>
         </div>
       </div>
@@ -243,8 +249,6 @@
         // set message to UI IN-progress
         this.entityPrepareStatus.active = true
         let visDataBack = await this.learnStart(liveBundle)
-        console.log('visDataBack ')
-        console.log(visDataBack)
         this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions
@@ -290,8 +294,6 @@
         }
       },
       async navTimeLearn (uSeg) {
-        console.log('time rlearn')
-        console.log(uSeg)
         let updateTbundle = {}
         // what KID is live?
         let bundList = this.$store.getters.startBundlesList
@@ -442,7 +444,6 @@
         return true
       },
       scienceStatus (sIN) {
-        console.log(sIN)
         this.liveData.scienceLive = sIN
       },
       timeStatus (tIN) {
@@ -503,12 +504,10 @@
         this.liveNavTime = this.timeNav('datatime-index')
       },
       addToExperiment (exB) {
-        console.log('add to expet')
         this.selectedExperiment = exB.target.value
       },
       experADD (expA) {
         // need to keep permanent store of experiments to Ecomponents linked (save, delete, update also)
-        console.log('add save to dashboard')
         const localthis = this
         this.saveMappingExpKB(this.selectedExperiment)
         // this.$emit('experimentMap', this.selectedExperiment)
@@ -526,16 +525,12 @@
   margin-left: 1em;
 }
 
-.live-element {
-  float: left;
-  min-width: 120px;
-}
-
-.live-item {
-  font-weight: bold;
-}
 #learn-close {
   clear:both;
+}
+
+#live-learn-container {
+  margin: 20px;
 }
 
 #learn-button {
@@ -560,7 +555,33 @@
 }
 
 #live-knowledge-elements {
+  border: 0px solid blue;
   background-color: #FBF4A9;
+}
+
+#live-knowledge-holder {
+  float: left;
+  border: 1px solid purple;
+  background-color: #EBE7E0;
+  margin: 6px;
+}
+
+.live-element {
+  display: inline-block;
+  vertical-align: top;
+  border: 0px solid red;
+  margin-left: 40px;
+}
+
+.live-item {
+  font-weight: bold;
+  border: 0px solid black;
+}
+
+#history-box {
+  float: left;
+  border: 1px solid green;
+  margin: 20px;
 }
 
 #add-exp-button {
@@ -585,7 +606,7 @@
 
 .custom-resizer {
   width: 100%;
-  height: 800px;
+  height: 900px;
 }
 
 .custom-resizer > .pane {

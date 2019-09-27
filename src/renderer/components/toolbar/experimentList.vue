@@ -3,6 +3,15 @@
     <ul v-if="experimentData.length !== 0" >
       <li id="experiment-item" v-for="(exp, index) in experimentData">
         <div id="live-experiment-elements">
+          <div id="select-ebox" class="live-element">
+            <div id="select-ebox-container">
+              <div id="select-status">
+                <header>Select</header>
+                <input type="checkbox" v-bind:id="exp.cnrl" v-bind:value="exp.cnrl" v-model="eboxSelect" @change="makeELive($event)">
+                <label for="e-select">{{ }}</label>
+              </div>
+            </div>
+          </div>
           <div id="context-experiment" class="live-element">
             <header>Status:</header>
             <div class="live-item">
@@ -31,15 +40,6 @@
             <header>Participation:</header>
             <div class="live-item">
               N=1
-            </div>
-          </div>
-          <div id="select-ebox" class="live-element">
-            <div id="select-ebox-container">
-              <div id="select-status">
-                <header>Select</header>
-                <input type="checkbox" v-bind:id="exp.cnrl" v-bind:value="exp.cnrl" v-model="eboxSelect" @change="makeELive($event)">
-                <label for="e-select">{{ }}</label>
-              </div>
             </div>
           </div>
           <div id="experiment-close"></div>

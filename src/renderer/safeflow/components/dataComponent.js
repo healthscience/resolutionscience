@@ -87,8 +87,6 @@ DataComponent.prototype.setCategories = function (ctIN) {
 *
 */
 DataComponent.prototype.sourceData = async function (apiINFO, timeComponent) {
-  console.log('sourcdate funct')
-  console.log(timeComponent)
   this.apiInfoLive = apiINFO
   let systemBundle = {}
   systemBundle.apiInfo = apiINFO
@@ -99,12 +97,8 @@ DataComponent.prototype.sourceData = async function (apiINFO, timeComponent) {
   systemBundle.timeseg = timeComponent.livedate.timeseg
   systemBundle.querytime = this.did.time
   systemBundle.categories = this.did.categories
-  console.log('sourc dataaaaa')
-  console.log(systemBundle)
   // need to check if one day or more or some segment of time is required?
   for (let rt of timeComponent.timerange) {
-    console.log('time r')
-    console.log(rt)
     let convertTime = moment(rt).valueOf()
     let timeStructure = convertTime
     await this.DataControlFlow(systemBundle, timeStructure)
@@ -120,8 +114,6 @@ DataComponent.prototype.sourceData = async function (apiINFO, timeComponent) {
 DataComponent.prototype.DataControlFlow = async function (systemBundle, time) {
   let dataRback = await this.liveDataSystem.datatypeQueryMapping(systemBundle, time)
   this.dataRaw[time] = dataRback
-  console.log('data comp live data')
-  console.log(this.dataRaw)
   // is there a categories filter to apply?
   this.CategoriseData(systemBundle, time)
   // is there any data tidying required
@@ -200,8 +192,6 @@ DataComponent.prototype.directSourceUpdated = async function (straightBundle) {
   systemBundle.timeseg = this.timeSegs
   systemBundle.categories = this.did.categories
   this.liveData = await this.liveDataSystem.datatypeQueryMapping(systemBundle)
-  console.log('data comp live data')
-  console.log(this.liveData)
 }
 
 export default DataComponent

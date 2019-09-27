@@ -41,14 +41,14 @@ ComputeComponent.prototype.computeList = async function () {
 * @method filterCompute
 *
 */
-ComputeComponent.prototype.filterCompute = async function (compInfo, tidyInfo) {
+ComputeComponent.prototype.filterCompute = async function (compInfo, timeComponent) {
   let computeStatelive = {}
   // var localthis = this
   if (this.EIDinfo.science.wasmfile === 'none' && this.computeStatus === false) {
     // raw data nothing to compute
     computeStatelive.computeState = 'observation'
   } else {
-    let computeState = await this.liveComputeSystem.computationSystem(this.EIDinfo, compInfo, tidyInfo)
+    let computeState = await this.liveComputeSystem.computationSystem(this.EIDinfo, compInfo, timeComponent)
     computeStatelive = computeState
   }
   return computeStatelive

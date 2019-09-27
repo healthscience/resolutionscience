@@ -35,8 +35,6 @@ DatatypeComponent.prototype.dataTypeMapping = function () {
   // query CNRL for hash and parse out datatype and packaging info.
   let dataTypeMapped = this.liveDTsystem.DTStartMatch(this.did.devices, this.did.datatypes, this.did.categories)
   this.datatypeInfoLive = dataTypeMapped
-  console.log('datatype COMPONENT')
-  console.log(this.datatypeInfoLive)
   return true
 }
 

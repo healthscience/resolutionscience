@@ -226,7 +226,7 @@
 
 <style>
 #visual-view {
-  border: 2px solid green;
+  border: 4px solid green;
   margin: 0.0em;
   width: 100%;
 }
@@ -260,7 +260,7 @@ li {
 }
 
 #visulation-select {
-    border: 1px solid green;
+    border: 2px solid green;
     margin-left: 1em;
 }
 
@@ -300,5 +300,10 @@ li {
 
 #add-button {
   display: inline-block;
+}
+
+#charts-live {
+  border: 0px solid red;
+  width: 100%;
 }
 </style>

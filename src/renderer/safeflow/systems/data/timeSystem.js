@@ -51,9 +51,6 @@ TimeSystem.prototype.discoverTimeStatus = async function (EIDinfo, compInfo, raw
 *
 */
 TimeSystem.prototype.sourceTimeRange = function (startTime, TimeSeg) {
-  console.log('update or set range')
-  console.log(startTime)
-  console.log(TimeSeg)
   let beginD = this.assessSourceRange(startTime, TimeSeg)
   let timeSourceRange = this.momentRangeBuild(beginD, startTime)
   let rangeFormat = this.formatTimeSafeFlow(timeSourceRange)

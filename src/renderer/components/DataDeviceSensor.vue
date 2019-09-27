@@ -143,11 +143,7 @@
         this.viewPkey = true
       },
       luftDatenConnect (codeIn) {
-        console.log('connect luftdaten')
-        console.log(codeIn)
-        console.log(this.luftdatenDevice)
         this.luftdatenDeviceConnect = this.luftdatenDevice
-        console.log(this.luftdatenDeviceConnect)
       }
     }
   }

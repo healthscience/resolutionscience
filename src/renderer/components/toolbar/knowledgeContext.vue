@@ -206,7 +206,6 @@
         // this.$emit('setVLanguage', l)
       },
       selectDevice (s) {
-        console.log(s)
         s.active = !s.active
         kBus.$emit('setVDevice', s)
         this.dataTypeDevice(s)

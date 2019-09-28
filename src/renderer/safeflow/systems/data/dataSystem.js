@@ -150,7 +150,7 @@ DataSystem.prototype.checkForDataPerDevice = async function (device) {
 DataSystem.prototype.datatypeQueryMapping = async function (systemBundle, time) {
   let rawHolder = {}
   // loop over the each devices API data source info.
-  for (let devI of systemBundle.deviceList) {
+  for (let devI of systemBundle.devices) {
     rawHolder[devI] = {}
     // first is the data from the PAST or FUTURE ie simulated?
     if (systemBundle.startperiod === 'simulateData') {
@@ -178,7 +178,7 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle, time) 
           rawHolder = SumsourcerawData
         } else if (dtItem.api === 'average/<publickey>/<token>/<queryTime>/<deviceID>/') {
           // console.log('average data query')
-          let AvgsourcerawData = await this.getRawAverageData(systemBundle)
+          let AvgsourcerawData = await this.getRawAverageData(devI, time, systemBundle)
           rawHolder = AvgsourcerawData
         }
       }
@@ -223,7 +223,7 @@ DataSystem.prototype.getRawSumData = async function (bundleIN) {
   // loop over and return Statistics Data and return to callback
   let averageData = {}
   let averageHolder = {}
-  for (let di of bundleIN.deviceList) {
+  for (let di of bundleIN.devices) {
     // also need to loop for datatype and map to storage API function that matches
     for (let dtl of bundleIN.dtAsked) {
       // loop over datatypes
@@ -249,20 +249,20 @@ DataSystem.prototype.getRawSumData = async function (bundleIN) {
 * @method getRawAverageData
 *
 */
-DataSystem.prototype.getRawAverageData = async function (bundleIN) {
+DataSystem.prototype.getRawAverageData = async function (devI, time, avgBundle) {
   const localthis = this
   // how many sensor ie data sets are being asked for?
   // loop over and return Statistics Data and return to callback
   let averageData = {}
   // let averageArray = []
   let averageHolder = {}
-  for (let di of bundleIN.deviceList) {
+  for (let di of avgBundle.devices) {
     // also need to loop for datatype and map to storage API function that matches
-    for (let dtl of bundleIN.dtAsked) {
+    for (let dtl of avgBundle.dtAsked) {
       // loop over datatypes
-      for (let tsg of bundleIN.timeseg) {
+      for (let tsg of avgBundle.timeseg) {
         // loop over time segments
-        let statsData = await localthis.liveTestStorage.getAverageData(bundleIN.startperiod, di, bundleIN.scienceAsked.prime.cnrl, dtl.cnrl, tsg, bundleIN.categories[0].cnrl).catch(function (err) {
+        let statsData = await localthis.liveTestStorage.getAverageData(time, di, avgBundle.scienceAsked.prime.cnrl, dtl.cnrl, tsg, avgBundle.categories[0].cnrl).catch(function (err) {
           console.log(err)
         })
         averageHolder = {}
@@ -285,7 +285,7 @@ DataSystem.prototype.getRawAverageData = async function (bundleIN) {
 DataSystem.prototype.getHRrecovery = async function (bundleIN, dtAsked) {
   const localthis = this
   this.recoverHR = {}
-  const deviceLiveFilter = bundleIN.deviceList
+  const deviceLiveFilter = bundleIN.devices
   for (let di of deviceLiveFilter) {
     await localthis.liveTestStorage.getHRrecoveryData(bundleIN.timePeriod, di, dtAsked).then(function (statsData) {
       localthis.recoverHR[di] = statsData

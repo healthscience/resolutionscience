@@ -93,7 +93,7 @@ DataComponent.prototype.sourceData = async function (apiINFO, timeComponent) {
   systemBundle.startperiod = timeComponent.livedate.startperiod
   systemBundle.scienceAsked = this.CNRLscience
   systemBundle.dtAsked = this.datatypeList
-  systemBundle.deviceList = this.deviceList
+  systemBundle.devices = this.deviceList
   systemBundle.timeseg = timeComponent.livedate.timeseg
   systemBundle.querytime = this.did.time
   systemBundle.categories = this.did.categories
@@ -182,16 +182,16 @@ DataComponent.prototype.assessDataStatus = function (time) {
 * @method directSourceUpdated
 *
 */
-DataComponent.prototype.directSourceUpdated = async function (straightBundle) {
+DataComponent.prototype.directSourceUpdated = async function (straightBundle, sTime) {
   let systemBundle = {}
   systemBundle.apiInfo = straightBundle
   systemBundle.startperiod = this.livedate
   systemBundle.scienceAsked = this.CNRLscience
   systemBundle.dtAsked = this.datatypeList
-  systemBundle.deviceList = this.deviceList
-  systemBundle.timeseg = this.timeSegs
+  systemBundle.devices = this.deviceList
+  systemBundle.timeseg = sTime.livedate.timeseg
   systemBundle.categories = this.did.categories
-  this.liveData = await this.liveDataSystem.datatypeQueryMapping(systemBundle)
+  this.liveData = await this.liveDataSystem.datatypeQueryMapping(systemBundle, sTime.livedate.startperiod)
 }
 
 export default DataComponent

@@ -107,9 +107,18 @@ TimeComponent.prototype.timeProfiling = function () {
 * @method startTimeSystem
 *
 */
-TimeComponent.prototype.startTimeSystem = async function (dtInfo, rawIN) {
+TimeComponent.prototype.startTimeSystem = async function (dtInfo, dataIN) {
   // need to look at the entity datatype INFO bundle and map times start stop update status
-  this.liveTime = await this.liveTimeSystem.discoverTimeStatus(this.did, dtInfo, rawIN)
+  let systemBundle = {}
+  systemBundle.time = this.did.time
+  systemBundle.devices = this.did.devices
+  systemBundle.dtInfo = dtInfo.datatypeInfoLive
+  if (this.did.science.wasmfile === 'none') {
+    // raw data nothing to compute
+    this.liveTime = 'none'
+  } else {
+    this.liveTime = await this.liveTimeSystem.discoverTimeStatus(systemBundle, dataIN)
+  }
   return true
 }
 

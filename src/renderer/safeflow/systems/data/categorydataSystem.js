@@ -52,7 +52,7 @@ CategoryDataSystem.prototype.categorySorter = function (systemBundle, rawData, t
       }
     }
     let catData = []
-    for (let dev of systemBundle.deviceList) {
+    for (let dev of systemBundle.devices) {
       catHolder[dev] = []
       // extract the column query name
       if (systemBundle.apiInfo[dev].categorycodes.length !== 0) {

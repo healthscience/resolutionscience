@@ -37,7 +37,7 @@ FilterDataSystem.prototype.dtFilterController = function (systemBundle, liveData
   let filterType = ''
   filterHolder = {}
   // loop over the each devices API data source info.
-  for (let devI of systemBundle.deviceList) {
+  for (let devI of systemBundle.devices) {
     filterHolder[devI] = {}
     // is the filter on derived source(s)?
     let dtSourceR = []

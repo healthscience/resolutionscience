@@ -39,7 +39,7 @@ TidyDataSystem.prototype.tidyRawData = function (bundleIN, dataRaw, time) {
   tidyHolder = {}
   let tidyBack = []
   let dInfo = []
-  for (let dev of bundleIN.deviceList) {
+  for (let dev of bundleIN.devices) {
     tidyHolder[dev] = []
     dInfo = bundleIN.apiInfo[dev].tidyList
     if (dInfo.length !== 0) {
@@ -53,8 +53,9 @@ TidyDataSystem.prototype.tidyRawData = function (bundleIN, dataRaw, time) {
           dtMatch = bundleIN.dtAsked
           tidyBack = this.tidyFilter(dtTidy, dtMatch, 'day', rawDataarray)
         } else {
+          let rawDataarrayb = dataRaw[time][dev]
           dtMatch = bundleIN.apiInfo[dev].sourceDTs
-          tidyBack = this.tidyFilterRemove(dtTidy, dtMatch, 'day', rawDataarray)
+          tidyBack = this.tidyFilterRemove(dtTidy, dtMatch, 'day', rawDataarrayb)
         }
         tidyHolder[dev] = tidyBack
       }

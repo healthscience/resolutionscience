@@ -35,17 +35,6 @@ var TimeSystem = function (setIN) {
 util.inherits(TimeSystem, events.EventEmitter)
 
 /**
-*  return array of active devices
-* @method timeStartFilter
-*
-*/
-TimeSystem.prototype.discoverTimeStatus = async function (EIDinfo, compInfo, rawIN) {
-  // establish start date or last compute date, deal with segmentation if required.
-  let timeStart = await this.updatedDTCStatus(EIDinfo, compInfo, rawIN)
-  return timeStart
-}
-
-/**
 *  assess what range of data day / range are required?
 * @method sourceTimeRange
 *
@@ -55,6 +44,78 @@ TimeSystem.prototype.sourceTimeRange = function (startTime, TimeSeg) {
   let timeSourceRange = this.momentRangeBuild(beginD, startTime)
   let rangeFormat = this.formatTimeSafeFlow(timeSourceRange)
   return rangeFormat
+}
+
+/**
+* does this data time ask need updating? Y N
+* @method discoverTimeStatus
+*
+*/
+TimeSystem.prototype.discoverTimeStatus = async function (systemBundle, dataIN) {
+  let statusHolder = {}
+  let lastComputetime = []
+  let liveTimeConvert = moment(systemBundle.time.startperiod).valueOf()
+  let liveTime = liveTimeConvert / 1000
+  // need to discover prime data type (and) source DT's start time is neccessary
+  for (let dev of systemBundle.devices) {
+    for (let dtl of systemBundle.dtInfo[dev.device_mac].datatypes) {
+      let devMac = dev.device_mac
+      for (let tsega of systemBundle.time.timeseg) {
+        statusHolder[liveTime] = {}
+        statusHolder[liveTime][devMac] = {}
+        statusHolder[liveTime][devMac][dtl.cnrl] = {}
+        // need to select the latest data object from array
+        let lastDataItem = dataIN[liveTime][devMac][dtl.cnrl][tsega].slice(-1)[0]
+        // need to check if prime data type be computed before?
+        if (tsega !== undefined || tsega.length > 0) {
+          if (tsega === 'day') {
+            lastComputetime = this.timeOrderLast(lastDataItem)
+            let catStatus2 = await this.assessCompute(systemBundle, lastComputetime, liveTime, devMac, 'day')
+            let computeOngoing = {}
+            if (catStatus2.computestatus === 'on-going') {
+              // map compute to data source API query
+              computeOngoing.lastComputeTime = catStatus2.firstdate
+              computeOngoing.status = catStatus2.computestatus
+              computeOngoing.timeseg = 'day'
+              computeOngoing.computeTime = this.assessOngoing(lastComputetime, liveTime)
+            } else if (catStatus2.computestatus === 'update-required') {
+              // just return first time data compute INFO
+              computeOngoing.lastComputeTime = catStatus2.firstdate
+              computeOngoing.status = catStatus2.computestatus
+              computeOngoing.timeseg = 'day'
+              computeOngoing.computeTime = this.assessOngoing(lastComputetime, liveTime)
+            } else {
+              // nothing to compute
+              computeOngoing.status = catStatus2.computestatus
+            }
+            statusHolder[liveTime][devMac][dtl.cnrl][tsega] = computeOngoing
+          }
+          if (tsega === 'week') {
+            console.log('week time period')
+            let computeOngoing = {}
+            // convert to array of single days and 'add together those data sets
+            let catStatus3 = await this.assessCompute(systemBundle, lastComputetime, liveTime, devMac, 'week')
+            computeOngoing.lastComputeTime = catStatus3.firstdate
+            computeOngoing.status = catStatus3.computestatus
+            computeOngoing.timeseg = 'week'
+            computeOngoing.computeTime = this.assessOngoing(systemBundle.cid, catStatus3.firstdate, liveTime)
+            statusHolder[liveTime][devMac][dtl.cnrl][tsega] = catStatus3
+          }
+          /* if (tsega === 'month') {
+            lastComputetime = tsega.week.slice(-1)
+            let catStatus4 = await this.prepareDateArrays(systemBundle, lastComputetime, dev, 'month')
+            statusHolder[liveTime][devMac][dtl.cnrl][tsega] = catStatus4
+          }
+          if (tsega === 'year') {
+            lastComputetime = tsega.week.slice(-1)
+            let catStatus5 = await this.prepareDateArrays(systemBundle, lastComputetime, dev, 'year')
+            statusHolder[liveTime][devMac][dtl.cnrl][tsega] = catStatus5
+          } */
+        }
+      }
+    }
+  }
+  return statusHolder
 }
 
 /**
@@ -83,77 +144,6 @@ TimeSystem.prototype.assessSourceRange = function (startT, timeSeg) {
 }
 
 /**
-* does this data time ask need updating? Y N
-* @method updatedDTCStatus
-*
-*/
-TimeSystem.prototype.updatedDTCStatus = async function (EIDinfo, compInfo, rawIN) {
-  let statusHolder = {}
-  let lastComputetime = []
-  let liveTime = EIDinfo.time.startperiod
-  // need to discover prime data type (and) source DT's start time is neccessary
-  for (let dev of EIDinfo.devices) {
-    for (let dtl of compInfo[dev.device_mac].datatypes) {
-      let devMac = dev.device_mac
-      for (let tsega of EIDinfo.time.timeseg) {
-        statusHolder[liveTime] = {}
-        statusHolder[liveTime][devMac] = {}
-        statusHolder[liveTime][devMac][dtl.cnrl] = {}
-        // need to select the latest data object from array
-        let lastDataItem = rawIN[liveTime][devMac][dtl.cnrl][tsega].slice(-1)[0]
-        // need to check if prime data type be computed before?
-        if (tsega !== undefined || tsega.length > 0) {
-          if (tsega === 'day') {
-            lastComputetime = this.timeOrderLast(lastDataItem)
-            let catStatus2 = await this.assessCompute(EIDinfo, lastComputetime, liveTime, devMac, 'day')
-            let computeOngoing = {}
-            if (catStatus2 === 'on-going') {
-              // map compute to data source API query
-              computeOngoing.lastComputeTime = catStatus2.firstdate
-              computeOngoing.status = catStatus2.computestatus
-              computeOngoing.timeseg = 'day'
-              computeOngoing.computeTime = this.assessOngoing(EIDinfo.cid, catStatus2.firstdate, liveTime)
-            } else if (catStatus2 === 'update-required') {
-              // just return first time data compute INFO
-              computeOngoing.lastComputeTime = catStatus2.firstdate
-              computeOngoing.status = catStatus2.computestatus
-              computeOngoing.timeseg = 'day'
-              computeOngoing.computeTime = this.assessOngoing(EIDinfo.cid, catStatus2.firstdate, liveTime)
-            } else {
-              // nothing to compute
-              computeOngoing.status = catStatus2.computestatus
-            }
-            statusHolder[liveTime][devMac][dtl.cnrl][tsega] = computeOngoing
-          }
-          if (tsega === 'week') {
-            console.log('week time period')
-            let computeOngoing = {}
-            // convert to array of single days and 'add together those data sets
-            let catStatus3 = await this.assessCompute(EIDinfo, lastComputetime, liveTime, devMac, 'week')
-            computeOngoing.lastComputeTime = catStatus3.firstdate
-            computeOngoing.status = catStatus3.computestatus
-            computeOngoing.timeseg = 'week'
-            computeOngoing.computeTime = this.assessOngoing(EIDinfo.cid, catStatus3.firstdate, liveTime)
-            statusHolder[liveTime][devMac][dtl.cnrl][tsega] = catStatus3
-          }
-          /* if (tsega === 'month') {
-            lastComputetime = tsega.week.slice(-1)
-            let catStatus4 = await this.prepareDateArrays(EIDinfo, lastComputetime, dev, 'month')
-            statusHolder[liveTime][devMac][dtl.cnrl][tsega] = catStatus4
-          }
-          if (tsega === 'year') {
-            lastComputetime = tsega.week.slice(-1)
-            let catStatus5 = await this.prepareDateArrays(EIDinfo, lastComputetime, dev, 'year')
-            statusHolder[liveTime][devMac][dtl.cnrl][tsega] = catStatus5
-          } */
-        }
-      }
-    }
-  }
-  return statusHolder
-}
-
-/**
 * order the array by time and select the last time
 * @method timeOrderLast
 *
@@ -174,13 +164,13 @@ TimeSystem.prototype.timeOrderLast = function (dataAIN) {
 * @method assessCompute
 *
 */
-TimeSystem.prototype.assessCompute = async function (EIDinfo, lastTime, liveTime, device, timeseg) {
+TimeSystem.prototype.assessCompute = async function (systemBundle, lastTime, liveTime, device, timeseg) {
   let computeCheck = {}
   // first time compute? Or not?
   if (lastTime === 0) {
     // console.log('logic 1')
     let updateCompStatus = 'update-required'
-    let startTimeFound = await this.sourceDTstartTime(EIDinfo, device)
+    let startTimeFound = await this.sourceDTstartTime(systemBundle, device)
     computeCheck.computestatus = updateCompStatus
     computeCheck.firstdate = startTimeFound
   } else if (lastTime < liveTime) {
@@ -208,7 +198,7 @@ TimeSystem.prototype.assessOngoing = function (lastComputeIN, liveTime) {
 * @method prepareDateArrays
 *
 */
-TimeSystem.prototype.prepareDateArrays = async function (EIDinfo, lastComputeIN, dev, timeSeg) {
+TimeSystem.prototype.prepareDateArrays = async function (systemBundle, lastComputeIN, dev, timeSeg) {
 /*  let catHolder = {}
   let realTime = EIDinfo.time.realtime
   // console.log(realTime)
@@ -241,7 +231,7 @@ TimeSystem.prototype.prepareDateArrays = async function (EIDinfo, lastComputeIN,
 * @method sourceDTstartTime
 *
 */
-TimeSystem.prototype.sourceDTstartTime = async function (EIDinfo, devIN) {
+TimeSystem.prototype.sourceDTstartTime = async function (systemBundle, devIN) {
   // need to map compute asked for to function that calls API for data
   let timeDevHolder = ''
   // pass over to data system to match function for API query
@@ -271,6 +261,9 @@ TimeSystem.prototype.momentRangeBuild = function (lastCompTime, liveTime) {
 *
 */
 TimeSystem.prototype.updateComputeDateArray = function (lastCompTime, liveTime) {
+  console.log('update compte date array')
+  console.log(lastCompTime)
+  console.log(liveTime)
   let computeList = []
   const liveDate = liveTime * 1000
   const lastComputeDate = lastCompTime * 1000

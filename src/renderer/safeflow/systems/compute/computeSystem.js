@@ -46,15 +46,15 @@ ComputeSystem.prototype.CNRLquery = function () {
 * @method computationSystem
 *
 */
-ComputeSystem.prototype.computationSystem = async function (EIDinfo, compInfo, timeInfo) {
+ComputeSystem.prototype.computationSystem = async function (systemBundle) {
   // match computation to approprate verified compute need LOADER to add what WASM is being used/required
   let computeStatus = {}
-  if (EIDinfo.cid === 'cnrl-2356388732') {
-    computeStatus = await this.liveAverage.averageSystemStart(EIDinfo, compInfo, timeInfo)
-  } else if (EIDinfo.cid === 'cnrl-2356388733') {
-    computeStatus = await this.recoverySystem(EIDinfo, compInfo, timeInfo)
-  } else if (EIDinfo.cid === 'cnrl-2356388737') {
-    computeStatus = await this.liveSum.sumSystemStart(EIDinfo, compInfo, timeInfo)
+  if (systemBundle.cid === 'cnrl-2356388732') {
+    computeStatus = await this.liveAverage.averageSystemStart(systemBundle)
+  } else if (systemBundle.cid === 'cnrl-2356388733') {
+    computeStatus = await this.recoverySystem(systemBundle)
+  } else if (systemBundle.cid === 'cnrl-2356388737') {
+    computeStatus = await this.liveSum.sumSystemStart(systemBundle)
   }
   return computeStatus
 }

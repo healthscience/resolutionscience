@@ -34,7 +34,7 @@
             </ul>
         </div>
         <div v-if="liveData.scienceLive.prime" id="live-context-science" class="live-element">
-          <header>Compute -</header> 
+          <header>Compute -</header>
           <div class="live-item">{{ liveData.scienceLive.prime.text || 'none' }}</div>
         </div>
         <div v-else id="live-context-science" class="live-element">Compute: not selected</div>
@@ -249,6 +249,8 @@
         // set message to UI IN-progress
         this.entityPrepareStatus.active = true
         let visDataBack = await this.learnStart(liveBundle)
+        console.log('visDataBack')
+        console.log(visDataBack)
         this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions

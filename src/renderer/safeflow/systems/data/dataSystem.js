@@ -122,27 +122,6 @@ DataSystem.prototype.getLiveDatatypes = function (dtIN) {
 }
 
 /**
-*  check if entity already has data raw tidy visual
-* @method checkForDataPerDevice
-*
-*/
-DataSystem.prototype.checkForDataPerDevice = async function (device) {
-  /* let deviceStatus = {}
-  let dataStatus = []
-  // does any input source data exist?
-  let firstD = await this.liveTestStorage.getFirstData(device).catch(function (err) {
-    console.log(err)
-  })
-  // console.log('firstD')
-  // console.log(firstD)
-  deviceStatus.lastComputeTime = firstD[0].timestamp
-  deviceStatus[device] = false
-  dataStatus.push(deviceStatus)
-
-  return dataStatus */
-}
-
-/**
 *  mapping datatypes to  API source
 * @method datatypeQueryMapping
 *
@@ -174,7 +153,7 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle, time) 
           rawHolder[devI][dtItem.cnrl] = dayAQHolder
         } else if (dtItem.api === 'sum/<publickey>/<token>/<queryTime>/<deviceID>/') {
           // console.log('sum data query')
-          let SumsourcerawData = await this.getRawSumData(systemBundle)
+          let SumsourcerawData = await this.getRawSumData(devI, time, systemBundle)
           rawHolder = SumsourcerawData
         } else if (dtItem.api === 'average/<publickey>/<token>/<queryTime>/<deviceID>/') {
           // console.log('average data query')
@@ -217,7 +196,7 @@ DataSystem.prototype.getAirqualityData = async function (device, startTime) {
 * @method getRawSumData
 *
 */
-DataSystem.prototype.getRawSumData = async function (bundleIN) {
+DataSystem.prototype.getRawSumData = async function (devI, time, bundleIN) {
   const localthis = this
   // how many sensor ie data sets are being asked for?
   // loop over and return Statistics Data and return to callback
@@ -229,7 +208,7 @@ DataSystem.prototype.getRawSumData = async function (bundleIN) {
       // loop over datatypes
       for (let tsg of bundleIN.timeseg) {
         // loop over time segments
-        await localthis.liveTestStorage.getSumData(bundleIN.startperiod, di, bundleIN.scienceAsked.prime.cnrl, dtl.cnrl, tsg).then(function (statsData) {
+        await localthis.liveTestStorage.getSumData(time, di, bundleIN.scienceAsked.prime.cnrl, dtl.cnrl, tsg).then(function (statsData) {
           averageHolder = {}
           averageHolder[tsg] = statsData
           averageData[di] = {}

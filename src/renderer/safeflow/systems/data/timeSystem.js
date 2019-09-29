@@ -77,13 +77,13 @@ TimeSystem.prototype.discoverTimeStatus = async function (systemBundle, dataIN) 
               computeOngoing.lastComputeTime = catStatus2.firstdate
               computeOngoing.status = catStatus2.computestatus
               computeOngoing.timeseg = 'day'
-              computeOngoing.computeTime = this.assessOngoing(lastComputetime, liveTime)
+              computeOngoing.computeTime = this.assessOngoing(catStatus2.firstdate, liveTime)
             } else if (catStatus2.computestatus === 'update-required') {
               // just return first time data compute INFO
               computeOngoing.lastComputeTime = catStatus2.firstdate
               computeOngoing.status = catStatus2.computestatus
               computeOngoing.timeseg = 'day'
-              computeOngoing.computeTime = this.assessOngoing(lastComputetime, liveTime)
+              computeOngoing.computeTime = this.assessOngoing(catStatus2.firstdate, liveTime)
             } else {
               // nothing to compute
               computeOngoing.status = catStatus2.computestatus
@@ -170,7 +170,7 @@ TimeSystem.prototype.assessCompute = async function (systemBundle, lastTime, liv
   if (lastTime === 0) {
     // console.log('logic 1')
     let updateCompStatus = 'update-required'
-    let startTimeFound = await this.sourceDTstartTime(systemBundle, device)
+    let startTimeFound = await this.sourceDTstartTime(device)
     computeCheck.computestatus = updateCompStatus
     computeCheck.firstdate = startTimeFound
   } else if (lastTime < liveTime) {
@@ -194,50 +194,17 @@ TimeSystem.prototype.assessOngoing = function (lastComputeIN, liveTime) {
 }
 
 /**
-* categorise status of each time seg asked for
-* @method prepareDateArrays
-*
-*/
-TimeSystem.prototype.prepareDateArrays = async function (systemBundle, lastComputeIN, dev, timeSeg) {
-/*  let catHolder = {}
-  let realTime = EIDinfo.time.realtime
-  // console.log(realTime)
-  let updateCompStatus = ''
-  let startTimeFound = ''
-  let timeArray = []
-  if (lastComputeIN === 0) {
-    // console.log('logic 1')
-    updateCompStatus = 'update-required'
-    startTimeFound = await this.sourceDTstartTime(dev)
-    // form array for compute structure???
-    timeArray = this.updateComputeDateArray(startTimeFound, EIDinfo.time.startperiod)
-  } else if (lastComputeIN < realTime) {
-    // console.log('logic 2')
-    updateCompStatus = 'update-required'
-    timeArray = this.updateComputeDateArray(lastComputeIN, EIDinfo.time.startperiod)
-  } else {
-    // console.log('logic 3')
-    updateCompStatus = 'uptodate'
-  }
-  catHolder.lastComputeTime = startTimeFound
-  catHolder.status = updateCompStatus
-  catHolder.timeseg = timeSeg
-  catHolder.computeTime = timeArray
-  return catHolder */
-}
-
-/**
 * query source datatype for a starting time stamp
 * @method sourceDTstartTime
 *
 */
-TimeSystem.prototype.sourceDTstartTime = async function (systemBundle, devIN) {
+TimeSystem.prototype.sourceDTstartTime = async function (devIN) {
   // need to map compute asked for to function that calls API for data
   let timeDevHolder = ''
   // pass over to data system to match function for API query
-  let dateDevice = this.liveDataSystem.datatypeQueryMapping()
-  // let dateDevice = await this.checkForDataPerDevice(devIN)
-  timeDevHolder = dateDevice[0].lastComputeTime
+  // need to update query for source DT rather than the prime ie derived
+  let dateDevice = await this.liveTestStorage.getFirstData(devIN)
+  timeDevHolder = dateDevice[0].timestamp
   return timeDevHolder
 }
 
@@ -261,9 +228,6 @@ TimeSystem.prototype.momentRangeBuild = function (lastCompTime, liveTime) {
 *
 */
 TimeSystem.prototype.updateComputeDateArray = function (lastCompTime, liveTime) {
-  console.log('update compte date array')
-  console.log(lastCompTime)
-  console.log(liveTime)
   let computeList = []
   const liveDate = liveTime * 1000
   const lastComputeDate = lastCompTime * 1000

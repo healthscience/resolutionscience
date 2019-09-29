@@ -130,7 +130,6 @@ AverageSystem.prototype.prepareAvgCompute = async function (computeTimes, device
     let queryTime = qt / 1000
     // The datatype asked should be MAPPED to storage API via source Datatypes that make up e.g. average-bpm
     let dataBatch = await this.liveTestStorage.getComputeData(queryTime, device)
-    // console.log(dataBatch)
     systemBundle.startperiod = queryTime
     let formHolder = {}
     formHolder[queryTime] = {}

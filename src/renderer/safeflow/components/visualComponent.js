@@ -42,8 +42,10 @@ VisualComponent.prototype.setVisLive = function (updateEID) {
 *
 */
 VisualComponent.prototype.filterVisual = function (visIN, vData, timeComponent) {
-  // console.log('vis timecompoents')
-  // console.log(timeComponent)
+  console.log('vis timecompoents')
+  console.log(visIN)
+  console.log(vData)
+  console.log(timeComponent)
   // which of three types of visualisations?
   let status = false
   // todo need to check if one or many visualisation types required? ONe for now

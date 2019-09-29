@@ -231,18 +231,18 @@ ChartSystem.prototype.prepareLabelchart = function (labelIN) {
 * @method structureAverageData
 *
 */
-ChartSystem.prototype.structureAverageData = function (datatypeIN, eInfo, cBundle, dataIN) {
-  let liveDate = eInfo.time.startperiod
+ChartSystem.prototype.structureAverageData = function (datatypeIN, eInfo, cBundle, dataIN, timeComponent) {
+  let liveDate = timeComponent.livedate.startperiod
   let visCHolder = {}
   visCHolder[liveDate] = {}
   let datalabel = []
   let dataC = []
-  if (dataIN[liveDate]) {
+  if (dataIN) {
     for (let devI of eInfo.devices) {
       visCHolder[liveDate][devI.device_mac] = {}
       // let dataholder = {}
-      for (let ts of eInfo.time.timeseg) {
-        for (let liveData of dataIN[liveDate][devI.device_mac][datatypeIN.cnrl][ts]) {
+      for (let ts of timeComponent.livedate.timeseg) {
+        for (let liveData of dataIN[devI.device_mac][datatypeIN.cnrl][ts]) {
           let millTimeprepare = liveData.timestamp * 1000
           let mString = moment(millTimeprepare).toDate() // .format('YYYY-MM-DD hh:mm')
           datalabel.push(mString)
@@ -253,6 +253,8 @@ ChartSystem.prototype.structureAverageData = function (datatypeIN, eInfo, cBundl
   }
   visCHolder.labels = datalabel
   visCHolder.datasets = dataC
+  console.log('visCHolder')
+  console.log(visCHolder)
   return visCHolder
 }
 

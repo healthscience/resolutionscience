@@ -77,7 +77,7 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN, timeCompon
   } else if (eInfo.cid === 'cnrl-2356388732') {
     let liveChartOptions = this.liveChartOptions.AverageChartOptions()
     for (let dtv of eInfo.datatypes) {
-      structureHolder = this.liveChartSystem.structureAverageData(dtv, eInfo, chartBundle, dataIN)
+      structureHolder = this.liveChartSystem.structureAverageData(dtv, eInfo, chartBundle, dataIN, timeComponent)
       let chartColorsSet = localthis.liveChartSystem.StatschartColors(dtv)
       dataTypeBucket.data = structureHolder
       dataTypeBucket.color = chartColorsSet

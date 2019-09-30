@@ -99,9 +99,10 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN, timeCompon
   } else if (eInfo.cid === 'cnrl-2356388737') {
     // summation of datatypes
     // could be more than one visualisation required,  devices, datatypes, timeseg or computation or event resolutions
+    console.log('sum charting')
     let liveChartOptions = this.liveChartOptions.SumChartOptions()
     for (let dtv of eInfo.datatypes) {
-      structureHolder = this.liveChartSystem.structureSumData(dtv, eInfo, chartBundle, dataIN)
+      structureHolder = this.liveChartSystem.structureSumData(dtv, eInfo, chartBundle, dataIN, timeComponent)
       let chartColorsSet = localthis.liveChartSystem.StatschartColors(dtv)
       dataTypeBucket.data = structureHolder
       dataTypeBucket.color = chartColorsSet
@@ -120,34 +121,6 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN, timeCompon
       dataTypeBucket = {}
       this.visSystemData = chartGroupHolder
     }
-    /* let liveChartOptions = this.liveChartOptions.SumChartOptions()
-    for (let dType of eInfo.datatypes) {
-      for (let device of eInfo.devices) {
-        for (let entry of dataIN[liveTime][device.device_mac][dType.cnrl]) {
-          // pass on to appropriate structure, day, week, in context of resolution etc.
-          if (entry.day) {
-            structureHolder = this.liveChartSystem.structureSumData(entry.day)
-            let chartColorsSet = localthis.liveChartSystem.StatschartColors(dType)
-            dataTypeBucket.data = structureHolder
-            dataTypeBucket.color = chartColorsSet
-            chartDataH.chart.push(dataTypeBucket)
-            // now prepare data format for chartjs
-            chartData.prepared = this.liveChartSystem.prepareSumVueChartJS(eInfo.devices, chartDataH)
-            let setTimeTools = chartData.prepared.labels
-            let chartOptionsSet = this.liveChartOptions.updateChartoptions(setTimeTools, liveChartOptions)
-            chartData.options = chartOptionsSet
-            const chartHolder = {}
-            chartHolder[visIN] = {}
-            chartHolder[visIN][liveTime] = {}
-            chartHolder[visIN][liveTime]['day'] = chartData
-            chartGroupHolder.push(chartHolder)
-            structureHolder = {}
-            dataTypeBucket = {}
-          }
-        }
-      }
-    }
-    this.visSystemData = chartGroupHolder */
   } else if (eInfo.cid === 'cnrl-2356388733') {
     const chartHolder = {}
     chartHolder[visIN] = {}

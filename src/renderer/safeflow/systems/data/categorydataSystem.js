@@ -40,7 +40,6 @@ CategoryDataSystem.prototype.categorySorter = function (systemBundle, rawData, t
     // console.log('no categorisation required')
     catHolder = rawData
   } else {
-    let startTime = time
     catHolder = {}
     const excludeCodes = (e, tItem, column) => {
       for (let fCode of tItem) {
@@ -61,8 +60,7 @@ CategoryDataSystem.prototype.categorySorter = function (systemBundle, rawData, t
         // is it for primary or derive data types?
         for (let dti of systemBundle.apiInfo[dev].apiquery) {
           for (let ts of systemBundle.timeseg) {
-            console.log(ts)
-            catData = rawData[startTime][dev][dti.cnrl]['day'].filter(n => excludeCodes(n, systemBundle.apiInfo[dev].categorycodes, catColumnQueryName))
+            catData = rawData[dev][dti.cnrl]['day'].filter(n => excludeCodes(n, systemBundle.apiInfo[dev].categorycodes, catColumnQueryName))
             let catTempHold = {}
             catTempHold[ts] = catData
             catHolder[dev][dti.cnrl] = catTempHold

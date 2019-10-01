@@ -45,10 +45,6 @@ export default {
         console.log('chartjs')
         if (entityGetter.chartMessage === 'computation in progress') {
           console.log('chartjs--ongoing computation or obseration data')
-          // this.chartmessage = entityGetter.chartMessage
-          // this.options = entityGetter.chartPackage.options
-          // this.datacollection = entityGetter.chartPackage.prepared
-          // this.liveTime = entityGetter.chartPackage.livetime
         } else if (entityGetter.chartMessage === 'vis-report') {
           console.log('prepare report for HR recovery')
           let recoveryStart = {}

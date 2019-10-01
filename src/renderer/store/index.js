@@ -103,10 +103,9 @@ export default new Vuex.Store({
     },
     updateLiveBTime: (state, inVerified) => {
       console.log(inVerified)
-      // state.bundle.time.timeseg = inVerifed.timeseg
-      // state.bundle.time.startperiod = inVerifed.startperiod
     },
     setStartKBundles: (state, inVerified) => {
+      // need to update time to today
       state.startBundles = inVerified
     },
     setStartKBundlesItem: (state, inVerified) => {

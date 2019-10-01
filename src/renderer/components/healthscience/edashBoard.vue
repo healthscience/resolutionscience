@@ -12,8 +12,8 @@
       <!-- <expfuturevisual :entityCNRL="{}" :dataFcollection="{}" :optionsF="{}" :displayTimeF="{}"></expfuturevisual>
       <expvisual :entityCNRL="{}" :datacollection="{}" :options="{}" :displayTime="{}"></expvisual> -->
       <li v-for="(vEnt, index) in makeKbundles">
-        <!-- <expfuturevisual :entityCNRL="vEnt.cnrl" :dataFcollection="{}" :optionsF="{}" :displayTimeF="{}"></expfuturevisual> -->
         <expvisual :entityCNRL="vEnt.cnrl" :datacollection="vEnt.liveDataCollection" :options="vEnt.liveOptions" :displayTime="vEnt.liveTimeV"></expvisual>
+        <!-- <expfuturevisual :entityCNRL="vEnt.cnrl" :dataFcollection="{}" :optionsF="{}" :displayTimeF="{}"></expfuturevisual> -->
       </li>
     </ul>
   </div>
@@ -82,7 +82,9 @@
         let entityArray = []
         let chartDataReady = {}
         let mappedExpENTs = this.$store.getters.liveKentities
+        console.log(mappedExpENTs)
         let currentEntities = this.$store.getters.startBundlesList
+        console.log(currentEntities)
         let liveBundles = mappedExpENTs[this.experimentDash.cnrl]
         for (let expEB of liveBundles) {
           for (let iee of currentEntities) {

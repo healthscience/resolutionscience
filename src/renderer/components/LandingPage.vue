@@ -35,6 +35,9 @@
         <br />
         <br />
       </div>
+      <div v-if="newSetup"  id="firsttime-setup">
+        <a href="#" id="newsetup" @click.prevent="setupNewAccount">Setup a new account</a>
+      </div>
       <div v-if="newKeystartseen"  id="firsttime-start">
         Create a new account: start by enter a password:
         <form>
@@ -87,7 +90,8 @@
       password: null,
       text: '',
       keybuttonseen: false,
-      newKeystartseen: true,
+      newSetup: true,
+      newKeystartseen: false,
       feedbackM: '',
       warningM: ''
     }),
@@ -138,6 +142,9 @@
         // console.log('event called to remove create')
         // console.log(evIN)
         this.newKeystartseen = false
+      },
+      setupNewAccount (cIN) {
+        this.newKeystartseen = true
       },
       connectSAFE () {
         console.log('connect to safe network please')
@@ -243,5 +250,9 @@
 #secure-start {
   margin: 30px;
   border-top-style: dotted;
+}
+
+#firsttime-setup {
+  margin: 2em;
 }
 </style>

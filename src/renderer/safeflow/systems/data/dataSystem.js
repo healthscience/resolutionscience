@@ -17,6 +17,7 @@ import FilterDataSystem from './filterdataSystem.js'
 
 const util = require('util')
 const events = require('events')
+const moment = require('moment')
 
 var DataSystem = function (setIN) {
   events.EventEmitter.call(this)
@@ -68,7 +69,8 @@ DataSystem.prototype.saveStartStatus = async function (bundle) {
 DataSystem.prototype.getStartStatus = async function () {
   // make query to network for context data per devices
   let startStatusresult = await this.liveTestStorage.getStartSettings()
-  return startStatusresult
+  let updateKBstart = this.updateTimesStart(startStatusresult)
+  return updateKBstart
 }
 
 /**
@@ -80,6 +82,26 @@ DataSystem.prototype.getExpKbundles = async function () {
   // make query to network for context data per devices
   let startStatusresult = await this.liveTestStorage.getExpKbundles()
   return startStatusresult
+}
+
+/**
+*  update times to present of exising Knowledge Bundles saved
+* @method updateTimesStart
+*
+*/
+DataSystem.prototype.updateTimesStart = function (kbList) {
+  let updateTimeKB = []
+  for (let oKB of kbList) {
+    let timeUpdate = {}
+    timeUpdate = oKB.time
+    let nowTime = moment()
+    let startDay = moment(nowTime).startOf('day')
+    timeUpdate.realtime = nowTime
+    timeUpdate.startperiod = startDay
+    oKB.time = timeUpdate
+    updateTimeKB.push(oKB)
+  }
+  return updateTimeKB
 }
 
 /**

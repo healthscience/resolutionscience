@@ -167,8 +167,6 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle, time) 
         } else if (dtItem.api === 'luftdatenGet/<publickey>/<token>/<queryTime>/<deviceID>/') {
           // console.log('air quality data query')
           let AirsourcerawData = await this.getAirqualityData(devI, time)
-          console.log('air qua raw')
-          console.log(AirsourcerawData)
           let filterColumnAQ = this.liveFilterData.filterDataTypeSub(dtItem, AirsourcerawData)
           let dayAQHolder = {}
           dayAQHolder.day = filterColumnAQ

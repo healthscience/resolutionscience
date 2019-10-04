@@ -127,9 +127,14 @@ export default new Vuex.Store({
         }
       }
     },
+    updateSeenComputeStatus: (state, inVerified) => {
+      // prepare object to hold compute state per entity kbid
+      let computeStatus = {active: false, text: 'Compute-in-progress', update: '---', seen: true}
+      Vue.set(state.computeKidStatus, inVerified, computeStatus)
+    },
     updateComputeStatus: (state, inVerified) => {
       // prepare object to hold compute state per entity kbid
-      let computeStatus = {active: true, text: 'Compute-in-progress', update: '---'}
+      let computeStatus = {active: true, text: 'Compute-in-progress', update: '---', seen: true}
       Vue.set(state.computeKidStatus, inVerified, computeStatus)
     },
     stopComputeStatus: (state, inVerified) => {
@@ -249,6 +254,10 @@ export default new Vuex.Store({
     actionComputeStatus: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL
       context.commit('setComputeStatus', update)
+    },
+    actionUpdateSeenComputeStatus: (context, update) => {
+    // filter a list of Kentity bundles given the Experiment CNRL
+      context.commit('updateSeenComputeStatus', update)
     },
     actionUpdateComputeStatus: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL

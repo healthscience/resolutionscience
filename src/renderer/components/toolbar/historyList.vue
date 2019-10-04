@@ -5,7 +5,7 @@
     FILTERS - latest, per device, per compute, per datatype
   </div>
   <ul>
-    <li id="data-type-history" v-for="lh in historyData">
+    <li id="data-type-history" v-for="(lh, index) in historyData" v-bind:key="lh.kbid">
       <div id="list-knowledge-elements">
         <div id="select-kbox" class="select-element">
           <div id="select-kbox-container">
@@ -78,7 +78,8 @@
           </div>
         </div>
         <div id="learn-close"></div>
-        <div id="compute-control-panel">
+        <button @click.prevent="SeenStartCompute($event)"  v-bind:value="lh.kbid" id="view-compute-controls">View controls</button>
+        <div v-if="entityPrepareStatus[lh.kbid].seen" id="compute-control-panel">
           <header>compute control panel</header>
           <div class="compute-control-item">
             <header>Status:</header>
@@ -132,7 +133,8 @@
         liveExperimentList: [],
         liveExperimentB: [],
         cStatus: 'needs updating',
-        entityPrepareStatus: {}
+        entityPrepareStatus: {},
+        controlsSeen: {}
       }
     },
     created () {
@@ -195,9 +197,19 @@
           }
         }
       },
+      computeSeenProgressLive (computeEntityKID) {
+        this.$store.dispatch('actionUpdateSeenComputeStatus', computeEntityKID)
+        this.entityPrepareStatus = this.$store.getters.liveKComputeStatus
+      },
       computeProgressLive (computeEntityKID) {
         this.$store.dispatch('actionUpdateComputeStatus', computeEntityKID)
         this.entityPrepareStatus = this.$store.getters.liveKComputeStatus
+      },
+      SeenStartCompute (fsc) {
+        let computeEntityKID = fsc.target.value
+        // create compute progress entry for this Kbid
+        this.computeSeenProgressLive(computeEntityKID)
+        // this.updateCompute(computeEntityKID)
       }
     }
   }

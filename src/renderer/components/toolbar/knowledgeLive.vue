@@ -249,8 +249,6 @@
         // set message to UI IN-progress
         this.entityPrepareStatus.active = true
         let visDataBack = await this.learnStart(liveBundle)
-        console.log('visDataBack')
-        console.log(visDataBack)
         this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions

@@ -34,8 +34,26 @@
         </div>
         <div id="calendar-selector">
           <date-picker v-model="value" @change="calendarSelect($event)" :lang="lang"></date-picker>
+          <div id="time-calendar-tools">
+            <button id="multi-days" @click.prevent="setMultidays($event)">{{ calendarTools.name }}</button> {{ calendarTools.active }}
+          </div>
+          <div id="calendar-list-view" >
+            {{ calendarList }}
+            <button id="multi-day-chart" @click.prevent="chartMultiday($event)">Multi-chart</button>
+            <button id="multi-day-clear" @click.prevent="clearMultidays($event)">Clear</button>
+          </div>
         </div>
       </div>
+    </div>
+    <div id="multi-chart-view">TB over
+      <ul v-for="(vEnt, index) in makeTimeBundles">
+        <li>
+          <div id="additional-chart">
+            <reactive :chartData="vEnt.liveDataCollection" :options="vEnt.liveOptions"  :width="1200" :height="600"></reactive>
+            {{ vEnt.liveDataCollection.labels[0]}}
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -73,6 +91,9 @@
       navTime: {
         type: Array
       },
+      makeTimeBundles: {
+        type: Array
+      },
       displayTime: ''
     },
     data () {
@@ -100,6 +121,13 @@
           active: false,
           text: 'off'
         },
+        calendarTools:
+        {
+          name: 'Mulit Days',
+          id: 'multi-days',
+          active: false
+        },
+        calendarList: [],
         toolbarData: {},
         recoveryData: {},
         datastatistics: null,
@@ -212,13 +240,28 @@
         this.$emit('updateLearn', seg)
       },
       calendarSelect () {
-        console.log('calendar select')
-        console.log(this.value)
-        // convert to correct time format and update KBundle and build new visStyle
-        let bTime = {}
-        bTime.selectDate = this.value
-        bTime.text = 'selectd'
-        this.$emit('updateLearn', bTime)
+        if (this.calendarTools.active !== true) {
+          // convert to correct time format and update KBundle and build new visStyle
+          let bTime = {}
+          bTime.selectDate = this.value
+          bTime.text = 'selectd'
+          this.$emit('updateLearn', bTime)
+        } else if (this.calendarTools.active === true) {
+          this.calendarList.push(this.value)
+        }
+      },
+      setMultidays (md) {
+        this.calendarTools.active = true
+      },
+      clearMultidays (md) {
+        this.calendarList = []
+      },
+      chartMultiday (cm) {
+        // prepare list of KnowledgeBundles to visualise
+        let uSeg = {}
+        uSeg.text = 'timeList'
+        uSeg.timelist = this.calendarList
+        this.$emit('updateLearn', uSeg)
       }
     }
   }
@@ -257,6 +300,7 @@ li {
 #time-context {
   min-margin: 40px;
   text-align: center;
+  border: 1px solid pink;
 }
 
 #visulation-select {
@@ -306,4 +350,14 @@ li {
   border: 0px solid red;
   width: 100%;
 }
+
+#time-calendar-tools {
+  display: inline-block;
+}
+
+#additional-chart {
+  border: 1px solid green;
+  width: auto;
+}
+
 </style>

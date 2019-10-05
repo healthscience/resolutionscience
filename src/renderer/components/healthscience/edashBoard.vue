@@ -82,14 +82,11 @@
         let entityArray = []
         let chartDataReady = {}
         let mappedExpENTs = this.$store.getters.liveKentities
-        console.log(mappedExpENTs)
         let currentEntities = this.$store.getters.startBundlesList
-        console.log(currentEntities)
         let liveBundles = mappedExpENTs[this.experimentDash.cnrl]
         for (let expEB of liveBundles) {
           for (let iee of currentEntities) {
             if (expEB === iee.kbid) {
-              // need to update time live for bundle TODO
               chartDataReady = await this.learnStart(iee)
               entityArray.push(chartDataReady)
             }

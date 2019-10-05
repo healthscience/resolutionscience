@@ -94,13 +94,13 @@
       <multipane-resizer></multipane-resizer>
       <div class="pane" :style="{ width: '50%', maxWidth: '100%' }">
         <div>
-          <hsvisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime"></hsvisual>
+          <hsvisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime" :makeTimeBundles="buildTimeBundles"></hsvisual>
         </div>
       </div>
       <multipane-resizer></multipane-resizer>
       <div class="pane" :style="{ flexGrow: 1, width: '10%', maxWidth: '100%' }">
         <div>
-          <hsfuturevisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeVFuture" :navTime="liveNavTime"></hsfuturevisual>
+          <hsfuturevisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeVFuture" :navTime="liveNavTime" :makeTimeBundles="buildTimeBundles"></hsfuturevisual>
         </div>
       </div>
     </multipane>
@@ -108,6 +108,7 @@
 </template>
 
 <script>
+  import Reactive from '@/components/charts/Reactive'
   import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
   import KnowledgeContext from '@/components/toolbar/knowledgeContext'
   import historyList from '@/components/toolbar/historyList.vue'
@@ -125,6 +126,7 @@
   export default {
     name: 'knowledge-live',
     components: {
+      Reactive,
       historyList,
       KnowledgeContext,
       progressMessage,
@@ -180,7 +182,8 @@
         {
           active: false,
           text: ''
-        }
+        },
+        buildTimeBundles: []
       }
     },
     created () {
@@ -308,16 +311,36 @@
           // convert time to correct format
           timeAsk.push('day')
           updateTbundle.time.startperiod = uSeg.selectDate
+          updateTbundle.time.timeseg = this.liveData.timeLive
+          updateTbundle.time.timevis = timeAsk
+          updateTbundle.time.laststartperiod = this.liveTimeV
+          this.entityPrepareStatus.active = true
+          this.learnManager(updateTbundle)
+        } else if (uSeg.text === 'timeList') {
+          this.prepareMultiLearn(updateTbundle, uSeg.timelist)
         } else {
           // time setTimeSegments
           timeAsk.push(uSeg.text)
           updateTbundle.time.startperiod = 'relative'
+          updateTbundle.time.timeseg = this.liveData.timeLive
+          updateTbundle.time.timevis = timeAsk
+          updateTbundle.time.laststartperiod = this.liveTimeV
+          this.entityPrepareStatus.active = true
+          this.learnManager(updateTbundle)
         }
-        updateTbundle.time.timeseg = this.liveData.timeLive
-        updateTbundle.time.timevis = timeAsk
-        updateTbundle.time.laststartperiod = this.liveTimeV
         // pass on to learn safeFlow
-        this.entityPrepareStatus.active = true
+      },
+      async prepareMultiLearn (liveKB, timeList) {
+        this.buildTimeBundles = []
+        let updateTimeKBundles = liveKB
+        for (let tl of timeList) {
+          updateTimeKBundles.time.startperiod = tl
+          let visDataBack = await this.learnStart(updateTimeKBundles)
+          this.buildTimeBundles.push(visDataBack)
+        }
+        return true
+      },
+      async learnManager (updateTbundle) {
         let visDataBack = await this.learnStart(updateTbundle)
         // remove compute in progress Message
         this.$store.dispatch('actionstopComputeStatus', updateTbundle.kbid)
@@ -606,7 +629,7 @@
 
 .custom-resizer {
   width: 100%;
-  height: 900px;
+  height: 4000px;
 }
 
 .custom-resizer > .pane {

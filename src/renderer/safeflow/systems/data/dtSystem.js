@@ -235,6 +235,8 @@ DTSystem.prototype.mapDTs = function (dts1, dts2) {
 *
 */
 DTSystem.prototype.DTtableStructure = function (dAPI) {
+  console.log('dttable struture')
+  console.log(dAPI)
   let dtHolder = {}
   let subSourceAPI = {}
   let apiDTs = []

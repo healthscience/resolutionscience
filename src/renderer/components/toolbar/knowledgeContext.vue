@@ -231,6 +231,8 @@
         this.devices = this.$store.getters.liveContext.device
       },
       dataTypeDevice (devC) {
+        console.log('drive dts')
+        console.log(devC)
         let devDTHolder = []
         let deviceDTypes = this.GETcnrlDeviceDTs(devC.cnrl)
         devDTHolder.push(deviceDTypes)

@@ -44,16 +44,16 @@
           </div>
         </div>
       </div>
-    </div>
-    <div id="multi-chart-view">TB over
-      <ul v-for="(vEnt, index) in makeTimeBundles">
-        <li>
-          <div id="additional-chart">
-            <reactive :chartData="vEnt.liveDataCollection" :options="vEnt.liveOptions"  :width="1200" :height="600"></reactive>
-            {{ vEnt.liveDataCollection.labels[0]}}
-          </div>
-        </li>
-      </ul>
+      <div id="multi-chart-view">
+        <ul v-for="(vEnt, index) in makeTimeBundles">
+          <li>
+            <div id="additional-chart">
+              <reactive :chartData="vEnt.liveDataCollection" :options="vEnt.liveOptions"  :width="1200" :height="600"></reactive>
+              {{ vEnt.liveDataCollection.labels[0]}}
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -255,6 +255,7 @@
       },
       clearMultidays (md) {
         this.calendarList = []
+        this.makeTimeBundles = []
       },
       chartMultiday (cm) {
         // prepare list of KnowledgeBundles to visualise
@@ -357,7 +358,6 @@ li {
 
 #additional-chart {
   border: 1px solid green;
-  width: auto;
 }
 
 </style>

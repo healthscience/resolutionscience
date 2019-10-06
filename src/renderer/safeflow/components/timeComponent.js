@@ -89,8 +89,15 @@ TimeComponent.prototype.setMasterClock = function () {
 *
 */
 TimeComponent.prototype.timeProfiling = function () {
+  console.log('time profiling')
+  console.log(this.livedate.startperiod)
+  console.log(this.lastactiveStartTime)
+  console.log(this.did.time.startperiod)
   let startperiod
-  if (this.lastactiveStartTime === 0) {
+  if (this.did.time.startperiod === 'simulateData') {
+    console.log('simluate data')
+    return true
+  } else if (this.lastactiveStartTime === 0) {
     startperiod = this.livedate.startperiod
   } else {
     startperiod = this.lastactiveStartTime
@@ -98,6 +105,8 @@ TimeComponent.prototype.timeProfiling = function () {
   let timeseg = this.livedate.timeseg
   // as time system to assess the range of data days required?
   let timeSource = this.liveTimeSystem.sourceTimeRange(startperiod, timeseg)
+  console.log('timesource')
+  console.log(timeSource)
   this.timerange = timeSource
   return true
 }

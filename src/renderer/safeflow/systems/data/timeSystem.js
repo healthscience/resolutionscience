@@ -65,11 +65,15 @@ TimeSystem.prototype.discoverTimeStatus = async function (systemBundle, dataIN) 
         statusHolder[liveTime][devMac] = {}
         statusHolder[liveTime][devMac][dtl.cnrl] = {}
         // need to select the latest data object from array
+        console.log('data for avg sum etc')
+        console.log(dataIN)
         let lastDataItem = dataIN[liveTime][devMac][dtl.cnrl][tsega].slice(-1)[0]
+        console.log(lastDataItem)
         // need to check if prime data type be computed before?
         if (tsega !== undefined || tsega.length > 0) {
           if (tsega === 'day') {
             lastComputetime = this.timeOrderLast(lastDataItem)
+            console.log(lastComputetime)
             let catStatus2 = await this.assessCompute(systemBundle, lastComputetime, liveTime, devMac, 'day')
             let computeOngoing = {}
             if (catStatus2.computestatus === 'on-going') {
@@ -175,7 +179,7 @@ TimeSystem.prototype.assessCompute = async function (systemBundle, lastTime, liv
     computeCheck.firstdate = startTimeFound
   } else if (lastTime < liveTime) {
     computeCheck.computestatus = 'on-going'
-    computeCheck.firstdate = liveTime
+    computeCheck.firstdate = lastTime
   } else {
     computeCheck.computestatus = 'uptodate'
   }
@@ -228,6 +232,9 @@ TimeSystem.prototype.momentRangeBuild = function (lastCompTime, liveTime) {
 *
 */
 TimeSystem.prototype.updateComputeDateArray = function (lastCompTime, liveTime) {
+  console.log('update comupet array')
+  console.log(lastCompTime)
+  console.log(liveTime)
   let computeList = []
   const liveDate = liveTime * 1000
   const lastComputeDate = lastCompTime * 1000

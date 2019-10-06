@@ -10,6 +10,7 @@
 * @version    $Id$
 */
 
+import CALE from '../../CALE/cale-utility.js'
 import CNRLmaster from '../../kbl-cnrl/cnrlMaster.js'
 import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
 const util = require('util')
@@ -17,6 +18,7 @@ const events = require('events')
 
 var SimulatedDataSystem = function (setIN) {
   events.EventEmitter.call(this)
+  this.liveCALE = new CALE(setIN)
   this.liveCNRL = new CNRLmaster()
   this.liveTestStorage = new TestStorageAPI(setIN)
   this.simulatedData = []
@@ -33,7 +35,12 @@ util.inherits(SimulatedDataSystem, events.EventEmitter)
 * @method assessFuture
 *
 */
-SimulatedDataSystem.prototype.assessFuture = function () {
+SimulatedDataSystem.prototype.assessFuture = function (dataSystem, timeInfo) {
+  console.log('assess future')
+  console.log(dataSystem)
+  console.log(timeInfo)
+  let futureData = this.liveCALE.learn('tomorrow', dataSystem, timeInfo)
+  return futureData
 }
 
 export default SimulatedDataSystem

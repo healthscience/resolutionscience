@@ -84,7 +84,6 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
 *
 */
 EntitiesManager.prototype.controlFlow = async function (cflowIN) {
-  console.log('KBL---controlflow start')
   let cid = cflowIN.kbid
   console.log('EMANAGER0-----beginCONTROL-FLOW')
   // set the MASTER TIME CLOCK for entity
@@ -92,6 +91,8 @@ EntitiesManager.prototype.controlFlow = async function (cflowIN) {
   this.liveSEntities[cid].liveDatatypeC.dataTypeMapping()
   this.liveSEntities[cid].liveTimeC.timeProfiling()
   await this.liveSEntities[cid].liveDataC.sourceData(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveTimeC)
+  console.log('srouce data em')
+  console.log(this.liveSEntities[cid].liveDataC.liveData)
   this.emit('computation', 'in-progress')
   await this.liveSEntities[cid].liveTimeC.startTimeSystem(this.liveSEntities[cid].liveDatatypeC, this.liveSEntities[cid].liveDataC.liveData)
   this.computeStatus = await this.liveSEntities[cid].liveComputeC.filterCompute(this.liveSEntities[cid].liveTimeC, this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive)

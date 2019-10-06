@@ -87,10 +87,14 @@ DataComponent.prototype.setCategories = function (ctIN) {
 *
 */
 DataComponent.prototype.sourceData = async function (apiINFO, timeComponent) {
+  console.log('source data')
+  console.log(apiINFO)
+  console.log(timeComponent)
   this.apiInfoLive = apiINFO
   let systemBundle = {}
   systemBundle.apiInfo = apiINFO
   systemBundle.startperiod = timeComponent.livedate.startperiod
+  systemBundle.futureperiod = timeComponent.livedate.futureperiod
   systemBundle.scienceAsked = this.CNRLscience
   systemBundle.dtAsked = this.datatypeList
   systemBundle.devices = this.deviceList
@@ -112,6 +116,9 @@ DataComponent.prototype.sourceData = async function (apiINFO, timeComponent) {
 *
 */
 DataComponent.prototype.DataControlFlow = async function (systemBundle, time) {
+  console.log('data congor flow')
+  console.log(systemBundle)
+  console.log(time)
   let dataRback = await this.liveDataSystem.datatypeQueryMapping(systemBundle, time)
   this.dataRaw[time] = dataRback
   // is there a categories filter to apply?

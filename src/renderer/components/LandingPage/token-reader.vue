@@ -101,7 +101,7 @@
         // look up contract and get API info for default
         // let defaultAPI = this.GETcnrlLookup(apiCRNLdefault)
         // what data APIs are connected?
-        let dataAPIconnected = ['cnrl-33221101', 'cnrl-33221102']
+        let dataAPIconnected = ['cnrl-33221101'] // , 'cnrl-33221102']
         // query peer ledger to extract experiments, computes i.e. KBLedger latest
         this.startExpMappedKbundles()
         this.startKSetting()

@@ -100,7 +100,7 @@
       <multipane-resizer></multipane-resizer>
       <div class="pane" :style="{ flexGrow: 1, width: '10%', maxWidth: '100%' }">
         <div>
-          <hsfuturevisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeVFuture" :navTime="liveNavTime" :makeTimeBundles="buildTimeBundles"></hsfuturevisual>
+          <hsfuturevisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="futureliveDataCollection" :options="futureliveOptions" :displayTime="liveTimeVFuture" :navTime="liveNavTime" :makeTimeBundles="buildTimeBundles"></hsfuturevisual>
         </div>
       </div>
     </multipane>
@@ -173,6 +173,8 @@
         kContext: {},
         liveDataCollection: {},
         liveOptions: {},
+        futureliveDataCollection: {},
+        futureliveOptions: {},
         liveNavTime: [],
         liveTimeV: '',
         liveTimeVFuture: '',
@@ -258,6 +260,8 @@
         this.kContext = visDataBack.kContext
         this.liveTimeV = visDataBack.displayTime
         this.liveTimeVFuture = visDataBack.displayTimeF
+        // start the future
+        // this.startFuture(liveBundle, visDataBack.displayTimeF)
       },
       setTimeBundle () {
         const nowTime = moment()
@@ -269,6 +273,19 @@
         updateTbundle.startperiod = startPeriodTime
         updateTbundle.timevis = this.liveData.timeLive
         return updateTbundle
+      },
+      async startFuture (liveBundle, fTime) {
+        // start the future
+        console.log('STTTTTFUUUTURE')
+        console.log(liveBundle)
+        liveBundle.time.startperiod = 'simulateData'
+        liveBundle.time.futureperiod = moment(fTime)
+        let visDataBack = await this.learnStart(liveBundle)
+        this.futureliveDataCollection = visDataBack.liveDataCollection
+        this.futureliveOptions = visDataBack.liveOptions
+        this.futurekContext = visDataBack.kContext
+        // this.liveTimeV = visDataBack.displayTime
+        this.liveTimeVFuture = visDataBack.displayTimeF
       },
       saveLearnHistory (lBundle) {
         this.historyData.push(lBundle)
@@ -341,6 +358,7 @@
         return true
       },
       async learnManager (updateTbundle) {
+        console.log('LLEERTNN MANGERR')
         let visDataBack = await this.learnStart(updateTbundle)
         // remove compute in progress Message
         this.$store.dispatch('actionstopComputeStatus', updateTbundle.kbid)
@@ -350,6 +368,7 @@
         this.kContext = visDataBack.kContext
         this.liveTimeV = visDataBack.displayTime
         this.liveTimeVFuture = visDataBack.displayTimeF
+        // this.startFuture(updateTbundle, visDataBack.displayTimeF)
       },
       async makeLiveKnowledge (lBund) {
         // set live Bundle for context
@@ -376,6 +395,7 @@
         this.kContext = visDataBack.kContext
         this.liveTimeV = visDataBack.displayTime
         this.liveTimeVFuture = visDataBack.displayTimeF
+        // this.startFuture(lBund, visDataBack.displayTimeF)
       },
       setKnowledgtBox (liveKbid) {
         // first clear existing knowledge in box

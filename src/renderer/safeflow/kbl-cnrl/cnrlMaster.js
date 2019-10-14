@@ -571,7 +571,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.tableStructure[1] = [{'cnrl': '', 'text': 'device_mac', 'active': false}, {'cnrl': '', 'text': 'firmware', 'active': false}]
     dataCNRLbundle.tableStructure[2] = [{'cnrl': 'cnrl-8856388724', 'text': 'average-bpm', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856388322', 'text': 'average-steps', 'active': false}]
     dataCNRLbundle.tableStructure[3] = [{'cnrl': 'cnrl-8856388924', 'text': 'sum-bpm', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856389322', 'text': 'sum-steps', 'active': false}]
-    dataCNRLbundle.namespace = 'http://165.227.244.213:8882/'
+    dataCNRLbundle.namespace = 'http://165.227.244.213:8881/'
     dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-33221102') {
     // CNRL implementation REST API

@@ -52,7 +52,7 @@ DatadeviceSystem.prototype.getLiveDevices = function (devicesIN) {
 DatadeviceSystem.prototype.systemDevice = async function (dapi) {
   // MAP api to REST library functions for the API
   let result
-  if (dapi.namespace === 'http://165.227.244.213:8882/' && dapi.device === 'contextdata/<publickey>/') {
+  if (dapi.namespace === 'http://165.227.244.213:8881/' && dapi.device === 'contextdata/<publickey>/') {
     result = await this.liveTestStorage.getDeviceData(dapi.namespace)
   } else if (dapi.namespace === 'http://165.227.244.213:8881/' && dapi.device === 'luftdatendevice/<publickey>/') {
     result = await this.liveTestStorage.getDeviceLuftdatenData(dapi.namespace)

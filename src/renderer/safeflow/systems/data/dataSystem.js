@@ -168,6 +168,8 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle, time) 
       // rawHolder[devI][dtItem.cnrl] = dayHolder
     } else {
       for (let dtItem of systemBundle.apiInfo[devI].apiquery) {
+        console.log('yes data')
+        console.log(dtItem)
         if (dtItem.api === 'computedata/<publickey>/<token>/<queryTime>/<deviceID>/') {
           let sourcerawData = await this.getRawData(devI, time)
           let dayHolder = {}
@@ -176,6 +178,15 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle, time) 
         } else if (dtItem.api === 'luftdatenGet/<publickey>/<token>/<queryTime>/<deviceID>/') {
           // console.log('air quality data query')
           let AirsourcerawData = await this.getAirqualityData(devI, time)
+          let filterColumnAQ = this.liveFilterData.filterDataTypeSub(dtItem, AirsourcerawData)
+          let dayAQHolder = {}
+          dayAQHolder.day = filterColumnAQ
+          rawHolder[devI][dtItem.cnrl] = dayAQHolder
+        } else if (dtItem.api === '<date>/<fileS1>') {
+          // console.log('air quality data query')
+          let AirsourcerawData = await this.getLuftdateDirect(devI, time)
+          console.log('aq csv call')
+          console.log(AirsourcerawData)
           let filterColumnAQ = this.liveFilterData.filterDataTypeSub(dtItem, AirsourcerawData)
           let dayAQHolder = {}
           dayAQHolder.day = filterColumnAQ
@@ -217,6 +228,22 @@ DataSystem.prototype.getAirqualityData = async function (device, startTime) {
   let statsData = await this.liveTestStorage.getAirQualityData(device, startTime, endTime).catch(function (err) {
     console.log(err)
   })
+  return statsData
+}
+
+/**
+* get airquality data direct CSV parse
+* @method getLuftdateDirect
+*
+*/
+DataSystem.prototype.getLuftdateDirect = async function (device, startTime) {
+  console.log('direct luftdaten')
+  let endTime = startTime + 86400
+  let statsData = await this.liveTestStorage.getLuftdateDirectCSV(device, startTime, endTime).catch(function (err) {
+    console.log(err)
+  })
+  console.log('data system return')
+  console.log(statsData)
   return statsData
 }
 

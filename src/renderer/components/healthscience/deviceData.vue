@@ -17,10 +17,10 @@
         <div id="sensors" class="device-detail-item">
           <header>Sensors</header>
           <div id="sensor-type">
-            Accelerometer -> Steps -> DataType <a id="" href="#" >heartchain/activity/steps</a>
+            Accelerometer -> Steps -> DataType <a id="" href="#" >/activity/steps</a>
           </div>
           <div id="sensor-type">
-            LED -> BMP -> DataType <a id="" href="#" >heartchain/heart/bmp</a>
+            LED -> BMP -> DataType <a id="" href="#" >heart/bmp</a>
           </div>
         </div>
         <div id="mobile" class="device-detail-item" >

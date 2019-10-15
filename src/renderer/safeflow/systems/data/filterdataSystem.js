@@ -81,7 +81,7 @@ FilterDataSystem.prototype.filterDataType = function (fTypeIN, sourceDT, arrayIN
       if (sing[sourceDT.column] === null) {
         valueC = null
       } else {
-        valueC = parseFloat(sing[sourceDT.column]) // parseInt(sing[sourceDT.column], 10)
+        valueC = parseFloat(sing[sourceDT.column])
       }
       dataPair[sourceDT.column] = valueC
       singleArray.push(dataPair)
@@ -102,6 +102,9 @@ FilterDataSystem.prototype.filterDataType = function (fTypeIN, sourceDT, arrayIN
 *
 */
 FilterDataSystem.prototype.filterDataTypeSub = function (sourceDT, arrayIN) {
+  console.log('data fileter system SUB')
+  console.log(sourceDT)
+  console.log(arrayIN)
   let singleArray = []
   // check if sub data structure
   let subData = this.subStructure(arrayIN)

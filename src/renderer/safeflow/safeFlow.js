@@ -233,7 +233,7 @@ safeFlow.prototype.cnrlLookup = function (cid) {
 }
 
 /**
-* look up devcie data types and return in CNRL format
+* look up device data types and return in CNRL format
 * @method cnrlDeviceDTs
 *
 */

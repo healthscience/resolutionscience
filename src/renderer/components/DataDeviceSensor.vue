@@ -3,11 +3,59 @@
     <h1>Devices, Sensors & Data</h1>
     <device-list></device-list>
     <div id="device-data">
-      Connect to device data stores and verify account ownership.
+      Connect to device, data stores and verify account ownership.
+    </div>
+    <div id="connect-devices">
+      <header>ADD Devices</header>
+      <ul>
+        <li class="device-type-item">
+          <button class="select-wearable" id="wearable" @click.prevent="selectDevice($event)" >Wearables</button>
+        </li>
+        <li class="device-type-item">
+          <button class="select-aq" id="airquality" @click.prevent="selectDevice($event)">Air quality</button>
+        </li>
+        <li class="device-type-item">
+          <button class="select-bloodm" id="bloodmonitor" @click.prevent="selectDevice($event)">Blood monitoring</button>
+        </li>
+      </ul>
+      <div class="display-device-options">
+        <ul v-if="selectDevices.type === 'wearable' ">
+          <li>Mi Band3 GadgetBridge</li>
+          <li>Mi Band2 GadgetBridge</li>
+          <li>Mi Amazfit GadgetBridge</li>
+          <li>Fitbit openhumans.org</li>
+        </ul>
+        <ul v-if="selectDevices.type === 'airquality' ">
+          <li><a @click.prevent="addDevice($event)" href="" id="Luftdaten-BME280" >Luftdaten-BME280</a></li>
+          <li><a @click.prevent="addDevice($event)" href="" id="Luftdaten-DHT22" >Luftdaten-DHT22</a></li>
+        </ul>
+        <ul v-if="selectDevices.type === 'bloodmonitor' ">
+          <li>RX-android</li>
+        </ul>
+      </div>
+      <div v-if="addDeviceSeen" class="display-device-add">
+        Please enter
+        <form id="dmap_form" name="dmap_form" method="post" action="#">
+          <ul>
+            <li>
+              <h2>Luftdaten devices ID</h2><input v-model="luftdaten.device_mac" placeholder="device id number">
+            </li>
+            <li>
+              Sensor1 ID <input v-model="luftdaten.device_sensor1" placeholder="id number">
+            </li>
+            <li>
+              Sensor2 ID <input v-model="luftdaten.device_sensor2" placeholder="id number">
+            </li>
+            <li>
+              <button @click.prevent="makeActive($event)">Make Active</button>
+            </li>
+          </ul>
+        </form>
+      </div>
     </div>
     <div id="device-data-status">
-      <header>DATA STORES</header>
-      <ul>
+      <header>DATA STORES</header> <button class="view-activapis" @click.prevent="viewDevices($event)">{{ liveDeviceSeen.text }}</button>
+      <ul v-if="liveDeviceSeen.seen">
         <li class="datastore-item">
           <header>TESTnetwork</header>
           <div id="hardware">
@@ -56,8 +104,8 @@
       </ul>
     </div>
     <div id="device-otherdata-status">
-      <header>OTHER STORES</header>
-      <ul>
+      <header>OTHER STORES</header> <button class="view-apis" @click.prevent="viewAPIS($event)">{{ otherDevices.text }}</button>
+      <ul v-if="otherDevices.seen">
         <li class="datastore-item">
           <header>Genetics</header>
           <div id="openhumans-api">
@@ -116,7 +164,31 @@
       firstTimetokenseen: false,
       repeatTimetokenseen: true,
       luftdatenDevice: 0,
-      luftdatenDeviceConnect: 0
+      luftdatenDeviceConnect: 0,
+      luftdaten:
+      {
+        device_mac: '',
+        device_sensor1: '',
+        device_sensor2: '',
+        cnrl: 'cnrl-33221103'
+      },
+      selectDevices:
+      {
+        type: '',
+        seen: false,
+        text: 'view'
+      },
+      liveDeviceSeen:
+      {
+        seen: false,
+        text: 'view'
+      },
+      otherDevices:
+      {
+        seen: false,
+        text: 'view'
+      },
+      addDeviceSeen: false
     }),
     created () {
       this.checkforToken()
@@ -142,8 +214,44 @@
         this.repeatTimetokenseen = true
         this.viewPkey = true
       },
+      selectDevice (sdev) {
+        console.log('select device type')
+        console.log(sdev.target.id)
+        this.selectDevices.type = sdev.target.id
+      },
+      addDevice (addDev) {
+        console.log('add devices')
+        console.log(addDev.target.id)
+        this.luftdaten.text = addDev.target.id
+        this.addDeviceSeen = true
+      },
       luftDatenConnect (codeIn) {
         this.luftdatenDeviceConnect = this.luftdatenDevice
+      },
+      viewDevices (vDev) {
+        this.liveDeviceSeen.seen = true
+        this.liveDeviceSeen.text = 'close'
+      },
+      viewAPIS (vApi) {
+        this.otherDevices.seen = true
+        this.otherDevices.text = 'close'
+      },
+      makeActive (ma) {
+        console.log('make active')
+        console.log(ma)
+        console.log(this.luftdaten)
+        // set devices life on the fly  (also provide option to save but shoud be done vie Dapp)
+        let existingDevices = this.$store.getters.liveContext
+        console.log(existingDevices)
+        let addDevice = {}
+        addDevice.active = false
+        addDevice.device_mac = this.luftdaten.device_mac
+        addDevice.cnrl = this.luftdaten.cnrl
+        addDevice.sensor1 = this.luftdaten.device_sensor1
+        addDevice.sensor2 = this.luftdaten.device_sensor2
+        addDevice.device_name = this.luftdaten.text + this.luftdaten.device_sensor1
+        this.$store.dispatch('actionAddDeviceDataAPI', addDevice)
+        console.log(this.$store.getters.liveContext.device)
       }
     }
   }
@@ -199,5 +307,27 @@
   border: 1px solid blue;
   margin: 10px;
   padding: 8px;
+}
+
+.device-type-item {
+  display: inline-block;
+  border-top-style: dotted;
+  border: 1px solid orange;
+  margin: 10px;
+  padding: 8px;
+}
+
+.device-type-item button {
+  font-size: 2em;
+}
+
+.display-device-options {
+  border: 1px solid orange;
+  margin: 2em;
+}
+
+.display-device-add {
+  border: 1px solid orange;
+  margin: 2em;
 }
 </style>

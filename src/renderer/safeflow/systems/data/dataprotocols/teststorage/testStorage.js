@@ -13,11 +13,14 @@ import TimeUtilities from '../../../../systems/timeUtility.js'
 const util = require('util')
 const events = require('events')
 const axios = require('axios')
+const http = require('http')
+const csv = require('csv-parser')
+const fs = require('fs')
 
 var TestStorageAPI = function (setUP) {
   events.EventEmitter.call(this)
   this.liveTimeUtil = new TimeUtilities()
-  this.baseAPI = 'http://165.227.244.213:8882'
+  this.baseAPI = 'http://165.227.244.213:8881'
   this.liveData = {}
   this.datacollection = []
   this.tempPubkey = setUP.publickey
@@ -143,6 +146,63 @@ TestStorageAPI.prototype.getAirQualityData = async function (luftdatenID, queryT
   let jsondata = await axios.get(this.baseAPI + '/luftdatenGet/' + this.tempPubkey + '/' + this.tempToken + '/' + luftdatenID + '/' + queryTimeStart + '/' + queryTimeEnd)
   // console.log(jsondata)
   return jsondata.data
+}
+
+/**
+*  Get existing air quality data
+* @method getLuftdateDirectCSV
+*
+*/
+TestStorageAPI.prototype.getLuftdateDirectCSV = async function (luftdatenID, queryTimeStart, queryTimeEnd) {
+  luftdatenID = 3652817
+  queryTimeStart = '2019-10-14'
+  let filename = queryTimeStart + '_bme280_sensor_30105.csv'
+  let filename2 = queryTimeStart + '_sds011_sensor_30104.csv'
+  // console.log(luftdatenID)
+  // console.log(queryTimeStart)
+  // console.log(queryTimeEnd)
+  // let jsondata = await axios.get('http://archive.luftdaten.info/' + queryTimeStart + '/' + filename)
+  // console.log(jsondata.data)
+  http.get('http://archive.luftdaten.info/' + queryTimeStart + '/' + filename, res => res.pipe(fs.createWriteStream('local.csv')))
+  let praser = await readStream()
+  function readStream () {
+    return new Promise((resolve, reject) => {
+      let results = []
+      fs.createReadStream('local.csv')
+        .pipe(csv(['luftdaten']))
+        .on('data', (data) => results.push(data['luftdaten'].split(';')))
+        .on('end', () => {
+          // console.log('end')
+          // console.log(results)
+          resolve(results)
+        })
+    })
+  }
+  http.get('http://archive.luftdaten.info/' + queryTimeStart + '/' + filename2, res => res.pipe(fs.createWriteStream('local2.csv')))
+  let praser2 = await readStream2()
+  function readStream2 () {
+    return new Promise((resolve, reject) => {
+      let results = []
+      fs.createReadStream('local2.csv')
+        .pipe(csv(['luftdaten']))
+        .on('data', (data) => results.push(data['luftdaten'].split(';')))
+        .on('end', () => {
+          // console.log('end')
+          // console.log(results)
+          resolve(results)
+        })
+    })
+  }
+  console.log('praser2')
+  console.log(praser2)
+  // form standard array
+  let dtStructure = []
+  for (let pp of praser) {
+    dtStructure.push({'timestamp': pp[5], 'temperature': pp[9], 'humidity': pp[10]})
+  }
+  console.log('parer')
+  console.log(dtStructure)
+  return dtStructure
 }
 
 /**

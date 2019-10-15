@@ -69,6 +69,9 @@ export default new Vuex.Store({
     setDevice: (state, inVerified) => {
       state.context.device = Vue.set(state, 'device', inVerified)
     },
+    addDevice: (state, inVerified) => {
+      state.context.device.push(inVerified)
+    },
     setDatatype: (state, inVerified) => {
       state.context.datatypes = inVerified
     },
@@ -270,6 +273,10 @@ export default new Vuex.Store({
     actionDeviceDataAPI: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL
       context.commit('setDevice', update)
+    },
+    actionAddDeviceDataAPI: (context, update) => {
+    // filter a list of Kentity bundles given the Experiment CNRL
+      context.commit('addDevice', update)
     },
     actionSetDataTypes: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL

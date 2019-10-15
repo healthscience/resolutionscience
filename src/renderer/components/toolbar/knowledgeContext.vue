@@ -130,7 +130,6 @@
         },
         liveScience: {},
         knowledgeSummary: '',
-        devices: [],
         sensors: [],
         datatypes: [],
         scidtypes: [],
@@ -162,6 +161,9 @@
       })
     },
     computed: {
+      devices: function () {
+        return this.$store.getters.liveContext.device
+      }
     },
     mounted () {
     },
@@ -170,7 +172,7 @@
       setAccess () {
         this.languageContext()
         this.scienceContext()
-        this.deviceContext()
+        // this.deviceContext()
         this.timeContext()
       },
       openKnowledge (ok) {

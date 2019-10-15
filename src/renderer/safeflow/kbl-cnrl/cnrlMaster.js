@@ -571,7 +571,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.tableStructure[1] = [{'cnrl': '', 'text': 'device_mac', 'active': false}, {'cnrl': '', 'text': 'firmware', 'active': false}]
     dataCNRLbundle.tableStructure[2] = [{'cnrl': 'cnrl-8856388724', 'text': 'average-bpm', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856388322', 'text': 'average-steps', 'active': false}]
     dataCNRLbundle.tableStructure[3] = [{'cnrl': 'cnrl-8856388924', 'text': 'sum-bpm', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856389322', 'text': 'sum-steps', 'active': false}]
-    dataCNRLbundle.namespace = 'http://165.227.244.213:8882/'
+    dataCNRLbundle.namespace = 'http://165.227.244.213:8881/'
     dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-33221102') {
     // CNRL implementation REST API
@@ -586,6 +586,20 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     let subColumn = [{'cnrl': 'cnrl-3339949442', 'text': 'SDS_P2', 'active': false}, {'cnrl': 'cnrl-3339949443', 'text': 'SDS_P1', 'active': false}, {'cnrl': 'cnrl-3339949444', 'text': 'temperature', 'active': false}, {'cnrl': 'cnrl-3339949445', 'text': 'humidity', 'active': false}, {'cnrl': 'cnrl-3339949446', 'text': 'air-pressure', 'active': false}]
     dataCNRLbundle.tableStructure[0] = [{'cnrl': 'cnrl-', 'text': 'publickey', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'datasub', 'text': 'sensordata', 'active': false, 'data': subColumn}]
     dataCNRLbundle.namespace = 'http://165.227.244.213:8881/'
+    dataCNRLbundle.index = []
+  } else if (refIN === 'cnrl-33221103') {
+    // CNRL implementation REST API
+    dataCNRLbundle.type = 'dtpackaging'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-33221103', 'text': 'luftaten-archive-RESTAPI', 'active': false }
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.device = ''
+    dataCNRLbundle.devicetableStructure = []
+    dataCNRLbundle.apistructure = ['<date>/<fileS1>', '<date>/<fileS2>']
+    dataCNRLbundle.tableStructure[0] = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-3339949442', 'text': 'SDS_P2', 'active': false}, {'cnrl': 'cnrl-3339949443', 'text': 'SDS_P1', 'active': false}, {'cnrl': 'cnrl-3339949444', 'text': 'temperature', 'active': false}, {'cnrl': 'cnrl-3339949445', 'text': 'humidity', 'active': false}, {'cnrl': 'cnrl-3339949446', 'text': 'air-pressure', 'active': false}]
+    dataCNRLbundle.tableStructure[1] = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}]
+    dataCNRLbundle.namespace = 'http://archive.luftdaten.info/'
     dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-773355992211') {
     // CNRL implementation contract e.g. from mobile phone sqlite table structure

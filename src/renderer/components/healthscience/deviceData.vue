@@ -90,6 +90,7 @@
   display: block;
   border: 1px solid lightgrey;
   margin: 5px;
+  background-color: #EBE7E0;
 }
 
 .device-detail-item {

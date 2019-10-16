@@ -26,8 +26,8 @@
           <li>Fitbit openhumans.org</li>
         </ul>
         <ul v-if="selectDevices.type === 'airquality' ">
-          <li><a @click.prevent="addDevice($event)" href="" id="Luftdaten-BME280" >Luftdaten-BME280</a></li>
-          <li><a @click.prevent="addDevice($event)" href="" id="Luftdaten-DHT22" >Luftdaten-DHT22</a></li>
+          <li><a @click.prevent="addDevice($event)" href="" id="_bme280_sensor" >Luftdaten-BME280</a></li>
+          <li><a @click.prevent="addDevice($event)" href="" id="_DHT22_sensor" >Luftdaten-DHT22</a></li>
         </ul>
         <ul v-if="selectDevices.type === 'bloodmonitor' ">
           <li>RX-android</li>
@@ -215,13 +215,9 @@
         this.viewPkey = true
       },
       selectDevice (sdev) {
-        console.log('select device type')
-        console.log(sdev.target.id)
         this.selectDevices.type = sdev.target.id
       },
       addDevice (addDev) {
-        console.log('add devices')
-        console.log(addDev.target.id)
         this.luftdaten.text = addDev.target.id
         this.addDeviceSeen = true
       },
@@ -237,21 +233,16 @@
         this.otherDevices.text = 'close'
       },
       makeActive (ma) {
-        console.log('make active')
-        console.log(ma)
-        console.log(this.luftdaten)
         // set devices life on the fly  (also provide option to save but shoud be done vie Dapp)
-        let existingDevices = this.$store.getters.liveContext
-        console.log(existingDevices)
+        // let existingDevices = this.$store.getters.liveContext
         let addDevice = {}
         addDevice.active = false
         addDevice.device_mac = this.luftdaten.device_mac
         addDevice.cnrl = this.luftdaten.cnrl
         addDevice.sensor1 = this.luftdaten.device_sensor1
         addDevice.sensor2 = this.luftdaten.device_sensor2
-        addDevice.device_name = this.luftdaten.text + this.luftdaten.device_sensor1
+        addDevice.device_name = this.luftdaten.text
         this.$store.dispatch('actionAddDeviceDataAPI', addDevice)
-        console.log(this.$store.getters.liveContext.device)
       }
     }
   }

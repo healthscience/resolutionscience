@@ -149,9 +149,6 @@ DataSystem.prototype.getLiveDatatypes = function (dtIN) {
 *
 */
 DataSystem.prototype.datatypeQueryMapping = async function (systemBundle, time) {
-  console.log('data mapping')
-  console.log(systemBundle)
-  console.log(time)
   let rawHolder = {}
   // loop over the each devices API data source info.
   for (let devI of systemBundle.devices) {
@@ -159,7 +156,6 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle, time) 
     // first is the data from the PAST or FUTURE ie simulated?
     if (systemBundle.querytime && systemBundle.querytime.startperiod === 'simulateData') {
       console.log('simulated data')
-      console.log(systemBundle)
       // need whole new system for product future data
       let futureData = this.liveSimulatedData.assessFuture(this, time)
       console.log(futureData)
@@ -168,8 +164,6 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle, time) 
       // rawHolder[devI][dtItem.cnrl] = dayHolder
     } else {
       for (let dtItem of systemBundle.apiInfo[devI].apiquery) {
-        console.log('yes data')
-        console.log(dtItem)
         if (dtItem.api === 'computedata/<publickey>/<token>/<queryTime>/<deviceID>/') {
           let sourcerawData = await this.getRawData(devI, time)
           let dayHolder = {}
@@ -184,12 +178,10 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle, time) 
           rawHolder[devI][dtItem.cnrl] = dayAQHolder
         } else if (dtItem.api === '<date>/<fileS1>') {
           // console.log('air quality data query')
-          let AirsourcerawData = await this.getLuftdateDirect(devI, time)
-          console.log('aq csv call')
-          console.log(AirsourcerawData)
-          let filterColumnAQ = this.liveFilterData.filterDataTypeSub(dtItem, AirsourcerawData)
+          let AirsourcerawData = await this.getLuftdateDirect(devI, time, systemBundle)
+          // let filterColumnAQ = this.liveFilterData.filterDataTypeSub(dtItem, AirsourcerawData)
           let dayAQHolder = {}
-          dayAQHolder.day = filterColumnAQ
+          dayAQHolder.day = AirsourcerawData
           rawHolder[devI][dtItem.cnrl] = dayAQHolder
         } else if (dtItem.api === 'sum/<publickey>/<token>/<queryTime>/<deviceID>/') {
           // console.log('sum data query')
@@ -236,14 +228,11 @@ DataSystem.prototype.getAirqualityData = async function (device, startTime) {
 * @method getLuftdateDirect
 *
 */
-DataSystem.prototype.getLuftdateDirect = async function (device, startTime) {
-  console.log('direct luftdaten')
+DataSystem.prototype.getLuftdateDirect = async function (device, startTime, systemBundle) {
   let endTime = startTime + 86400
-  let statsData = await this.liveTestStorage.getLuftdateDirectCSV(device, startTime, endTime).catch(function (err) {
+  let statsData = await this.liveTestStorage.getLuftdateDirectCSV(device, startTime, endTime, systemBundle).catch(function (err) {
     console.log(err)
   })
-  console.log('data system return')
-  console.log(statsData)
   return statsData
 }
 
@@ -253,10 +242,6 @@ DataSystem.prototype.getLuftdateDirect = async function (device, startTime) {
 *
 */
 DataSystem.prototype.getRawSumData = async function (devI, time, bundleIN) {
-  console.log('getrawsumdata')
-  console.log(devI)
-  console.log(time)
-  console.log(bundleIN)
   const localthis = this
   // how many sensor ie data sets are being asked for?
   // loop over and return Statistics Data and return to callback

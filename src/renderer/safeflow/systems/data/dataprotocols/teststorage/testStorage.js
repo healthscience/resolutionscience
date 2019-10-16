@@ -16,6 +16,7 @@ const axios = require('axios')
 const http = require('http')
 const csv = require('csv-parser')
 const fs = require('fs')
+const moment = require('moment')
 
 var TestStorageAPI = function (setUP) {
   events.EventEmitter.call(this)
@@ -153,24 +154,21 @@ TestStorageAPI.prototype.getAirQualityData = async function (luftdatenID, queryT
 * @method getLuftdateDirectCSV
 *
 */
-TestStorageAPI.prototype.getLuftdateDirectCSV = async function (luftdatenID, queryTimeStart, queryTimeEnd) {
+TestStorageAPI.prototype.getLuftdateDirectCSV = async function (luftdatenID, queryTimeStart, queryTimeEnd, systemBundle) {
   luftdatenID = 3652817
-  queryTimeStart = '2019-10-14'
-  let filename = queryTimeStart + '_bme280_sensor_30105.csv'
-  let filename2 = queryTimeStart + '_sds011_sensor_30104.csv'
-  // console.log(luftdatenID)
-  // console.log(queryTimeStart)
-  // console.log(queryTimeEnd)
-  // let jsondata = await axios.get('http://archive.luftdaten.info/' + queryTimeStart + '/' + filename)
-  // console.log(jsondata.data)
-  http.get('http://archive.luftdaten.info/' + queryTimeStart + '/' + filename, res => res.pipe(fs.createWriteStream('local.csv')))
+  queryTimeStart = moment((queryTimeStart * 1000)).locale('en-gb').startOf('day').format('L') // '2019-10-14'
+  let splitTime = queryTimeStart.split('/')
+  let fileTimeStructure = splitTime[2] + '-' + splitTime[1] + '-' + splitTime[0]
+  let filename = fileTimeStructure + '_bme280_sensor_' + systemBundle.devicesFull[0].sensor2 + '.csv' // '_bme280_sensor_30105.csv'
+  let filename2 = fileTimeStructure + '_sds011_sensor_' + systemBundle.devicesFull[0].sensor1 + '.csv' // '_sds011_sensor_30104.csv'
+  http.get('http://archive.luftdaten.info/' + fileTimeStructure + '/' + filename, res => res.pipe(fs.createWriteStream('local.csv')))
   let praser = await readStream()
   function readStream () {
     return new Promise((resolve, reject) => {
       let results = []
       fs.createReadStream('local.csv')
-        .pipe(csv(['luftdaten']))
-        .on('data', (data) => results.push(data['luftdaten'].split(';')))
+        .pipe(csv({ headers: ['sensor_id', 'sensor_type', 'location', 'lat', 'lon', 'timestamp', 'pressure', 'altitude', 'pressure_sealevel', 'temperature', 'humidity'], separator: ';', skipLines: 1 }))
+        .on('data', (data) => results.push(data))
         .on('end', () => {
           // console.log('end')
           // console.log(results)
@@ -178,14 +176,15 @@ TestStorageAPI.prototype.getLuftdateDirectCSV = async function (luftdatenID, que
         })
     })
   }
-  http.get('http://archive.luftdaten.info/' + queryTimeStart + '/' + filename2, res => res.pipe(fs.createWriteStream('local2.csv')))
+  http.get('http://archive.luftdaten.info/' + fileTimeStructure + '/' + filename2, res => res.pipe(fs.createWriteStream('local2.csv')))
   let praser2 = await readStream2()
   function readStream2 () {
     return new Promise((resolve, reject) => {
       let results = []
       fs.createReadStream('local2.csv')
-        .pipe(csv(['luftdaten']))
-        .on('data', (data) => results.push(data['luftdaten'].split(';')))
+        .pipe(csv({ headers: ['sensor_id', 'sensor_type', 'location', 'lat', 'lon', 'timestamp', 'P1', 'durP1', 'ratioP1', 'P2', 'durP2', 'ratioP2'], separator: ';', skipLines: 1 }))
+        .on('data', (data) => results.push(data))
+        // .on('data', (data) => console.log(data))
         .on('end', () => {
           // console.log('end')
           // console.log(results)
@@ -193,15 +192,19 @@ TestStorageAPI.prototype.getLuftdateDirectCSV = async function (luftdatenID, que
         })
     })
   }
-  console.log('praser2')
-  console.log(praser2)
-  // form standard array
+  const totalPraser = [...praser, ...praser2]
+  // form standard array  data: device_mac: publickey: sensors:  {value: , value_type}
   let dtStructure = []
-  for (let pp of praser) {
-    dtStructure.push({'timestamp': pp[5], 'temperature': pp[9], 'humidity': pp[10]})
+  for (let pp of totalPraser) {
+    let luftdatenObject = {}
+    luftdatenObject.timestamp = moment(pp.timestamp).valueOf() / 1000
+    luftdatenObject.temperature = pp.temperature
+    luftdatenObject.humidity = pp.humidity
+    luftdatenObject.airpressure = pp.pressure
+    luftdatenObject.SDS_P1 = pp.P1
+    luftdatenObject.SDS_P2 = pp.P2
+    dtStructure.push(luftdatenObject)
   }
-  console.log('parer')
-  console.log(dtStructure)
   return dtStructure
 }
 

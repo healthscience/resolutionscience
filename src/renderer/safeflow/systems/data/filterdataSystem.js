@@ -102,9 +102,6 @@ FilterDataSystem.prototype.filterDataType = function (fTypeIN, sourceDT, arrayIN
 *
 */
 FilterDataSystem.prototype.filterDataTypeSub = function (sourceDT, arrayIN) {
-  console.log('data fileter system SUB')
-  console.log(sourceDT)
-  console.log(arrayIN)
   let singleArray = []
   // check if sub data structure
   let subData = this.subStructure(arrayIN)

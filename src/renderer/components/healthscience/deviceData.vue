@@ -2,7 +2,7 @@
   <div id="device-list">
   <header>DEVICES LIVE</header>
   <ul>
-    <li v-for="dev in devicesLive" class="device-item">
+    <li v-for="dev in devices" class="device-item">
       <header>{{ dev.device_name }} <a href="" @click.prevent="viewDeviceDetail(dev)" id="view-details">View details</a> </header>
       <div id="device-details" v-if="dev.active">
         <div id="hardware" class="device-detail-item" >
@@ -53,7 +53,6 @@
     data: () => ({
       liveSafeFlow: {},
       computeFlag: '',
-      devices: [],
       sensors: []
     }),
     created () {
@@ -61,7 +60,7 @@
     mounted () {
     },
     computed: {
-      devicesLive: function () {
+      devices: function () {
         return this.$store.getters.liveContext.device
       }
     },

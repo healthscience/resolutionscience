@@ -26,8 +26,8 @@
           <li>Fitbit openhumans.org</li>
         </ul>
         <ul v-if="selectDevices.type === 'airquality' ">
-          <li><a @click.prevent="addDevice($event)" href="" id="_bme280_sensor" >Luftdaten-BME280</a></li>
-          <li><a @click.prevent="addDevice($event)" href="" id="_DHT22_sensor" >Luftdaten-DHT22</a></li>
+          <li><a @click.prevent="addDevice($event)" href="" id="_bme280_sensor_" >Luftdaten-BME280</a></li>
+          <li><a @click.prevent="addDevice($event)" href="" id="_dht22_sensor_" >Luftdaten-DHT22</a></li>
         </ul>
         <ul v-if="selectDevices.type === 'bloodmonitor' ">
           <li>RX-android</li>
@@ -41,10 +41,15 @@
               <h2>Luftdaten devices ID</h2><input v-model="luftdaten.device_mac" placeholder="device id number">
             </li>
             <li>
-              Sensor1 ID <input v-model="luftdaten.device_sensor1" placeholder="id number">
+              Particle Sensor ID<input v-model="luftdaten.device_sensor1" placeholder="id number">
             </li>
             <li>
-              Sensor2 ID <input v-model="luftdaten.device_sensor2" placeholder="id number">
+              Temperature/Hum/Pres ID <input v-model="luftdaten.device_sensor2" placeholder="id number">
+            </li>
+            <li>
+              Indoors?
+              <input type="checkbox" id="checkbox" v-model="luftdaten.indoors">
+              <label for="checkbox">{{ luftdaten.indoors }}</label>
             </li>
             <li>
               <button @click.prevent="makeActive($event)">Make Active</button>
@@ -52,9 +57,12 @@
           </ul>
         </form>
       </div>
+      <transition name="fade" >
+        <div v-if="devicemessage.active === true" id="confirm-add-device">{{ devicemessage.text }}</div>
+      </transition>
     </div>
     <div id="device-data-status">
-      <header>DATA STORES</header> <button class="view-activapis" @click.prevent="viewDevices($event)">{{ liveDeviceSeen.text }}</button>
+      <header>DATA STORES</header> <button class="view-activapis" @click.prevent="viewDatastores($event)">{{ liveDeviceSeen.text }}</button>
       <ul v-if="liveDeviceSeen.seen">
         <li class="datastore-item">
           <header>TESTnetwork</header>
@@ -170,7 +178,8 @@
         device_mac: '',
         device_sensor1: '',
         device_sensor2: '',
-        cnrl: 'cnrl-33221103'
+        cnrl: 'cnrl-33221103',
+        indoors: false
       },
       selectDevices:
       {
@@ -188,7 +197,12 @@
         seen: false,
         text: 'view'
       },
-      addDeviceSeen: false
+      addDeviceSeen: false,
+      devicemessage:
+      {
+        'active': false,
+        'text': 'Devices is added'
+      }
     }),
     created () {
       this.checkforToken()
@@ -224,17 +238,29 @@
       luftDatenConnect (codeIn) {
         this.luftdatenDeviceConnect = this.luftdatenDevice
       },
-      viewDevices (vDev) {
-        this.liveDeviceSeen.seen = true
-        this.liveDeviceSeen.text = 'close'
+      viewDatastores (vDev) {
+        if (this.liveDeviceSeen.seen === false) {
+          this.liveDeviceSeen.seen = true
+          this.liveDeviceSeen.text = 'close'
+        } else {
+          this.liveDeviceSeen.seen = false
+          this.liveDeviceSeen.text = 'view'
+        }
       },
       viewAPIS (vApi) {
-        this.otherDevices.seen = true
-        this.otherDevices.text = 'close'
+        console.log('set api open close')
+        if (this.otherDevices.seen === false) {
+          this.otherDevices.seen = true
+          this.otherDevices.text = 'close'
+        } else {
+          this.otherDevices.seen = false
+          this.otherDevices.text = 'view'
+        }
       },
       makeActive (ma) {
         // set devices life on the fly  (also provide option to save but shoud be done vie Dapp)
         // let existingDevices = this.$store.getters.liveContext
+        this.devicemessage.active = true
         let addDevice = {}
         addDevice.active = false
         addDevice.device_mac = this.luftdaten.device_mac
@@ -242,7 +268,13 @@
         addDevice.sensor1 = this.luftdaten.device_sensor1
         addDevice.sensor2 = this.luftdaten.device_sensor2
         addDevice.device_name = this.luftdaten.text
+        addDevice.indoors = this.luftdaten.indoors
         this.$store.dispatch('actionAddDeviceDataAPI', addDevice)
+        this.addDeviceSeen = false
+        this.selectDevices.type = ''
+        setTimeout(function () {
+          this.devicemessage.active = false
+        }, 3000) // hide the message after 3 seconds
       }
     }
   }
@@ -320,5 +352,13 @@
 .display-device-add {
   border: 1px solid orange;
   margin: 2em;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.25s ease-out;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
 }
 </style>

@@ -155,19 +155,33 @@ TestStorageAPI.prototype.getAirQualityData = async function (luftdatenID, queryT
 *
 */
 TestStorageAPI.prototype.getLuftdateDirectCSV = async function (luftdatenID, queryTimeStart, queryTimeEnd, systemBundle) {
-  luftdatenID = 3652817
   queryTimeStart = moment((queryTimeStart * 1000)).locale('en-gb').startOf('day').format('L') // '2019-10-14'
   let splitTime = queryTimeStart.split('/')
   let fileTimeStructure = splitTime[2] + '-' + splitTime[1] + '-' + splitTime[0]
-  let filename = fileTimeStructure + '_bme280_sensor_' + systemBundle.devicesFull[0].sensor2 + '.csv' // '_bme280_sensor_30105.csv'
-  let filename2 = fileTimeStructure + '_sds011_sensor_' + systemBundle.devicesFull[0].sensor1 + '.csv' // '_sds011_sensor_30104.csv'
+  // indoors?
+  let csvEnding = ''
+  if (systemBundle.devicesFull[0].indoors === false) {
+    csvEnding = '.csv'
+  } else {
+    csvEnding = '_indoor.csv'
+  }
+  let filename = fileTimeStructure + systemBundle.devicesFull[0].device_name + systemBundle.devicesFull[0].sensor2 + csvEnding // '_bme280_sensor_30105.csv'
+  let filename2 = fileTimeStructure + '_sds011_sensor_' + systemBundle.devicesFull[0].sensor1 + csvEnding // '_sds011_sensor_30104.csv'
+  // which csv style headers?
+  let headerSet
+  if (systemBundle.devicesFull[0].device_name === '_bme280_sensor_') {
+    headerSet = ['sensor_id', 'sensor_type', 'location', 'lat', 'lon', 'timestamp', 'pressure', 'altitude', 'pressure_sealevel', 'temperature', 'humidity']
+  } else {
+    headerSet = ['sensor_id', 'sensor_type', 'location', 'lat', 'lon', 'timestamp', 'temperature', 'humidity']
+  }
+  // now do the parsing work
   http.get('http://archive.luftdaten.info/' + fileTimeStructure + '/' + filename, res => res.pipe(fs.createWriteStream('local.csv')))
   let praser = await readStream()
   function readStream () {
     return new Promise((resolve, reject) => {
       let results = []
       fs.createReadStream('local.csv')
-        .pipe(csv({ headers: ['sensor_id', 'sensor_type', 'location', 'lat', 'lon', 'timestamp', 'pressure', 'altitude', 'pressure_sealevel', 'temperature', 'humidity'], separator: ';', skipLines: 1 }))
+        .pipe(csv({ headers: headerSet, separator: ';', skipLines: 1 }))
         .on('data', (data) => results.push(data))
         .on('end', () => {
           // console.log('end')

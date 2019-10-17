@@ -54,7 +54,6 @@ AverageSystem.prototype.verifyComputeWASM = function (wasmFile) {
 *
 */
 AverageSystem.prototype.averageSystemStart = async function (systemBundle) {
-  console.log('avg sstyem')
   let updateStatus = {}
   // prepare deviceList format
   let devList = this.liveDataSystem.getLiveDevices(systemBundle.devices)

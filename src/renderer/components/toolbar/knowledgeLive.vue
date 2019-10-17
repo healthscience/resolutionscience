@@ -2,55 +2,65 @@
   <div id="live-view">
     <div id="live-knowledge-elements">
       <div id="live-knowledge-holder">
-        <div v-if="liveData.languageLive" id="context-language" class="live-element">
+        <!-- <div v-if="liveData.languageLive" id="context-language" class="live-kelement">
           Language: <div class="live-item">{{ liveData.languageLive.word }}</div>
           <div id="learn-close"></div>
         </div>
-        <div v-else id="live-context-language" class="live-element">Please set</div>
-        <div id="live-context-devices" class="live-element">
+        <div v-else id="live-context-language" class="live-kelement">Please set</div> -->
+        <div id="live-context-devices" class="live-kelement">
           <header>Devices:</header>
             <ul>
               <li v-for="dev in liveData.devicesLive">
                  <div class="live-item">{{ dev.device_name }}</div>
               </li>
             </ul>
+            <div v-if="feedback.devices" class="feedback">---</div>
         </div>
-        <div id="live-context-datatypes" class="live-element">
-          <header>DataTypes - </header>
+        <div id="live-context-datatypes" class="live-kelement">
+          <header>X-axis fixed </header>
+            <ul>
+              <li id="bmp-data-sensor">
+                <div class="live-item">Timestamp</div>
+              </li>
+            </ul>
+          <header>Y-axis</header>
             <ul>
               <li id="bmp-data-sensor" v-for="dts in liveData.datatypesLive">
                 <div class="live-item">{{ dts.text }}</div>
               </li>
-              <li>
-                <header>Category</header>
-                  <div id="live-context-category" class="live-element">
-                    <ul>
-                      <li id="cat-items" v-for="catL in liveData.categoryLive">
-                        <div class="live-item">{{ catL.text }}</div>
-                      </li>
-                    </ul>
-                  </div>
+            </ul>
+            <div v-if="feedback.datatypes" class="feedback">---</div>
+        </div>
+        <div id="live-context-category" class="live-kelement">
+          <header>Category</header>
+            <ul>
+              <li id="cat-items" v-for="catL in liveData.categoryLive">
+                <div class="live-item">{{ catL.text }}</div>
               </li>
             </ul>
+            <div v-if="feedback.categories" class="feedback">---</div>
         </div>
-        <div v-if="liveData.scienceLive.prime" id="live-context-science" class="live-element">
+        <div v-if="liveData.scienceLive.prime" id="live-context-science" class="live-kelement">
           <header>Compute -</header>
           <div class="live-item">{{ liveData.scienceLive.prime.text || 'none' }}</div>
+          <div v-if="feedback.science" class="feedback">---</div>
         </div>
-        <div v-else id="live-context-science" class="live-element">Compute: not selected</div>
-        <div id="context-time" class="live-element">
+        <div v-else id="live-context-science" class="live-kelement">Compute: not selected</div>
+        <div id="context-time" class="live-kelement">
           <header>Time Period:</header>
             <ul>
               <li v-for="ts in liveData.timeLive">
                  <div class="live-item">{{ ts }}</div>
               </li>
             </ul>
+            <div v-if="feedback.time" class="feedback">---</div>
         </div>
-        <div id="context-resolution" class="live-element">
+        <div id="context-resolution" class="live-kelement">
           <header>Resolution:</header>
             <div class="live-item">{{ liveData.resolutionLive }}</div>
+            <div v-if="feedback.resolution" class="feedback">---</div>
         </div>
-        <div id="live-learn" class="live-element">
+        <div id="live-learn" class="live-kelement">
           <div id="live-learn-container">
             <div id="learn">
               <button class="" href="" id="learn-button" @click.prevent="filterLearn(learn)">{{ learn.name }}</button>
@@ -58,58 +68,53 @@
           </div>
         </div>
       </div>
-      <div id="history-box">
-        <div id="history-learn" class="live-element2">
-          <div id="history-learn-container">
-            <div id="history-view">
-              <a href="" id="history-button" @click.prevent="viewHistory(hist)" v-bind:class="{ 'active': hist.active}">{{ hist.name }}</a>
-            </div>
-          </div>
-        </div>
-      </div>
       <div id="learn-close"></div>
     </div>
-    <knowledge-Context :kContext="kContext" @clearKbox="clearKnowledgeBox"></knowledge-Context>
-    <div id="history" v-if="hist.active">
+    <knowledge-Context :kContext="kContext" @viewHistory="viewHistoryLive"  @clearKbox="clearKnowledgeBox"></knowledge-Context>
+    <div id="history" v-if="computehist.active">
       <history-List :historyData="historyData" @setLiveBundle="makeLiveKnowledge"></history-List>
     </div>
-    <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
-    <!-- <hsvisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime" :saveExpKid="saveStatusEK"></hsvisual> -->
-    <!-- <pastfuture></pastfuture> -->
-    <div id="add-experiment">
-      Add to experiment. Please select:
-      <select v-model="liveexerimentList" @change="addToExperiment($event)">
-        <option class="science-compute" v-for="expi in liveexerimentList" v-bind:value="expi.cnrl">
-          {{ expi.contract.prime.text }}
-        </option>
-      </select>
-      <div id="add-button">
-        <button v-model="liveexerimentList" class="button-expadd" href="" id="add-exp-button" @click.prevent="experADD($event)">Add</button>
-        <transition name="fade" >
-          <div v-if="saveStatusEK.active === true" id="confirm-add-experiment">{{ saveStatusEK.text }}</div>
-        </transition>
+    <div id="k-toolkit">
+      <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
+      <!-- <hsvisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime" :saveExpKid="saveStatusEK"></hsvisual> -->
+      <!-- <pastfuture></pastfuture> -->
+      <button class="" href="" id="add-new-science" @click.prevent="addnewScience()">Add New Science Experiment</button>
+      <div id="add-experiment">
+        Add to experiment dashboard:
+        <select v-model="liveexerimentList" @change="addToExperiment($event)">
+          <option class="science-compute" v-for="expi in liveexerimentList" v-bind:value="expi.cnrl">
+            {{ expi.contract.prime.text }}
+          </option>
+        </select>
+        <div id="add-button">
+          <button v-model="liveexerimentList" class="button-expadd" href="" id="add-exp-button" @click.prevent="experADD($event)">Add</button>
+          <transition name="fade" >
+            <div v-if="saveStatusEK.active === true" id="confirm-add-experiment">{{ saveStatusEK.text }}</div>
+          </transition>
+        </div>
       </div>
+      <multipane class="custom-resizer" layout="vertical">
+        <multipane-resizer></multipane-resizer>
+        <div class="pane" :style="{ width: '50%', maxWidth: '100%' }">
+          <div>
+            <hsvisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime" :makeTimeBundles="buildTimeBundles"></hsvisual>
+          </div>
+        </div>
+        <multipane-resizer></multipane-resizer>
+        <div class="pane" :style="{ flexGrow: 1, width: '10%', maxWidth: '100%' }">
+          <div>
+            <hsfuturevisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="futureliveDataCollection" :options="futureliveOptions" :displayTime="liveTimeVFuture" :navTime="liveNavTime" :makeTimeBundles="buildTimeBundles"></hsfuturevisual>
+          </div>
+        </div>
+      </multipane>
     </div>
-    <multipane class="custom-resizer" layout="vertical">
-      <multipane-resizer></multipane-resizer>
-      <div class="pane" :style="{ width: '50%', maxWidth: '100%' }">
-        <div>
-          <hsvisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime" :makeTimeBundles="buildTimeBundles"></hsvisual>
-        </div>
-      </div>
-      <multipane-resizer></multipane-resizer>
-      <div class="pane" :style="{ flexGrow: 1, width: '10%', maxWidth: '100%' }">
-        <div>
-          <hsfuturevisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="futureliveDataCollection" :options="futureliveOptions" :displayTime="liveTimeVFuture" :navTime="liveNavTime" :makeTimeBundles="buildTimeBundles"></hsfuturevisual>
-        </div>
-      </div>
-    </multipane>
   </div>
 </template>
 
 <script>
   import Reactive from '@/components/charts/Reactive'
   import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
+  import scienceContribute from '@/components/healthscience/scienceContribute.vue'
   import KnowledgeContext from '@/components/toolbar/knowledgeContext'
   import historyList from '@/components/toolbar/historyList.vue'
   import progressMessage from '@/components/toolbar/inProgress'
@@ -127,6 +132,7 @@
     name: 'knowledge-live',
     components: {
       Reactive,
+      scienceContribute,
       historyList,
       KnowledgeContext,
       progressMessage,
@@ -161,7 +167,16 @@
         },
         activeEntity: '',
         activevis: '',
-        hist:
+        feedback:
+        {
+          devices: false,
+          datatypes: false,
+          categories: false,
+          time: false,
+          visulisation: false,
+          resolution: false
+        },
+        computehist:
         {
           name: 'View compute list',
           id: 'learn-history',
@@ -245,23 +260,82 @@
         liveBundle.time = timeBundle
         liveBundle.resolution = this.liveData.resolutionLive
         liveBundle.visualisation = ['vis-sc-1']
-        // create unquie ID for kbundle and use to save
-        let uuidBundle = this.createKBID(liveBundle)
-        liveBundle.kbid = uuidBundle
-        this.bundleuuid = uuidBundle
-        // this.saveLearnHistory(liveBundle)
-        this.$store.dispatch('actionStartKBundlesItem', liveBundle)
-        // set message to UI IN-progress
-        this.entityPrepareStatus.active = true
-        let visDataBack = await this.learnStart(liveBundle)
-        this.entityPrepareStatus.active = false
-        this.liveDataCollection = visDataBack.liveDataCollection
-        this.liveOptions = visDataBack.liveOptions
-        this.kContext = visDataBack.kContext
-        this.liveTimeV = visDataBack.displayTime
-        this.liveTimeVFuture = visDataBack.displayTimeF
-        // start the future
-        // this.startFuture(liveBundle, visDataBack.displayTimeF)
+        // check all the elements are filled correctly
+        let checkElements = this.checkLiveElements(liveBundle)
+        if (checkElements.status === true) {
+          // clear any feedback
+          this.feedback = {}
+          // create unquie ID for kbundle and use to save
+          let uuidBundle = this.createKBID(liveBundle)
+          liveBundle.kbid = uuidBundle
+          this.bundleuuid = uuidBundle
+          // this.saveLearnHistory(liveBundle)
+          this.$store.dispatch('actionStartKBundlesItem', liveBundle)
+          // set message to UI IN-progress
+          this.entityPrepareStatus.active = true
+          let visDataBack = await this.learnStart(liveBundle)
+          this.entityPrepareStatus.active = false
+          this.liveDataCollection = visDataBack.liveDataCollection
+          this.liveOptions = visDataBack.liveOptions
+          this.kContext = visDataBack.kContext
+          this.liveTimeV = visDataBack.displayTime
+          this.liveTimeVFuture = visDataBack.displayTimeF
+          // start the future
+          // this.startFuture(liveBundle, visDataBack.displayTimeF)
+        } else {
+          // prompt what need selected
+          console.log('elelment not selelted')
+        }
+      },
+      checkLiveElements (bundle) {
+        let statusCheck = {}
+        statusCheck.status = true
+        statusCheck.feedback = []
+        // check all filled
+        if (bundle.cnrl !== undefined && bundle.cnrl.length === 0) {
+          statusCheck.feedback.push('cnrl')
+          statusCheck.status = false
+        }
+        if (bundle.language.length === 0) {
+          statusCheck.feedback.push('language')
+          statusCheck.status = false
+        }
+        if (bundle.devices.length === 0) {
+          statusCheck.feedback.push('devices')
+          statusCheck.status = false
+          this.feedback.devices = true
+        }
+        if (bundle.datatypes.length === 0) {
+          statusCheck.feedback.push('datatypes')
+          statusCheck.status = false
+          this.feedback.datatypes = true
+        }
+        if (bundle.categories.length < 1) {
+          statusCheck.feedback.push('categories')
+          statusCheck.status = false
+          this.feedback.categories = true
+        }
+        if (bundle.science.prime.text === 'empty') {
+          statusCheck.feedback.push('science')
+          statusCheck.status = false
+          this.feedback.science = true
+        }
+        if (bundle.time.length === 0) {
+          statusCheck.feedback.push('time')
+          statusCheck.status = false
+          this.feedback.time = true
+        }
+        if (bundle.resolution.length === 0) {
+          statusCheck.feedback.push('resolution')
+          statusCheck.status = false
+          this.feedback.resolution = true
+        }
+        if (bundle.visualisation.length === 0) {
+          statusCheck.feedback.push('visualisation')
+          statusCheck.status = false
+          this.feedback.visulisation = true
+        }
+        return statusCheck
       },
       setTimeBundle () {
         const nowTime = moment()
@@ -276,8 +350,6 @@
       },
       async startFuture (liveBundle, fTime) {
         // start the future
-        console.log('STTTTTFUUUTURE')
-        console.log(liveBundle)
         liveBundle.time.startperiod = 'simulateData'
         liveBundle.time.futureperiod = moment(fTime)
         let visDataBack = await this.learnStart(liveBundle)
@@ -304,14 +376,6 @@
         // const bytes = bs58.decode(addressde)
         // console.log(bytes.toString('base64'))
         return tempTokenG
-      },
-      viewHistory (hist) {
-        hist.active = !hist.active
-        if (hist.active === true) {
-          hist.name = 'Close compute list'
-        } else {
-          hist.name = 'View compute list'
-        }
       },
       async navTimeLearn (uSeg) {
         let updateTbundle = {}
@@ -358,7 +422,6 @@
         return true
       },
       async learnManager (updateTbundle) {
-        console.log('LLEERTNN MANGERR')
         let visDataBack = await this.learnStart(updateTbundle)
         // remove compute in progress Message
         this.$store.dispatch('actionstopComputeStatus', updateTbundle.kbid)
@@ -373,8 +436,8 @@
       async makeLiveKnowledge (lBund) {
         // set live Bundle for context
         // first close the computelist
-        this.hist.active = false
-        this.hist.name = 'View compute list'
+        this.computehist.active = false
+        this.computehist.name = 'View compute list'
         this.bundleuuid = lBund.kbid
         this.$store.dispatch('actionLiveBundle', lBund)
         // update bundle start time
@@ -491,6 +554,7 @@
       },
       timeStatus (tIN) {
         if (tIN.active === true) {
+          this.liveData.timeLive = []
           this.liveData.timeLive.push(tIN.text)
         } else if (tIN.active === false) {
           // remove device
@@ -513,6 +577,7 @@
         // this.liveData.categoryLive = catIN
         this.liveData.categoryLive = []
         if (catIN.active === true) {
+          this.liveData.categoryLive = []
           this.liveData.categoryLive.push(catIN)
         } else if (catIN.active === false) {
           // remove device
@@ -557,6 +622,14 @@
         setTimeout(function () {
           localthis.saveStatusEK.active = false
         }, 3000) // hide the message after 3 seconds
+      },
+      viewHistoryLive (ch) {
+        this.computehist = ch
+      },
+      addnewScience () {
+        let scienceStart = {}
+        scienceStart.formSeen = true
+        this.contributeData = scienceStart
       }
     }
   }
@@ -587,19 +660,14 @@
   margin-top: 2em;
 }
 
-#experiments {
-  border: 2px solid green;
-  margin-top: 2em;
-}
-
 #live-context-datatypes li {
   display: block;
-  border: 2px solid pink;
+  border: 0px solid pink;
 }
 
 #live-knowledge-elements {
   border: 0px solid blue;
-  background-color: #FBF4A9;
+  background-color: #dfc8f7;
 }
 
 #live-knowledge-holder {
@@ -609,11 +677,18 @@
   margin: 6px;
 }
 
-.live-element {
+.live-kelement {
   display: inline-block;
   vertical-align: top;
   border: 0px solid red;
-  margin-left: 40px;
+  margin-left: 20px;
+  width: 180px;
+}
+
+.live-kelement header {
+  background-color: #d7e6f5;
+  border-bottom: 2px dotted #6F6B63;
+  margin: 4px;
 }
 
 .live-item {
@@ -621,16 +696,25 @@
   border: 0px solid black;
 }
 
-#history-box {
-  float: left;
-  border: 1px solid green;
-  margin: 20px;
+.context-selecttime {
+  display: inline;
+  margin: 1em;
+  min-height: 40px;
+}
+
+#k-toolkit {
+  border: 2px solid grey;
 }
 
 #add-exp-button {
   font-size: 1.4em;
   padding-left: 8px;
   padding-right: 8px;
+}
+
+.feedback {
+  background-color: red;
+  vertical-align: bottom;
 }
 
 .tg  {border-collapse:collapse;border-spacing:0;}

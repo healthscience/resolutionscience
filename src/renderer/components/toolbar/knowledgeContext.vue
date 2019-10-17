@@ -1,52 +1,54 @@
 <template>
-  <div id="knowledge-view">
-    <div id="knowlege-boxes" v-if="ok.active">
-      <div id="context-language">
-        <ul>
-          <li v-for="sk in knowledge" class="context-horizontal">
-            <a href="" id="" @click.prevent="selectKnowledge(sk)" v-bind:class="{ 'active': sk.active}">{{ sk.name }}</a>
-          </li>
-        </ul>
-        <div id="language-words">
-          <a href="" id="" @click.prevent="selectLanguage(kwords)">{{ kwords.word }} {{ kwords.wordconnect }}</a>
-        </div>
-      </div>
-      <div id="data-boxes">
+  <div id="knowledge-context">
+    <div id="context-knowledge-holder">
+      <div id="knowlege-boxes" v-if="ok.active">
+        <!-- <div id="context-language">
+          <ul>
+            <li v-for="sk in knowledge" class="context-horizontal">
+              <a href="" id="" @click.prevent="selectKnowledge(sk)" v-bind:class="{ 'active': sk.active}">{{ sk.name }}</a>
+            </li>
+          </ul>
+          <div id="language-words">
+            <a href="" id="" @click.prevent="selectLanguage(kwords)">{{ kwords.word }} {{ kwords.wordconnect }}</a>
+          </div>
+        </div> -->
         <div id="context-devices" class="context-box">
           <header>Devices:</header>
             <ul>
-              <li v-for="dev in devices">
-                <a href="" id="" @click.prevent="selectDevice(dev)" v-bind:class="{ 'active': dev.active}">{{ dev.device_name }}</a>
+              <li class="knowledge-item" v-for="dev in devices">
+                <a href="#" @click.prevent="selectDevice(dev)" v-bind:class="{ 'active': dev.active}">{{ dev.device_name }}</a>
               </li>
             </ul>
         </div>
         <div id="context-datatypes" class="context-box">
-          <header>Live Datatypes</header>
+          <!-- <header>Live Datatypes</header>
           <ul>
-            <li id="data-type-live" v-for="lts in livedtypes">
-              <a class="" href="" id="cnrl-data" @click.prevent="selectDatatypes(sdts)" v-bind:class="{ 'active': false }">{{ lts.text }}</a>
+            <li id="data-type-live" class="knowledge-item" v-for="lts in livedtypes">
+              <a class="" href="" id="cnrl-data" @click.prevent="selectDatatypes(sdts)" v-bind:class="{ 'active': false }" >{{ lts.text }}</a>
             </li>
-          </ul>
+          </ul> -->
           <header>Science Datatypes</header>
           <ul>
-            <li id="data-type-live" v-for="sdts in scidtypes">
+            <li id="data-type-live" class="knowledge-item" v-for="sdts in scidtypes">
               <a class="" href="" id="bmp-data" @click.prevent="selectSciDatatypes(sdts)" v-bind:class="{ 'active':sdts.active }">{{ sdts.text }}</a>
-            </li>
-          </ul>
-          <header>Categories</header>
-          <ul>
-            <li id="data-type-live" v-for="cdt in cdtypes">
-              <a class="" href="" id="bmp-data" @click.prevent="selectCatTD(cdt)" v-bind:class="{ 'active':cdt.active }">{{ cdt.text }}</a>
             </li>
           </ul>
           <header>Device DataTypes - </header>
             <ul>
-              <li id="data-type-live" v-for="dts in datatypes">
+              <li id="data-type-live" class="knowledge-item" v-for="dts in datatypes">
                 <a class="" href="" id="bmp-data" @click.prevent="selectDatatypes(dts)" v-bind:class="{ 'active': dts.active}">{{ dts.text }}</a>
               </li>
             </ul>
         </div>
-        <div id="context-science" class="context-box-science">
+        <div id="context-category" class="context-box">
+          <header>Category</header>
+          <ul>
+            <li id="data-type-live" class="knowledge-item" v-for="cdt in cdtypes">
+              <a class="" href="" id="bmp-data" @click.prevent="selectCatTD(cdt)" v-bind:class="{ 'active':cdt.active }">{{ cdt.text }}</a>
+            </li>
+          </ul>
+        </div>
+        <div id="context-science" class="context-box">
           <header>Science Computations - </header>
             <ul>
               <li >
@@ -57,36 +59,41 @@
               </select>
               </li>
               <li>
-                Living Paper: <a href="" @click.prevent="livingPaper()">{{ liveScience.livingpaper }}</a>
+                <a href="" id="liveScience.livingpaperLiving" @click.prevent="livingPaper()">Paper: </a>
               </li>
             </ul>
-            <div id="context-time">
-              <header>Time Period:</header>
-                <ul>
-                  <li v-if="timeSeg" v-for="t in timeSeg" class="context-time">
-                    <a href="" id="" @click.prevent="selectTime(t)" v-bind:class="{ 'active': t.active}">{{ t.text }}</a>
-                  </li>
-                </ul>
-                <div v-if="timeSelect" id="time-select" >
-                  <div id="start-point" class="context-time">Start: {{ kContext.analysisStart }}</div>
-                  <div id="end-point" class="context-time">End: {{ kContext.analysisEnd }}</div>
-                </div>
-            </div>
-            <div id="context-resolution">
-              <header>Resolution:</header>
-                <ul>
-                  <li v-for="r in resolution" class="context-time">
-                    <a href="" id="" @click.prevent="selectResolution(r)" v-bind:class="{ 'active': r.active}">{{ r.text }}</a>
-                  </li>
-                </ul>
-            </div>
         </div>
-        <div id="clear-data-box"></div>
+        <div id="context-time" class="context-box">
+          <header>Time Period:</header>
+            <ul>
+              <li v-if="timeSeg" v-for="t in timeSeg" class="context-time">
+                <a href="" id="" @click.prevent="selectTime(t)" v-bind:class="{ 'active': t.active}" class="knowledge-item">{{ t.text }}</a>
+              </li>
+            </ul>
+        </div>
+        <div id="context-resolution" class="context-box">
+          <header>Resolution:</header>
+            <ul>
+              <li v-for="r in resolution" class="context-time">
+                <a href="" id="" @click.prevent="selectResolution(r)" v-bind:class="{ 'active': r.active}" class="knowledge-item">{{ r.text }}</a>
+              </li>
+            </ul>
+        </div>
+      </div>
+      <div id="select-knowledge">
+        <a href="" id="open-knowledge" @click.prevent="openKnowledge(ok)" v-bind:class="{ 'active': ok.active}">{{ ok.name }}</a>
+      </div>
+      <div id="history-box">
+        <div id="history-learn" class="live-kelement2">
+          <div id="history-learn-container">
+            <div id="history-view">
+              <a href="" id="history-button" @click.prevent="viewHistory(hist)" v-bind:class="{ 'active': hist.active}">{{ hist.name }}</a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div id="select-knowledge">
-      <a href="" id="open-knowledge" @click.prevent="openKnowledge(ok)" v-bind:class="{ 'active': ok.active}">{{ ok.name }}</a>
-    </div>
+    <div id="clear-data-box"></div>
   </div>
 </template>
 
@@ -128,6 +135,12 @@
           id: 'learn-status',
           active: false
         },
+        hist:
+        {
+          name: 'View compute list',
+          id: 'learn-history',
+          active: false
+        },
         liveScience: {},
         knowledgeSummary: '',
         sensors: [],
@@ -147,7 +160,6 @@
           id: 'cnrl-r1',
           active: false
         }],
-        timeSelect: true,
         livedtypes: [],
         startLine: '1',
         stopLine: '2'
@@ -233,8 +245,6 @@
         this.devices = this.$store.getters.liveContext.device
       },
       dataTypeDevice (devC) {
-        console.log('drive dts')
-        console.log(devC)
         let devDTHolder = []
         let deviceDTypes = this.GETcnrlDeviceDTs(devC.cnrl)
         devDTHolder.push(deviceDTypes)
@@ -312,12 +322,30 @@
       },
       listenkBus () {
         // console.log(kBus)
+      },
+      viewHistory (hist) {
+        hist.active = !hist.active
+        if (hist.active === true) {
+          hist.name = 'Close compute list'
+        } else {
+          hist.name = 'View compute list'
+        }
+        this.$emit('viewHistory', hist)
       }
     }
   }
 </script>
 
 <style>
+#knowledge-context {
+  margin-left: 0em;
+  border: 0px solid orange;
+}
+
+#context-knowledge-holder {
+  margin-left: 5px;
+}
+
 .active{
   background-color:#8ec16d;
   color: purple;
@@ -329,22 +357,14 @@
   min-height: 40px;
 }
 
-#knowledge-view {
-  border: 0px solid orange;
-}
-
-#context-devices {
-  margin:1em;
-}
-
 #select-knowledge {
+  float: right;
   margin-left: 1em;
 }
 
 #knowlege-boxes {
-  border: 0px solid blue;
-  background-color: #FAF6C8;
-  margin: 2em;
+  background-color: #dfc8f7;
+  margin: 0em;
 }
 
 #data-boxes {
@@ -352,10 +372,24 @@
 }
 
 .context-box {
-  float: left;
-  width: 20%;
-  padding: 1em;
-  border: 1px solid grey;
+  display: inline-block;
+  vertical-align: top;
+  border-right: 1px dashed #f4f0f7;
+  margin-left: 20px;
+  width: 180px;
+}
+
+.context-box header {
+  background-color: #d7e6f5;
+  border-bottom: 2px dotted #6F6B63;
+  margin: 4px;
+}
+
+.knowledge-item {
+  display: block;
+  font-weight: bold;
+  border: 0px solid black;
+  margin-bottom: 10px;
 }
 
 .context-box-science {
@@ -377,7 +411,7 @@
 
 #open-knowledge {
   display: block;
-  background-color: #FBF4A9;
+  background-color: #c4afdb;
   height: 40px;
   width: 200px;
   padding-left: 10px;
@@ -388,5 +422,11 @@
 #open-knowledge.active {
   background-color:#8ec16d;
   color: purple;
+}
+
+#history-box {
+  float: right;
+  border: 1px solid green;
+  margin: 10px;
 }
 </style>

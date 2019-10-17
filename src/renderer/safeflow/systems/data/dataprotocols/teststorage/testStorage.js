@@ -21,7 +21,7 @@ const moment = require('moment')
 var TestStorageAPI = function (setUP) {
   events.EventEmitter.call(this)
   this.liveTimeUtil = new TimeUtilities()
-  this.baseAPI = 'http://165.227.244.213:8881'
+  this.baseAPI = 'http://165.227.244.213:8882'
   this.liveData = {}
   this.datacollection = []
   this.tempPubkey = setUP.publickey
@@ -53,6 +53,7 @@ TestStorageAPI.prototype.LKNtime = function () {
 *
 */
 TestStorageAPI.prototype.getDeviceData = async function (api) {
+  console.log(api)
   //  nosql query but headng towards a gRPC listener on stream socket
   let jsondata = await axios.get(api + 'contextdata/' + this.tempPubkey + '/' + this.tempToken)
   return jsondata.data
@@ -140,10 +141,6 @@ TestStorageAPI.prototype.getAverageData = async function (queryTime, deviceID, c
 *
 */
 TestStorageAPI.prototype.getAirQualityData = async function (luftdatenID, queryTimeStart, queryTimeEnd) {
-  luftdatenID = 3652817
-  // console.log(luftdatenID)
-  // console.log(queryTimeStart)
-  // console.log(queryTimeEnd)
   let jsondata = await axios.get(this.baseAPI + '/luftdatenGet/' + this.tempPubkey + '/' + this.tempToken + '/' + luftdatenID + '/' + queryTimeStart + '/' + queryTimeEnd)
   // console.log(jsondata)
   return jsondata.data

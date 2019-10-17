@@ -99,7 +99,6 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN, timeCompon
   } else if (eInfo.cid === 'cnrl-2356388737') {
     // summation of datatypes
     // could be more than one visualisation required,  devices, datatypes, timeseg or computation or event resolutions
-    console.log('sum charting')
     let liveChartOptions = this.liveChartOptions.SumChartOptions()
     for (let dtv of eInfo.datatypes) {
       structureHolder = this.liveChartSystem.structureSumData(dtv, eInfo, chartBundle, dataIN, timeComponent)

@@ -68,27 +68,19 @@ SumSystem.prototype.sumSystemStart = async function (systemBundle) {
 *
 */
 SumSystem.prototype.computeControlFlow = async function (systemBundle) {
-  console.log('coputecontorlflow')
-  console.log(systemBundle)
   let cFlowStatus = {}
   let liveTimeConvert = moment(systemBundle.time.startperiod).valueOf()
   let liveTime = liveTimeConvert / 1000
   let timeState = {}
   for (let dvc of systemBundle.devices) {
-    console.log(dvc)
     // need to loop for datatype and time seg // datatype or source Datatypes that use to compute dt asked for?
     for (let dtl of systemBundle.apiInfo[dvc].apiquery) {
-      console.log(dtl)
       // check status of compute?  uptodate, needs updating or first time compute?
       for (let ts of systemBundle.time.timeseg) {
-        console.log(ts)
-        console.log(systemBundle.timeInfo.liveTime[liveTime][dvc])
         timeState = systemBundle.timeInfo.liveTime[liveTime][dvc][dtl.cnrl][ts]
       }
     }
   }
-  console.log('timeState')
-  console.log(timeState)
   // now loop over the source datatypes for this compute
   for (let dvc of systemBundle.devices) {
     // need to loop for datatype and time seg // datatype or source Datatypes that use to compute dt asked for?
@@ -108,16 +100,9 @@ SumSystem.prototype.computeControlFlow = async function (systemBundle) {
 *
 */
 SumSystem.prototype.updateComputeControl = async function (timeBundle, dvc, dtl, ts, systemBundle) {
-  console.log('updatecompcontrol')
-  console.log(timeBundle)
-  console.log(dvc)
-  console.log(dtl)
-  console.log(ts)
-  console.log(systemBundle)
   let liveTime = systemBundle.timeInfo.livedate.startperiod
   // let liveComputeCNRL = systemBundle.timeInfo.did.cid
   let computeStatus = {}
-  console.log(timeBundle.status)
   if (timeBundle.status === 'update-required' || timeBundle.status === 'on-going') {
     let dtCompute = systemBundle.apiInfo[dvc].datatypes[0].cnrl
     computeStatus = await this.prepareSumCompute(systemBundle.timeInfo.liveTime[liveTime][dvc][dtCompute][ts].computeTime, dvc, dtl, ts, systemBundle)
@@ -133,7 +118,6 @@ SumSystem.prototype.updateComputeControl = async function (timeBundle, dvc, dtl,
 *
 */
 SumSystem.prototype.prepareSumCompute = async function (computeTimes, device, datatype, ts, systemBundle) {
-  console.log('preparesumcompute')
   // computeTimes = [1535846400000, 1535932800000, 1536019200000]
   // computeTimes = []
   // let lastItem = computeTimes.slice(-1)[0]
@@ -157,7 +141,6 @@ SumSystem.prototype.prepareSumCompute = async function (computeTimes, device, da
       // let flatArray = this.liveDataSystem.flatFilter()
       // need to check for categories TODO
       let saveReady = this.liveSumStatistics.sumStatistics(filterDTs)
-      console.log('averg result')
       let batchSize = dataBatch.length
       let saveJSON = {}
       saveJSON.publickey = ''
@@ -171,8 +154,6 @@ SumSystem.prototype.prepareSumCompute = async function (computeTimes, device, da
       saveJSON.size = batchSize
       saveJSON.timeseg = ts
       saveJSON.category = systemBundle.categories[0].cnrl
-      console.log('asve JSON')
-      console.log(saveJSON)
       this.liveTestStorage.savesumData(saveJSON)
     }
   }

@@ -248,7 +248,6 @@
         }
       },
       viewAPIS (vApi) {
-        console.log('set api open close')
         if (this.otherDevices.seen === false) {
           this.otherDevices.seen = true
           this.otherDevices.text = 'close'

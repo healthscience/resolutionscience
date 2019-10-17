@@ -36,8 +36,8 @@ util.inherits(EntitiesManager, events.EventEmitter)
 *
 */
 EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
-  console.log('kbundle in to entity manager')
-  console.log(ecsIN)
+  // console.log('kbundle in to entity manager')
+  // console.log(ecsIN)
   let cid = ecsIN.kbid
   let timeBundle = ecsIN.time // starting time ms
   let visID = ecsIN.visID[0] // limited to one for now will free up TODO
@@ -68,7 +68,7 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
   } else {
     console.log('entity' + cid + 'is new')
     // start workflow for setting up entity, compute and vis/sim etc.
-    console.log(ecsIN)
+    // console.log(ecsIN)
     this.liveSEntities[cid] = new Entity(ecsIN, setIN)
     // default input set on setting up of component
     await this.controlFlow(ecsIN)
@@ -110,7 +110,6 @@ EntitiesManager.prototype.controlFlow = async function (cflowIN) {
 *
 */
 EntitiesManager.prototype.latestData = function (dataIn) {
-  console.log('lastest Data tidy')
   let lastArray = dataIn.slice(-1)
   return lastArray
 }
@@ -215,7 +214,6 @@ EntitiesManager.prototype.listenRHRdataEvent = async function () {
   // let dataOlive = {}
   // listener
   this.liveSEntities['cnrl-2356388733'].liveComputeC.liveCompute.liveRecoveryHR.on('liveobserve', function (call) {
-    console.log('event from recoveryHR')
     localthis.liveSEntities['cnrl-2356388733'].liveComputeC.liveCompute.liveRecoveryHR.data = localthis.liveSEntities['cnrl-2356388731'].liveDataC.tidyData[0]
     // console.log(localthis.liveSEntities['cnrl-2356388731'])
     // dataOlive = localthis.liveSEntities['cnrl-2356388731'].liveDataC.tidyData[0]

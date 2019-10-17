@@ -95,13 +95,12 @@
         this.tokenTView = 'TestToken = ' + this.token.token
       },
       connectAPIS () {
-        console.log('what data api need connecting')
         // get list of all API cnrl contracts connected
         // let apiCRNLdefault = 'cnrl-33221100'
         // look up contract and get API info for default
         // let defaultAPI = this.GETcnrlLookup(apiCRNLdefault)
         // what data APIs are connected?
-        let dataAPIconnected = ['cnrl-33221101', 'cnrl-33221102']
+        let dataAPIconnected = ['cnrl-33221101'] // , 'cnrl-33221102']
         // query peer ledger to extract experiments, computes i.e. KBLedger latest
         this.startExpMappedKbundles()
         this.startKSetting()
@@ -136,12 +135,10 @@
         this.$store.dispatch('actionExperimentList', liveExper)
       },
       async deviceContext (dataAPIconnected) {
-        console.log('get devcies')
         let devicesList = []
         for (let dapi of dataAPIconnected) {
           // look up the contract
           let apiDev = this.GETcnrlLookup(dapi)
-          console.log(apiDev)
           // make call to set start deviceContext for this pubkey
           const deviceFlag = 'device'
           let deviceAPI = await this.GETtoolkitDevices(apiDev, deviceFlag)

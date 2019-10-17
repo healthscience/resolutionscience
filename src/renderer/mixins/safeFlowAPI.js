@@ -21,7 +21,7 @@ export default {
       await this.safeMixin.SAFEsendAuthRequest()
     },
     async learnStart (lBundle) {
-      console.log('start Learning')
+      // console.log('start Learning')
       // console.log(lBundle)
       let returnVISvue = {}
       this.chartmessage.text = 'Visualisation being prepared'

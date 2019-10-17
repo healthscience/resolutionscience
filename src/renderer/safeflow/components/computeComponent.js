@@ -49,8 +49,6 @@ ComputeComponent.prototype.filterCompute = async function (timeComponent, apiInf
     computeStatelive.computeState = 'observation'
   } else {
     let systemBundle = {}
-    console.log('editinfo')
-    console.log(this.EIDinfo)
     systemBundle.cid = this.EIDinfo.cid
     systemBundle.devices = this.EIDinfo.devices
     systemBundle.time = this.EIDinfo.time
@@ -59,7 +57,6 @@ ComputeComponent.prototype.filterCompute = async function (timeComponent, apiInf
     systemBundle.categories = this.EIDinfo.categories
     systemBundle.timeInfo = timeComponent
     systemBundle.apiInfo = apiInfo
-    console.log(systemBundle)
     let computeState = await this.liveComputeSystem.computationSystem(systemBundle)
     computeStatelive = computeState
   }

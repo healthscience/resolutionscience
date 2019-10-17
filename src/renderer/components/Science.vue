@@ -1,7 +1,6 @@
 <template>
   <div id="science">
     <h1>DIY Science & Computations</h1>
-    <button class="" href="" id="add-new-science" @click.prevent="addnewScience()">Add New Science Experiment</button>
     <knowledge-Live :liveData="liveData" ></knowledge-Live>
     <!-- <section v-if="newScienceSeen" id="new-science"> -->
     <!--<science-contribute  :contributeData="contributeData"></science-contribute>-->
@@ -12,15 +11,13 @@
 <script>
 import scienceList from '@/components/healthscience/scienceData.vue'
 import KnowledgeLive from '@/components/toolbar/knowledgeLive'
-import scienceContribute from '@/components/healthscience/scienceContribute.vue'
 const moment = require('moment')
 
 export default {
   name: 'Science',
   components: {
     KnowledgeLive,
-    scienceList,
-    scienceContribute
+    scienceList
   },
   data () {
     return {
@@ -102,11 +99,6 @@ export default {
       } else if (this.vis2.active === true) {
         this.activevis = this.vis2.id
       }
-    },
-    addnewScience () {
-      let scienceStart = {}
-      scienceStart.formSeen = true
-      this.contributeData = scienceStart
     },
     learnUpdate (uSeg) {
       let updateTbundle = {}

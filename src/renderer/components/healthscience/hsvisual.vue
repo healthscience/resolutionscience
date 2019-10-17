@@ -10,6 +10,12 @@
             <header>Tools</header>
             <a class="" href="" id="toolbarholder" @click.prevent="toolsSwitch(toolbar)" v-bind:class="{ 'active': toolbar.active}">{{ toolbar.text }}</a>
           </li>
+          <li>
+            <div v-if="timeSelect" id="time-select" >
+              <div id="start-point" class="context-selecttime">Start: {{  }}</div>
+              <div id="end-point" class="context-selecttime">End: {{  }}</div>
+            </div>
+          </li>
         </ul>
       </div>
       <div v-if="visChartview" id="charts-live">
@@ -136,6 +142,7 @@
         liveTime: '',
         visTableview: false,
         visSimview: false,
+        timeSelect: true,
         timeVis: [],
         selectedExperiment: '',
         confirmAddE: '---',

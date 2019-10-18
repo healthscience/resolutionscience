@@ -12,7 +12,7 @@ export default new Vuex.Store({
     context: {},
     science: {},
     tools: {},
-    visualisation: ['vis-sc-1'],
+    visualisation: ['vis-sc-2'],
     visData: {},
     visOptions: {},
     testString: '',

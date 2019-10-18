@@ -14,6 +14,7 @@ import ChartOptions from './charts/chartOptions.js'
 import TableSystem from './table/tableSystem.js'
 const util = require('util')
 const events = require('events')
+// const moment = require('moment')
 
 var VisSystem = function () {
   events.EventEmitter.call(this)
@@ -34,9 +35,9 @@ util.inherits(VisSystem, events.EventEmitter)
 * @method chartSystem
 *
 */
-VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN, timeComponent) {
+VisSystem.prototype.visSystemChart = function (eInfo, chartBundle, dataIN, timeComponent) {
   var localthis = this
-  let visIN = eInfo.visID[0]
+  let visIN = 'vis-sc-1'
   let liveTime = timeComponent.livedate.startperiod
   let structureHolder = {}
   let chartGroupHolder = []
@@ -134,8 +135,14 @@ VisSystem.prototype.visSystem = function (eInfo, chartBundle, dataIN, timeCompon
 * @method tableSystem
 *
 */
-VisSystem.prototype.tableSystem = function () {
+VisSystem.prototype.tableSystem = function (bundle, visIN, vData, timeComponent) {
   console.log('VISCOMP==tablesysme START1')
+  let tableData
+  if (bundle.cid === 'cnrl-2356388731') {
+    tableData = this.liveTableSystem.structureTableData(bundle, visIN, vData, timeComponent.timerange)
+  }
+  // console.log(tableData)
+  return tableData
 }
 
 export default VisSystem

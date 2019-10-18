@@ -21,12 +21,6 @@
       <div v-if="visChartview" id="charts-live">
         <reactive :chartData="datacollection" :options="options" :width="1200" :height="600"></reactive>
       </div>
-      <div v-if="visTableview" id="table-view">
-        <table-Build></table-Build>
-      </div>
-      <div v-if="visSimview" id="sim-view">
-        <simulation-View></simulation-View>
-      </div>
       <div id="time-context">
         <div id="select-time">
           <ul>
@@ -59,6 +53,12 @@
             </div>
           </li>
         </ul>
+      </div>
+      <div v-if="visTableview" id="table-view">
+        <table-Build :tableData="tablecollection"></table-Build>
+      </div>
+      <div v-if="visSimview" id="sim-view">
+        <simulation-View></simulation-View>
       </div>
     </div>
   </div>
@@ -100,7 +100,10 @@
       makeTimeBundles: {
         type: Array
       },
-      displayTime: ''
+      displayTime: '',
+      tablecollection: {
+        type: Object
+      }
     },
     data () {
       return {
@@ -209,7 +212,7 @@
             this.visSimview = true
           }
         }
-        // filter what visualisation is active and setToken
+        // filter what visualisation is active
         this.filterVisualisation()
       },
       filterVisualisation () {

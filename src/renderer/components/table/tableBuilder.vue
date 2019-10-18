@@ -1,58 +1,13 @@
 <template>
   <div id="table-live">
-    <table class="tg">
-      <tr>
-        <th class="tg-0pky"></th>
-        <th class="tg-0pky"></th>
-        <th class="tg-0pky"></th>
-        <th class="tg-0lax"></th>
-        <th class="tg-0lax"></th>
-        <th class="tg-0lax"></th>
-        <th class="tg-0lax"></th>
-        <th class="tg-0lax"></th>
-        <th class="tg-0lax"></th>
-        <th class="tg-0lax"></th>
-        <th class="tg-0lax"></th>
-        <th class="tg-0lax"></th>
-        <th class="tg-0lax"></th>
-        <th class="tg-0lax"></th>
-        <th class="tg-0lax"></th>
-      </tr>
-      <tr>
-        <td class="tg-0pky"></td>
-        <td class="tg-0pky"></td>
-        <td class="tg-0pky"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-      </tr>
-      <tr>
-        <td class="tg-0pky"></td>
-        <td class="tg-0pky"></td>
-        <td class="tg-0pky"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-        <td class="tg-0lax"></td>
-      </tr>
-    </table>
+    <ul v-for="tp in tableData.tablePackage" >
+     <li>
+      <table v-html="tp">
+        {{ tp }}
+      </table>
+      <div>---------------------------</div>
+     </li>
+    </ul>
   </div>
 </template>
 
@@ -61,6 +16,11 @@
     name: 'table-view',
     components: {
     },
+    props: {
+      tableData: {
+        type: Object
+      }
+    },
     data: () => ({
     }),
     created () {
@@ -68,9 +28,6 @@
     mounted () {
     },
     computed: {
-      system: function () {
-        return this.$store.state.system
-      }
     },
     methods: {
     }
@@ -78,4 +35,19 @@
 </script>
 
 <style>
+#table-live {
+  overflow:scroll;
+  overflow-y:scroll;
+  overflow-x:hidden;
+  min-height: 900px;
+}
+
+table, th, td {
+  border: 1px solid lightgrey;
+}
+
+td {
+  min-width: 100px;
+}
+
 </style>

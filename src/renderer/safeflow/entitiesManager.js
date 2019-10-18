@@ -148,38 +148,31 @@ EntitiesManager.prototype.listEntities = function () {
 *
 */
 EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
-  // console.log('ENTITYMANAGER----retrun data')
-  // console.log(this.liveSEntities[eid].liveTimeC)
   let GroupVisBundle = {}
   let messageVisBundle = {}
   let timeLive = this.liveSEntities[eid].liveTimeC.livedate.startperiod
   // loop over visualisation available and pick out match
-  for (let lvc of this.liveSEntities[eid].liveVisualC.visualData) {
-    // console.log(lvc)
-    if (lvc[visStyle] === undefined) {
-      // console.log('no existing chart data')
+  let lvc = this.liveSEntities[eid].liveVisualC.visualData[visStyle]
+  if (visStyle === 'vis-sc-1') {
+    // if (lvc[visStyle][timeLive].day) {
+    if (lvc) {
       messageVisBundle = {}
-      messageVisBundle.chartMessage = 'computation in progress/ Nothing to chart'
-      GroupVisBundle = messageVisBundle
-    } else if (lvc[visStyle].status === 'report-component') {
-      // console.log('HR learn report instead of chart')
-      messageVisBundle = {}
-      messageVisBundle.chartMessage = 'vis-report'
-      messageVisBundle.liveChartOptions = {}
-      messageVisBundle.chartPackage = {}
+      messageVisBundle.chartMessage = 'Chart'
+      messageVisBundle.liveChartOptions = lvc[0]['vis-sc-1'][timeLive].day.options
+      messageVisBundle.chartPackage = lvc[0]['vis-sc-1'][timeLive].day.prepared
       messageVisBundle.displayTime = timeLive
-      messageVisBundle.hrcReport = this.liveSEntities[eid].liveDataC.dataRaw
+      messageVisBundle.selectTimeStart = this.liveSEntities[eid].liveVisualC.liveVisSystem.liveChartSystem
       GroupVisBundle = messageVisBundle
-    } else if (lvc['vis-sc-1']) {
-      if (lvc[visStyle][timeLive].day) {
-        messageVisBundle = {}
-        messageVisBundle.chartMessage = 'Chart'
-        messageVisBundle.liveChartOptions = lvc[visStyle][timeLive].day.options
-        messageVisBundle.chartPackage = lvc[visStyle][timeLive].day.prepared
-        messageVisBundle.displayTime = timeLive
-        messageVisBundle.selectTimeStart = this.liveSEntities[eid].liveVisualC.liveVisSystem.liveChartSystem
-        GroupVisBundle = messageVisBundle
-      }
+    }
+  }
+  if (visStyle === 'vis-sc-2') {
+    // if (lvc[visStyle][timeLive].day) {
+    if (lvc) {
+      messageVisBundle = {}
+      messageVisBundle.chartMessage = 'Table'
+      messageVisBundle.tablePackage = lvc // [timeLive].day.prepared
+      messageVisBundle.displayTime = timeLive
+      GroupVisBundle = messageVisBundle
     }
   }
   return GroupVisBundle

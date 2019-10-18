@@ -33,9 +33,12 @@ export default {
       // make the Entity
       await this.safeMixin.scienceEntities(lBundle)
       // this.learnListening()
-      let entityGetter = await this.safeMixin.entityGetter(this.activeEntity, this.activevis)
+      let entityGetter = await this.safeMixin.entityGetter(this.activeEntity, 'vis-sc-1')
+      let entityGetterTable = await this.safeMixin.entityGetter(this.activeEntity, 'vis-sc-2')
       this.chartmessage.active = false
-      returnVISvue = await this.diplayFilter(this.activeEntity, this.activevis, entityGetter)
+      // get the table visulisation
+      returnVISvue = await this.diplayFilter(this.activeEntity, 'vis-sc-1', entityGetter)
+      returnVISvue.table = entityGetterTable
       return returnVISvue
     },
     async diplayFilter (aEID, aVis, entityGetter) {

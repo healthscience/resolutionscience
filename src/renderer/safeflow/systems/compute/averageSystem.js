@@ -68,7 +68,6 @@ AverageSystem.prototype.averageSystemStart = async function (systemBundle) {
 *
 */
 AverageSystem.prototype.computeControlFlow = async function (systemBundle) {
-  console.log(systemBundle)
   let liveTimeConvert = moment(systemBundle.time.startperiod).valueOf()
   let liveTime = liveTimeConvert / 1000
   let cFlowStatus = {}
@@ -101,8 +100,6 @@ AverageSystem.prototype.computeControlFlow = async function (systemBundle) {
 *
 */
 AverageSystem.prototype.updateComputeControl = async function (timeBundle, dvc, dtl, ts, systemBundle) {
-  console.log('updatecompute contorll')
-  console.log(systemBundle)
   let liveTime = systemBundle.timeInfo.livedate.startperiod
   // let liveComputeCNRL = systemBundle.timeInfo.did.cid
   let computeStatus = {}
@@ -158,8 +155,6 @@ AverageSystem.prototype.prepareAvgCompute = async function (computeTimes, device
       saveJSON.size = batchSize
       saveJSON.timeseg = ts
       saveJSON.category = systemBundle.categories[0].cnrl
-      console.log('asve JSON')
-      console.log(saveJSON)
       this.liveTestStorage.saveaverageData(saveJSON)
     }
   }

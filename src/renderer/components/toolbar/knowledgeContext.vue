@@ -411,7 +411,7 @@
 
 #open-knowledge {
   display: block;
-  background-color: #c4afdb;
+  background-color: #eedefa; /* #c4afdb;*/
   height: 40px;
   width: 200px;
   padding-left: 10px;
@@ -420,13 +420,13 @@
 }
 
 #open-knowledge.active {
-  background-color:#8ec16d;
+  background-color: #eedefa;
   color: purple;
 }
 
 #history-box {
   float: right;
-  border: 1px solid green;
+  border: 0px solid green;
   margin: 10px;
 }
 </style>

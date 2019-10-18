@@ -97,7 +97,7 @@
         <multipane-resizer></multipane-resizer>
         <div class="pane" :style="{ width: '50%', maxWidth: '100%' }">
           <div>
-            <hsvisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime" :makeTimeBundles="buildTimeBundles"></hsvisual>
+            <hsvisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime" :makeTimeBundles="buildTimeBundles" :tablecollection="liveTable"></hsvisual>
           </div>
         </div>
         <multipane-resizer></multipane-resizer>
@@ -187,6 +187,7 @@
         bundleuuid: '',
         kContext: {},
         liveDataCollection: {},
+        liveTable: {},
         liveOptions: {},
         futureliveDataCollection: {},
         futureliveOptions: {},
@@ -259,12 +260,18 @@
         liveBundle.science = this.liveData.scienceLive
         liveBundle.time = timeBundle
         liveBundle.resolution = this.liveData.resolutionLive
-        liveBundle.visualisation = ['vis-sc-1']
+        liveBundle.visualisation = ['vis-sc-1', 'vis-sc-2'] // 'vis-sc-1',
         // check all the elements are filled correctly
         let checkElements = this.checkLiveElements(liveBundle)
         if (checkElements.status === true) {
           // clear any feedback
-          this.feedback = {}
+          this.feedback.devices = false
+          this.feedback.datatypes = false
+          this.feedback.categories = false
+          this.feedback.science = false
+          this.feedback.time = false
+          this.feedback.visulisation = false
+          this.feedback.resolution = false
           // create unquie ID for kbundle and use to save
           let uuidBundle = this.createKBID(liveBundle)
           liveBundle.kbid = uuidBundle
@@ -274,12 +281,15 @@
           // set message to UI IN-progress
           this.entityPrepareStatus.active = true
           let visDataBack = await this.learnStart(liveBundle)
+          console.log('visDataBack')
+          console.log(visDataBack)
           this.entityPrepareStatus.active = false
           this.liveDataCollection = visDataBack.liveDataCollection
           this.liveOptions = visDataBack.liveOptions
           this.kContext = visDataBack.kContext
           this.liveTimeV = visDataBack.displayTime
           this.liveTimeVFuture = visDataBack.displayTimeF
+          this.liveTable = visDataBack.table
           // start the future
           // this.startFuture(liveBundle, visDataBack.displayTimeF)
         } else {
@@ -291,6 +301,13 @@
         let statusCheck = {}
         statusCheck.status = true
         statusCheck.feedback = []
+        this.feedback.devices = false
+        this.feedback.datatypes = false
+        this.feedback.categories = false
+        this.feedback.science = false
+        this.feedback.time = false
+        this.feedback.visulisation = false
+        this.feedback.resolution = false
         // check all filled
         if (bundle.cnrl !== undefined && bundle.cnrl.length === 0) {
           statusCheck.feedback.push('cnrl')
@@ -320,7 +337,7 @@
           statusCheck.status = false
           this.feedback.science = true
         }
-        if (bundle.time.length === 0) {
+        if (bundle.time.timeseg.length === 0) {
           statusCheck.feedback.push('time')
           statusCheck.status = false
           this.feedback.time = true
@@ -335,6 +352,7 @@
           statusCheck.status = false
           this.feedback.visulisation = true
         }
+        console.log(statusCheck)
         return statusCheck
       },
       setTimeBundle () {
@@ -389,6 +407,7 @@
         let timeAsk = []
         // did UI give nav segment or date from calendar?
         if (uSeg.text === 'selectd') {
+          updateTbundle.visualisation = ['vis-sc-1', 'vis-sc-2']
           // convert time to correct format
           timeAsk.push('day')
           updateTbundle.time.startperiod = uSeg.selectDate
@@ -401,6 +420,7 @@
           this.prepareMultiLearn(updateTbundle, uSeg.timelist)
         } else {
           // time setTimeSegments
+          updateTbundle.visualisation = ['vis-sc-1', 'vis-sc-2']
           timeAsk.push(uSeg.text)
           updateTbundle.time.startperiod = 'relative'
           updateTbundle.time.timeseg = this.liveData.timeLive
@@ -431,6 +451,7 @@
         this.kContext = visDataBack.kContext
         this.liveTimeV = visDataBack.displayTime
         this.liveTimeVFuture = visDataBack.displayTimeF
+        this.liveTable = visDataBack.table
         // this.startFuture(updateTbundle, visDataBack.displayTimeF)
       },
       async makeLiveKnowledge (lBund) {
@@ -448,6 +469,7 @@
         this.$store.dispatch('actionUpdateSciCompute', lBund.cnrl)
         this.entityPrepareStatus.active = true
         // set the active knowledge boxes
+        lBund.visualisation = ['vis-sc-1', 'vis-sc-2']
         this.setKnowledgtBox(lBund)
         let visDataBack = await this.learnStart(lBund)
         // remove compute in progress Message
@@ -458,6 +480,7 @@
         this.kContext = visDataBack.kContext
         this.liveTimeV = visDataBack.displayTime
         this.liveTimeVFuture = visDataBack.displayTimeF
+        this.liveTable = visDataBack.table
         // this.startFuture(lBund, visDataBack.displayTimeF)
       },
       setKnowledgtBox (liveKbid) {
@@ -673,7 +696,7 @@
 #live-knowledge-holder {
   float: left;
   border: 1px solid purple;
-  background-color: #EBE7E0;
+  background-color: #eedefa;
   margin: 6px;
 }
 
@@ -739,7 +762,8 @@
 .custom-resizer > .pane {
   text-align: left;
   padding: 1px;
-  overflow: hidden;
+  overflow: scroll;
+  overflow-y:scroll;
   background: #eee;
   border: 1px solid #ccc;
 }

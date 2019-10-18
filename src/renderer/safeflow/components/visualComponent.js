@@ -44,19 +44,30 @@ VisualComponent.prototype.setVisLive = function (updateEID) {
 VisualComponent.prototype.filterVisual = function (visIN, vData, timeComponent) {
   // which of three types of visualisations?
   let status = false
-  // todo need to check if one or many visualisation types required? ONe for now
-  if (this.EIDinfo.visID[0] === 'vis-sc-1') {
-    // console.log('charts asked for')
-    this.visualData = this.liveVisSystem.visSystem(this.EIDinfo, visIN, vData, timeComponent)
-    status = true
-  } else if (visIN.vid === 'vis-sc-2') {
-    // console.log('table asked for')
-    this.visualData = this.liveVisSystem.tableSystem(visIN, vData)
-    status = true
-  } else if (visIN.vid === 'vis-sc-3') {
-    status = true
-    // console.log('simulation asked for')
-    // this.visualData = this.liveVisSystem.simSystem()
+  let visBundle = {}
+  visBundle.cid = this.EIDinfo.cid
+  visBundle.devices = this.EIDinfo.devices
+  visBundle.datatypes = this.EIDinfo.datatypes
+  visBundle.visID = this.EIDinfo.visID
+  visBundle.startperiod = this.EIDinfo.time.startperiod
+  visBundle.time = this.EIDinfo.time
+  for (let vid of this.EIDinfo.visID) {
+    // todo need to check if one or many visualisation types required? ONe for now
+    if (vid === 'vis-sc-1') {
+      console.log('charts asked for')
+      this.visualData['vis-sc-1'] = this.liveVisSystem.visSystemChart(visBundle, visIN, vData, timeComponent)
+      status = true
+    }
+    if (vid === 'vis-sc-2') {
+      console.log('table asked for')
+      this.visualData['vis-sc-2'] = this.liveVisSystem.tableSystem(visBundle, visIN, vData, timeComponent)
+      // status = true
+    }
+    if (visIN.vid === 'vis-sc-3') {
+      status = true
+      // console.log('simulation asked for')
+      // this.visualData['vis-sc-3'] = this.liveVisSystem.simSystem()
+    }
   }
   return status
 }

@@ -344,8 +344,13 @@
 }
 
 .display-device-options {
-  border: 1px solid orange;
+  border: 2px solid orange;
   margin: 2em;
+}
+
+ul li.display-device-options a {
+  margin: 2em;
+  min-height: 100px;
 }
 
 .display-device-add {

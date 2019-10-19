@@ -78,9 +78,9 @@
       <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
       <!-- <hsvisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime" :saveExpKid="saveStatusEK"></hsvisual> -->
       <!-- <pastfuture></pastfuture> -->
-      <button class="" href="" id="add-new-science" @click.prevent="addnewScience()">Add New Science Experiment</button>
+      <!-- <button class="" href="" id="add-new-science" @click.prevent="addnewScience()">Add New Science Experiment</button> -->
       <div id="add-experiment">
-        Add to experiment dashboard:
+        Experiment dashboard:
         <select v-model="liveexerimentList" @change="addToExperiment($event)">
           <option class="science-compute" v-for="expi in liveexerimentList" v-bind:value="expi.cnrl">
             {{ expi.contract.prime.text }}
@@ -91,6 +91,10 @@
           <transition name="fade" >
             <div v-if="saveStatusEK.active === true" id="confirm-add-experiment">{{ saveStatusEK.text }}</div>
           </transition>
+        </div>
+        <div v-if="timeSelect" id="time-select" >
+          <div id="start-point" class="context-selecttime">Start: {{ kContext.analysisStart }}</div>
+          <div id="end-point" class="context-selecttime">End: {{ kContext.analysisEnd }}</div>
         </div>
       </div>
       <multipane class="custom-resizer" layout="vertical">
@@ -186,6 +190,7 @@
         experimentData: [],
         bundleuuid: '',
         kContext: {},
+        timeSelect: true,
         liveDataCollection: {},
         liveTable: {},
         liveOptions: {},
@@ -231,8 +236,6 @@
       let sciStartEmpty = {}
       sciStartEmpty.prime = {'text': 'empty'}
       this.liveData.scienceLive = sciStartEmpty
-      // let categoryEmpty = {}
-      // categoryEmpty.categories = {'active': false, 'cnrl': 'none', 'text': 'none'}
       this.liveData.categoryLive.push({'active': false, 'cnrl': 'none', 'text': 'none'}) // categoryEmpty
       this.setNaveTime()
     },
@@ -733,6 +736,10 @@
   font-size: 1.4em;
   padding-left: 8px;
   padding-right: 8px;
+}
+
+#add-experiment,#time-select {
+  display: inline-block;
 }
 
 .feedback {

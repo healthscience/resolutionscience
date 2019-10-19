@@ -34,11 +34,11 @@
         </ul>
       </div>
       <div v-if="addDeviceSeen" class="display-device-add">
-        Please enter
-        <form id="dmap_form" name="dmap_form" method="post" action="#">
+        {{ luftdaten.text }} Please enter
+        <form id="luftdaten_form" name="luftdaten_form" method="post" action="#">
           <ul>
             <li>
-              <h2>Luftdaten devices ID</h2><input v-model="luftdaten.device_mac" placeholder="device id number">
+              Luftdaten devices ID<input v-model="luftdaten.device_mac" placeholder="device id number">
             </li>
             <li>
               Particle Sensor ID<input v-model="luftdaten.device_sensor1" placeholder="id number">
@@ -62,7 +62,8 @@
       </transition>
     </div>
     <div id="device-data-status">
-      <header>DATA STORES</header> <button class="view-activapis" @click.prevent="viewDatastores($event)">{{ liveDeviceSeen.text }}</button>
+      <header>DATA STORES</header>
+      <button class="view-activapis" @click.prevent="viewDatastores($event)">{{ liveDeviceSeen.text }}</button>
       <ul v-if="liveDeviceSeen.seen">
         <li class="datastore-item">
           <header>TESTnetwork</header>
@@ -151,22 +152,47 @@
         </li>
       </ul>
     </div>
+    <div id="add-new-network">
+      <header>CNRL network contributions</header>
+      <ul>
+        <li>
+          <button class="new-describe-cnrl" @click.prevent="newDesAPI($event)">{{ newAPIseen.text }}</button>
+        </li>
+        <li>
+          <button class="view-cnrl" id="experimentCNRL" @click.prevent="viewCNRL($event)">{{ CNRLexperimentseen.text }}</button>
+        </li>
+        <li>
+          <button class="view-cnrl" id="datatypesCNRL" @click.prevent="viewCNRL($event)">{{ CNRLdatatypesseen.text }}</button>
+        </li>
+        <li>
+          <button class="view-cnrl"  id="computeCNRL" @click.prevent="viewCNRL($event)">{{ CNRLcomputeseen.text }}</button>
+        </li>
+      </ul>
+      <new-API v-if="newAPIseen.active"></new-API>
+      <view-CNRL v-if="statusCNRL.active" :cnrlLive="CNRLdata"></view-CNRL>
+    </div>
   </div>
 </template>
 
 <script>
   import fs from 'fs'
+  import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
   import TokenReader from './LandingPage/token-reader.vue'
   import FirstToken from './LandingPage/token-first.vue'
   import deviceList from './healthscience/deviceData.vue'
+  import newAPI from './healthscience/newAPI.vue'
+  import viewCNRL from './healthscience/viewCNRL.vue'
 
   export default {
     name: 'data-page',
     components: {
       TokenReader,
       FirstToken,
-      deviceList
+      deviceList,
+      newAPI,
+      viewCNRL
     },
+    mixins: [liveMixinSAFEflow],
     data: () => ({
       viewPkey: false,
       firstTimetokenseen: false,
@@ -191,6 +217,32 @@
       {
         seen: false,
         text: 'view'
+      },
+      newAPIseen:
+      {
+        active: false,
+        text: 'Add new'
+      },
+      CNRLdata: [],
+      statusCNRL:
+      {
+        active: false,
+        type: ''
+      },
+      CNRLexperimentseen:
+      {
+        active: false,
+        text: 'Experiments'
+      },
+      CNRLdatatypesseen:
+      {
+        active: false,
+        text: 'Datatypes'
+      },
+      CNRLcomputeseen:
+      {
+        active: false,
+        text: 'Compute'
       },
       otherDevices:
       {
@@ -253,7 +305,7 @@
           this.otherDevices.text = 'close'
         } else {
           this.otherDevices.seen = false
-          this.otherDevices.text = 'view'
+          this.otherDevices.text = 'NEW api'
         }
       },
       makeActive (ma) {
@@ -274,6 +326,30 @@
         setTimeout(function () {
           this.devicemessage.active = false
         }, 3000) // hide the message after 3 seconds
+      },
+      newDesAPI (ap) {
+        if (this.newAPIseen.active === false) {
+          this.newAPIseen.active = true
+          this.newAPIseen.text = 'close'
+        } else {
+          this.newAPIseen.active = false
+          this.newAPIseen.text = 'Add new'
+        }
+      },
+      viewCNRL (cnrle) {
+        console.log('view cnrl views')
+        console.log(cnrle)
+        console.log(cnrle.target.id)
+        this.statusCNRL.active = true
+        this.statusCNRL.type = cnrle.target.id
+        let cnrlActive = cnrle.target.id
+        if (cnrlActive === 'experimentCNRL') {
+          this.CNRLdata = this.GETexperimentsList()
+        } else if (cnrlActive === 'datatypesCNRL') {
+          this.CNRLdata = this.GETdatatypeList()
+        } else if (cnrlActive === 'computeCNRL') {
+          this.CNRLdata = this.GetcnrlComputeList()
+        }
       }
     }
   }
@@ -323,6 +399,14 @@
   font-weight: bold;
 }
 
+#device-data-status,#device-otherdata-status {
+  margin-bottom: 2em;
+}
+
+#add-new-network li {
+  margin: 0.5em;
+}
+
 .datastore-item {
   display: inline-block;
   border-top-style: dotted;
@@ -336,7 +420,7 @@
   border-top-style: dotted;
   border: 1px solid orange;
   margin: 10px;
-  padding: 8px;
+  padding: 10px;
 }
 
 .device-type-item button {
@@ -344,8 +428,9 @@
 }
 
 .display-device-options {
+  display: block;
   border: 2px solid orange;
-  margin: 2em;
+  padding: 10px;
 }
 
 ul li.display-device-options a {
@@ -354,8 +439,8 @@ ul li.display-device-options a {
 }
 
 .display-device-add {
-  border: 1px solid orange;
-  margin: 2em;
+  border: 2px solid orange;
+  padding: 20px;
 }
 
 .fade-enter-active, .fade-leave-active {

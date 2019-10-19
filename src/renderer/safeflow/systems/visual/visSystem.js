@@ -69,6 +69,7 @@ VisSystem.prototype.visSystemChart = function (eInfo, chartBundle, dataIN, timeC
     // update for annotation values needing set
     let chartOptionsSet = this.liveChartOptions.updateChartoptions(setTimeTools, liveChartOptions) // this.liveChartSystem.getterChartOptions()
     chartData.options = chartOptionsSet
+    chartData.liveActive = this.liveChartOptions
     const chartHolder = {}
     chartHolder[visIN] = {}
     chartHolder[visIN][liveTime] = {}

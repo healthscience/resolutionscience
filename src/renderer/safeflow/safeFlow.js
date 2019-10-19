@@ -218,8 +218,46 @@ safeFlow.prototype.cnrlTimeIndex = function (refIN) {
 *
 */
 safeFlow.prototype.cnrlExperimentIndex = function () {
+  let cnrlDetail = []
   let index = this.liveCNRL.indexExperiments()
-  return index
+  for (let ie of index) {
+    // lookup contracts
+    let cnrlContract = this.liveCNRL.lookupContract(ie)
+    cnrlDetail.push(cnrlContract)
+  }
+  return cnrlDetail
+}
+
+/**
+* datatype on CNRL network index query
+* @method cnrlNetworkDatatypeIndex
+*
+*/
+safeFlow.prototype.cnrlNetworkDatatypeIndex = function () {
+  let cnrlDetail = []
+  let index = this.liveCNRL.indexDatatypes()
+  for (let ie of index) {
+    // lookup contracts
+    let cnrlContract = this.liveCNRL.lookupContract(ie)
+    cnrlDetail.push(cnrlContract)
+  }
+  return cnrlDetail
+}
+
+/**
+* computes on CNRL network index query
+* @method cnrlNetworkComputeIndex
+*
+*/
+safeFlow.prototype.cnrlNetworkComputeIndex = function () {
+  let cnrlDetail = []
+  let index = this.liveCNRL.indexCompute()
+  for (let ie of index) {
+    // lookup contracts
+    let cnrlContract = this.liveCNRL.lookupContract(ie)
+    cnrlDetail.push(cnrlContract)
+  }
+  return cnrlDetail
 }
 
 /**

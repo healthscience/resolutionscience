@@ -139,8 +139,7 @@ CNRLmaster.prototype.timeContracts = function (refIN) {
     }]
   } else if (refIN === 'datatime-index') {
     // navigate data time buttons
-    timeIndex =
-    [{
+    /* {
       text: '-year',
       id: 'cnrl-t66',
       active: false
@@ -150,7 +149,19 @@ CNRLmaster.prototype.timeContracts = function (refIN) {
       id: 'cnrl-t22',
       active: false
     },
+    ,
     {
+      text: '+month',
+      id: 'cnrl-t4',
+      active: false
+    },
+    {
+      text: '+year',
+      id: 'cnrl-t5',
+      active: false
+    } */
+    timeIndex =
+    [{
       text: '-week',
       id: 'cnrl-t33',
       active: false
@@ -174,16 +185,6 @@ CNRLmaster.prototype.timeContracts = function (refIN) {
       text: '+week',
       id: 'cnrl-t3',
       active: false
-    },
-    {
-      text: '+month',
-      id: 'cnrl-t4',
-      active: false
-    },
-    {
-      text: '+year',
-      id: 'cnrl-t5',
-      active: false
     }]
   }
   return timeIndex
@@ -200,6 +201,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
   dataCNRLbundle.type = ''
   dataCNRLbundle.livingpaper = ''
   dataCNRLbundle.prime = {}
+  dataCNRLbundle.history = {}
   dataCNRLbundle.resolution = {}
   dataCNRLbundle.source = []
   dataCNRLbundle.input = []
@@ -217,6 +219,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
   dataCNRLbundle.kentities = []
   if (refIN === 'cnrl-8856388711') {
     dataCNRLbundle.type = 'datatype'
+    dataCNRLbundle.history = {'proposed': 157118400, 'accepted': 15728400, 'votes': 343}
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-8856388711', 'text': 'bpm', 'active': false }
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
@@ -763,21 +766,19 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
 */
 CNRLmaster.prototype.indexDatatypes = function () {
   // index datatype live in network by cnrl // id
-  let indexDTlive = []
-  indexDTlive.push('cnrl-')
+  let indexDTlive = ['cnrl-8856388711', 'cnrl-8856388712', 'cnrl-8856388713', 'cnrl-8856388723', 'cnrl-8856388727', 'cnrl-8356388727', 'cnrl-8326388727', 'cnrl-8326328727', 'cnrl-3356388722', 'cnrl-3356388733', 'cnrl-8856388724', 'cnrl-8856388322', 'cnrl-8856388924', 'cnrl-8856389322', 'cnrl-8856388725']
   return indexDTlive
 }
 
 /**
 * Index of science computations
-* @method indexScience
+* @method indexCompute
 *
 */
-CNRLmaster.prototype.indexScience = function () {
+CNRLmaster.prototype.indexCompute = function () {
   // index datatype live in network by cnrl // id
-  let indexSciencelive = []
-  indexSciencelive.push('cnrl-')
-  return indexSciencelive
+  let indexComputelive = ['cnrl-2356388731', 'cnrl-2356388737', 'cnrl-2356388732', 'cnrl-2356383848']
+  return indexComputelive
 }
 
 /**

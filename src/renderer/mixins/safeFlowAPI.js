@@ -157,6 +157,14 @@ export default {
       let expList = this.safeMixin.cnrlExperimentIndex()
       return expList
     },
+    GETdatatypeList () {
+      let dtList = this.safeMixin.cnrlNetworkDatatypeIndex()
+      return dtList
+    },
+    GetcnrlComputeList () {
+      let computeList = this.safeMixin.cnrlNetworkComputeIndex()
+      return computeList
+    },
     GetcnrlScienceStart () {
       let scienceCompute = this.safeMixin.cnrlScienceStart()
       return scienceCompute

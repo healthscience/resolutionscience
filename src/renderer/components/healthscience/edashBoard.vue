@@ -1,21 +1,34 @@
 <template>
-  <div v-if="experimentDash && experimentDash.status === true && dashCNRL === experimentDash.cnrl" id="dashboard-view">
-    <header>Dashboard for experiment {{ experimentDash.cnrl }}</header>
-    <div id="experiment-summary">
-      <div class="summary-item" id="exerpiment-name"> Experiment: {{ experimentDash.contract.prime.text }} </div>
-      <div class="summary-item" id="living-paper"> LivingPaper: {{ experimentDash.contract.livingpaper.link }} </div>
+  <div v-if="progressMessageIN && progressMessageIN.cnrl === dashCNRL" id="progess">
+    <progress-Message :progressMessage="progressMessageIN"></progress-Message>
+    <div v-if="experimentDash && experimentDash.status === true && dashCNRL === experimentDash.cnrl" id="dashboard-view">
+      <header>Dashboard</header>
+      <div id="experiment-summary">
+        <div class="summary-item" id="exerpiment-name"> Experiment: {{ experimentDash.contract.prime.text }} </div>
+        <div class="summary-item" id="living-paper">
+          <a href="experimentDash.contract.livingpaper.link" >LivingPaper</a>
+        </div>
+      </div>
+      <learn-Report></learn-Report>
+      <learn-Action></learn-Action>
+      <ul>
+        <li v-for="(vEnt, index) in experimentDash.dashKBlist">
+          <div id="dashboard-toolbar" >
+            <ul>
+              <li>
+                Start: {{ chartUI.analysisStart }}
+                <button v-model="peerChart" href="" id="add-exp-button" @click.prevent="setDashTime()">Sync Time Lines</button>
+              </li>
+              <li>
+                End: {{ chartUI.analysisEnd }}
+              </li>
+            </ul>
+          </div>
+          <expvisual :entityCNRL="vEnt.cnrl" :datacollection="vEnt.liveDataCollection" :options="vEnt.liveOptions" :displayTime="vEnt.liveTimeV"></expvisual>
+          <!-- <expfuturevisual :entityCNRL="vEnt.cnrl" :dataFcollection="{}" :optionsF="{}" :displayTimeF="{}"></expfuturevisual> -->
+        </li>
+      </ul>
     </div>
-    <learn-Report></learn-Report>
-    <learn-Action></learn-Action>
-    <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
-    <ul>
-      <!-- <expfuturevisual :entityCNRL="{}" :dataFcollection="{}" :optionsF="{}" :displayTimeF="{}"></expfuturevisual>
-      <expvisual :entityCNRL="{}" :datacollection="{}" :options="{}" :displayTime="{}"></expvisual> -->
-      <li v-for="(vEnt, index) in makeKbundles">
-        <expvisual :entityCNRL="vEnt.cnrl" :datacollection="vEnt.liveDataCollection" :options="vEnt.liveOptions" :displayTime="vEnt.liveTimeV"></expvisual>
-        <!-- <expfuturevisual :entityCNRL="vEnt.cnrl" :dataFcollection="{}" :optionsF="{}" :displayTimeF="{}"></expfuturevisual> -->
-      </li>
-    </ul>
   </div>
 </template>
 
@@ -26,6 +39,7 @@
   import learnAction from '@/components/reports/LearnAction'
   import expvisual from '@/components/healthscience/expVisual'
   import expfuturevisual from '@/components/healthscience/expfutureVisual'
+  // const moment = require('moment')
 
   export default {
     name: 'visual-liveview',
@@ -42,6 +56,14 @@
       {
         type: Object
       },
+      KBDash:
+      {
+        type: Object
+      },
+      progressMessageIN:
+      {
+        type: Object
+      },
       liveDataCollection: {},
       liveOptions: {},
       liveTimeV: ''
@@ -49,24 +71,17 @@
     data () {
       return {
         dashEstatus: false,
-        experimentDash2: {},
-        kbundlelive: {},
         entityPrepareStatus:
         {
           active: false,
           text: 'Preparing visualisation'
+        },
+        peerChart: {},
+        chartUI:
+        {
+          analysisStart: 'd----',
+          analysisEnd: '---dd-'
         }
-      }
-    },
-    asyncComputed: {
-      async makeKbundles () {
-        // look up Kentitycomponents for this experiment per this Peer
-        let visEC = {}
-        if (this.experimentDash) {
-          visEC = await this.visDataPrepare()
-          this.stopLiveProgress()
-        }
-        return visEC
       }
     },
     computed: {
@@ -78,27 +93,24 @@
     },
     mixins: [liveMixinSAFEflow],
     methods: {
-      async visDataPrepare () {
-        let entityArray = []
-        let chartDataReady = {}
-        let mappedExpENTs = this.$store.getters.liveKentities
-        let currentEntities = this.$store.getters.startBundlesList
-        let liveBundles = mappedExpENTs[this.experimentDash.cnrl]
-        for (let expEB of liveBundles) {
-          for (let iee of currentEntities) {
-            if (expEB === iee.kbid) {
-              chartDataReady = await this.learnStart(iee)
-              entityArray.push(chartDataReady)
-            }
-          }
-        }
-        return entityArray
-      },
       makeLiveProgress () {
         this.entityPrepareStatus.active = true
       },
       stopLiveProgress () {
-        this.entityPrepareStatus.active = false
+        this.progressMessage.active = false
+      },
+      setDashTime () {
+        console.log('set dashtime')
+        // call action to update state
+        this.updateChartOptions()
+      },
+      updateChartOptions () {
+        let optState = {}
+        optState.syncOptions = []
+        optState.expCNRL = this.dashCNRL
+        this.$store.dispatch('actionUpdateChartOptions', optState)
+        console.log('chart action complete')
+        // console.log()
       }
     }
   }
@@ -106,7 +118,7 @@
 
 <style>
 #dashboard-view {
-  border: 2px solid orange;
+  border: 2px solid white;
   margin: 2em;
   width: 98%;
 }

@@ -634,6 +634,21 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-888355992223'
     dataCNRLbundle.index = []
     dataCNRLbundle.kentities = ['cnrl-2356388731']
+  } else if (refIN === 'cnrl-88735d99d228') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'experiment'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-88735d99d228', 'text': 'STRESS - Mental Health', 'active': false }
+    dataCNRLbundle.livingpaper = {'link': 'https://docs.google.com/document'}
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.tableStructure = []
+    dataCNRLbundle.categorycodes.push()
+    dataCNRLbundle.categorycodes.push()
+    dataCNRLbundle.resolution = {}
+    dataCNRLbundle.namespace = 'safe://cnrl/cnrl-88735d99d228'
+    dataCNRLbundle.index = []
+    dataCNRLbundle.kentities = ['cnrl-88735d99d228']
   } else if (refIN === 'cnrl-888355992224') {
     // CNRL implementation contract e.g. from mobile phone sqlite table structure
     dataCNRLbundle.type = 'experiment'
@@ -801,7 +816,7 @@ CNRLmaster.prototype.indexDatapackaging = function () {
 CNRLmaster.prototype.indexExperiments = function () {
   // index datatype live in network by cnrl // id
   let indexExperimentslive = []
-  indexExperimentslive.push('cnrl-848388553323', 'cnrl-888388992224', 'cnrl-888388443324', 'cnrl-888355992223', 'cnrl-888388233324', 'cnrl-888388232224', 'cnrl-848388554344', 'cnrl-848388553329', 'cnrl-888355992224')
+  indexExperimentslive.push('cnrl-848388553323', 'cnrl-888388992224', 'cnrl-888388443324', 'cnrl-888355992223', 'cnrl-88735d99d228', 'cnrl-888388233324', 'cnrl-888388232224', 'cnrl-848388554344', 'cnrl-848388553329', 'cnrl-888355992224')
   return indexExperimentslive
 }
 

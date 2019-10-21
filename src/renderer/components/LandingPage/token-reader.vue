@@ -85,6 +85,23 @@
         // var datadir = process.cwd()
         // this.tokenJSONy = (datadir)
       },
+      autoloadTextFromFile (ev) {
+        // prompt for Password
+        const localthis = this
+        const file = process.cwd() + '/keystore/healthscience-token.json'
+        const reader = new FileReader()
+        reader.onloadend = function () {
+          const tJSONstring = reader.result
+          const tokenJSON = JSON.parse(tJSONstring)
+          // now use getter to store state
+          localthis.token = tokenJSON
+          localthis.$store.commit('setBoth', tokenJSON)
+          localthis.verifyfeedbackM = 'Data token live'
+          localthis.viewPkeybuttons = true
+          localthis.connectAPIS()
+        }
+        reader.readAsText(file)
+      },
       verifyKeypw () {
         // verify key password for token
       },
@@ -125,11 +142,12 @@
         let liveExper = []
         let experimentList = this.GETexperimentsList()
         for (let exl of experimentList) {
-          let expCNRL = this.GETcnrlLookup(exl)
+          // let expCNRL = this.GETcnrlLookup(exl)
           let experBundle = {}
-          experBundle.cnrl = exl
+          experBundle.cnrl = exl.prime.cnrl
           experBundle.status = false
-          experBundle.contract = expCNRL
+          experBundle.contract = exl
+          experBundle.dashKBlist = []
           liveExper.push(experBundle)
         }
         this.$store.dispatch('actionExperimentList', liveExper)

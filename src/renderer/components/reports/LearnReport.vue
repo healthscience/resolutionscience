@@ -1,17 +1,17 @@
 <template>
   <div id="learn-report">
     <header>REPORT</header>
-    <div id="oracles">oracles</div>
+    <!-- <div id="oracles">oracles</div>  -->
     <div id="tends">
-      <header>trends</header>
-      <ul v-if="experimentTrends.length !== 0" >
+      <header>trends - coming soon</header>
+      <!-- <ul v-if="experimentTrends.length !== 0" >
         <li class="trend-item" v-for="(expT, index) in experimentTrends">
           <div id="live-trend-element">{{ index }}
             <p>{{ trendIcon[index] }}</p>
             <img class="smaller-trends-icons" :src="trendIcon[index].url" />
           </div>
         </li>
-      </ul>
+      </ul> -->
     </div>
     <div id="visulation-select"></div>
   </div>
@@ -59,7 +59,7 @@
 <style>
 #learn-report {
   margin: 1em;
-  background-color: #D0FCC1;
+  background-color: #cac8cc;
 }
 
 header {

@@ -99,6 +99,17 @@
               <b>Manual</b> --- AUTO
             </div>
           </div>
+          <div class="compute-control-itemmedium" id="dashboard-select">
+            <header>Dashboards</header>
+            <div>
+              <b>Live</b> {{ lh.kbid }}
+              <ul v-for="dxp in mappedExps">
+                <li>
+                  ddd- {{ dxp.text }} <button @click.prevent="removeDashboard(lh.kbid)">Remove</button>
+                </li>
+              </ul>
+            </div>
+          </div>
           <div class="compute-control-item">
             <progress-Message v-bind:progressMessage="entityPrepareStatus[lh.kbid]"></progress-Message>
           </div>
@@ -134,7 +145,9 @@
         liveExperimentB: [],
         cStatus: 'needs updating',
         entityPrepareStatus: {},
-        controlsSeen: {}
+        controlsSeen: {},
+        dashboardElement: {},
+        computeEntityKID: ''
       }
     },
     created () {
@@ -143,6 +156,15 @@
     computed: {
       startK: function () {
         return this.$store.state.startBundles
+      },
+      liveexerimentList: function () {
+        return this.$store.state.experimentList
+      },
+      livemapExperimentKbundles: function () {
+        return this.$store.state.mapExperimentKbundles
+      },
+      mappedExps: function () {
+        return this.mappJOIN()
       }
     },
     mounted () {
@@ -206,10 +228,31 @@
         this.entityPrepareStatus = this.$store.getters.liveKComputeStatus
       },
       SeenStartCompute (fsc) {
-        let computeEntityKID = fsc.target.value
+        this.computeEntityKID = fsc.target.value
         // create compute progress entry for this Kbid
-        this.computeSeenProgressLive(computeEntityKID)
+        this.computeSeenProgressLive(this.computeEntityKID)
         // this.updateCompute(computeEntityKID)
+      },
+      mappJOIN () {
+        let experPerCompute = []
+        for (let mapE of this.livemapExperimentKbundles) {
+          if (this.computeEntityKID === mapE.kbid) {
+            for (let expDet of this.liveexerimentList) {
+              if (mapE.experimentCNRL === expDet.cnrl) {
+                experPerCompute.push(expDet.contract.prime)
+              }
+            }
+          }
+        }
+        return experPerCompute
+      },
+      removeDashboard (removeID) {
+        console.log('remove from dashboard')
+        // need to dispatch to remove and datastore
+        console.log(removeID)
+        console.log(this.livemapExperimentKbundles)
+        this.$store.dispatch('actionRemoveExpDashMap', removeID)
+        // and remove from datastore
       }
     }
   }
@@ -259,7 +302,7 @@
 }
 
 #compute-control-panel {
-  background-color: #FAF6C8;
+  background-color: #f2f6fa;
 }
 
 #compute-control-panel header {
@@ -270,6 +313,12 @@
   display: inline-block;
   margin: 1em;
   width: 140px;
+}
+
+.compute-control-itemmedium {
+  display: inline-block;
+  margin: 1em;
+  width: 340px;
 }
 
 .compute-control-item header {

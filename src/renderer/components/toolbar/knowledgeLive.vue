@@ -289,7 +289,7 @@
           this.entityPrepareStatus.active = false
           this.liveDataCollection = visDataBack.liveDataCollection
           this.liveOptions = visDataBack.liveOptions
-          this.kContext = visDataBack.kContext
+          // this.kContext = visDataBack.kContext
           this.liveTimeV = visDataBack.displayTime
           this.liveTimeVFuture = visDataBack.displayTimeF
           this.liveTable = visDataBack.table
@@ -376,7 +376,7 @@
         let visDataBack = await this.learnStart(liveBundle)
         this.futureliveDataCollection = visDataBack.liveDataCollection
         this.futureliveOptions = visDataBack.liveOptions
-        this.futurekContext = visDataBack.kContext
+        // this.futurekContext = visDataBack.kContext
         // this.liveTimeV = visDataBack.displayTime
         this.liveTimeVFuture = visDataBack.displayTimeF
       },
@@ -451,7 +451,7 @@
         this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions
-        this.kContext = visDataBack.kContext
+        // this.kContext = visDataBack.kContext
         this.liveTimeV = visDataBack.displayTime
         this.liveTimeVFuture = visDataBack.displayTimeF
         this.liveTable = visDataBack.table
@@ -480,7 +480,7 @@
         this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions
-        this.kContext = visDataBack.kContext
+        // this.kContext = visDataBack.kContext
         this.liveTimeV = visDataBack.displayTime
         this.liveTimeVFuture = visDataBack.displayTimeF
         this.liveTable = visDataBack.table

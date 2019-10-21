@@ -61,7 +61,7 @@
         <div v-if="devicemessage.active === true" id="confirm-add-device">{{ devicemessage.text }}</div>
       </transition>
     </div>
-    <div id="device-data-status">
+    <div id="device-datastore-status">
       <header>DATA STORES</header>
       <button class="view-activapis" @click.prevent="viewDatastores($event)">{{ liveDeviceSeen.text }}</button>
       <ul v-if="liveDeviceSeen.seen">
@@ -337,9 +337,6 @@
         }
       },
       viewCNRL (cnrle) {
-        console.log('view cnrl views')
-        console.log(cnrle)
-        console.log(cnrle.target.id)
         this.statusCNRL.active = true
         this.statusCNRL.type = cnrle.target.id
         let cnrlActive = cnrle.target.id
@@ -399,11 +396,21 @@
   font-weight: bold;
 }
 
+#connect-devices, #device-datastore-status, #device-otherdata-status, #add-new-network {
+  background-color: #EBE7E0;
+  padding: 10px;
+}
+
+#connect-devices, #device-datastore-status, #device-otherdata-status, #add-new-network header {
+  margin: 0.5em;
+}
+
 #device-data-status,#device-otherdata-status {
   margin-bottom: 2em;
 }
 
 #add-new-network li {
+  display: inline-block;
   margin: 0.5em;
 }
 
@@ -418,7 +425,7 @@
 .device-type-item {
   display: inline-block;
   border-top-style: dotted;
-  border: 1px solid orange;
+  border: 0px solid orange;
   margin: 10px;
   padding: 10px;
 }
@@ -429,7 +436,7 @@
 
 .display-device-options {
   display: block;
-  border: 2px solid orange;
+  border: 0px solid orange;
   padding: 10px;
 }
 

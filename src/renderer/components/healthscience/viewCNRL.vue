@@ -3,10 +3,10 @@
     <ul v-for="cd in cnrlLive">
       <li>
         <div class="cnrl-element">{{ cd.type }}</div>
-        <div class="cnrl-element">{{ cd.livingpaper }}</div>
         <div class="cnrl-element"> <b> {{ cd.prime.text }} </b> {{ cd.prime.cnrl }}</div>
         <div class="cnrl-element"> {{ cd.history }}</div>
         <div class="cnrl-element"> {{ cd.wasmfile }}</div>
+        <div class="cnrl-element">{{ cd.livingpaper }}</div>
       </li>
     </ul>
   </div>

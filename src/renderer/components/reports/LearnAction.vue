@@ -1,7 +1,7 @@
 <template>
   <div id="learn-action">
-    <header>ACTION</header>
-    <div id="self-action">
+    <header>ACTION - coming soon</header>
+    <!-- <div id="self-action">
       SELF: Manual setting of notifications on mobile.
     </div>
     <div id="HealthSpanPractitioner-action">
@@ -12,7 +12,7 @@
     </div>
     <div id="dapp-action">
       Set Notification to mobile device: Y / N
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -50,7 +50,7 @@
 <style>
 #learn-action {
   margin: 1em;
-  background-color: #FCE8C1;
+  background-color: #cac8cc;
 }
 
 header {

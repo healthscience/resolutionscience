@@ -1,13 +1,13 @@
 <template>
   <div id="oracle-view">TENDS
-    <ul v-if="experimentTrends.length !== 0" >
+    <!-- <ul v-if="experimentTrends.length !== 0" >
       <li class="trend-item" v-for="(expT, index) in experimentTrends">
         <div id="live-trend-element">{{ index }}
           <p>{{ trendIcon[index] }}</p>
           <img class="smaller-trends-icons" :src="trendIcon[index].url" />
         </div>
       </li>
-    </ul>
+    </ul> -->
   </div>
 </template>
 
@@ -34,7 +34,7 @@
     computed: {
     },
     mounted () {
-      this.tremdsStart()
+      // this.tremdsStart()
     },
     methods: {
       tremdsStart () {

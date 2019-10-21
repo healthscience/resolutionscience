@@ -12,8 +12,8 @@
                 <a class="" href="" id="toolbarholder" @click.prevent="toolsSwitch(toolbar)" v-bind:class="{ 'active': toolbar.active}">{{ toolbar.text }}</a>
               </li>
             </ul>
-            <div id="edit-experiment">Edit
-          </div>
+            <div id="edit-experiment">
+            </div>
         </div>
       </div>
       <div v-if="visChartview" id="charts-live">
@@ -26,7 +26,7 @@
         <simulation-View></simulation-View>
       </div>
       <div id="time-context">
-        <!--<div id="select-time">
+        <!-- <div id="select-time">
           <ul>
             <li v-for="tv in timeVis" class="context-time">
               <button class="button is-primary" @click.prevent="setTimeData(tv)">{{ tv.text }}</button>
@@ -44,6 +44,7 @@
 </template>
 
 <script>
+  import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
   import Reactive from '@/components/charts/Reactive'
   import Reactivestats from '@/components/charts/Reactivestats'
   import ToolbarTools from '@/components/toolbar/statisticstools'
@@ -70,6 +71,7 @@
       },
       displayTime: ''
     },
+    mixins: [liveMixinSAFEflow],
     data () {
       return {
         vis1:
@@ -111,7 +113,7 @@
     },
     methods: {
       timeNavSegments () {
-        // this.timeVis = this.liveSafeFlow.cnrlTimeIndex('datatime-index')
+        this.timeVis = this.timeNav('datatime-index')
       },
       selectVis (visIN) {
         if (visIN.id === 'vis-sc-1') {

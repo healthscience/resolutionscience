@@ -166,20 +166,47 @@ export default new Vuex.Store({
       state.bundle.scienceLive = sciCompute
     },
     setExperimentCNRL: (state, inVerified) => {
+      console.log('set experiment')
+      console.log(state.experimentCNRL)
       if (inVerified.view === true) {
+        let kel = {}
+        kel.status = true
+        kel.dashKBlist = inVerified.dashKBlist
+        kel.contract = inVerified.contract
+        kel.cnrl = inVerified.cnrl
+        let objectProp = inVerified.cnrl
+        Vue.set(state.experimentCNRL, objectProp, kel)
         // take Kbundles list and prepare for display
-        for (let kel of state.experimentList) {
+        /* for (let kel of state.experimentList) {
           if (inVerified.cnrl === kel.cnrl) {
             kel.status = true
+            kel.dashKBlist = inVerified.dashKBlist
             let objectProp = inVerified.cnrl
             Vue.set(state.experimentCNRL, objectProp, kel)
           }
-        }
-      } else {
-        // set to fase the experiment entity
-        let updateECNRL = state.experimentCNRL[inVerified.cnrl]
-        updateECNRL.status = false
-        Vue.set(state.experimentCNRL, inVerified.cnrl, updateECNRL)
+        } */
+        console.log('inde xstate sing list')
+        console.log(state.experimentCNRL[inVerified.cnrl])
+        console.log(state.experimentCNRL[inVerified.cnrl])
+      }
+    },
+    setExperimentCNRLc: (state, inVerified) => {
+      console.log(inVerified)
+      if (inVerified.view === false) {
+        console.log('close')
+        // console.log(state.experimentList)
+        console.log(state.experimentCNRL)
+        // let updateECNRL = state.experimentCNRL[inVerified.cnrl]
+        // console.log(updateECNRL)
+        let updateExpState = {}
+        updateExpState.cnrl = inVerified.cnrl
+        updateExpState.contract = {}
+        updateExpState.status = false
+        updateExpState.dashKBlist = inVerified.dashKBlist
+        let objectPropC = inVerified.cnrl
+        Vue.set(state.experimentCNRL, objectPropC, updateExpState)
+        // state.experimentCNRL[inVerified.cnrl] = updateExpState
+        console.log(state.experimentCNRL)
       }
     },
     setExperimentList: (state, inVerified) => {
@@ -204,6 +231,40 @@ export default new Vuex.Store({
           }
         }
       }
+    },
+    updateChartOptions: (state, inVerified) => {
+      console.log('update charts at source')
+      console.log(inVerified)
+      let listKBs = state.experimentCNRL[inVerified.expCNRL]
+      let indexK = 0
+      for (let kb of listKBs.dashKBlist) {
+        Vue.set(state.experimentCNRL[inVerified.expCNRL].dashKBlist[indexK], 'liveOptions', kb.syncOptions)
+        indexK++
+      }
+      console.log('sate at end')
+      console.log(state.experimentCNRL[inVerified.expCNRL])
+    },
+    removeExpDashMap: (state, inVerified) => {
+      // loop over maplist and remove
+      console.log(state.startBundles)
+      let updateStartList = []
+      for (let sb of state.startBundles) {
+        if (sb.kbid !== inVerified) {
+          updateStartList.push(sb)
+        }
+      }
+      state.startBundles = updateStartList
+      let updatedEDmap = []
+      for (let med of state.mapExperimentKbundles) {
+        console.log(med)
+        if (med.kbid !== inVerified) {
+          console.log('keep')
+          updatedEDmap.push(med)
+        }
+      }
+      console.log('kept')
+      console.log(updatedEDmap)
+      state.mapExperimentKbundles = updatedEDmap
     }
   },
   actions: {
@@ -237,6 +298,10 @@ export default new Vuex.Store({
     actionUpdateExperiment: (context, update) => {
     // update settings to show at startup per bundle item
       context.commit('setExperimentCNRL', update)
+    },
+    actionUpdateExperimentC: (context, update) => {
+    // update settings to show at startup per bundle item
+      context.commit('setExperimentCNRLc', update)
     },
     actionExperimentList: (context, update) => {
     // update settings to show at startup per bundle item
@@ -281,6 +346,14 @@ export default new Vuex.Store({
     actionSetDataTypes: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL
       context.commit('setDatatype', update)
+    },
+    actionUpdateChartOptions: (context, update) => {
+    // filter a list of Kentity bundles given the Experiment CNRL
+      context.commit('updateChartOptions', update)
+    },
+    actionRemoveExpDashMap: (context, update) => {
+    // filter a list of Kentity bundles given the Experiment CNRL
+      context.commit('removeExpDashMap', update)
     }
   },
   modules,

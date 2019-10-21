@@ -60,12 +60,12 @@ export default {
           this.options2 = entityGetter.liveChartOptions
           this.datacollection2 = entityGetter.chartPackage
           this.liveTimeV2 = moment(entityGetter.displayTime * 1000).format('LLLL')
-          this.liveanalysisStart = entityGetter.selectTimeStart
+          // this.liveanalysisStart = entityGetter.selectTimeStart
           this.liveSelectTime = this.liveanalysisStart
           let AvgDstart = await this.getAverages(aEID)
           this.options2.annotation.annotations[0].value = AvgDstart.avgdhr
           this.options2.annotation.annotations[1].value = AvgDstart.avgdrhr
-          visObjectVUE.kContext = this.liveanalysisStart
+          // visObjectVUE.kContext = this.liveanalysisStart
           visObjectVUE.displayTime = this.liveTimeV2
           visObjectVUE.displayTimeF = this.setFutureUItime(entityGetter.displayTime)
           visObjectVUE.liveOptions = this.options2

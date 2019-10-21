@@ -59,7 +59,6 @@
 </template>
 
 <script>
-  // import SAFEflow from '../../safeflow/safeFlow.js'
   // import LineChart from '@/components/charts/LineChart'
   // import BarChart from '@/components/charts/BarChart'
   // import BubbleChart from '@/components/charts/BubbleChart'
@@ -273,7 +272,7 @@
 
 <style>
 #visual-view {
-  border: 4px solid green;
+  border: 2px solid green;
   margin: 0.0em;
   width: 100%;
 }

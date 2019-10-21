@@ -140,6 +140,7 @@ ChartOptions.prototype.prepareChartOptions = function (title, datatypes, scale) 
       }]
     }
   }
+  this.options = options
   return options
 }
 
@@ -363,6 +364,7 @@ ChartOptions.prototype.AverageChartOptions = function () {
       }]
     }
   }
+  this.options = options
   return options
 }
 
@@ -505,6 +507,7 @@ ChartOptions.prototype.SumChartOptions = function () {
       }]
     }
   }
+  this.options = options
   return options
 }
 

@@ -45,15 +45,16 @@
       feedbackM: '',
       warningM: '',
       repeatTimetokenseen: false,
-      viewPkey: ''
+      viewPkey: '',
+      filePath: {}
     }),
     created () {
     },
     methods: {
       loadTextFromFile (ev) {
         // prompt for Password
-        const filepath = ev.target.files[0].path
-        const extractPkey = filepath.substr(filepath.length - 40)
+        this.filepath = ev.target.files[0].path
+        const extractPkey = this.filepath.substr(this.filepath.length - 40)
         this.pkaddress = extractPkey
         this.$store.commit('setPublickey', this.pkaddress)
         // Specify a data directory (optional; defaults to ~/.ethereum)

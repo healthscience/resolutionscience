@@ -1,6 +1,6 @@
 <template>
   <section class="container">
-    <oracle-View></oracle-View>
+    <!-- <oracle-View></oracle-View> -->
     <section id="knowledge">
       <div id="experiment-learn" class="live-element">
         <div id="experiment-learn-container">

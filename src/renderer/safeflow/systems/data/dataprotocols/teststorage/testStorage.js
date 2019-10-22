@@ -244,6 +244,21 @@ TestStorageAPI.prototype.saveStartSettings = async function (jsonIN) {
 }
 
 /**
+*  Remove start bundle
+* @method removeStartSettings
+*
+*/
+TestStorageAPI.prototype.removeStartSettings = async function (removeID) {
+  let jsonIN = {}
+  jsonIN.publickey = this.tempPubkey
+  jsonIN.kbid = removeID
+  await axios.post(this.baseAPI + '/startStatusRemove/' + this.tempPubkey + '/' + this.tempToken, jsonIN)
+    .then(function (response) {
+      // console.log(response)
+    })
+}
+
+/**
 *  Get start settings
 * @method getExpKbundles
 *

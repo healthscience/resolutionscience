@@ -62,6 +62,17 @@ DataSystem.prototype.saveStartStatus = async function (bundle) {
 }
 
 /**
+* remove a starting bundle
+* @method removeStartStatus
+*
+*/
+DataSystem.prototype.removeStartStatus = async function (bundle) {
+  // make query to network for context data per devices
+  let startStatusresult = await this.liveTestStorage.removeStartSettings(bundle)
+  return startStatusresult
+}
+
+/**
 * get the inital context for data required
 * @method getStartStatus
 *
@@ -261,6 +272,8 @@ DataSystem.prototype.getRawSumData = async function (devI, time, bundleIN) {
         averageData[di] = {}
         averageData[di][dtl.cnrl] = {}
         averageData[di][dtl.cnrl] = averageHolder
+        console.log('sum data backkkckckckc')
+        console.log(averageData)
       }
     }
   }

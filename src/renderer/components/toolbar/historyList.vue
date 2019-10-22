@@ -1,6 +1,6 @@
 <template>
   <div id="history-view">
-  <header>Science & Compute List</header>
+  <header>Compute List</header>
   <div id="filter-history-list">
     FILTERS - latest, per device, per compute, per datatype
   </div>
@@ -49,11 +49,14 @@
               </li>
             </ul>
         </div>
-        <div id="context-time" class="live-element">
+        <div id="context-time" class="live-element" >
           <header>Time:</header>
             <ul>
-              <li v-for="ts in lh.time">
-                 <div class="live-item">{{ ts }}</div>
+              <li>
+                 <div class="live-item">{{ parseTime[lh.kbid].startperiod}}</div>
+              </li>
+              <li>
+                 <div class="live-item">{{ parseTime[lh.kbid].timeseg[0]}}</div>
               </li>
             </ul>
         </div>
@@ -66,6 +69,7 @@
             <div id="start-status">
               <header>Save compute</header>
               <a href="" v-bind:id="lh.kbid" v-bind:value="lh.kbid" @click.prevent="startStatusSave($event)" v-bind:class="{ 'active': lh.startStatus.active}">{{ lh.startStatus.name }}</a>
+              <button @click.prevent="removeCompute(lh.kbid)">Remove</button>
             </div>
           </div>
         </div>
@@ -102,10 +106,11 @@
           <div class="compute-control-itemmedium" id="dashboard-select">
             <header>Dashboards</header>
             <div>
-              <b>Live</b> {{ lh.kbid }}
-              <ul v-for="dxp in mappedExps">
+            <b>Live</b>
+              <ul v-for="dxp in mappedExps[lh.kbid]">
                 <li>
-                  ddd- {{ dxp.text }} <button @click.prevent="removeDashboard(lh.kbid)">Remove</button>
+                  {{ dxp.text }}
+                  <button @click.prevent="removeDashboard(lh.kbid)">Remove</button>
                 </li>
               </ul>
             </div>
@@ -147,7 +152,8 @@
         entityPrepareStatus: {},
         controlsSeen: {},
         dashboardElement: {},
-        computeEntityKID: ''
+        computeEntityKID: '',
+        timeClean: {}
       }
     },
     created () {
@@ -165,6 +171,9 @@
       },
       mappedExps: function () {
         return this.mappJOIN()
+      },
+      parseTime: function () {
+        return this.parseTimeSaved()
       }
     },
     mounted () {
@@ -177,7 +186,7 @@
         let MSstartTime = moment(startPeriodTime).format('x')
         this.$store.dispatch('actionComputeStatus', MSstartTime)
         if (this.startK.length > 0) {
-          this.historyData = this.$store.getters.startBundlesList
+          // this.historyData = this.$store.getters.startBundlesList
           this.entityPrepareStatus = this.$store.getters.liveKComputeStatus
         }
       },
@@ -235,24 +244,44 @@
       },
       mappJOIN () {
         let experPerCompute = []
-        for (let mapE of this.livemapExperimentKbundles) {
-          if (this.computeEntityKID === mapE.kbid) {
-            for (let expDet of this.liveexerimentList) {
-              if (mapE.experimentCNRL === expDet.cnrl) {
-                experPerCompute.push(expDet.contract.prime)
+        let compDashHolder = {}
+        for (let tss of this.historyData) {
+          for (let mapE of this.livemapExperimentKbundles) {
+            if (tss.kbid === mapE.kbid) {
+              for (let expDet of this.liveexerimentList) {
+                if (mapE.experimentCNRL === expDet.cnrl) {
+                  experPerCompute.push(expDet.contract.prime)
+                }
               }
             }
           }
+          compDashHolder[tss.kbid] = experPerCompute
+          experPerCompute = []
         }
-        return experPerCompute
+        return compDashHolder
+      },
+      removeCompute (removeID) {
+        let keepHL = []
+        for (let hls of this.historyData) {
+          if (hls.kbid !== removeID) {
+            keepHL.push(hls)
+          }
+        }
+        this.$store.dispatch('actionStartKBundles', keepHL)
+        // remove from viewDatastore
+        this.removeStartBundle(removeID)
       },
       removeDashboard (removeID) {
-        console.log('remove from dashboard')
         // need to dispatch to remove and datastore
-        console.log(removeID)
-        console.log(this.livemapExperimentKbundles)
         this.$store.dispatch('actionRemoveExpDashMap', removeID)
         // and remove from datastore
+      },
+      parseTimeSaved () {
+        for (let tss of this.historyData) {
+          let timeParser = tss.time // JSON.parse(tss.time)
+          this.timeClean[tss.kbid] = timeParser
+        }
+        return this.timeClean
       }
     }
   }

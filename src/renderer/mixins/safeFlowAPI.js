@@ -137,6 +137,11 @@ export default {
       // need up date startStatus Object
       this.safeMixin.startSettings('save', bund)
     },
+    removeStartBundle (bund) {
+      // need up date startStatus Object
+      console.log('remove')
+      this.safeMixin.startSettings('remove', bund)
+    },
     async SaveexperimentKbundles (mapEKb) {
       let saveStatus = await this.safeMixin.experimentKbundles('save', mapEKb)
       return saveStatus
@@ -179,6 +184,8 @@ export default {
     },
     GETcnrlDeviceDTs (cnrl) {
       let datatypesPerDevice = this.safeMixin.cnrlDeviceDTs(cnrl)
+      console.log('dtdd')
+      console.log(datatypesPerDevice)
       return datatypesPerDevice
     },
     GETcnrlScienceDTs (sciIN) {

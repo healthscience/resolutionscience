@@ -108,6 +108,7 @@ AverageSystem.prototype.updateComputeControl = async function (timeBundle, dvc, 
     computeStatus = await this.prepareAvgCompute(systemBundle.timeInfo.liveTime[liveTime][dvc][dtCompute][ts].computeTime, dvc, dtl, ts, systemBundle)
   } else {
     console.log('no updated require, go and get existing results')
+    computeStatus = true
   }
   return computeStatus
 }

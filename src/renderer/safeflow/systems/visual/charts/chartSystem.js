@@ -242,7 +242,7 @@ ChartSystem.prototype.structureAverageData = function (datatypeIN, eInfo, cBundl
       visCHolder[liveDate][devI.device_mac] = {}
       // let dataholder = {}
       for (let ts of timeComponent.livedate.timeseg) {
-        for (let liveData of dataIN[devI.device_mac][datatypeIN.cnrl][ts]) {
+        for (let liveData of dataIN[liveDate][devI.device_mac][datatypeIN.cnrl][ts]) {
           let millTimeprepare = liveData.timestamp * 1000
           let mString = moment(millTimeprepare).toDate() // .format('YYYY-MM-DD hh:mm')
           datalabel.push(mString)
@@ -272,7 +272,7 @@ ChartSystem.prototype.structureSumData = function (datatypeIN, eInfo, cBundle, d
       visCHolder[liveDate][devI.device_mac] = {}
       // let dataholder = {}
       for (let ts of timeComponent.livedate.timeseg) {
-        for (let liveDataI of dataIN[devI.device_mac][datatypeIN.cnrl][ts]) {
+        for (let liveDataI of dataIN[liveDate][devI.device_mac][datatypeIN.cnrl][ts]) {
           let millTimeprepare = liveDataI.timestamp * 1000
           let mString = moment(millTimeprepare).toDate() // .format('YYYY-MM-DD hh:mm')
           datalabel.push(mString)

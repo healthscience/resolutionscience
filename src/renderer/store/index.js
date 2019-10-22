@@ -69,6 +69,12 @@ export default new Vuex.Store({
     setDevice: (state, inVerified) => {
       state.context.device = Vue.set(state, 'device', inVerified)
     },
+    updateDevice: (state, inVerified) => {
+      console.log('upddate active Open Knowledge list set active')
+      console.log(inVerified)
+      state.context.device = []
+      state.context.device = inVerified
+    },
     addDevice: (state, inVerified) => {
       state.context.device.push(inVerified)
     },
@@ -166,8 +172,6 @@ export default new Vuex.Store({
       state.bundle.scienceLive = sciCompute
     },
     setExperimentCNRL: (state, inVerified) => {
-      console.log('set experiment')
-      console.log(state.experimentCNRL)
       if (inVerified.view === true) {
         let kel = {}
         kel.status = true
@@ -185,19 +189,11 @@ export default new Vuex.Store({
             Vue.set(state.experimentCNRL, objectProp, kel)
           }
         } */
-        console.log('inde xstate sing list')
-        console.log(state.experimentCNRL[inVerified.cnrl])
-        console.log(state.experimentCNRL[inVerified.cnrl])
       }
     },
     setExperimentCNRLc: (state, inVerified) => {
       console.log(inVerified)
       if (inVerified.view === false) {
-        console.log('close')
-        // console.log(state.experimentList)
-        console.log(state.experimentCNRL)
-        // let updateECNRL = state.experimentCNRL[inVerified.cnrl]
-        // console.log(updateECNRL)
         let updateExpState = {}
         updateExpState.cnrl = inVerified.cnrl
         updateExpState.contract = {}
@@ -205,8 +201,6 @@ export default new Vuex.Store({
         updateExpState.dashKBlist = inVerified.dashKBlist
         let objectPropC = inVerified.cnrl
         Vue.set(state.experimentCNRL, objectPropC, updateExpState)
-        // state.experimentCNRL[inVerified.cnrl] = updateExpState
-        console.log(state.experimentCNRL)
       }
     },
     setExperimentList: (state, inVerified) => {
@@ -246,24 +240,12 @@ export default new Vuex.Store({
     },
     removeExpDashMap: (state, inVerified) => {
       // loop over maplist and remove
-      console.log(state.startBundles)
-      let updateStartList = []
-      for (let sb of state.startBundles) {
-        if (sb.kbid !== inVerified) {
-          updateStartList.push(sb)
-        }
-      }
-      state.startBundles = updateStartList
       let updatedEDmap = []
       for (let med of state.mapExperimentKbundles) {
-        console.log(med)
         if (med.kbid !== inVerified) {
-          console.log('keep')
           updatedEDmap.push(med)
         }
       }
-      console.log('kept')
-      console.log(updatedEDmap)
       state.mapExperimentKbundles = updatedEDmap
     }
   },
@@ -338,6 +320,10 @@ export default new Vuex.Store({
     actionDeviceDataAPI: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL
       context.commit('setDevice', update)
+    },
+    actionDeviceUpdateOK: (context, update) => {
+    // filter a list of Kentity bundles given the Experiment CNRL
+      context.commit('updateDevice', update)
     },
     actionAddDeviceDataAPI: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL

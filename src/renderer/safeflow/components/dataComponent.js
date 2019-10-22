@@ -193,7 +193,10 @@ DataComponent.prototype.directSourceUpdated = async function (straightBundle, sT
   systemBundle.devices = this.deviceList
   systemBundle.timeseg = sTime.livedate.timeseg
   systemBundle.categories = this.did.categories
-  this.liveData = await this.liveDataSystem.datatypeQueryMapping(systemBundle, sTime.livedate.startperiod)
+  let sourceDirectData = await this.liveDataSystem.datatypeQueryMapping(systemBundle, sTime.livedate.startperiod)
+  this.liveData[sTime.livedate.startperiod] = sourceDirectData
+  console.log('sum liv Data')
+  console.log(this.liveData)
 }
 
 export default DataComponent

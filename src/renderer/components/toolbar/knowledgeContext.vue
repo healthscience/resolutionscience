@@ -27,7 +27,7 @@
               <a class="" href="" id="cnrl-data" @click.prevent="selectDatatypes(sdts)" v-bind:class="{ 'active': false }" >{{ lts.text }}</a>
             </li>
           </ul> -->
-          <header>Science Datatypes</header>
+          <header>Datatypes</header>
           <ul>
             <li id="data-type-live" class="knowledge-item" v-for="sdts in scidtypes">
               <a class="" href="" id="bmp-data" @click.prevent="selectSciDatatypes(sdts)" v-bind:class="{ 'active':sdts.active }">{{ sdts.text }}</a>
@@ -49,7 +49,7 @@
           </ul>
         </div>
         <div id="context-science" class="context-box">
-          <header>Science Computations - </header>
+          <header>Computations - </header>
             <ul>
               <li >
                 <select v-model="selectedCompute" @change="updateSciDTs(selectedCompute)">
@@ -171,6 +171,9 @@
         this.ok.active = true
         this.openKnowledge(this.ok)
       })
+      kBus.$on('newLiveKBundle', (KBdata) => {
+        this.updateKBcontext(KBdata)
+      })
     },
     computed: {
       devices: function () {
@@ -184,7 +187,6 @@
       setAccess () {
         this.languageContext()
         this.scienceContext()
-        // this.deviceContext()
         this.timeContext()
       },
       openKnowledge (ok) {
@@ -241,12 +243,13 @@
         let lanuageCNRL = this.GETcnrlLivingKnowledge(refContext)
         this.kwords = lanuageCNRL
       },
-      deviceContext () {
-        this.devices = this.$store.getters.liveContext.device
-      },
       dataTypeDevice (devC) {
+        console.log('dt per devcies')
+        console.log(devC)
         let devDTHolder = []
         let deviceDTypes = this.GETcnrlDeviceDTs(devC.cnrl)
+        console.log('deviceDTypes')
+        console.log(deviceDTypes)
         devDTHolder.push(deviceDTypes)
         this.datatypes = devDTHolder[0].datatypes
       },
@@ -331,6 +334,29 @@
           hist.name = 'View compute list'
         }
         this.$emit('viewHistory', hist)
+      },
+      updateKBcontext (kbl) {
+        console.log('update the open knowledge')
+        console.log(kbl)
+        // set device
+        let keepDevices = []
+        let updateDevices = []
+        // remove or update status of existing device
+        for (let dvl of this.devices) {
+          if (dvl.device_mac !== kbl.devices[0].device_mac) {
+            keepDevices.push(dvl)
+          }
+        }
+        updateDevices = keepDevices
+        console.log('reset')
+        console.log(kbl.devices[0])
+        updateDevices.push(kbl.devices[0])
+        this.$store.dispatch('actionDeviceUpdateOK', updateDevices)
+        console.log('ok devcies')
+        console.log(this.devices)
+        // updated linked datatypes to this device
+        this.datatypes = []
+        this.dataTypeDevice(kbl.devices[0])
       }
     }
   }

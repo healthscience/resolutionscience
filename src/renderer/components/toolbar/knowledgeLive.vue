@@ -155,6 +155,9 @@
     computed: {
       liveexerimentList: function () {
         return this.$store.state.experimentList
+      },
+      historyData: function () {
+        return this.$store.state.startBundles
       }
     },
     data () {
@@ -186,7 +189,7 @@
           id: 'learn-history',
           active: false
         },
-        historyData: this.$store.getters.startBundlesList,
+        // historyData: this.$store.getters.startBundlesList,
         experimentData: [],
         bundleuuid: '',
         kContext: {},
@@ -511,6 +514,8 @@
         categoriesBuild.cnrl = liveKbid.categories[0].cnrl
         categoriesBuild.text = liveKbid.categories[0].text
         this.categoryStatus(categoriesBuild)
+        // pass on info to open knowledge
+        kBus.$emit('newLiveKBundle', liveKbid)
       },
       clearKnowledgeBox () {
         // but set category and compute variables

@@ -27,6 +27,7 @@
   import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
   import Passwordk from 'vue-password-strength-meter'
   // import { sBus } from '../../main.js'
+  const moment = require('moment')
 
   export default {
     name: 'unlockkey-page',
@@ -137,6 +138,13 @@
         let startKset = await this.latestKBL()
         // set via store and then pick up in historyData
         this.$store.dispatch('actionStartKBundles', startKset)
+        this.startKup()
+      },
+      startKup () {
+        const nowTime = moment()
+        let startPeriodTime = moment.utc(nowTime).startOf('day')
+        let MSstartTime = moment(startPeriodTime).format('x')
+        this.$store.dispatch('actionComputeStatus', MSstartTime)
       },
       startExperiments () {
         let liveExper = []

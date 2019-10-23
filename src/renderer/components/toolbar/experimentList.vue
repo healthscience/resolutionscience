@@ -43,8 +43,8 @@
             </div>
           </div>
           <div id="experiment-close"></div>
-        </div>
-        <edashboard :progressMessageIN="setprogressMessage" :dashCNRL="exp.cnrl" :experimentDash="eKBundle[exp.cnrl]"></edashboard>
+        </div> <!-- :progressMessageIN="setprogressMessage" -->
+        <edashboard  :dashCNRL="exp.cnrl" :experimentDash="eKBundle[exp.cnrl]"></edashboard>
       </li>
     </ul>
   </div>
@@ -68,13 +68,14 @@
     data () {
       return {
         eboxSelect: [],
-        eKBundle: {},
         setprogressMessage:
         {
           active: false,
           cnrl: '',
           text: 'Preparing visualisation'
-        }
+        },
+        liveExpActive: '',
+        liveExpStateObject: {}
       }
     },
     created () {
@@ -88,6 +89,9 @@
       },
       experimentList: function () {
         return this.$store.state.experimentList
+      },
+      eKBundle: function () {
+        return this.$store.state.experimentCNRL
       }
     },
     mounted () {
@@ -96,19 +100,20 @@
     methods: {
       async makeELive (status) {
         let expCNRL = status.target.id
+        this.liveExpActive = expCNRL
         let expStateLive = this.experimentState(expCNRL)
+        this.liveExpStateObject = expStateLive
         // are any of the other experiments OPEN?  If so keep them open
         if (status.target.checked === true) {
-          this.makeLiveProgress(expCNRL)
+          // this.makeLiveProgress(expCNRL)
           let learnDlist = await this.learnWork(expCNRL)
           this.updateStoreExpStateTrue(expCNRL, expStateLive, learnDlist)
-          this.stopLiveProgress(expCNRL)
+          // this.stopLiveProgress(expCNRL)
         } else {
           this.updateStoreExpStateFalse(expCNRL, expStateLive)
         }
       },
       async learnWork (expCNRL) {
-        // let mappedExpENTs = this.$store.getters.liveKentities
         let currentEntities = this.startBundlesList
         let liveBundles = this.activeKentities[expCNRL]
         let prepareDashList = []
@@ -140,7 +145,6 @@
         expState.dashKBlist = learnDlist
         expState.contract = expStateLive.contract
         this.$store.dispatch('actionUpdateExperiment', expState)
-        this.eKBundle = this.$store.getters.liveExperiment
       },
       updateStoreExpStateFalse (expCNRL, expStateLive) {
         let expState = {}
@@ -149,7 +153,17 @@
         expState.dashKBlist = []
         expState.contract = expStateLive.contract
         this.$store.dispatch('actionUpdateExperimentC', expState)
-        this.eKBundle = this.$store.getters.liveExperiment
+      },
+      leaveClearExpClose () {
+        console.log('close call exp')
+        console.log(this.liveExpActive)
+        console.log(this.liveExpStateObject)
+        let expState = {}
+        expState.cnrl = this.liveExpActive
+        expState.view = false
+        expState.dashKBlist = []
+        expState.contract = this.liveExpStateObject.contract
+        this.$store.dispatch('actionUpdateExperimentC', expState)
       },
       makeLiveProgress (pcnrl) {
         this.setprogressMessage.active = true
@@ -159,6 +173,12 @@
         this.setprogressMessage.active = false
         this.setprogressMessage.cnrl = pcnrl
       }
+    },
+    beforeDestroy: function () {
+      console.log('Stopping the interval timer')
+      window.confirm('Do you really want to leave? you have unsaved changes!')
+      // clearInterval(this.twoSecondsTimerEvents)
+      this.leaveClearExpClose()
     }
   }
 </script>

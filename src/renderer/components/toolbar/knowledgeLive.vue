@@ -76,9 +76,6 @@
     </div>
     <div id="k-toolkit">
       <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
-      <!-- <hsvisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime" :saveExpKid="saveStatusEK"></hsvisual> -->
-      <!-- <pastfuture></pastfuture> -->
-      <!-- <button class="" href="" id="add-new-science" @click.prevent="addnewScience()">Add New Science Experiment</button> -->
       <div id="add-experiment">
         Experiment dashboard:
         <select v-model="liveexerimentList" @change="addToExperiment($event)">
@@ -402,38 +399,47 @@
         return tempTokenG
       },
       async navTimeLearn (uSeg) {
+        console.log(this.$store.getters.liveBundle)
         let updateTbundle = {}
-        // what KID is live?
-        let bundList = this.$store.getters.startBundlesList
-        for (let ukb of bundList) {
-          if (ukb.kbid === this.bundleuuid) {
-            updateTbundle = ukb
-          }
-        }
         let timeAsk = []
         // did UI give nav segment or date from calendar?
         if (uSeg.text === 'selectd') {
+          console.log('selectD')
           updateTbundle.visualisation = ['vis-sc-1', 'vis-sc-2']
           // convert time to correct format
           timeAsk.push('day')
-          updateTbundle.time.startperiod = uSeg.selectDate
-          updateTbundle.time.timeseg = this.liveData.timeLive
-          updateTbundle.time.timevis = timeAsk
-          updateTbundle.time.laststartperiod = this.liveTimeV
+          let updateTime = {}
+          updateTime.startperiod = uSeg.selectDate
+          updateTime.timeseg = this.liveData.timeLive
+          updateTime.timevis = timeAsk
+          updateTime.laststartperiod = this.liveTimeV
+          updateTbundle.time = updateTime
+          this.$store.dispatch('actionLiveBundleNav', updateTbundle)
+          let updatedBundleSet = this.$store.getters.liveBundle
           this.entityPrepareStatus.active = true
-          this.learnManager(updateTbundle)
+          this.learnManager(updatedBundleSet)
         } else if (uSeg.text === 'timeList') {
+          console.log('list of days')
           this.prepareMultiLearn(updateTbundle, uSeg.timelist)
         } else {
+          console.log('back for forward nav')
           // time setTimeSegments
-          updateTbundle.visualisation = ['vis-sc-1', 'vis-sc-2']
+          // updateTbundle.visualisation = ['vis-sc-1', 'vis-sc-2']
           timeAsk.push(uSeg.text)
-          updateTbundle.time.startperiod = 'relative'
-          updateTbundle.time.timeseg = this.liveData.timeLive
-          updateTbundle.time.timevis = timeAsk
-          updateTbundle.time.laststartperiod = this.liveTimeV
+          // timeAsk.push('day')
+          console.log(this.liveTimeV)
+          let updateTimen = {}
+          updateTimen.startperiod = 'relative'
+          updateTimen.timeseg = this.liveData.timeLive
+          updateTimen.timevis = timeAsk
+          updateTimen.laststartperiod = this.liveTimeV
+          updateTbundle.time = updateTimen
+          console.log(updateTbundle)
+          this.$store.dispatch('actionLiveBundleNav', updateTbundle)
+          let updatedBundleSetN = this.$store.getters.liveBundle
+          console.log(updatedBundleSetN)
           this.entityPrepareStatus.active = true
-          this.learnManager(updateTbundle)
+          this.learnManager(updatedBundleSetN)
         }
         // pass on to learn safeFlow
       },
@@ -470,16 +476,16 @@
         // update bundle start time
         const nowTime = moment()
         let updatestartPeriodTime = moment.utc(nowTime).startOf('day')
-        lBund.time.realtime = updatestartPeriodTime
         this.$store.dispatch('actionUpdateStartTime', updatestartPeriodTime)
         this.$store.dispatch('actionUpdateSciCompute', lBund.cnrl)
         this.entityPrepareStatus.active = true
         // set the active knowledge boxes
-        lBund.visualisation = ['vis-sc-1', 'vis-sc-2']
-        this.setKnowledgtBox(lBund)
-        let visDataBack = await this.learnStart(lBund)
+        // lBund.visualisation = ['vis-sc-1', 'vis-sc-2']
+        let updatedKBundleSet = this.$store.getters.liveBundle
+        this.setKnowledgtBox(updatedKBundleSet)
+        let visDataBack = await this.learnStart(updatedKBundleSet)
         // remove compute in progress Message
-        this.$store.dispatch('actionstopComputeStatus', lBund.kbid)
+        this.$store.dispatch('actionstopComputeStatus', updatedKBundleSet.kbid)
         this.entityPrepareStatus.active = false
         this.liveDataCollection = visDataBack.liveDataCollection
         this.liveOptions = visDataBack.liveOptions

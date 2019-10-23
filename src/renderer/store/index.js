@@ -70,8 +70,6 @@ export default new Vuex.Store({
       state.context.device = Vue.set(state, 'device', inVerified)
     },
     updateDevice: (state, inVerified) => {
-      console.log('upddate active Open Knowledge list set active')
-      console.log(inVerified)
       state.context.device = []
       state.context.device = inVerified
     },
@@ -110,6 +108,24 @@ export default new Vuex.Store({
     setLiveBundle: (state, inVerified) => {
       state.bundle = Vue.set(state, 'bundle', inVerified)
     },
+    setBundlestartTime: (state, inVerified) => {
+      state.bundle.time.startperiod = inVerified
+    },
+    setSciCompute: (state, inVerified) => {
+      let sciCompute = {}
+      sciCompute.cnrl = inVerified
+      state.bundle.scienceLive = sciCompute
+    },
+    setLiveBundleNav: (state, inVerified) => {
+      console.log('nave seg nave update fo bundel')
+      console.log(inVerified)
+      console.log(inVerified.time.laststartperiod)
+      inVerified.time.realtime = state.bundle.time.realtime
+      console.log(inVerified.time.timevis)
+      // state.bundle = Vue.set(state.bundle, 'time', inVerified.time)
+      state.bundle.time = inVerified.time
+      console.log(state.bundle.time.laststartperiod)
+    },
     updateLiveBTime: (state, inVerified) => {
       console.log(inVerified)
     },
@@ -122,7 +138,7 @@ export default new Vuex.Store({
     },
     setComputeStatus: (state, startPeriodTime) => {
       // prepare object to hold compute state per entity kbid
-      let openStatus = {active: false, text: 'Compute-in-progress', update: '---'}
+      let openStatus = {active: false, text: 'Compute-in-progress', update: '---', seen: false}
       for (let kItem of state.startBundles) {
         let kID = kItem.kbid
         // is the bundleData behind real time?
@@ -137,9 +153,15 @@ export default new Vuex.Store({
       }
     },
     updateSeenComputeStatus: (state, inVerified) => {
+      console.log('compute seen status')
+      console.log(inVerified)
+      console.log('PRE state')
+      console.log(state.computeKidStatus)
       // prepare object to hold compute state per entity kbid
       let computeStatus = {active: false, text: 'Compute-in-progress', update: '---', seen: true}
       Vue.set(state.computeKidStatus, inVerified, computeStatus)
+      console.log('post state')
+      console.log(state.computeKidStatus)
     },
     updateComputeStatus: (state, inVerified) => {
       // prepare object to hold compute state per entity kbid
@@ -148,7 +170,7 @@ export default new Vuex.Store({
     },
     stopComputeStatus: (state, inVerified) => {
       // prepare object to hold compute state per entity kbid
-      let computeStatus = {active: false, text: 'Compute-in-progress', update: 'up-to-date'}
+      let computeStatus = {active: false, text: 'Compute-in-progress', update: 'up-to-date', seen: false}
       Vue.set(state.computeKidStatus, inVerified, computeStatus)
     },
     setStartStatusUpdate: (state, inVerified) => {
@@ -160,16 +182,6 @@ export default new Vuex.Store({
           ukb.startStatus = lss
         }
       }
-    },
-    setBundlestartTime: (state, inVerified) => {
-      // TEMP add cateogry data
-      // state.bundle.categories = []
-      state.bundle.time.startperiod = inVerified
-    },
-    setSciCompute: (state, inVerified) => {
-      let sciCompute = {}
-      sciCompute.cnrl = inVerified
-      state.bundle.scienceLive = sciCompute
     },
     setExperimentCNRL: (state, inVerified) => {
       if (inVerified.view === true) {
@@ -192,7 +204,6 @@ export default new Vuex.Store({
       }
     },
     setExperimentCNRLc: (state, inVerified) => {
-      console.log(inVerified)
       if (inVerified.view === false) {
         let updateExpState = {}
         updateExpState.cnrl = inVerified.cnrl
@@ -227,16 +238,14 @@ export default new Vuex.Store({
       }
     },
     updateChartOptions: (state, inVerified) => {
-      console.log('update charts at source')
-      console.log(inVerified)
       let listKBs = state.experimentCNRL[inVerified.expCNRL]
       let indexK = 0
       for (let kb of listKBs.dashKBlist) {
         Vue.set(state.experimentCNRL[inVerified.expCNRL].dashKBlist[indexK], 'liveOptions', kb.syncOptions)
         indexK++
       }
-      console.log('sate at end')
-      console.log(state.experimentCNRL[inVerified.expCNRL])
+      // console.log('sate at end')
+      // console.log(state.experimentCNRL[inVerified.expCNRL])
     },
     removeExpDashMap: (state, inVerified) => {
       // loop over maplist and remove
@@ -258,6 +267,9 @@ export default new Vuex.Store({
     },
     actionLiveBundle: (context, update) => {
       context.commit('setLiveBundle', update)
+    },
+    actionLiveBundleNav: (context, update) => {
+      context.commit('setLiveBundleNav', update)
     },
     actionStartKBundles: (context, update) => {
       context.commit('setStartKBundles', update)

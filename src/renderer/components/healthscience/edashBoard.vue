@@ -71,11 +71,6 @@
     data () {
       return {
         dashEstatus: false,
-        entityPrepareStatus:
-        {
-          active: false,
-          text: 'Preparing visualisation'
-        },
         peerChart: {},
         chartUI:
         {
@@ -89,16 +84,9 @@
     created () {
     },
     mounted () {
-      this.makeLiveProgress()
     },
     mixins: [liveMixinSAFEflow],
     methods: {
-      makeLiveProgress () {
-        this.entityPrepareStatus.active = true
-      },
-      stopLiveProgress () {
-        this.progressMessage.active = false
-      },
       setDashTime () {
         console.log('set dashtime')
         // call action to update state

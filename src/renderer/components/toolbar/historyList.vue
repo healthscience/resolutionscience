@@ -129,7 +129,6 @@
   import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
   import progressMessage from '@/components/toolbar/inProgress'
   // import { sBus } from '../../main.js'
-  const moment = require('moment')
 
   export default {
     name: 'knowledge-history',
@@ -149,7 +148,6 @@
         liveExperimentList: [],
         liveExperimentB: [],
         cStatus: 'needs updating',
-        entityPrepareStatus: {},
         controlsSeen: {},
         dashboardElement: {},
         computeEntityKID: '',
@@ -157,7 +155,6 @@
       }
     },
     created () {
-      this.startKup()
     },
     computed: {
       startK: function () {
@@ -174,22 +171,15 @@
       },
       parseTime: function () {
         return this.parseTimeSaved()
+      },
+      entityPrepareStatus: function () {
+        return this.$store.getters.liveKComputeStatus
       }
     },
     mounted () {
     },
     mixins: [liveMixinSAFEflow],
     methods: {
-      startKup () {
-        const nowTime = moment()
-        let startPeriodTime = moment.utc(nowTime).startOf('day')
-        let MSstartTime = moment(startPeriodTime).format('x')
-        this.$store.dispatch('actionComputeStatus', MSstartTime)
-        if (this.startK.length > 0) {
-          // this.historyData = this.$store.getters.startBundlesList
-          this.entityPrepareStatus = this.$store.getters.liveKComputeStatus
-        }
-      },
       async makeKLive (status) {
         // loop over array of bundles and match bid number and make active
         if (status.target.checked === true) {
@@ -230,11 +220,9 @@
       },
       computeSeenProgressLive (computeEntityKID) {
         this.$store.dispatch('actionUpdateSeenComputeStatus', computeEntityKID)
-        this.entityPrepareStatus = this.$store.getters.liveKComputeStatus
       },
       computeProgressLive (computeEntityKID) {
         this.$store.dispatch('actionUpdateComputeStatus', computeEntityKID)
-        this.entityPrepareStatus = this.$store.getters.liveKComputeStatus
       },
       SeenStartCompute (fsc) {
         this.computeEntityKID = fsc.target.value

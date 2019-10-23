@@ -244,12 +244,12 @@
         this.kwords = lanuageCNRL
       },
       dataTypeDevice (devC) {
-        console.log('dt per devcies')
-        console.log(devC)
+        // console.log('dt per devcies')
+        // console.log(devC)
         let devDTHolder = []
         let deviceDTypes = this.GETcnrlDeviceDTs(devC.cnrl)
-        console.log('deviceDTypes')
-        console.log(deviceDTypes)
+        // console.log('deviceDTypes')
+        // console.log(deviceDTypes)
         devDTHolder.push(deviceDTypes)
         this.datatypes = devDTHolder[0].datatypes
       },
@@ -336,8 +336,8 @@
         this.$emit('viewHistory', hist)
       },
       updateKBcontext (kbl) {
-        console.log('update the open knowledge')
-        console.log(kbl)
+        // console.log('update the open knowledge')
+        // console.log(kbl)
         // set device
         let keepDevices = []
         let updateDevices = []
@@ -348,12 +348,12 @@
           }
         }
         updateDevices = keepDevices
-        console.log('reset')
-        console.log(kbl.devices[0])
+        // console.log('reset')
+        // console.log(kbl.devices[0])
         updateDevices.push(kbl.devices[0])
         this.$store.dispatch('actionDeviceUpdateOK', updateDevices)
-        console.log('ok devcies')
-        console.log(this.devices)
+        // console.log('ok devcies')
+        // console.log(this.devices)
         // updated linked datatypes to this device
         this.datatypes = []
         this.dataTypeDevice(kbl.devices[0])

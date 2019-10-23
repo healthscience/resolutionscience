@@ -48,16 +48,20 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
     if (checkDataExist === true) {
       console.log('data already ready')
       this.liveSEntities[cid].liveTimeC.setStartPeriod(timeBundle.startperiod)
+      this.liveSEntities[cid].liveTimeC.setLastTimeperiod(timeBundle.laststartperiod)
       this.liveSEntities[cid].liveTimeC.setTimeList(timeBundle.startperiod)
       this.liveSEntities[cid].liveTimeC.setTimeSegments(timeBundle.timeseg)
+      this.liveSEntities[cid].liveTimeC.setTimeVis(timeBundle.timevis)
       this.liveSEntities[cid].liveDataC.setDatatypesLive(ecsIN.datatypes)
       this.liveSEntities[cid].liveDataC.setCategories(ecsIN.categories)
     } else {
       // new data call required for this visualisation time
       console.log('need to prepare new visualisation data')
       this.liveSEntities[cid].liveTimeC.setStartPeriod(timeBundle.startperiod)
+      this.liveSEntities[cid].liveTimeC.setLastTimeperiod(timeBundle.laststartperiod)
       this.liveSEntities[cid].liveTimeC.setTimeList(timeBundle.startperiod)
       this.liveSEntities[cid].liveTimeC.setTimeSegments(timeBundle.timeseg)
+      this.liveSEntities[cid].liveTimeC.setTimeVis(timeBundle.timevis)
       this.liveSEntities[cid].liveDataC.setDatatypesLive(ecsIN.datatypes)
       this.liveSEntities[cid].liveDataC.setCategories(ecsIN.categories)
       this.liveSEntities[cid].liveVisualC.setVisLive(timeBundle.startperiod)
@@ -86,10 +90,14 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
 EntitiesManager.prototype.controlFlow = async function (cflowIN) {
   let cid = cflowIN.kbid
   console.log('EMANAGER0-----beginCONTROL-FLOW')
+  console.log(cflowIN)
   // set the MASTER TIME CLOCK for entity
   this.liveSEntities[cid].liveTimeC.setMasterClock()
+  console.log('EMANAGER1')
   this.liveSEntities[cid].liveDatatypeC.dataTypeMapping()
+  console.log('EMANAGER2')
   this.liveSEntities[cid].liveTimeC.timeProfiling()
+  console.log('EMANAGER3')
   await this.liveSEntities[cid].liveDataC.sourceData(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveTimeC)
   this.emit('computation', 'in-progress')
   await this.liveSEntities[cid].liveTimeC.startTimeSystem(this.liveSEntities[cid].liveDatatypeC, this.liveSEntities[cid].liveDataC.liveData)

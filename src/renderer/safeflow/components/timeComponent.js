@@ -19,6 +19,7 @@ var TimeComponent = function (DID, setIN) {
   this.did = DID
   this.liveTimeUtil = new TimeUtilities()
   this.liveTimeSystem = new TimeSystem(setIN)
+  this.livedate = this.did.time
   this.liveTime = {}
   this.timerange = []
   this.lastactiveStartTime = 0
@@ -33,25 +34,29 @@ util.inherits(TimeComponent, events.EventEmitter)
 
 /**
 *  set the live date active in the UI
-* @method setStartTime
+* @method setStartPeriod
 *
 */
-
-TimeComponent.prototype.setStartTime = function (startDate) {
-  this.livedate = startDate
+TimeComponent.prototype.setStartPeriod = function (startDate) {
+  console.log('set start period')
+  console.log(startDate)
+  if (startDate !== 'relative') {
+    let convertSafeFlowTime = moment(startDate).valueOf()
+    this.livedate.startperiod = convertSafeFlowTime / 1000
+    this.setTimeList(this.livedate.startperiod)
+  } else {
+    this.livedate.startperiod = startDate
+  }
   return true
 }
 
 /**
-*  set the live date active in the UI
-* @method setStartTime
+*  set the last time from UI
+* @method setLastTimeperiod
 *
 */
-TimeComponent.prototype.setStartPeriod = function (startDate) {
-  let convertSafeFlowTime = moment(startDate).valueOf()
-  this.livedate.startperiod = convertSafeFlowTime / 1000
-  this.setTimeList(this.livedate.startperiod)
-  return true
+TimeComponent.prototype.setLastTimeperiod = function (laststarttime) {
+  this.livedate.laststartperiod = laststarttime
 }
 
 /**
@@ -73,13 +78,22 @@ TimeComponent.prototype.setTimeSegments = function (liveTimeSegs) {
 }
 
 /**
+*  reset the vis time segment from navigation
+* @method setTimeVis
+*
+*/
+TimeComponent.prototype.setTimeVis = function (liveVis) {
+  this.livedate.timevis = liveVis
+}
+
+/**
 *  convert UI status to entity master clock
 * @method setMasterClock
 *
 */
 
 TimeComponent.prototype.setMasterClock = function () {
-  this.livedate = this.liveTimeUtil.timeConversionUtility(this.did.time)
+  this.livedate = this.liveTimeUtil.timeConversionUtility(this.livedate) // this.did.time
   return true
 }
 
@@ -98,6 +112,8 @@ TimeComponent.prototype.timeProfiling = function () {
   } else {
     startperiod = this.lastactiveStartTime
   }
+  console.log('timepRofiing')
+  console.log(startperiod)
   let timeseg = this.livedate.timeseg
   // as time system to assess the range of data days required?
   let timeSource = this.liveTimeSystem.sourceTimeRange(startperiod, timeseg)

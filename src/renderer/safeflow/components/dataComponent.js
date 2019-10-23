@@ -185,6 +185,7 @@ DataComponent.prototype.assessDataStatus = function (time) {
 *
 */
 DataComponent.prototype.directSourceUpdated = async function (straightBundle, sTime) {
+  console.log('directupdated')
   let systemBundle = {}
   systemBundle.apiInfo = straightBundle
   systemBundle.startperiod = this.livedate

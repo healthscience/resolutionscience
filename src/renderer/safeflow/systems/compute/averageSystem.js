@@ -100,6 +100,8 @@ AverageSystem.prototype.computeControlFlow = async function (systemBundle) {
 *
 */
 AverageSystem.prototype.updateComputeControl = async function (timeBundle, dvc, dtl, ts, systemBundle) {
+  console.log('update com AVG')
+  console.log(timeBundle.status)
   let liveTime = systemBundle.timeInfo.livedate.startperiod
   // let liveComputeCNRL = systemBundle.timeInfo.did.cid
   let computeStatus = {}
@@ -119,6 +121,12 @@ AverageSystem.prototype.updateComputeControl = async function (timeBundle, dvc, 
 *
 */
 AverageSystem.prototype.prepareAvgCompute = async function (computeTimes, device, datatype, ts, systemBundle) {
+  console.log('prepareAVGcompute')
+  console.log(computeTimes)
+  console.log(device)
+  console.log(datatype)
+  console.log(ts)
+  console.log(systemBundle)
   // computeTimes = [1535846400000, 1535932800000, 1536019200000]
   // let lastItem = computeTimes.slice(-1)[0]
   // computeTimes = []
@@ -138,7 +146,7 @@ AverageSystem.prototype.prepareAvgCompute = async function (computeTimes, device
       // systemBundle.primary = 'primary'
       let singleArray = this.liveCategoryData.categorySorter(systemBundle, formHolder, queryTime)
       let tidyData = this.liveTidyData.tidyRawData(systemBundle, singleArray, queryTime)
-      let filterDTs = this.liveFilterData.dtFilterController(systemBundle, tidyData, queryTime)
+      let filterDTs = this.liveFilterData.dtFilterController(systemBundle, tidyData[queryTime], queryTime)
       // let flatArray = this.liveDataSystem.flatFilter()
       // need to check for categories TODO
       let saveReady = this.avgliveStatistics.averageStatistics(filterDTs)

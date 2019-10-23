@@ -34,6 +34,8 @@ util.inherits(TimeUtilities, events.EventEmitter)
 *
 */
 TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
+  console.log('time converation')
+  console.log(timeBundle)
   // pass range to get converted from moment format to miillseconds (stnd for safeflow)
   let timeConversion = {}
   let liveStarttime = 0
@@ -42,7 +44,9 @@ TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
   } else {
     liveStarttime = moment(timeBundle.startperiod).valueOf() / 1000
   }
-  let laststarttime = moment(timeBundle.laststartperiod).valueOf() / 1000
+  let laststarttime = moment(timeBundle.laststartperiod).startOf('day').valueOf() / 1000
+  console.log('ast timemme')
+  console.log(laststarttime)
   this.realtime = timeBundle.realtime
   let UItimeConvertion = this.updateUItime(timeBundle.timevis, liveStarttime, laststarttime)
   timeConversion.timeseg = timeBundle.timeseg
@@ -51,6 +55,7 @@ TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
   timeConversion.realtime = Math.round(realTimems / 1000)
   let startConvertion = UItimeConvertion.startperiod // moment(UItimeConvertion.timeperiod).valueOf()
   timeConversion.startperiod = startConvertion // Math.round(startConvertion / 1000)
+  console.log(timeConversion)
   return timeConversion
 }
 
@@ -82,6 +87,8 @@ TimeUtilities.prototype.computeTimeSegments = function (startTime, tSegs) {
 *
 */
 TimeUtilities.prototype.updateUItime = function (timeUI, time, lastTime) {
+  console.log('time vis')
+  console.log(timeUI)
   let timeMills = {}
   // does a standard time types need converting or range or both?
   for (let ti of timeUI) {
@@ -141,6 +148,10 @@ TimeUtilities.prototype.rangeCovert = function (rangeIN) {
 *
 */
 TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
+  console.log('timeconvert')
+  console.log(uT)
+  console.log(time)
+  console.log(lastTime)
   let convertLasttime = lastTime
   let startTime = time
   let timestamp
@@ -164,15 +175,14 @@ TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
     // move forward day in time
     if (startTime === 'relative') {
       startTime = (convertLasttime + 86400)
-    }
-    // startTime = (startTime + 86400)
-    // console.log(this.realtime)
-    let msRealtime = moment(this.realtime).valueOf()
-    if (startTime > msRealtime) {
-      // pass on to simulated data
-      startTime = 'simulateData'
     } else {
-      // console.log('forward one day')
+      // startTime = (startTime + 86400)
+      // console.log(this.realtime)
+      let msRealtime = moment(this.realtime).valueOf()
+      if (startTime > msRealtime) {
+        // pass on to simulated data
+        startTime = 'simulateData'
+      }
     }
   } else if (uT === '-week') {
     // return start of year timeout
@@ -205,12 +215,20 @@ TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
     }
   }
   //  get the micro time for start of time for query
+  console.log('mid flow')
+  console.log(startTime)
   if (startTime !== 'simulateData') {
-    let startQuerytime = moment(startTime).valueOf()
-    timestamp = startQuerytime
+    if (startTime !== 'relative') {
+      let startQuerytime = moment(startTime).valueOf()
+      timestamp = startQuerytime
+    } else {
+      timestamp = startTime
+    }
   } else {
     timestamp = 'simulateData'
   }
+  console.log('affter')
+  console.log(timestamp)
   return timestamp
 }
 

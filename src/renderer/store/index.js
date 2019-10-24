@@ -23,6 +23,7 @@ export default new Vuex.Store({
     bundleCounter: 0,
     experimentCNRL: {},
     experimentList: {},
+    experimentProgressStatus: {},
     expEntities: {},
     mapExperimentKbundles: [],
     activeKentities: {},
@@ -109,22 +110,18 @@ export default new Vuex.Store({
       state.bundle = Vue.set(state, 'bundle', inVerified)
     },
     setBundlestartTime: (state, inVerified) => {
-      state.bundle.time.startperiod = inVerified
+      // state.bundle.time.startperiod = inVerified
+      Vue.set(state.bundle.time, 'startperiod', inVerified)
+    },
+    setLiveBundleNav: (state, inVerified) => {
+      inVerified.time.realtime = state.bundle.time.realtime
+      // state.bundle = Vue.set(state.bundle, 'time', inVerified.time)
+      state.bundle.time = inVerified.time
     },
     setSciCompute: (state, inVerified) => {
       let sciCompute = {}
       sciCompute.cnrl = inVerified
       state.bundle.scienceLive = sciCompute
-    },
-    setLiveBundleNav: (state, inVerified) => {
-      console.log('nave seg nave update fo bundel')
-      console.log(inVerified)
-      console.log(inVerified.time.laststartperiod)
-      inVerified.time.realtime = state.bundle.time.realtime
-      console.log(inVerified.time.timevis)
-      // state.bundle = Vue.set(state.bundle, 'time', inVerified.time)
-      state.bundle.time = inVerified.time
-      console.log(state.bundle.time.laststartperiod)
     },
     updateLiveBTime: (state, inVerified) => {
       console.log(inVerified)
@@ -153,15 +150,9 @@ export default new Vuex.Store({
       }
     },
     updateSeenComputeStatus: (state, inVerified) => {
-      console.log('compute seen status')
-      console.log(inVerified)
-      console.log('PRE state')
-      console.log(state.computeKidStatus)
       // prepare object to hold compute state per entity kbid
       let computeStatus = {active: false, text: 'Compute-in-progress', update: '---', seen: true}
       Vue.set(state.computeKidStatus, inVerified, computeStatus)
-      console.log('post state')
-      console.log(state.computeKidStatus)
     },
     updateComputeStatus: (state, inVerified) => {
       // prepare object to hold compute state per entity kbid
@@ -256,6 +247,13 @@ export default new Vuex.Store({
         }
       }
       state.mapExperimentKbundles = updatedEDmap
+    },
+    setExperimentStatus: (state, inVerified) => {
+      console.log('st rpogreee sss')
+      console.log(inVerified)
+      Vue.set(state.experimentProgressStatus, inVerified.cnrl, inVerified)
+      console.log('set progres status')
+      console.log(state.experimentProgressStatus)
     }
   },
   actions: {
@@ -352,6 +350,10 @@ export default new Vuex.Store({
     actionRemoveExpDashMap: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL
       context.commit('removeExpDashMap', update)
+    },
+    actionExperimentStatus: (context, update) => {
+    // filter a list of Kentity bundles given the Experiment CNRL
+      context.commit('setExperimentStatus', update)
     }
   },
   modules,

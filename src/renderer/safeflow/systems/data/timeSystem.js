@@ -178,7 +178,6 @@ TimeSystem.prototype.assessCompute = async function (systemBundle, lastTime, liv
   } else {
     computeCheck.computestatus = 'uptodate'
   }
-  console.log(computeCheck)
   return computeCheck
 }
 

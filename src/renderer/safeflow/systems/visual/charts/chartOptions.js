@@ -191,6 +191,9 @@ ChartOptions.prototype.prepareYoptions = function (datatypes, scale) {
 *
 */
 ChartOptions.prototype.updateChartoptions = function (labelchart, options) {
+  console.log('chartoptions')
+  console.log(labelchart)
+  console.log(options)
   var startChartDate = moment(labelchart[0])
   this.liveTime = startChartDate
   let setstartTime = this.newDate(startChartDate) // moment('12/21/2018', 'MM-DD-YYYY')

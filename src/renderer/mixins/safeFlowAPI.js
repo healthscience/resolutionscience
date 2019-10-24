@@ -184,8 +184,6 @@ export default {
     },
     GETcnrlDeviceDTs (cnrl) {
       let datatypesPerDevice = this.safeMixin.cnrlDeviceDTs(cnrl)
-      console.log('dtdd')
-      console.log(datatypesPerDevice)
       return datatypesPerDevice
     },
     GETcnrlScienceDTs (sciIN) {

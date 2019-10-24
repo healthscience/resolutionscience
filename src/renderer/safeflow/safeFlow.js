@@ -278,14 +278,10 @@ safeFlow.prototype.cnrlLookup = function (cid) {
 *
 */
 safeFlow.prototype.cnrlDeviceDTs = function (cid) {
-  console.log('cnrlDeviceDTs')
-  console.log(cid)
   let cnrlContract = this.liveDTsystem.DTtableStructure(cid)
   // now convert to CNRL speak
   let convertedDTs = this.liveDTsystem.convertAPIdatatypeToCNRL(cnrlContract)
   cnrlContract.datatypes = convertedDTs
-  console.log('cnrlContract')
-  console.log(cnrlContract)
   return cnrlContract
 }
 

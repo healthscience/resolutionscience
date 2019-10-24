@@ -31,13 +31,13 @@ util.inherits(ChartSystem, events.EventEmitter)
 * @method structureChartData
 *
 */
-ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle, cData, liveRange) {
+ChartSystem.prototype.structureChartData = function (datatype, cBundle, cData) {
   let lastDataObject = {}
   let liveDate = Object.keys(cData)
-  // console.log('al data')
-  // console.log(cData)
+  console.log('al data')
+  console.log(cData)
   // does the data need merged i.e. spans more than one day?
-  if (eInfo.time.timeseg[0] === 'day') {
+  if (cBundle.time.timeseg[0] === 'day') {
     lastDataObject = cData
   } else {
     lastDataObject = this.rangeStructureData(cData)
@@ -49,26 +49,29 @@ ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle,
   this.chartPrep = {}
   // loop through and build two sperate arrays
   if (lastDataObject) {
-    for (let devI of eInfo.devices) {
+    console.log(cBundle)
+    for (let devI of cBundle.devices) {
       visCHolder[liveDate][devI.device_mac] = {}
       let dataholder = {}
-      for (let tis of liveRange) {
-        for (let liveData of lastDataObject[tis][devI.device_mac][datatypeIN.cnrl]['day']) {
+      for (let tis of cBundle.timerange) {
+        console.log(tis)
+        console.log(lastDataObject)
+        for (let liveData of lastDataObject[tis][devI.device_mac][datatype.cnrl]['day']) {
           var mDateString = moment(liveData.timestamp * 1000).toDate()
           datalabel.push(mDateString)
-          if (datatypeIN.cnrl === 'cnrl-8856388711') {
+          if (datatype.cnrl === 'cnrl-8856388711') {
             datay.push(liveData.heart_rate)
-          } else if (datatypeIN.cnrl === 'cnrl-8856388712') {
+          } else if (datatype.cnrl === 'cnrl-8856388712') {
             datay.push(liveData.steps)
-          } else if (datatypeIN.cnrl === 'cnrl-3339949442') {
+          } else if (datatype.cnrl === 'cnrl-3339949442') {
             datay.push(liveData.SDS_P2)
-          } else if (datatypeIN.cnrl === 'cnrl-3339949443') {
+          } else if (datatype.cnrl === 'cnrl-3339949443') {
             datay.push(liveData.SDS_P1)
-          } else if (datatypeIN.cnrl === 'cnrl-3339949444') {
+          } else if (datatype.cnrl === 'cnrl-3339949444') {
             datay.push(liveData.temperature)
-          } else if (datatypeIN.cnrl === 'cnrl-3339949445') {
+          } else if (datatype.cnrl === 'cnrl-3339949445') {
             datay.push(liveData.humidity)
-          } else if (datatypeIN.cnrl === 'cnrl-3339949446') {
+          } else if (datatype.cnrl === 'cnrl-3339949446') {
             datay.push(liveData['air-pressure'])
           }
         }
@@ -81,6 +84,8 @@ ChartSystem.prototype.structureChartData = function (datatypeIN, eInfo, cBundle,
       datay = []
     }
   }
+  console.log('visholder')
+  console.log(visCHolder)
   return visCHolder
 }
 
@@ -231,18 +236,18 @@ ChartSystem.prototype.prepareLabelchart = function (labelIN) {
 * @method structureAverageData
 *
 */
-ChartSystem.prototype.structureAverageData = function (datatypeIN, eInfo, cBundle, dataIN, timeComponent) {
-  let liveDate = timeComponent.livedate.startperiod
+ChartSystem.prototype.structureAverageData = function (datatype, cBundle, dataIN) {
+  let liveDate = cBundle.startperiod
   let visCHolder = {}
   visCHolder[liveDate] = {}
   let datalabel = []
   let dataC = []
   if (dataIN) {
-    for (let devI of eInfo.devices) {
+    for (let devI of cBundle.devices) {
       visCHolder[liveDate][devI.device_mac] = {}
       // let dataholder = {}
-      for (let ts of timeComponent.livedate.timeseg) {
-        for (let liveData of dataIN[liveDate][devI.device_mac][datatypeIN.cnrl][ts]) {
+      for (let ts of cBundle.time.timeseg) {
+        for (let liveData of dataIN[liveDate][devI.device_mac][datatype.cnrl][ts]) {
           let millTimeprepare = liveData.timestamp * 1000
           let mString = moment(millTimeprepare).toDate() // .format('YYYY-MM-DD hh:mm')
           datalabel.push(mString)
@@ -253,6 +258,8 @@ ChartSystem.prototype.structureAverageData = function (datatypeIN, eInfo, cBundl
   }
   visCHolder.labels = datalabel
   visCHolder.datasets = dataC
+  console.log('aveg chart holder')
+  console.log(visCHolder)
   return visCHolder
 }
 
@@ -261,18 +268,18 @@ ChartSystem.prototype.structureAverageData = function (datatypeIN, eInfo, cBundl
 * @method structureumData
 *
 */
-ChartSystem.prototype.structureSumData = function (datatypeIN, eInfo, cBundle, dataIN, timeComponent) {
-  let liveDate = timeComponent.livedate.startperiod
+ChartSystem.prototype.structureSumData = function (datatype, cBundle, dataIN) {
+  let liveDate = cBundle.startperiod
   let visCHolder = {}
   visCHolder[liveDate] = {}
   let datalabel = []
   let dataC = []
   if (dataIN) {
-    for (let devI of eInfo.devices) {
+    for (let devI of cBundle.devices) {
       visCHolder[liveDate][devI.device_mac] = {}
       // let dataholder = {}
-      for (let ts of timeComponent.livedate.timeseg) {
-        for (let liveDataI of dataIN[liveDate][devI.device_mac][datatypeIN.cnrl][ts]) {
+      for (let ts of cBundle.time.timeseg) {
+        for (let liveDataI of dataIN[liveDate][devI.device_mac][datatype.cnrl][ts]) {
           let millTimeprepare = liveDataI.timestamp * 1000
           let mString = moment(millTimeprepare).toDate() // .format('YYYY-MM-DD hh:mm')
           datalabel.push(mString)
@@ -321,6 +328,9 @@ ChartSystem.prototype.StatschartColors = function (datatypeItem) {
 */
 ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
   // need to prepare different visualisations, data return will fit only one select option
+  console.log('propare avg stats')
+  console.log(deviceList)
+  console.log(results)
   var localthis = this
   let datacollection = {}
   this.labelback = []
@@ -432,6 +442,8 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
       }
     }
   }
+  console.log('avg prapred')
+  console.log(datacollection)
   return datacollection
 }
 

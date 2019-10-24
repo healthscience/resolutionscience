@@ -52,6 +52,7 @@ FilterDataSystem.prototype.dtFilterController = function (systemBundle, liveData
       filterHolder[devI][dtItem.cnrl] = {}
       for (let ts of systemBundle.timeseg) {
         console.log(ts)
+        console.log(liveData)
         let sourcerawData = liveData[devI][dtItem.cnrl]['day']
         let filterColumn = this.filterDataType(filterType, dtItem, sourcerawData, time)
         if (filterType === 'primary') {

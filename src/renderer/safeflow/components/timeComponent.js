@@ -42,12 +42,21 @@ TimeComponent.prototype.setStartPeriod = function (startDate) {
   console.log(startDate)
   if (startDate !== 'relative') {
     let convertSafeFlowTime = moment(startDate).valueOf()
-    this.livedate.startperiod = convertSafeFlowTime / 1000
+    this.livedate.startperiod = convertSafeFlowTime // 1000
     this.setTimeList(this.livedate.startperiod)
   } else {
     this.livedate.startperiod = startDate
   }
   return true
+}
+
+/**
+*  real time
+* @method setLastTimeperiod
+*
+*/
+TimeComponent.prototype.setRealtime = function (realtime) {
+  this.livedate.realtime = realtime
 }
 
 /**
@@ -93,6 +102,8 @@ TimeComponent.prototype.setTimeVis = function (liveVis) {
 */
 
 TimeComponent.prototype.setMasterClock = function () {
+  console.log('master clockc standard')
+  console.log(this.livedate)
   this.livedate = this.liveTimeUtil.timeConversionUtility(this.livedate) // this.did.time
   return true
 }

@@ -35,10 +35,10 @@ util.inherits(VisSystem, events.EventEmitter)
 * @method chartSystem
 *
 */
-VisSystem.prototype.visSystemChart = function (eInfo, chartBundle, dataIN, timeComponent) {
+VisSystem.prototype.visSystemChart = function (visBundle, dataIN) {
   var localthis = this
   let visIN = 'vis-sc-1'
-  let liveTime = timeComponent.livedate.startperiod
+  let liveTime = visBundle.startperiod
   let structureHolder = {}
   let chartGroupHolder = []
   let chartData = {}
@@ -47,9 +47,9 @@ VisSystem.prototype.visSystemChart = function (eInfo, chartBundle, dataIN, timeC
   let dataTypeBucket = {}
   chartDataH.options = {}
   chartDataH.prepared = {}
-  if (eInfo.cid === 'cnrl-2356388731') {
-    for (let dtv of eInfo.datatypes) {
-      structureHolder = this.liveChartSystem.structureChartData(dtv, eInfo, chartBundle, dataIN, timeComponent.timerange)
+  if (visBundle.cid === 'cnrl-2356388731') {
+    for (let dtv of visBundle.datatypes) {
+      structureHolder = this.liveChartSystem.structureChartData(dtv, visBundle, dataIN)
       // prepare the colors for the charts
       let chartColorsSet = localthis.liveChartSystem.chartColors(dtv)
       dataTypeBucket.data = structureHolder
@@ -59,15 +59,15 @@ VisSystem.prototype.visSystemChart = function (eInfo, chartBundle, dataIN, timeC
       dataTypeBucket = {}
     }
     // prepare title, y axis text and scaling
-    let titleOut = 'Device ' + eInfo.devices[0].device_name
+    let titleOut = 'Device ' + visBundle.devices[0].device_name
     // package all the info. to pass to vue
     chartData.prepared = this.liveChartSystem.prepareVueChartJS(chartDataH.chart)
     // prepare chart options
-    let liveChartOptions = this.liveChartOptions.prepareChartOptions(titleOut, eInfo.datatypes, chartData.prepared.scale)
+    let liveChartOptions = this.liveChartOptions.prepareChartOptions(titleOut, visBundle.datatypes, chartData.prepared.scale)
     // prepared the labels
     let setTimeTools = chartData.prepared.labels
     // update for annotation values needing set
-    let chartOptionsSet = this.liveChartOptions.updateChartoptions(setTimeTools, liveChartOptions) // this.liveChartSystem.getterChartOptions()
+    let chartOptionsSet = this.liveChartOptions.updateChartoptions(setTimeTools, liveChartOptions)
     chartData.options = chartOptionsSet
     chartData.liveActive = this.liveChartOptions
     const chartHolder = {}
@@ -76,16 +76,16 @@ VisSystem.prototype.visSystemChart = function (eInfo, chartBundle, dataIN, timeC
     chartHolder[visIN][liveTime]['day'] = chartData
     chartGroupHolder.push(chartHolder)
     this.visSystemData = chartGroupHolder
-  } else if (eInfo.cid === 'cnrl-2356388732') {
+  } else if (visBundle.cid === 'cnrl-2356388732') {
     let liveChartOptions = this.liveChartOptions.AverageChartOptions()
-    for (let dtv of eInfo.datatypes) {
-      structureHolder = this.liveChartSystem.structureAverageData(dtv, eInfo, chartBundle, dataIN, timeComponent)
+    for (let dtv of visBundle.datatypes) {
+      structureHolder = this.liveChartSystem.structureAverageData(dtv, visBundle, dataIN)
       let chartColorsSet = localthis.liveChartSystem.StatschartColors(dtv)
       dataTypeBucket.data = structureHolder
       dataTypeBucket.color = chartColorsSet
       chartDataH.chart.push(dataTypeBucket)
       // now prepare data format for chartjs
-      chartData.prepared = this.liveChartSystem.prepareStatsVueChartJS(eInfo.devices, chartDataH)
+      chartData.prepared = this.liveChartSystem.prepareStatsVueChartJS(visBundle.devices, chartDataH)
       let setTimeTools = chartData.prepared.labels
       let chartOptionsSet = this.liveChartOptions.updateChartoptions(setTimeTools, liveChartOptions) // this.liveChartSystem.getterChartOptions()
       chartData.options = chartOptionsSet
@@ -98,18 +98,18 @@ VisSystem.prototype.visSystemChart = function (eInfo, chartBundle, dataIN, timeC
       dataTypeBucket = {}
       this.visSystemData = chartGroupHolder
     }
-  } else if (eInfo.cid === 'cnrl-2356388737') {
+  } else if (visBundle.cid === 'cnrl-2356388737') {
     // summation of datatypes
     // could be more than one visualisation required,  devices, datatypes, timeseg or computation or event resolutions
     let liveChartOptions = this.liveChartOptions.SumChartOptions()
-    for (let dtv of eInfo.datatypes) {
-      structureHolder = this.liveChartSystem.structureSumData(dtv, eInfo, chartBundle, dataIN, timeComponent)
+    for (let dtv of visBundle.datatypes) {
+      structureHolder = this.liveChartSystem.structureSumData(dtv, visBundle, dataIN)
       let chartColorsSet = localthis.liveChartSystem.StatschartColors(dtv)
       dataTypeBucket.data = structureHolder
       dataTypeBucket.color = chartColorsSet
       chartDataH.chart.push(dataTypeBucket)
       // now prepare data format for chartjs
-      chartData.prepared = this.liveChartSystem.prepareSumVueChartJS(eInfo.devices, chartDataH)
+      chartData.prepared = this.liveChartSystem.prepareSumVueChartJS(visBundle.devices, chartDataH)
       let setTimeTools = chartData.prepared.labels
       let chartOptionsSet = this.liveChartOptions.updateChartoptions(setTimeTools, liveChartOptions) // this.liveChartSystem.getterChartOptions()
       chartData.options = chartOptionsSet
@@ -122,7 +122,7 @@ VisSystem.prototype.visSystemChart = function (eInfo, chartBundle, dataIN, timeC
       dataTypeBucket = {}
       this.visSystemData = chartGroupHolder
     }
-  } else if (eInfo.cid === 'cnrl-2356388733') {
+  } else if (visBundle.cid === 'cnrl-2356388733') {
     const chartHolder = {}
     chartHolder[visIN] = {}
     chartHolder[visIN].status = 'report-component'

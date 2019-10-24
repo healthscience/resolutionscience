@@ -34,8 +34,6 @@ util.inherits(TimeUtilities, events.EventEmitter)
 *
 */
 TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
-  console.log('time converation')
-  console.log(timeBundle)
   // pass range to get converted from moment format to miillseconds (stnd for safeflow)
   let timeConversion = {}
   let liveStarttime = 0
@@ -45,8 +43,6 @@ TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
     liveStarttime = moment(timeBundle.startperiod).valueOf() / 1000
   }
   let laststarttime = moment(timeBundle.laststartperiod).startOf('day').valueOf() / 1000
-  console.log('ast timemme')
-  console.log(laststarttime)
   this.realtime = timeBundle.realtime
   let UItimeConvertion = this.updateUItime(timeBundle.timevis, liveStarttime, laststarttime)
   timeConversion.timeseg = timeBundle.timeseg
@@ -55,7 +51,6 @@ TimeUtilities.prototype.timeConversionUtility = function (timeBundle) {
   timeConversion.realtime = Math.round(realTimems / 1000)
   let startConvertion = UItimeConvertion.startperiod // moment(UItimeConvertion.timeperiod).valueOf()
   timeConversion.startperiod = startConvertion // Math.round(startConvertion / 1000)
-  console.log(timeConversion)
   return timeConversion
 }
 
@@ -87,8 +82,6 @@ TimeUtilities.prototype.computeTimeSegments = function (startTime, tSegs) {
 *
 */
 TimeUtilities.prototype.updateUItime = function (timeUI, time, lastTime) {
-  console.log('time vis')
-  console.log(timeUI)
   let timeMills = {}
   // does a standard time types need converting or range or both?
   for (let ti of timeUI) {
@@ -105,50 +98,12 @@ TimeUtilities.prototype.updateUItime = function (timeUI, time, lastTime) {
 }
 
 /**
-* build time arrays for computations
-* @method timeSegBuilder
-*
-*/
-TimeUtilities.prototype.timeSegBuilder = function (timeStart, sg) {
-  let timeEnd = 0
-  if (sg === 'day') {
-    timeEnd = timeStart
-  } else if (sg === 'week') {
-    // add 7 days of ms time to start time
-    timeEnd = timeStart - (7 * 86400)
-  } else if (sg === 'month') {
-    // add 30 days of ms time to start time
-    timeEnd = timeStart - (30 * 86400)
-  } else if (sg === 'year') {
-    // add 365 days of ms time to start time
-    timeEnd = timeStart - (365 * 86400)
-  }
-  return timeEnd
-}
-
-/**
-* take range object and convert moment times to miillseconds
-* @method rangeCovert
-*
-*/
-TimeUtilities.prototype.rangeCovert = function (rangeIN) {
-  let rangeMS = {}
-  let startMinute = moment(rangeIN.startTime).startOf('minute')
-  let startMS = moment(startMinute).valueOf()
-  let endMinute = moment(rangeIN.endTime).startOf('minute')
-  let endMS = moment(endMinute).valueOf()
-  rangeMS.startTime = startMS / 1000
-  rangeMS.endTime = endMS / 1000
-  return rangeMS
-}
-
-/**
 * Date and Time
 * @method timeConvert
 *
 */
 TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
-  console.log('timeconvert')
+  console.log('time conver befibg')
   console.log(uT)
   console.log(time)
   console.log(lastTime)
@@ -215,8 +170,6 @@ TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
     }
   }
   //  get the micro time for start of time for query
-  console.log('mid flow')
-  console.log(startTime)
   if (startTime !== 'simulateData') {
     if (startTime !== 'relative') {
       let startQuerytime = moment(startTime).valueOf()
@@ -227,9 +180,47 @@ TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
   } else {
     timestamp = 'simulateData'
   }
-  console.log('affter')
+  console.log('time conver after')
   console.log(timestamp)
   return timestamp
+}
+
+/**
+* build time arrays for computations
+* @method timeSegBuilder
+*
+*/
+TimeUtilities.prototype.timeSegBuilder = function (timeStart, sg) {
+  let timeEnd = 0
+  if (sg === 'day') {
+    timeEnd = timeStart
+  } else if (sg === 'week') {
+    // add 7 days of ms time to start time
+    timeEnd = timeStart - (7 * 86400)
+  } else if (sg === 'month') {
+    // add 30 days of ms time to start time
+    timeEnd = timeStart - (30 * 86400)
+  } else if (sg === 'year') {
+    // add 365 days of ms time to start time
+    timeEnd = timeStart - (365 * 86400)
+  }
+  return timeEnd
+}
+
+/**
+* take range object and convert moment times to miillseconds
+* @method rangeCovert
+*
+*/
+TimeUtilities.prototype.rangeCovert = function (rangeIN) {
+  let rangeMS = {}
+  let startMinute = moment(rangeIN.startTime).startOf('minute')
+  let startMS = moment(startMinute).valueOf()
+  let endMinute = moment(rangeIN.endTime).startOf('minute')
+  let endMS = moment(endMinute).valueOf()
+  rangeMS.startTime = startMS / 1000
+  rangeMS.endTime = endMS / 1000
+  return rangeMS
 }
 
 /**

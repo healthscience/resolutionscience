@@ -121,12 +121,6 @@ SumSystem.prototype.updateComputeControl = async function (timeBundle, dvc, dtl,
 *
 */
 SumSystem.prototype.prepareSumCompute = async function (computeTimes, device, datatype, ts, systemBundle) {
-  console.log('prepareSUMcompute')
-  console.log(computeTimes)
-  console.log(device)
-  console.log(datatype)
-  console.log(ts)
-  console.log(systemBundle)
   // computeTimes = [1535846400000, 1535932800000, 1536019200000]
   // computeTimes = []
   // let lastItem = computeTimes.slice(-1)[0]
@@ -146,7 +140,7 @@ SumSystem.prototype.prepareSumCompute = async function (computeTimes, device, da
     if (dataBatch.length > 0) {
       let singleArray = this.liveCategoryData.categorySorter(systemBundle, formHolder, queryTime)
       let tidyData = this.liveTidyData.tidyRawData(systemBundle, singleArray, queryTime)
-      let filterDTs = this.liveFilterData.dtFilterController(systemBundle, tidyData[queryTime], queryTime)
+      let filterDTs = this.liveFilterData.dtFilterController(systemBundle, tidyData, queryTime)
       // let flatArray = this.liveDataSystem.flatFilter()
       // need to check for categories TODO
       let saveReady = this.liveSumStatistics.sumStatistics(filterDTs)

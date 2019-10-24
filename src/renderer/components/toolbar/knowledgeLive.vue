@@ -399,12 +399,10 @@
         return tempTokenG
       },
       async navTimeLearn (uSeg) {
-        console.log(this.$store.getters.liveBundle)
         let updateTbundle = {}
         let timeAsk = []
         // did UI give nav segment or date from calendar?
         if (uSeg.text === 'selectd') {
-          console.log('selectD')
           updateTbundle.visualisation = ['vis-sc-1', 'vis-sc-2']
           // convert time to correct format
           timeAsk.push('day')
@@ -419,25 +417,20 @@
           this.entityPrepareStatus.active = true
           this.learnManager(updatedBundleSet)
         } else if (uSeg.text === 'timeList') {
-          console.log('list of days')
           this.prepareMultiLearn(updateTbundle, uSeg.timelist)
         } else {
-          console.log('back for forward nav')
           // time setTimeSegments
           // updateTbundle.visualisation = ['vis-sc-1', 'vis-sc-2']
           timeAsk.push(uSeg.text)
           // timeAsk.push('day')
-          console.log(this.liveTimeV)
           let updateTimen = {}
           updateTimen.startperiod = 'relative'
           updateTimen.timeseg = this.liveData.timeLive
           updateTimen.timevis = timeAsk
           updateTimen.laststartperiod = this.liveTimeV
           updateTbundle.time = updateTimen
-          console.log(updateTbundle)
           this.$store.dispatch('actionLiveBundleNav', updateTbundle)
           let updatedBundleSetN = this.$store.getters.liveBundle
-          console.log(updatedBundleSetN)
           this.entityPrepareStatus.active = true
           this.learnManager(updatedBundleSetN)
         }

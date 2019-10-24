@@ -160,6 +160,8 @@ DataSystem.prototype.getLiveDatatypes = function (dtIN) {
 *
 */
 DataSystem.prototype.datatypeQueryMapping = async function (systemBundle, time) {
+  console.log('datatype ery mappping')
+  console.log(systemBundle)
   let rawHolder = {}
   // loop over the each devices API data source info.
   for (let devI of systemBundle.devices) {
@@ -206,6 +208,8 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle, time) 
       }
     }
   }
+  console.log('rawholder')
+  console.log(rawHolder)
   return rawHolder
 }
 

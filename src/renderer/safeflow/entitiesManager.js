@@ -48,6 +48,7 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
     if (checkDataExist === true) {
       console.log('data already ready')
       this.liveSEntities[cid].liveTimeC.setStartPeriod(timeBundle.startperiod)
+      this.liveSEntities[cid].liveTimeC.setRealtime(timeBundle.realtime)
       this.liveSEntities[cid].liveTimeC.setLastTimeperiod(timeBundle.laststartperiod)
       this.liveSEntities[cid].liveTimeC.setTimeList(timeBundle.startperiod)
       this.liveSEntities[cid].liveTimeC.setTimeSegments(timeBundle.timeseg)
@@ -58,13 +59,13 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
       // new data call required for this visualisation time
       console.log('need to prepare new visualisation data')
       this.liveSEntities[cid].liveTimeC.setStartPeriod(timeBundle.startperiod)
+      this.liveSEntities[cid].liveTimeC.setRealtime(timeBundle.realtime)
       this.liveSEntities[cid].liveTimeC.setLastTimeperiod(timeBundle.laststartperiod)
       this.liveSEntities[cid].liveTimeC.setTimeList(timeBundle.startperiod)
       this.liveSEntities[cid].liveTimeC.setTimeSegments(timeBundle.timeseg)
       this.liveSEntities[cid].liveTimeC.setTimeVis(timeBundle.timevis)
       this.liveSEntities[cid].liveDataC.setDatatypesLive(ecsIN.datatypes)
       this.liveSEntities[cid].liveDataC.setCategories(ecsIN.categories)
-      this.liveSEntities[cid].liveVisualC.setVisLive(timeBundle.startperiod)
       await this.controlFlow(ecsIN).then(function (cFlow) {
         console.log('CONTROLFLOW--already-COMPLETE')
       })
@@ -99,14 +100,18 @@ EntitiesManager.prototype.controlFlow = async function (cflowIN) {
   this.liveSEntities[cid].liveTimeC.timeProfiling()
   console.log('EMANAGER3')
   await this.liveSEntities[cid].liveDataC.sourceData(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveTimeC)
+  console.log('EMANAGER4')
   this.emit('computation', 'in-progress')
   await this.liveSEntities[cid].liveTimeC.startTimeSystem(this.liveSEntities[cid].liveDatatypeC, this.liveSEntities[cid].liveDataC.liveData)
+  console.log('EMANAGER5')
   this.computeStatus = await this.liveSEntities[cid].liveComputeC.filterCompute(this.liveSEntities[cid].liveTimeC, this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive)
+  console.log('EMANAGER6')
   this.emit('computation', 'finished')
   if (this.computeStatus === true) {
   // go direct and get raw data direct
     await this.liveSEntities[cid].liveDataC.directSourceUpdated(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveTimeC)
   }
+  console.log('EMANAGER7')
   this.liveSEntities[cid].liveVisualC.filterVisual(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveDataC.liveData, this.liveSEntities[cid].liveTimeC)
   console.log('visCompenent--FINISHED')
   return true
@@ -131,6 +136,11 @@ EntitiesManager.prototype.checkForVisualData = function (cid, timePeriod, visSty
   // need to loop over TODO
   //  this only check for last prepareData, need VisualComponent to use push(object)
   // console.log(this.liveSEntities[cid])
+  console.log('check vis')
+  console.log(cid)
+  console.log(timePeriod)
+  console.log(visStyle)
+  console.log(this.liveSEntities[cid].liveVisualC.visualData)
   let entityData = this.liveSEntities[cid].liveVisualC.visualData
   if (!entityData[visStyle]) {
     return false

@@ -87,6 +87,9 @@ DataComponent.prototype.setCategories = function (ctIN) {
 *
 */
 DataComponent.prototype.sourceData = async function (apiINFO, timeComponent) {
+  console.log('source data')
+  console.log(apiINFO)
+  console.log(timeComponent)
   this.apiInfoLive = apiINFO
   let systemBundle = {}
   systemBundle.apiInfo = apiINFO
@@ -100,6 +103,8 @@ DataComponent.prototype.sourceData = async function (apiINFO, timeComponent) {
   systemBundle.querytime = this.did.time
   systemBundle.categories = this.did.categories
   // need to check if one day or more or some segment of time is required?
+  console.log('timerange')
+  console.log(timeComponent.timerange)
   for (let rt of timeComponent.timerange) {
     let convertTime = moment(rt).valueOf()
     let timeStructure = convertTime
@@ -114,6 +119,7 @@ DataComponent.prototype.sourceData = async function (apiINFO, timeComponent) {
 *
 */
 DataComponent.prototype.DataControlFlow = async function (systemBundle, time) {
+  console.log('start dataflow')
   let dataRback = await this.liveDataSystem.datatypeQueryMapping(systemBundle, time)
   this.dataRaw[time] = dataRback
   // is there a categories filter to apply?
@@ -121,6 +127,8 @@ DataComponent.prototype.DataControlFlow = async function (systemBundle, time) {
   // is there any data tidying required
   this.TidyData(systemBundle, time)
   this.FilterDownDT(systemBundle, time)
+  console.log('end data flow')
+  console.log(this.liveData)
   return true
 }
 
@@ -163,6 +171,8 @@ DataComponent.prototype.FilterDownDT = function (systemBundlea, time) {
     tidyDataG = this.liveFilterData.dtFilterController(systemBundlea, this.liveData[time], time)
     this.liveData[time] = tidyDataG
   }
+  console.log('filerdownd data')
+  console.log(this.liveData)
   return true
 }
 

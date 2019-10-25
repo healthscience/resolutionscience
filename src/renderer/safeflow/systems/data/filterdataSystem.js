@@ -53,6 +53,8 @@ FilterDataSystem.prototype.dtFilterController = function (systemBundle, liveData
       for (let ts of systemBundle.timeseg) {
         console.log(ts)
         console.log(liveData)
+        console.log(devI)
+        console.log(dtItem.cnrl)
         let sourcerawData = liveData[devI][dtItem.cnrl]['day']
         let filterColumn = this.filterDataType(filterType, dtItem, sourcerawData, time)
         if (filterType === 'primary') {
@@ -72,6 +74,11 @@ FilterDataSystem.prototype.dtFilterController = function (systemBundle, liveData
 *
 */
 FilterDataSystem.prototype.filterDataType = function (fTypeIN, sourceDT, arrayIN, time) {
+  console.log('fliter dataytpe')
+  console.log(fTypeIN)
+  console.log(sourceDT)
+  console.log(arrayIN)
+  console.log(time)
   let singleArray = []
   if (fTypeIN !== 'derived') {
     for (let sing of arrayIN) {

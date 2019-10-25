@@ -114,7 +114,7 @@ export default new Vuex.Store({
       Vue.set(state.bundle.time, 'startperiod', inVerified)
     },
     setLiveBundleNav: (state, inVerified) => {
-      inVerified.time.realtime = state.bundle.time.realtime
+      // inVerified.time.realtime = state.bundle.time.realtime
       // state.bundle = Vue.set(state.bundle, 'time', inVerified.time)
       state.bundle.time = inVerified.time
     },
@@ -131,7 +131,13 @@ export default new Vuex.Store({
       state.startBundles = inVerified
     },
     setStartKBundlesItem: (state, inVerified) => {
+      console.log('set new start k bundle')
+      console.log(inVerified)
+      console.log('also need to setup control panel')
+      console.log(state.computeKidStatus)
       state.startBundles.push(inVerified)
+      let openStatus = {active: false, text: 'Compute-in-progress', update: '---', seen: false}
+      Vue.set(state.computeKidStatus, inVerified.kbid, openStatus)
     },
     setComputeStatus: (state, startPeriodTime) => {
       // prepare object to hold compute state per entity kbid

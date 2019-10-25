@@ -1,5 +1,5 @@
 <template>
-  <div v-if="progressMessageIN" id="progess">dd {{ progressMessageIN }} {{ dashCNRL }}  {{ experimentDash.status }}<!-- v-if="progressMessageIN && progressMessageIN.cnrl === dashCNRL" -->
+  <div v-if="progressMessageIN" id="progess">
     <progress-Message v-if="progressMessageIN[dashCNRL]":progressMessage="progressMessageIN[dashCNRL]"></progress-Message>
     <div v-if="experimentDash && experimentDash.status === true && dashCNRL === experimentDash.cnrl" id="dashboard-view">
       <header>Dashboard</header>

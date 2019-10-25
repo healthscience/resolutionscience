@@ -140,7 +140,7 @@ SumSystem.prototype.prepareSumCompute = async function (computeTimes, device, da
     if (dataBatch.length > 0) {
       let singleArray = this.liveCategoryData.categorySorter(systemBundle, formHolder, queryTime)
       let tidyData = this.liveTidyData.tidyRawData(systemBundle, singleArray, queryTime)
-      let filterDTs = this.liveFilterData.dtFilterController(systemBundle, tidyData, queryTime)
+      let filterDTs = this.liveFilterData.dtFilterController(systemBundle, tidyData[queryTime], queryTime)
       // let flatArray = this.liveDataSystem.flatFilter()
       // need to check for categories TODO
       let saveReady = this.liveSumStatistics.sumStatistics(filterDTs)

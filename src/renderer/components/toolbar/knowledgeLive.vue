@@ -417,6 +417,12 @@
           this.entityPrepareStatus.active = true
           this.learnManager(updatedBundleSet)
         } else if (uSeg.text === 'timeList') {
+          let updateTime = {}
+          updateTime.startperiod = uSeg.selectDate
+          updateTime.timeseg = this.liveData.timeLive
+          updateTime.timevis = timeAsk
+          updateTime.laststartperiod = this.liveTimeV
+          updateTbundle.time = updateTime
           this.prepareMultiLearn(updateTbundle, uSeg.timelist)
         } else {
           // time setTimeSegments
@@ -437,11 +443,23 @@
         // pass on to learn safeFlow
       },
       async prepareMultiLearn (liveKB, timeList) {
+        console.log('prepare mulit')
+        console.log(liveKB)
+        console.log(timeList)
+        let updateTbundle = {}
+        let timeAsk = []
         this.buildTimeBundles = []
-        let updateTimeKBundles = liveKB
         for (let tl of timeList) {
-          updateTimeKBundles.time.startperiod = tl
-          let visDataBack = await this.learnStart(updateTimeKBundles)
+          let updateTime = {}
+          timeAsk.push('day')
+          updateTime.startperiod = tl
+          updateTime.timeseg = this.liveData.timeLive
+          updateTime.timevis = timeAsk
+          updateTime.laststartperiod = this.liveTimeV
+          updateTbundle.time = updateTime
+          this.$store.dispatch('actionLiveBundleNav', updateTbundle)
+          let updatedBundleSet = this.$store.getters.liveBundle
+          let visDataBack = await this.learnStart(updatedBundleSet)
           this.buildTimeBundles.push(visDataBack)
         }
         return true

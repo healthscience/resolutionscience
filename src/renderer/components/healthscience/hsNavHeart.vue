@@ -2,7 +2,7 @@
   <section class="container">
     <!-- <oracle-View></oracle-View> -->
     <section id="knowledge">
-      <div id="experiment-learn" class="live-element">
+      <div id="experiment-learn" class="live-button-explist">
         <div id="experiment-learn-container">
           <div id="experiment-view">
             <a href="" id="experiment-button" @click.prevent="viewExperiment(exper)" v-bind:class="{ 'active': exper.active}">{{ exper.name }}</a>
@@ -22,7 +22,7 @@
   import { sBus } from '../../main.js'
 
   export default {
-    name: 'VueChartJS',
+    name: 'hs-prepare',
     components: {
       oracleView,
       experimentList
@@ -34,30 +34,17 @@
           name: 'View experiments',
           id: 'learn-experiments',
           active: true
-        },
-        liveDataCollection: {},
-        liveOptions: {},
-        liveAnnotations: {},
-        liveSelectTime: 'ppp',
-        liveanalysisStart: 'select',
-        liveanalysisEnd: 'select',
-        startLine: '',
-        activeEntity: '',
-        liveBundle: {},
-        liveExper: [],
-        liveTimeV: 'time',
-        chartmessage: {
-          text: 'compute status = stopped',
-          active: false
         }
       }
     },
     computed: {
+      KLexperimentData: function () {
+        return this.$store.state.experimentList
+      }
     },
     mounted () {
     },
     created () {
-      this.experimentsStart()
       sBus.$on('saveLBundle', (cData) => {
         console.log('NOT USED')
       })
@@ -72,11 +59,6 @@
         } else {
           exper.name = 'View experiments'
         }
-      },
-      experimentsStart () {
-        this.liveExper = []
-        this.$store.dispatch('actionFilterKBundles')
-        this.KLexperimentData = this.$store.getters.liveExperimentList
       }
     }
   }

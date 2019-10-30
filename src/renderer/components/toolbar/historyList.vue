@@ -109,8 +109,8 @@
             <b>Live</b>
               <ul v-for="dxp in mappedExps[lh.kbid]">
                 <li>
-                  {{ dxp.text }}
-                  <button @click.prevent="removeDashboard(lh.kbid)">Remove</button>
+                  {{ dxp.prime.text }}
+                  <button @click.prevent="removeDashboard(dxp, lh.kbid)">Remove</button>
                 </li>
               </ul>
             </div>
@@ -200,6 +200,7 @@
         let updateBundle = this.$store.getters.startBundlesList
         for (let iB of updateBundle) {
           if (iB.kbid === startKID) {
+            console.log(iB)
             this.saveStartBundle(iB)
           }
         }
@@ -237,8 +238,8 @@
           for (let mapE of this.livemapExperimentKbundles) {
             if (tss.kbid === mapE.kbid) {
               for (let expDet of this.liveexerimentList) {
-                if (mapE.experimentCNRL === expDet.cnrl) {
-                  experPerCompute.push(expDet.contract.prime)
+                if (mapE.experimentCNRL === expDet.prime.cnrl) {
+                  experPerCompute.push(expDet)
                 }
               }
             }
@@ -259,10 +260,15 @@
         // remove from viewDatastore
         this.removeStartBundle(removeID)
       },
-      removeDashboard (removeID) {
+      removeDashboard (removeID, two) {
+        let removeHolder = {}
+        removeHolder.experimentCNRL = removeID.prime.cnrl
+        removeHolder.kbid = two
         // need to dispatch to remove and datastore
-        this.$store.dispatch('actionRemoveExpDashMap', removeID)
+        this.$store.dispatch('actionRemoveExpDashMap', two)
+        this.$store.dispatch('actionRemoveKentitiesByKID', removeHolder)
         // and remove from datastore
+        // this.removeStartDashboard(removeHolder)
       },
       parseTimeSaved () {
         for (let tss of this.historyData) {

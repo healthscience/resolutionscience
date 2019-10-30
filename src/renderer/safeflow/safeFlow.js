@@ -74,6 +74,8 @@ safeFlow.prototype.toolkitContext = async function (dapi, flag) {
 *
 */
 safeFlow.prototype.startSettings = async function (flag, bundle) {
+  console.log(flag)
+  console.log(bundle)
   // first time start of device, datatype context for toolkitContext
   let startStatusData = []
   if (flag === 'save') {
@@ -82,6 +84,8 @@ safeFlow.prototype.startSettings = async function (flag, bundle) {
     startStatusData = await this.liveDataSystem.getStartStatus()
   } else if (flag === 'remove') {
     startStatusData = await this.liveDataSystem.removeStartStatus(bundle)
+  } else if (flag === 'removedash') {
+    startStatusData = await this.liveDataSystem.removeStartDash(bundle)
   }
   return startStatusData
 }
@@ -123,8 +127,8 @@ safeFlow.prototype.scienceEntities = async function (contextIN) {
   // console.log(contextIN)
   let ecsIN = this.setpeerContext(contextIN)
   await this.liveEManager.addScienceEntity(ecsIN, this.settings).then(function (bk) {
-    // console.log('SAFEFLOW-new entitycomplete')
-    // console.log(bk)
+    console.log('SAFEFLOW-new entitycomplete')
+    console.log(bk)
     return true
   })
 }

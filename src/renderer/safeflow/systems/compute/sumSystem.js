@@ -100,8 +100,6 @@ SumSystem.prototype.computeControlFlow = async function (systemBundle) {
 *
 */
 SumSystem.prototype.updateComputeControl = async function (timeBundle, dvc, dtl, ts, systemBundle) {
-  console.log('update com SUM')
-  console.log(timeBundle.status)
   let liveTime = systemBundle.timeInfo.livedate.startperiod
   // let liveComputeCNRL = systemBundle.timeInfo.did.cid
   let computeStatus = {}
@@ -109,7 +107,6 @@ SumSystem.prototype.updateComputeControl = async function (timeBundle, dvc, dtl,
     let dtCompute = systemBundle.apiInfo[dvc].datatypes[0].cnrl
     computeStatus = await this.prepareSumCompute(systemBundle.timeInfo.liveTime[liveTime][dvc][dtCompute][ts].computeTime, dvc, dtl, ts, systemBundle)
   } else {
-    console.log('no updated require, go and get existing results')
     computeStatus = true
   }
   return computeStatus
@@ -140,7 +137,9 @@ SumSystem.prototype.prepareSumCompute = async function (computeTimes, device, da
     if (dataBatch.length > 0) {
       let singleArray = this.liveCategoryData.categorySorter(systemBundle, formHolder, queryTime)
       let tidyData = this.liveTidyData.tidyRawData(systemBundle, singleArray, queryTime)
-      let filterDTs = this.liveFilterData.dtFilterController(systemBundle, tidyData[queryTime], queryTime)
+      console.log('SUMDUM DYDDDD')
+      console.log(tidyData)
+      let filterDTs = this.liveFilterData.dtFilterController(systemBundle, tidyData, queryTime)
       // let flatArray = this.liveDataSystem.flatFilter()
       // need to check for categories TODO
       let saveReady = this.liveSumStatistics.sumStatistics(filterDTs)

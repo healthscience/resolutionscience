@@ -236,10 +236,11 @@ TestStorageAPI.prototype.getStartSettings = async function () {
 *
 */
 TestStorageAPI.prototype.saveStartSettings = async function (jsonIN) {
+  // console.log(jsonIN)
   jsonIN.publickey = this.tempPubkey
   await axios.post(this.baseAPI + '/startStatusSave/' + this.tempPubkey + '/' + this.tempToken + '/' + jsonIN.device_mac, jsonIN)
     .then(function (response) {
-      // console.log(response)
+      console.log(response)
     })
 }
 
@@ -255,6 +256,21 @@ TestStorageAPI.prototype.removeStartSettings = async function (removeID) {
   await axios.post(this.baseAPI + '/startStatusRemove/' + this.tempPubkey + '/' + this.tempToken, jsonIN)
     .then(function (response) {
       // console.log(response)
+    })
+}
+
+/**
+*  Remove start dashboard
+* @method removeStartDashboardSettings
+*
+*/
+TestStorageAPI.prototype.removeStartDashboardSettings = async function (removeID) {
+  let jsonIN = {}
+  jsonIN.publickey = this.tempPubkey
+  jsonIN.kbid = removeID
+  await axios.post(this.baseAPI + '/startDashboardRemove/' + this.tempPubkey + '/' + this.tempToken, jsonIN)
+    .then(function (response) {
+      console.log(response)
     })
 }
 
@@ -275,6 +291,7 @@ TestStorageAPI.prototype.getExpKbundles = async function () {
 *
 */
 TestStorageAPI.prototype.saveExpKbundles = async function (jsonIN) {
+  console.log(jsonIN)
   jsonIN.publickey = this.tempPubkey
   let saveStatus = await axios.post(this.baseAPI + '/experimentKBundlesSave/' + this.tempPubkey + '/' + this.tempToken + '/' + jsonIN.device_mac, jsonIN)
   return saveStatus.data[0]

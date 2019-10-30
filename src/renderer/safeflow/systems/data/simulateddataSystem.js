@@ -36,9 +36,6 @@ util.inherits(SimulatedDataSystem, events.EventEmitter)
 *
 */
 SimulatedDataSystem.prototype.assessFuture = function (dataSystem, timeInfo) {
-  console.log('assess future')
-  console.log(dataSystem)
-  console.log(timeInfo)
   let futureData = this.liveCALE.learn('tomorrow', dataSystem, timeInfo)
   return futureData
 }

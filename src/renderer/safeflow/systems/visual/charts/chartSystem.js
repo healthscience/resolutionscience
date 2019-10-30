@@ -34,8 +34,6 @@ util.inherits(ChartSystem, events.EventEmitter)
 ChartSystem.prototype.structureChartData = function (datatype, cBundle, cData) {
   let lastDataObject = {}
   let liveDate = Object.keys(cData)
-  console.log('al data')
-  console.log(cData)
   // does the data need merged i.e. spans more than one day?
   if (cBundle.time.timeseg[0] === 'day') {
     lastDataObject = cData
@@ -49,13 +47,10 @@ ChartSystem.prototype.structureChartData = function (datatype, cBundle, cData) {
   this.chartPrep = {}
   // loop through and build two sperate arrays
   if (lastDataObject) {
-    console.log(cBundle)
     for (let devI of cBundle.devices) {
       visCHolder[liveDate][devI.device_mac] = {}
       let dataholder = {}
       for (let tis of cBundle.timerange) {
-        console.log(tis)
-        console.log(lastDataObject)
         for (let liveData of lastDataObject[tis][devI.device_mac][datatype.cnrl]['day']) {
           var mDateString = moment(liveData.timestamp * 1000).toDate()
           datalabel.push(mDateString)
@@ -84,8 +79,6 @@ ChartSystem.prototype.structureChartData = function (datatype, cBundle, cData) {
       datay = []
     }
   }
-  console.log('visholder')
-  console.log(visCHolder)
   return visCHolder
 }
 
@@ -258,8 +251,6 @@ ChartSystem.prototype.structureAverageData = function (datatype, cBundle, dataIN
   }
   visCHolder.labels = datalabel
   visCHolder.datasets = dataC
-  console.log('aveg chart holder')
-  console.log(visCHolder)
   return visCHolder
 }
 
@@ -328,9 +319,6 @@ ChartSystem.prototype.StatschartColors = function (datatypeItem) {
 */
 ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
   // need to prepare different visualisations, data return will fit only one select option
-  console.log('propare avg stats')
-  console.log(deviceList)
-  console.log(results)
   var localthis = this
   let datacollection = {}
   this.labelback = []
@@ -442,8 +430,6 @@ ChartSystem.prototype.prepareStatsVueChartJS = function (deviceList, results) {
       }
     }
   }
-  console.log('avg prapred')
-  console.log(datacollection)
   return datacollection
 }
 

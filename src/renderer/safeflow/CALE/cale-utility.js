@@ -33,9 +33,6 @@ util.inherits(CALE, events.EventEmitter)
 *
 */
 CALE.prototype.learn = function (dataSystem, systemBundle, model, timeInfo) {
-  console.log('build future data')
-  console.log(model)
-  console.log(timeInfo)
   this.liveDataSystem = dataSystem
   if (model === 'tomorrow') {
     this.createTomorrow(systemBundle, timeInfo)
@@ -48,8 +45,6 @@ CALE.prototype.learn = function (dataSystem, systemBundle, model, timeInfo) {
 *
 */
 CALE.prototype.createTomorrow = function (systemBundle, timeInfo) {
-  console.log('build future data')
-  console.log(timeInfo)
   let updateTimeQuery = {}
   systemBundle.time = updateTimeQuery
   // setup WASM model file and start data flow via SAFEflow
@@ -62,8 +57,6 @@ CALE.prototype.createTomorrow = function (systemBundle, timeInfo) {
 *
 */
 CALE.prototype.importModel = function (model) {
-  console.log('import model')
-  console.log(model)
   // the model has to prepare data for the future date.  The ML model will self score its predictions and when resources available learn itself e.g. will it find weekly patterns?
   // call network address for WASM file and hashcheck
   // this.liveCNRL.lookUp(model.cnrl)

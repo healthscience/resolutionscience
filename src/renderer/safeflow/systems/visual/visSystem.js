@@ -137,12 +137,10 @@ VisSystem.prototype.visSystemChart = function (visBundle, dataIN) {
 *
 */
 VisSystem.prototype.tableSystem = function (bundle, visIN, vData, timeComponent) {
-  console.log('VISCOMP==tablesysme START1')
   let tableData
   if (bundle.cid === 'cnrl-2356388731') {
     tableData = this.liveTableSystem.structureTableData(bundle, visIN, vData, timeComponent.timerange)
   }
-  // console.log(tableData)
   return tableData
 }
 

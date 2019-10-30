@@ -68,19 +68,16 @@ ComputeSystem.prototype.recoverySystem = async function (compInfo, rawIN, device
   let statusHolder = {}
   let stateHolder = {}
   if (compInfo.status === false) {
-    console.log('does recoveryHR results exist?')
     statusHolder.lastComputeTime = 0
     statusHolder.status = 'update-required'
     stateHolder.timeStart = compInfo.rangeTime.startTime
     stateHolder.lastComputeTime = compInfo.rangeTime.endTime
   } else if (compInfo.status === true) {
-    console.log('COMPSYS4--start HRC')
     // need to loop over per devices
     let computeTimeRange = compInfo.rangeTime
     // console.log(computeTimeRange)
     for (let dvc of deviceList) {
       let updateStatus = await this.liveRecoveryHR.prepareRecoveryCompute(computeTimeRange, dvc)
-      console.log('recovery status compte')
       console.log(updateStatus)
     }
   }

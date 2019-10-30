@@ -311,6 +311,7 @@
       makeActive (ma) {
         // set devices life on the fly  (also provide option to save but shoud be done vie Dapp)
         // let existingDevices = this.$store.getters.liveContext
+        let localthis = this
         this.devicemessage.active = true
         let addDevice = {}
         addDevice.active = false
@@ -324,7 +325,7 @@
         this.addDeviceSeen = false
         this.selectDevices.type = ''
         setTimeout(function () {
-          this.devicemessage.active = false
+          localthis.devicemessage.active = false
         }, 3000) // hide the message after 3 seconds
       },
       newDesAPI (ap) {

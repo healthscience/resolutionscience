@@ -67,7 +67,6 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
       this.liveSEntities[cid].liveDataC.setDatatypesLive(ecsIN.datatypes)
       this.liveSEntities[cid].liveDataC.setCategories(ecsIN.categories)
       await this.controlFlow(ecsIN).then(function (cFlow) {
-        console.log('CONTROLFLOW--already-COMPLETE')
       })
     }
   } else {
@@ -91,27 +90,19 @@ EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
 EntitiesManager.prototype.controlFlow = async function (cflowIN) {
   let cid = cflowIN.kbid
   console.log('EMANAGER0-----beginCONTROL-FLOW')
-  console.log(cflowIN)
   // set the MASTER TIME CLOCK for entity
   this.liveSEntities[cid].liveTimeC.setMasterClock()
-  console.log('EMANAGER1')
   this.liveSEntities[cid].liveDatatypeC.dataTypeMapping()
-  console.log('EMANAGER2')
   this.liveSEntities[cid].liveTimeC.timeProfiling()
-  console.log('EMANAGER3')
   await this.liveSEntities[cid].liveDataC.sourceData(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveTimeC)
-  console.log('EMANAGER4')
   this.emit('computation', 'in-progress')
   await this.liveSEntities[cid].liveTimeC.startTimeSystem(this.liveSEntities[cid].liveDatatypeC, this.liveSEntities[cid].liveDataC.liveData)
-  console.log('EMANAGER5')
   this.computeStatus = await this.liveSEntities[cid].liveComputeC.filterCompute(this.liveSEntities[cid].liveTimeC, this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive)
-  console.log('EMANAGER6')
   this.emit('computation', 'finished')
   if (this.computeStatus === true) {
   // go direct and get raw data direct
     await this.liveSEntities[cid].liveDataC.directSourceUpdated(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveTimeC)
   }
-  console.log('EMANAGER7')
   this.liveSEntities[cid].liveVisualC.filterVisual(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveDataC.liveData, this.liveSEntities[cid].liveTimeC)
   console.log('visCompenent--FINISHED')
   return true
@@ -133,14 +124,7 @@ EntitiesManager.prototype.latestData = function (dataIn) {
 *
 */
 EntitiesManager.prototype.checkForVisualData = function (cid, timePeriod, visStyle) {
-  // need to loop over TODO
-  //  this only check for last prepareData, need VisualComponent to use push(object)
-  // console.log(this.liveSEntities[cid])
-  console.log('check vis')
-  console.log(cid)
-  console.log(timePeriod)
-  console.log(visStyle)
-  console.log(this.liveSEntities[cid].liveVisualC.visualData)
+  //  this only check for last prepareData, need VisualComponent to use push(obj
   let entityData = this.liveSEntities[cid].liveVisualC.visualData
   if (!entityData[visStyle]) {
     return false

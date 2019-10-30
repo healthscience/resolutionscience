@@ -1,18 +1,20 @@
 <template>
-  <div v-if="progressMessageIN" id="progess">
-    <progress-Message v-if="progressMessageIN[dashCNRL]":progressMessage="progressMessageIN[dashCNRL]"></progress-Message>
-    <div v-if="experimentDash && experimentDash.status === true && dashCNRL === experimentDash.cnrl" id="dashboard-view">
+  <div id="dashboard-holder">
+    <div v-if="progressMessageIN[dashCNRL]" id="progess">
+      <progress-Message v-if="progressMessageIN[dashCNRL].active === true" :progressMessage="progressMessageIN[dashCNRL]"></progress-Message>
+    </div>
+    <div v-if="experimentDash && dashCNRL === experimentDash.cnrl && experimentDash.status === true" id="dashboard-view">
       <header>Dashboard</header>
       <div id="experiment-summary">
         <div class="summary-item" id="exerpiment-name"> Experiment: {{ experimentDash.contract.prime.text }} </div>
         <div class="summary-item" id="living-paper">
-          <a href="experimentDash.contract.livingpaper.link" >LivingPaper</a>
+          <a href="experimentDash.livingpaper.link" >LivingPaper</a>
         </div>
       </div>
-      <learn-Report></learn-Report>
-      <learn-Action></learn-Action>
+      <!-- <learn-Report></learn-Report>
+      <learn-Action></learn-Action> -->
       <ul>
-        <li v-for="(vEnt, index) in experimentDash.dashKBlist">
+        <li  v-for="(vEnt, index) in experimentDash.dashKBlist">
           <div id="dashboard-toolbar" >
             <ul>
               <li>
@@ -42,7 +44,7 @@
   // const moment = require('moment')
 
   export default {
-    name: 'visual-liveview',
+    name: 'visual-dashview',
     components: {
       progressMessage,
       expvisual,
@@ -56,21 +58,13 @@
       {
         type: Object
       },
-      KBDash:
+      progressMessageIN3:
       {
         type: Object
-      },
-      progressMessageIN2:
-      {
-        type: Object
-      },
-      liveDataCollection: {},
-      liveOptions: {},
-      liveTimeV: ''
+      }
     },
     data () {
       return {
-        dashEstatus: false,
         peerChart: {},
         chartUI:
         {
@@ -91,7 +85,6 @@
     mixins: [liveMixinSAFEflow],
     methods: {
       setDashTime () {
-        console.log('set dashtime')
         // call action to update state
         this.updateChartOptions()
       },
@@ -99,9 +92,7 @@
         let optState = {}
         optState.syncOptions = []
         optState.expCNRL = this.dashCNRL
-        this.$store.dispatch('actionUpdateChartOptions', optState)
-        console.log('chart action complete')
-        // console.log()
+        // this.$store.dispatch('actionUpdateChartOptions', optState)
       }
     }
   }
@@ -115,8 +106,8 @@
 }
 
 header {
-  font-weight: bold;
   margin-bottom: 12px;
+  font-weight: bold;
 }
 
 .summary-item {
@@ -124,6 +115,10 @@ header {
   margin-left: 20px;
   font-weight: bold;
   font-size: 1.4em;
+}
+
+#progess {
+  margin-left: 2em;
 }
 
 </style>

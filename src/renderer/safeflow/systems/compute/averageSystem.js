@@ -100,8 +100,6 @@ AverageSystem.prototype.computeControlFlow = async function (systemBundle) {
 *
 */
 AverageSystem.prototype.updateComputeControl = async function (timeBundle, dvc, dtl, ts, systemBundle) {
-  console.log('update com AVG')
-  console.log(timeBundle.status)
   let liveTime = systemBundle.timeInfo.livedate.startperiod
   // let liveComputeCNRL = systemBundle.timeInfo.did.cid
   let computeStatus = {}
@@ -109,7 +107,6 @@ AverageSystem.prototype.updateComputeControl = async function (timeBundle, dvc, 
     let dtCompute = systemBundle.apiInfo[dvc].datatypes[0].cnrl
     computeStatus = await this.prepareAvgCompute(systemBundle.timeInfo.liveTime[liveTime][dvc][dtCompute][ts].computeTime, dvc, dtl, ts, systemBundle)
   } else {
-    console.log('no updated require, go and get existing results')
     computeStatus = true
   }
   return computeStatus

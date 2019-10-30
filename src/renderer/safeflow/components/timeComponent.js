@@ -38,8 +38,6 @@ util.inherits(TimeComponent, events.EventEmitter)
 *
 */
 TimeComponent.prototype.setStartPeriod = function (startDate) {
-  console.log('set start period')
-  console.log(startDate)
   if (startDate !== 'relative') {
     let convertSafeFlowTime = moment(startDate).valueOf()
     this.livedate.startperiod = convertSafeFlowTime // 1000
@@ -102,8 +100,6 @@ TimeComponent.prototype.setTimeVis = function (liveVis) {
 */
 
 TimeComponent.prototype.setMasterClock = function () {
-  console.log('master clockc standard')
-  console.log(this.livedate)
   this.livedate = this.liveTimeUtil.timeConversionUtility(this.livedate) // this.did.time
   return true
 }
@@ -116,15 +112,12 @@ TimeComponent.prototype.setMasterClock = function () {
 TimeComponent.prototype.timeProfiling = function () {
   let startperiod
   if (this.did.time.startperiod === 'simulateData') {
-    console.log('simluate data')
     return true
   } else if (this.lastactiveStartTime === 0) {
     startperiod = this.livedate.startperiod
   } else {
     startperiod = this.lastactiveStartTime
   }
-  console.log('timepRofiing')
-  console.log(startperiod)
   let timeseg = this.livedate.timeseg
   // as time system to assess the range of data days required?
   let timeSource = this.liveTimeSystem.sourceTimeRange(startperiod, timeseg)

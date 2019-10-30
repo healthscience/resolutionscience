@@ -103,10 +103,6 @@ TimeUtilities.prototype.updateUItime = function (timeUI, time, lastTime) {
 *
 */
 TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
-  console.log('time conver befibg')
-  console.log(uT)
-  console.log(time)
-  console.log(lastTime)
   let convertLasttime = lastTime
   let startTime = time
   let timestamp
@@ -180,8 +176,6 @@ TimeUtilities.prototype.timeConvert = function (uT, time, lastTime) {
   } else {
     timestamp = 'simulateData'
   }
-  console.log('time conver after')
-  console.log(timestamp)
   return timestamp
 }
 

@@ -42,10 +42,6 @@ VisualComponent.prototype.setVisLive = function (updateEID) {
 *
 */
 VisualComponent.prototype.filterVisual = function (visIN, vData, timeComponent) {
-  console.log('vis time')
-  console.log(timeComponent)
-  console.log(visIN)
-  console.log(this.EIDinfo)
   // which of three types of visualisations?
   let status = false
   let visBundle = {}

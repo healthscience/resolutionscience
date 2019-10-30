@@ -122,8 +122,6 @@
         // query peer ledger to extract experiments, computes i.e. KBLedger latest
         this.startExpMappedKbundles()
         this.startKSetting()
-        // build the UI data type components
-        this.startExperiments()
         // loop over active api and extrac devcies, datatypes
         this.deviceContext(dataAPIconnected)
         // this.datatypeContext()
@@ -133,6 +131,8 @@
         let mappedExpKbundles = await this.mappedKBLexp()
         // set via store and then pick up in historyData
         this.$store.dispatch('actionExperimentKBundles', mappedExpKbundles)
+        // build the UI status object
+        this.startExperiments()
       },
       async startKSetting () {
         let startKset = await this.latestKBL()
@@ -147,18 +147,8 @@
         this.$store.dispatch('actionComputeStatus', MSstartTime)
       },
       startExperiments () {
-        let liveExper = []
         let experimentList = this.GETexperimentsList()
-        for (let exl of experimentList) {
-          // let expCNRL = this.GETcnrlLookup(exl)
-          let experBundle = {}
-          experBundle.cnrl = exl.prime.cnrl
-          experBundle.status = false
-          experBundle.contract = exl
-          experBundle.dashKBlist = []
-          liveExper.push(experBundle)
-        }
-        this.$store.dispatch('actionExperimentList', liveExper)
+        this.$store.dispatch('actionExperimentList', experimentList)
       },
       async deviceContext (dataAPIconnected) {
         let devicesList = []
@@ -168,8 +158,6 @@
           // make call to set start deviceContext for this pubkey
           const deviceFlag = 'device'
           let deviceAPI = await this.GETtoolkitDevices(apiDev, deviceFlag)
-          // console.log('device data back')
-          // console.log(deviceAPI)
           // need to pair device to API source CNRL
           deviceAPI.cnrl = dapi
           devicesList.push(deviceAPI)

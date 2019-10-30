@@ -73,6 +73,18 @@ DataSystem.prototype.removeStartStatus = async function (bundle) {
 }
 
 /**
+* remove a starting dashboard
+* @method removeStartDash
+*
+*/
+DataSystem.prototype.removeStartDash = async function (bundle) {
+  console.log('stopped  remove dash system')
+  // make query to network for context data per devices
+  let startStatusresult = await this.liveTestStorage.removeStartDashboardSettings(bundle)
+  return startStatusresult
+}
+
+/**
 * get the inital context for data required
 * @method getStartStatus
 *
@@ -160,8 +172,6 @@ DataSystem.prototype.getLiveDatatypes = function (dtIN) {
 *
 */
 DataSystem.prototype.datatypeQueryMapping = async function (systemBundle, time) {
-  console.log('datatype ery mappping')
-  console.log(systemBundle)
   let rawHolder = {}
   // loop over the each devices API data source info.
   for (let devI of systemBundle.devices) {
@@ -170,8 +180,7 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle, time) 
     if (systemBundle.querytime && systemBundle.querytime.startperiod === 'simulateData') {
       console.log('simulated data')
       // need whole new system for product future data
-      let futureData = this.liveSimulatedData.assessFuture(this, time)
-      console.log(futureData)
+      // let futureData = this.liveSimulatedData.assessFuture(this, time)
       // let dayHolder = {}
       // dayHolder.day = futureData
       // rawHolder[devI][dtItem.cnrl] = dayHolder
@@ -208,8 +217,6 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle, time) 
       }
     }
   }
-  console.log('rawholder')
-  console.log(rawHolder)
   return rawHolder
 }
 
@@ -276,8 +283,6 @@ DataSystem.prototype.getRawSumData = async function (devI, time, bundleIN) {
         averageData[di] = {}
         averageData[di][dtl.cnrl] = {}
         averageData[di][dtl.cnrl] = averageHolder
-        console.log('sum data backkkckckckc')
-        console.log(averageData)
       }
     }
   }

@@ -21,8 +21,8 @@ export default new Vuex.Store({
     bundle: {},
     startBundles: [],
     bundleCounter: 0,
-    experimentCNRL: {},
-    experimentList: {},
+    experimentStatus: {},
+    experimentList: [],
     experimentProgressStatus: {},
     expEntities: {},
     mapExperimentKbundles: [],
@@ -44,7 +44,7 @@ export default new Vuex.Store({
     liveBundle: state => state.bundle,
     startBundlesList: state => state.startBundles,
     liveBundleCounter: state => state.bundleCounter,
-    liveExperiment: state => state.experimentCNRL,
+    liveExperimentStats: state => state.experimentStatus,
     liveExperimentList: state => state.experimentList,
     livemapExperimentKbundles: state => state.mapExperimentKbundles,
     liveKentities: state => state.activeKentities,
@@ -114,9 +114,13 @@ export default new Vuex.Store({
       Vue.set(state.bundle.time, 'startperiod', inVerified)
     },
     setLiveBundleNav: (state, inVerified) => {
-      // inVerified.time.realtime = state.bundle.time.realtime
-      // state.bundle = Vue.set(state.bundle, 'time', inVerified.time)
-      state.bundle.time = inVerified.time
+      // reform kbinput object
+      let reformKBbundle = {}
+      reformKBbundle = state.bundle
+      inVerified.time.realtime = state.bundle.time.realtime
+      reformKBbundle.time = inVerified.time
+      // Vue.set(state.bundle, 'time', inVerified.time)
+      state.bundle = reformKBbundle
     },
     setSciCompute: (state, inVerified) => {
       let sciCompute = {}
@@ -131,10 +135,6 @@ export default new Vuex.Store({
       state.startBundles = inVerified
     },
     setStartKBundlesItem: (state, inVerified) => {
-      console.log('set new start k bundle')
-      console.log(inVerified)
-      console.log('also need to setup control panel')
-      console.log(state.computeKidStatus)
       state.startBundles.push(inVerified)
       let openStatus = {active: false, text: 'Compute-in-progress', update: '---', seen: false}
       Vue.set(state.computeKidStatus, inVerified.kbid, openStatus)
@@ -180,86 +180,124 @@ export default new Vuex.Store({
         }
       }
     },
-    setExperimentCNRL: (state, inVerified) => {
+    setExperimentStatus: (state, inVerified) => {
+      let newData = inVerified.dashKBlist
       if (inVerified.view === true) {
         let kel = {}
         kel.status = true
-        kel.dashKBlist = inVerified.dashKBlist
+        // kel.dashKBlist = newData
         kel.contract = inVerified.contract
         kel.cnrl = inVerified.cnrl
         let objectProp = inVerified.cnrl
-        Vue.set(state.experimentCNRL, objectProp, kel)
-        // take Kbundles list and prepare for display
-        /* for (let kel of state.experimentList) {
-          if (inVerified.cnrl === kel.cnrl) {
-            kel.status = true
-            kel.dashKBlist = inVerified.dashKBlist
-            let objectProp = inVerified.cnrl
-            Vue.set(state.experimentCNRL, objectProp, kel)
-          }
-        } */
+        // Vue.set(state.experimentStatus, objectProp, kel)
+        Vue.set(state.experimentStatus[objectProp], 'dashKBlist', newData)
+        Vue.set(state.experimentStatus[objectProp], 'status', true)
+        console.log('experiment status uptated')
+        console.log(state.experimentStatus)
       }
     },
-    setExperimentCNRLc: (state, inVerified) => {
+    setExperimentStatusc: (state, inVerified) => {
       if (inVerified.view === false) {
         let updateExpState = {}
         updateExpState.cnrl = inVerified.cnrl
-        updateExpState.contract = {}
+        updateExpState.contract = inVerified.contract
         updateExpState.status = false
         updateExpState.dashKBlist = inVerified.dashKBlist
         let objectPropC = inVerified.cnrl
-        Vue.set(state.experimentCNRL, objectPropC, updateExpState)
+        Vue.set(state.experimentStatus, objectPropC, updateExpState)
       }
     },
     setExperimentList: (state, inVerified) => {
       state.experimentList = inVerified
+      for (let exl of state.experimentList) {
+        let experBundle = {}
+        experBundle.cnrl = exl.prime.cnrl
+        experBundle.status = false
+        experBundle.contract = exl
+        experBundle.dashKBlist = []
+        let objectPropC = exl.prime.cnrl
+        Vue.set(state.experimentStatus, objectPropC, experBundle)
+      }
+      state.activeKentities = {}
+      for (let budi of state.experimentList) {
+        let objectPropE = budi.prime.cnrl
+        Vue.set(state.activeKentities, objectPropE, [])
+        for (let expCNRL of state.mapExperimentKbundles) {
+          if (budi.prime.cnrl === expCNRL.experimentCNRL) {
+            let objectProp = budi.prime.cnrl
+            let objectValue = expCNRL.kbid
+            state.activeKentities[objectProp].push(objectValue)
+          }
+          // setup progress message holder object
+          let progressSet = {}
+          progressSet.active = false
+          progressSet.cnrl = objectPropE
+          progressSet.text = 'Visulisation in Progress'
+          Vue.set(state.experimentProgressStatus, objectPropE, progressSet)
+        }
+      }
     },
     setMappedExpKbundles: (state, inVerified) => {
       state.mapExperimentKbundles = inVerified
     },
     setMappedExpKbundlesItem: (state, inVerified) => {
+      console.log('set mapping iteam')
       state.mapExperimentKbundles.push(inVerified)
+      console.log(state.mapExperimentKbundles)
     },
-    filterKbundles: (state) => {
-      state.activeKentities = {}
-      for (let budi of state.experimentList) {
-        let objectPropE = budi.cnrl
-        Vue.set(state.activeKentities, objectPropE, [])
-        for (let expCNRL of state.mapExperimentKbundles) {
-          if (budi.cnrl === expCNRL.experimentCNRL) {
-            let objectProp = budi.cnrl
-            let objectValue = expCNRL.kbid
-            state.activeKentities[objectProp].push(objectValue)
-          }
-        }
-      }
-    },
-    updateChartOptions: (state, inVerified) => {
-      let listKBs = state.experimentCNRL[inVerified.expCNRL]
-      let indexK = 0
-      for (let kb of listKBs.dashKBlist) {
-        Vue.set(state.experimentCNRL[inVerified.expCNRL].dashKBlist[indexK], 'liveOptions', kb.syncOptions)
-        indexK++
-      }
-      // console.log('sate at end')
-      // console.log(state.experimentCNRL[inVerified.expCNRL])
-    },
-    removeExpDashMap: (state, inVerified) => {
+    removeMappedExpKbundlesItem: (state, inVerified) => {
       // loop over maplist and remove
+      console.log('remove dashmap')
+      /* console.log(inVerified)
       let updatedEDmap = []
       for (let med of state.mapExperimentKbundles) {
+        console.log(med)
         if (med.kbid !== inVerified) {
           updatedEDmap.push(med)
         }
       }
       state.mapExperimentKbundles = updatedEDmap
+      console.log('update map ex bundes')
+      console.log(state.mapExperimentKbundles) */
     },
-    setExperimentStatus: (state, inVerified) => {
-      console.log('st rpogreee sss')
+    setKentitiesItem: (state, inVerified) => {
+      console.log('udpate kentieis item in real time')
       console.log(inVerified)
+      let objectProp = inVerified.experimentCNRL
+      let objectValue = inVerified.kbid
+      // Vue.set(estate.activeKentities, objectProp, objectValue)
+      state.activeKentities[objectProp].push(objectValue)
+    },
+    removeKentitiesItem: (state, inVerified) => {
+      let newKIBlist = []
+      let objectProp = inVerified.experimentCNRL
+      // let objectValue = inVerified.kbid
+      // need to loop over exisitng and remove and push new list
+      for (let kb of state.activeKentities[objectProp]) {
+        if (kb !== inVerified.kbid) {
+          newKIBlist.push(kb)
+        }
+      }
+      // state.activeKentities[objectProp] = newKIBlist
+      console.log('updated live Kentieis')
+      console.log(state.activeKentities)
+    },
+    updateChartOptions: (state, inVerified) => {
+      let listKBs = state.experimentStatus[inVerified.expCNRL]
+      let indexK = 0
+      for (let kb of listKBs.dashKBlist) {
+        Vue.set(state.experimentStatus[inVerified.expCNRL].dashKBlist[indexK], 'liveOptions', kb.syncOptions)
+        indexK++
+      }
+      // console.log('sate at end')
+      // console.log(state.experimentStatus[inVerified.expCNRL])
+    },
+    startExperimentProgressStatus: (state, inVerified) => {
       Vue.set(state.experimentProgressStatus, inVerified.cnrl, inVerified)
-      console.log('set progres status')
-      console.log(state.experimentProgressStatus)
+    },
+    ExperimentProgressStatusFalse: (state, inVerified) => {
+      let setFalseCNRL = inVerified.cnrl
+      Vue.set(state.experimentProgressStatus[setFalseCNRL], 'active', false)
     }
   },
   actions: {
@@ -295,15 +333,23 @@ export default new Vuex.Store({
     },
     actionUpdateExperiment: (context, update) => {
     // update settings to show at startup per bundle item
-      context.commit('setExperimentCNRL', update)
+      context.commit('setExperimentStatus', update)
     },
     actionUpdateExperimentC: (context, update) => {
     // update settings to show at startup per bundle item
-      context.commit('setExperimentCNRLc', update)
+      context.commit('setExperimentStatusc', update)
     },
     actionExperimentList: (context, update) => {
     // update settings to show at startup per bundle item
       context.commit('setExperimentList', update)
+    },
+    actionExperimentProgressStatus: (context, update) => {
+    // update settings to show at startup per bundle item
+      context.commit('startExperimentProgressStatus', update)
+    },
+    actionExperimentProgressStatusFalse: (context, update) => {
+    // update settings to show at startup per bundle item
+      context.commit('ExperimentProgressStatusFalse', update)
     },
     actionExperimentKBundles: (context, update) => {
     // update peers ExerperimentCNRLs to KBundles
@@ -313,9 +359,17 @@ export default new Vuex.Store({
     // update peers ExerperimentCNRLs to KBundles
       context.commit('setMappedExpKbundlesItem', update)
     },
-    actionFilterKBundles: (context, update) => {
+    actionRemoveExpDashMap: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL
-      context.commit('filterKbundles', update)
+      context.commit('removeMappedExpKbundlesItem', update)
+    },
+    actionUpdateKentitiesByKID: (context, update) => {
+    // update peers ExerperimentCNRLs to KBundles
+      context.commit('setKentitiesItem', update)
+    },
+    actionRemoveKentitiesByKID: (context, update) => {
+    // update peers ExerperimentCNRLs to KBundles
+      context.commit('removeKentitiesItem', update)
     },
     actionComputeStatus: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL
@@ -352,14 +406,6 @@ export default new Vuex.Store({
     actionUpdateChartOptions: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL
       context.commit('updateChartOptions', update)
-    },
-    actionRemoveExpDashMap: (context, update) => {
-    // filter a list of Kentity bundles given the Experiment CNRL
-      context.commit('removeExpDashMap', update)
-    },
-    actionExperimentStatus: (context, update) => {
-    // filter a list of Kentity bundles given the Experiment CNRL
-      context.commit('setExperimentStatus', update)
     }
   },
   modules,

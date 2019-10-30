@@ -45,17 +45,13 @@ export default {
       // setup return vis Object
       let visObjectVUE = {}
       if (aVis === 'vis-sc-1') {
-        console.log('chartjs')
         if (entityGetter.chartMessage === 'computation in progress') {
-          console.log('chartjs--ongoing computation or obseration data')
         } else if (entityGetter.chartMessage === 'vis-report') {
-          console.log('prepare report for HR recovery')
           let recoveryStart = {}
           recoveryStart.seenStatus = true
           recoveryStart.hrcdata = entityGetter.hrcReport
           this.recoveryData = recoveryStart
         } else {
-          console.log('chartjs-- uptodate finised')
           this.chartmessage.text = 'computation up-to-date'
           this.options2 = entityGetter.liveChartOptions
           this.datacollection2 = entityGetter.chartPackage
@@ -72,10 +68,8 @@ export default {
           visObjectVUE.liveDataCollection = this.datacollection2
         }
       } else if (this.activevis === 'vis-sc-2') {
-        console.log('tablejs')
         // localthis.tableHTML = entityGetter.table
       } else if (this.activevis === 'vis-sc-3') {
-        console.log('simjs')
         // localthis.simulationHeart = entityGetter.heart
         // localthis.simulationMovement = entityGetter.heart
         // localthis.simulationTime = entityGetter.time
@@ -141,6 +135,11 @@ export default {
       // need up date startStatus Object
       console.log('remove')
       this.safeMixin.startSettings('remove', bund)
+    },
+    removeStartDashboard (bund) {
+      // need up date startStatus Object
+      console.log('removedash')
+      this.safeMixin.startSettings('removedash', bund)
     },
     async SaveexperimentKbundles (mapEKb) {
       let saveStatus = await this.safeMixin.experimentKbundles('save', mapEKb)

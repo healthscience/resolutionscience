@@ -77,10 +77,10 @@
     <div id="k-toolkit">
       <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
       <div id="add-experiment">
-        Experiment dashboard:
-        <select v-model="liveexerimentList" @change="addToExperiment($event)">
-          <option class="science-compute" v-for="expi in liveexerimentList" v-bind:value="expi.cnrl">
-            {{ expi.contract.prime.text }}
+        Dashboard:
+        <select v-model="liveexerimentList" class="button-expadd" href="" id="add-exp-button" @change="addToExperiment($event)">
+          <option class="science-compute" v-for="expi in liveexerimentList" v-bind:value="expi.prime.cnrl">
+            {{ expi.prime.text }}
           </option>
         </select>
         <div id="add-button">
@@ -92,6 +92,9 @@
         <div v-if="timeSelect" id="time-select" >
           <div id="start-point" class="context-selecttime">Start: {{ kContext.analysisStart }}</div>
           <div id="end-point" class="context-selecttime">End: {{ kContext.analysisEnd }}</div>
+        </div>
+        <div id="save-component">
+            <button @click.prevent="startStatusSave()">SAVE</button>
         </div>
       </div>
       <multipane class="custom-resizer" layout="vertical">
@@ -280,12 +283,12 @@
           liveBundle.kbid = uuidBundle
           this.bundleuuid = uuidBundle
           // this.saveLearnHistory(liveBundle)
+          this.$store.dispatch('actionLiveBundle', liveBundle)
+          // this.$store.dispatch('actionLiveBundleNav', liveBundle)
           this.$store.dispatch('actionStartKBundlesItem', liveBundle)
           // set message to UI IN-progress
           this.entityPrepareStatus.active = true
           let visDataBack = await this.learnStart(liveBundle)
-          console.log('visDataBack')
-          console.log(visDataBack)
           this.entityPrepareStatus.active = false
           this.liveDataCollection = visDataBack.liveDataCollection
           this.liveOptions = visDataBack.liveOptions
@@ -355,7 +358,6 @@
           statusCheck.status = false
           this.feedback.visulisation = true
         }
-        console.log(statusCheck)
         return statusCheck
       },
       setTimeBundle () {
@@ -443,9 +445,6 @@
         // pass on to learn safeFlow
       },
       async prepareMultiLearn (liveKB, timeList) {
-        console.log('prepare mulit')
-        console.log(liveKB)
-        console.log(timeList)
         let updateTbundle = {}
         let timeAsk = []
         this.buildTimeBundles = []
@@ -646,16 +645,6 @@
         this.liveData.categoryLive = result
         return true
       },
-      async saveMappingExpKB (expMapIN) {
-        let mappingEKB = {}
-        mappingEKB.experimentCNRL = expMapIN
-        mappingEKB.kbid = this.bundleuuid
-        this.$store.dispatch('actionExperimentKBundlesItem', mappingEKB)
-        let saveEK = await this.SaveexperimentKbundles(mappingEKB)
-        if (saveEK.save === 'expkbundle') {
-          this.saveStatusEK = {'active': true, 'text': 'saved'}
-        }
-      },
       setNaveTime () {
         this.liveNavTime = this.timeNav('datatime-index')
       },
@@ -665,11 +654,23 @@
       experADD (expA) {
         // need to keep permanent store of experiments to Ecomponents linked (save, delete, update also)
         const localthis = this
+        console.log(this.selectedExperiment)
         this.saveMappingExpKB(this.selectedExperiment)
         // this.$emit('experimentMap', this.selectedExperiment)
         setTimeout(function () {
           localthis.saveStatusEK.active = false
         }, 3000) // hide the message after 3 seconds
+      },
+      async saveMappingExpKB (expMapIN) {
+        let mappingEKB = {}
+        mappingEKB.experimentCNRL = expMapIN
+        mappingEKB.kbid = this.bundleuuid
+        this.$store.dispatch('actionExperimentKBundlesItem', mappingEKB)
+        this.$store.dispatch('actionUpdateKentitiesByKID', mappingEKB)
+        let saveEK = await this.SaveexperimentKbundles(mappingEKB)
+        if (saveEK.save === 'expkbundle') {
+          this.saveStatusEK = {'active': true, 'text': 'saved'}
+        }
       },
       viewHistoryLive (ch) {
         this.computehist = ch
@@ -678,6 +679,16 @@
         let scienceStart = {}
         scienceStart.formSeen = true
         this.contributeData = scienceStart
+      },
+      startStatusSave (se) {
+        // change start status and save or delete settings
+        this.$store.dispatch('actionUpdateBundleItem', this.activeEntity)
+        let updateBundle = this.$store.getters.startBundlesList
+        for (let iB of updateBundle) {
+          if (iB.kbid === this.activeEntity) {
+            this.saveStartBundle(iB)
+          }
+        }
       }
     }
   }
@@ -760,7 +771,7 @@
   padding-right: 8px;
 }
 
-#add-experiment,#time-select {
+#add-experiment,#time-select,#save-component {
   display: inline-block;
 }
 

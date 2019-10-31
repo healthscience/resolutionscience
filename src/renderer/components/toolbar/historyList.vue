@@ -265,10 +265,10 @@
         removeHolder.experimentCNRL = removeID.prime.cnrl
         removeHolder.kbid = two
         // need to dispatch to remove and datastore
-        this.$store.dispatch('actionRemoveExpDashMap', two)
+        this.$store.dispatch('actionRemoveExpDashMap', removeHolder)
         this.$store.dispatch('actionRemoveKentitiesByKID', removeHolder)
         // and remove from datastore
-        // this.removeStartDashboard(removeHolder)
+        this.removeStartDashboard(removeHolder)
       },
       parseTimeSaved () {
         for (let tss of this.historyData) {

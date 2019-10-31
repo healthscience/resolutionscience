@@ -246,23 +246,19 @@ export default new Vuex.Store({
       console.log(state.mapExperimentKbundles)
     },
     removeMappedExpKbundlesItem: (state, inVerified) => {
-      // loop over maplist and remove
-      console.log('remove dashmap')
-      /* console.log(inVerified)
-      let updatedEDmap = []
-      for (let med of state.mapExperimentKbundles) {
-        console.log(med)
-        if (med.kbid !== inVerified) {
-          updatedEDmap.push(med)
+      const items = state.mapExperimentKbundles
+      const manFilter = (e, tItem) => {
+        let filterMat = null
+        if (e.kbid === tItem.kbid && e.experimentCNRL === tItem.experimentCNRL) {
+          filterMat = false
+        } else {
+          filterMat = true
         }
+        return filterMat
       }
-      state.mapExperimentKbundles = updatedEDmap
-      console.log('update map ex bundes')
-      console.log(state.mapExperimentKbundles) */
+      state.mapExperimentKbundles = items.filter(n => manFilter(n, inVerified))
     },
     setKentitiesItem: (state, inVerified) => {
-      console.log('udpate kentieis item in real time')
-      console.log(inVerified)
       let objectProp = inVerified.experimentCNRL
       let objectValue = inVerified.kbid
       // Vue.set(estate.activeKentities, objectProp, objectValue)
@@ -271,16 +267,13 @@ export default new Vuex.Store({
     removeKentitiesItem: (state, inVerified) => {
       let newKIBlist = []
       let objectProp = inVerified.experimentCNRL
-      // let objectValue = inVerified.kbid
       // need to loop over exisitng and remove and push new list
       for (let kb of state.activeKentities[objectProp]) {
         if (kb !== inVerified.kbid) {
           newKIBlist.push(kb)
         }
       }
-      // state.activeKentities[objectProp] = newKIBlist
-      console.log('updated live Kentieis')
-      console.log(state.activeKentities)
+      state.activeKentities[objectProp] = newKIBlist
     },
     updateChartOptions: (state, inVerified) => {
       let listKBs = state.experimentStatus[inVerified.expCNRL]

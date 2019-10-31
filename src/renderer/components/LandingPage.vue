@@ -16,7 +16,7 @@
       <div class="right-side">
         <div class="doc">
           <div class="title">Peer to Peer Science with Rigour</div>
-          <p>version v0.031</p>
+          <p>version v0.032</p>
           <br><br>
           <div id="network-status">
             Status: Peer Autonomous - Network: NOT CONNECTED

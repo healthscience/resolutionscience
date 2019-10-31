@@ -336,27 +336,42 @@
         this.$emit('viewHistory', hist)
       },
       updateKBcontext (kbl) {
-        // console.log('update the open knowledge')
-        // console.log(kbl)
+        console.log('update the open knowledge')
+        console.log(kbl)
         // set device
         let keepDevices = []
-        let updateDevices = []
         // remove or update status of existing device
         for (let dvl of this.devices) {
-          if (dvl.device_mac !== kbl.devices[0].device_mac) {
-            keepDevices.push(dvl)
+          for (let adev of kbl.devices) {
+            if (dvl.device_mac !== adev.device_mac) {
+              dvl.active = false
+              keepDevices.push(dvl)
+            } else {
+              dvl.active = true
+              keepDevices.push(dvl)
+            }
           }
         }
-        updateDevices = keepDevices
-        // console.log('reset')
-        // console.log(kbl.devices[0])
-        updateDevices.push(kbl.devices[0])
-        this.$store.dispatch('actionDeviceUpdateOK', updateDevices)
-        // console.log('ok devcies')
-        // console.log(this.devices)
+        this.$store.dispatch('actionDeviceUpdateOK', keepDevices)
         // updated linked datatypes to this device
-        this.datatypes = []
-        this.dataTypeDevice(kbl.devices[0])
+        this.datatypes = kbl.datatypes
+        // set the timeperiod
+        let timeOptions = this.timeNav('time-index')
+        let updatedTimeSeg = []
+        for (let timo of timeOptions) {
+          for (let itim of kbl.time.timeseg) {
+            if (timo.text !== itim) {
+              timo.active = false
+              updatedTimeSeg.push(timo)
+            } else {
+              timo.active = true
+              updatedTimeSeg.push(timo)
+            }
+          }
+        }
+        this.timeSeg = updatedTimeSeg
+        // set resolution
+        this.resolution[0].active = true
       }
     }
   }

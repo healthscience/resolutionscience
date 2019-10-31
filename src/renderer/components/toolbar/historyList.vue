@@ -302,6 +302,7 @@
   background-color: #d7e6f5;
   border-bottom: 2px dotted #6F6B63;
   margin: 4px;
+  font-weight: normal;
 }
 
 .live-item {

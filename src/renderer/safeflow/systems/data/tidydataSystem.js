@@ -34,36 +34,65 @@ util.inherits(TidyDataSystem, events.EventEmitter)
 */
 TidyDataSystem.prototype.tidyRawData = function (bundleIN, dataRaw, time) {
   // first check if primary data source or derived (if derived dt source will be tidy on compute cycle)
+  console.log('start tidy')
+  console.log(bundleIN)
+  console.log(dataRaw)
+  console.log(time)
   let tidyHolder = {}
   // loop over devices dts and tidy as needed
   tidyHolder = {}
   let tidyBack = []
   let dInfo = []
-  for (let dev of bundleIN.devices) {
-    tidyHolder[dev] = []
-    dInfo = bundleIN.apiInfo[dev].tidyList
-    if (dInfo.length !== 0) {
-      // loop over per time segment
-      for (let ts of bundleIN.timeseg) {
-        console.log(ts)
-        let dtTidy = dInfo
-        let rawDataarray = dataRaw[dev]
-        let dtMatch = []
-        if (bundleIN.primary !== 'derived') {
-          dtMatch = bundleIN.dtAsked
-          tidyBack = this.tidyFilter(dtTidy, dtMatch, 'day', rawDataarray)
+  if (bundleIN.computeflow !== true) {
+    for (let dev of bundleIN.devices) {
+      tidyHolder[dev] = []
+      if (bundleIN.apiInfo[dev].sourceDTs[0].primary !== 'derived') {
+        console.log('primary data type first')
+        dInfo = bundleIN.apiInfo[dev].tidyList
+        if (dInfo.length !== 0) {
+          // loop over per time segment
+          for (let ts of bundleIN.timeseg) {
+            console.log(ts)
+            let dtTidy = dInfo
+            let rawDataarray = dataRaw[dev]
+            let dtMatch = []
+            dtMatch = bundleIN.apiInfo[dev].datatypes
+            tidyBack = this.tidyFilter(dtTidy, dtMatch, 'day', rawDataarray)
+            tidyHolder[dev] = tidyBack
+          }
         } else {
-          let rawDataarrayb = dataRaw[time][dev]
-          dtMatch = bundleIN.apiInfo[dev].sourceDTs
-          tidyBack = this.tidyFilterRemove(dtTidy, dtMatch, 'day', rawDataarrayb)
+          console.log('derived')
+          tidyHolder = dataRaw
         }
-        tidyHolder[dev] = tidyBack
+      } else {
+        console.log('NOtidy required')
+        tidyHolder = dataRaw
       }
-    } else {
-      // console.log('NOtidy required')
-      tidyHolder = dataRaw
+    }
+  } else {
+    console.log('flow coming form compute cycle')
+    for (let dev of bundleIN.devices) {
+      tidyHolder[dev] = []
+      if (bundleIN.apiInfo[dev].sourceDTs[0].primary === 'derived') {
+        console.log('primary data type first')
+        dInfo = bundleIN.apiInfo[dev].tidyList
+        if (dInfo.length !== 0) {
+        // loop over per time segment
+          for (let ts of bundleIN.timeseg) {
+            console.log(ts)
+            let dtTidy = dInfo
+            let dtMatch = []
+            let rawDataarrayc = dataRaw[dev]
+            dtMatch = bundleIN.apiInfo[dev].sourceDTs
+            tidyBack = this.tidyFilterRemove(dtTidy, dtMatch, 'day', rawDataarrayc)
+          }
+          tidyHolder[dev] = tidyBack
+        }
+      }
     }
   }
+  console.log('tidy complte')
+  console.log(tidyHolder)
   return tidyHolder
 }
 
@@ -74,6 +103,11 @@ TidyDataSystem.prototype.tidyRawData = function (bundleIN, dataRaw, time) {
 */
 TidyDataSystem.prototype.tidyFilter = function (tidyInfo, dtList, ts, dataRaw) {
   // build object structureReturn
+  console.log('tidy filter')
+  console.log(tidyInfo)
+  console.log(dtList)
+  console.log(ts)
+  console.log(dataRaw)
   let tidyHolderF = {}
   const manFilter = (e, tItem) => {
     let filterMat = null
@@ -93,8 +127,8 @@ TidyDataSystem.prototype.tidyFilter = function (tidyInfo, dtList, ts, dataRaw) {
   }
   for (let dttI of tidyInfo) {
     // loop over rawData until the start date matchtes
-    // console.log('tidyIfo')
-    // console.log(dttI)
+    console.log('tidyIfo')
+    console.log(dttI)
     for (let dtI of dtList) {
       // console.log(dtI)
       if (dataRaw[dtI.cnrl]) {
@@ -120,6 +154,11 @@ TidyDataSystem.prototype.tidyFilter = function (tidyInfo, dtList, ts, dataRaw) {
 */
 TidyDataSystem.prototype.tidyFilterRemove = function (tidyInfo, dtList, ts, dataRaw) {
   // build object structureReturn
+  console.log('tridy fileer remove')
+  console.log(tidyInfo)
+  console.log(dtList)
+  console.log(ts)
+  console.log(dataRaw)
   let tidyHolderF = {}
   const manFilter = (e, tItem) => {
     let filterMat = null

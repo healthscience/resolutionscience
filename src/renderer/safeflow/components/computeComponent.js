@@ -50,6 +50,7 @@ ComputeComponent.prototype.filterCompute = async function (timeComponent, apiInf
   } else {
     let systemBundle = {}
     systemBundle.cid = this.EIDinfo.cid
+    // systemBundle.primary = ''
     systemBundle.devices = this.EIDinfo.devices
     systemBundle.time = this.EIDinfo.time
     systemBundle.timeseg = this.EIDinfo.time.timeseg

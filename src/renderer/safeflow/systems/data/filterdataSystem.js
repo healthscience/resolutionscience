@@ -41,7 +41,7 @@ FilterDataSystem.prototype.dtFilterController = function (systemBundle, liveData
     filterHolder[devI] = {}
     // is the filter on derived source(s)?
     let dtSourceR = []
-    if (systemBundle.primary === 'derived') {
+    if (systemBundle.computeflow === true) {
       dtSourceR = systemBundle.apiInfo[devI].sourceapiquery
       filterType = 'derived'
     } else {
@@ -52,7 +52,6 @@ FilterDataSystem.prototype.dtFilterController = function (systemBundle, liveData
       filterHolder[devI][dtItem.cnrl] = {}
       for (let ts of systemBundle.timeseg) {
         console.log(ts)
-        console.log(liveData)
         let sourcerawData = liveData[devI][dtItem.cnrl]['day']
         let filterColumn = this.filterDataType(filterType, dtItem, sourcerawData, time)
         if (filterType === 'primary') {

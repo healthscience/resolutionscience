@@ -90,6 +90,7 @@ DataComponent.prototype.sourceData = async function (apiINFO, timeComponent) {
   this.apiInfoLive = apiINFO
   let systemBundle = {}
   systemBundle.apiInfo = apiINFO
+  systemBundle.computeflow = false
   systemBundle.startperiod = timeComponent.livedate.startperiod
   systemBundle.futureperiod = timeComponent.livedate.futureperiod
   systemBundle.scienceAsked = this.CNRLscience

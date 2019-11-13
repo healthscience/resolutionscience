@@ -57,7 +57,10 @@ AverageSystem.prototype.averageSystemStart = async function (systemBundle) {
   let updateStatus = {}
   // prepare deviceList format
   let devList = this.liveDataSystem.getLiveDevices(systemBundle.devices)
-  systemBundle.primary = 'derived'
+  // is there any categorisation required?
+  console.log('input averg system')
+  console.log(systemBundle)
+  // systemBundle.primary = 'derived'
   systemBundle.devices = devList
   updateStatus = await this.computeControlFlow(systemBundle)
   return updateStatus
@@ -101,7 +104,6 @@ AverageSystem.prototype.computeControlFlow = async function (systemBundle) {
 */
 AverageSystem.prototype.updateComputeControl = async function (timeBundle, dvc, dtl, ts, systemBundle) {
   let liveTime = systemBundle.timeInfo.livedate.startperiod
-  // let liveComputeCNRL = systemBundle.timeInfo.did.cid
   let computeStatus = {}
   if (timeBundle.status === 'update-required' || timeBundle.status === 'on-going') {
     let dtCompute = systemBundle.apiInfo[dvc].datatypes[0].cnrl
@@ -118,6 +120,12 @@ AverageSystem.prototype.updateComputeControl = async function (timeBundle, dvc, 
 *
 */
 AverageSystem.prototype.prepareAvgCompute = async function (computeTimes, device, datatype, ts, systemBundle) {
+  console.log('preapre avg compute')
+  console.log(computeTimes)
+  console.log(device)
+  console.log(datatype)
+  console.log(ts)
+  console.log(systemBundle)
   // computeTimes = [1535846400000, 1535932800000, 1536019200000]
   // let lastItem = computeTimes.slice(-1)[0]
   // computeTimes = []
@@ -132,14 +140,15 @@ AverageSystem.prototype.prepareAvgCompute = async function (computeTimes, device
     formHolder[queryTime][device] = {}
     formHolder[queryTime][device][datatype.cnrl] = {}
     formHolder[queryTime][device][datatype.cnrl][ts] = dataBatch
-    // [systemBundle.startperiod][devI][dtItem.cnrl][ts]
+    console.log(formHolder)
     if (dataBatch.length > 0) {
-      // systemBundle.primary = 'primary'
-      let singleArray = this.liveCategoryData.categorySorter(systemBundle, formHolder, queryTime)
+      systemBundle.computeflow = true
+      let singleArray = this.liveCategoryData.categorySorter(systemBundle, formHolder[queryTime], queryTime)
+      console.log('back from category sorter')
+      console.log(singleArray)
       let tidyData = this.liveTidyData.tidyRawData(systemBundle, singleArray, queryTime)
       let filterDTs = this.liveFilterData.dtFilterController(systemBundle, tidyData, queryTime)
       // let flatArray = this.liveDataSystem.flatFilter()
-      // need to check for categories TODO
       let saveReady = this.avgliveStatistics.averageStatistics(filterDTs)
       let batchSize = dataBatch.length
       // prepare JSON object for POST

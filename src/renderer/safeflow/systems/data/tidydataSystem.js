@@ -34,10 +34,6 @@ util.inherits(TidyDataSystem, events.EventEmitter)
 */
 TidyDataSystem.prototype.tidyRawData = function (bundleIN, dataRaw, time) {
   // first check if primary data source or derived (if derived dt source will be tidy on compute cycle)
-  console.log('start tidy')
-  console.log(bundleIN)
-  console.log(dataRaw)
-  console.log(time)
   let tidyHolder = {}
   // loop over devices dts and tidy as needed
   tidyHolder = {}
@@ -47,7 +43,6 @@ TidyDataSystem.prototype.tidyRawData = function (bundleIN, dataRaw, time) {
     for (let dev of bundleIN.devices) {
       tidyHolder[dev] = []
       if (bundleIN.apiInfo[dev].sourceDTs[0].primary !== 'derived') {
-        console.log('primary data type first')
         dInfo = bundleIN.apiInfo[dev].tidyList
         if (dInfo.length !== 0) {
           // loop over per time segment
@@ -61,20 +56,16 @@ TidyDataSystem.prototype.tidyRawData = function (bundleIN, dataRaw, time) {
             tidyHolder[dev] = tidyBack
           }
         } else {
-          console.log('derived')
           tidyHolder = dataRaw
         }
       } else {
-        console.log('NOtidy required')
         tidyHolder = dataRaw
       }
     }
   } else {
-    console.log('flow coming form compute cycle')
     for (let dev of bundleIN.devices) {
       tidyHolder[dev] = []
       if (bundleIN.apiInfo[dev].sourceDTs[0].primary === 'derived') {
-        console.log('primary data type first')
         dInfo = bundleIN.apiInfo[dev].tidyList
         if (dInfo.length !== 0) {
         // loop over per time segment
@@ -87,12 +78,12 @@ TidyDataSystem.prototype.tidyRawData = function (bundleIN, dataRaw, time) {
             tidyBack = this.tidyFilterRemove(dtTidy, dtMatch, 'day', rawDataarrayc)
           }
           tidyHolder[dev] = tidyBack
+        } else {
+          tidyHolder = dataRaw
         }
       }
     }
   }
-  console.log('tidy complte')
-  console.log(tidyHolder)
   return tidyHolder
 }
 
@@ -103,11 +94,6 @@ TidyDataSystem.prototype.tidyRawData = function (bundleIN, dataRaw, time) {
 */
 TidyDataSystem.prototype.tidyFilter = function (tidyInfo, dtList, ts, dataRaw) {
   // build object structureReturn
-  console.log('tidy filter')
-  console.log(tidyInfo)
-  console.log(dtList)
-  console.log(ts)
-  console.log(dataRaw)
   let tidyHolderF = {}
   const manFilter = (e, tItem) => {
     let filterMat = null
@@ -127,8 +113,6 @@ TidyDataSystem.prototype.tidyFilter = function (tidyInfo, dtList, ts, dataRaw) {
   }
   for (let dttI of tidyInfo) {
     // loop over rawData until the start date matchtes
-    console.log('tidyIfo')
-    console.log(dttI)
     for (let dtI of dtList) {
       // console.log(dtI)
       if (dataRaw[dtI.cnrl]) {
@@ -154,11 +138,6 @@ TidyDataSystem.prototype.tidyFilter = function (tidyInfo, dtList, ts, dataRaw) {
 */
 TidyDataSystem.prototype.tidyFilterRemove = function (tidyInfo, dtList, ts, dataRaw) {
   // build object structureReturn
-  console.log('tridy fileer remove')
-  console.log(tidyInfo)
-  console.log(dtList)
-  console.log(ts)
-  console.log(dataRaw)
   let tidyHolderF = {}
   const manFilter = (e, tItem) => {
     let filterMat = null

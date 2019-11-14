@@ -55,9 +55,7 @@ SumSystem.prototype.verifyComputeWASM = function (wasmFile) {
 */
 SumSystem.prototype.sumSystemStart = async function (systemBundle) {
   let updateStatus = {}
-  // prepare deviceList format
   let devList = this.liveDataSystem.getLiveDevices(systemBundle.devices)
-  systemBundle.primary = 'derived'
   systemBundle.devices = devList
   updateStatus = await this.computeControlFlow(systemBundle)
   return updateStatus
@@ -68,9 +66,9 @@ SumSystem.prototype.sumSystemStart = async function (systemBundle) {
 *
 */
 SumSystem.prototype.computeControlFlow = async function (systemBundle) {
-  let cFlowStatus = {}
   let liveTimeConvert = moment(systemBundle.time.startperiod).valueOf()
   let liveTime = liveTimeConvert / 1000
+  let cFlowStatus = {}
   let timeState = {}
   for (let dvc of systemBundle.devices) {
     // need to loop for datatype and time seg // datatype or source Datatypes that use to compute dt asked for?
@@ -101,7 +99,6 @@ SumSystem.prototype.computeControlFlow = async function (systemBundle) {
 */
 SumSystem.prototype.updateComputeControl = async function (timeBundle, dvc, dtl, ts, systemBundle) {
   let liveTime = systemBundle.timeInfo.livedate.startperiod
-  // let liveComputeCNRL = systemBundle.timeInfo.did.cid
   let computeStatus = {}
   if (timeBundle.status === 'update-required' || timeBundle.status === 'on-going') {
     let dtCompute = systemBundle.apiInfo[dvc].datatypes[0].cnrl
@@ -135,10 +132,9 @@ SumSystem.prototype.prepareSumCompute = async function (computeTimes, device, da
     formHolder[queryTime][device][datatype.cnrl][ts] = dataBatch
     // [systemBundle.startperiod][devI][dtItem.cnrl][ts]
     if (dataBatch.length > 0) {
-      let singleArray = this.liveCategoryData.categorySorter(systemBundle, formHolder, queryTime)
+      systemBundle.computeflow = true
+      let singleArray = this.liveCategoryData.categorySorter(systemBundle, formHolder[queryTime], queryTime)
       let tidyData = this.liveTidyData.tidyRawData(systemBundle, singleArray, queryTime)
-      console.log('SUMDUM DYDDDD')
-      console.log(tidyData)
       let filterDTs = this.liveFilterData.dtFilterController(systemBundle, tidyData, queryTime)
       // let flatArray = this.liveDataSystem.flatFilter()
       // need to check for categories TODO

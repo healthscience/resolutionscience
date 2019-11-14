@@ -78,7 +78,6 @@ DataSystem.prototype.removeStartStatus = async function (bundle) {
 *
 */
 DataSystem.prototype.removeStartDash = async function (bundle) {
-  console.log('stopped  remove dash system')
   // make query to network for context data per devices
   let startStatusresult = await this.liveTestStorage.removeStartDashboardSettings(bundle)
   return startStatusresult
@@ -178,7 +177,6 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle, time) 
     rawHolder[devI] = {}
     // first is the data from the PAST or FUTURE ie simulated?
     if (systemBundle.querytime && systemBundle.querytime.startperiod === 'simulateData') {
-      console.log('simulated data')
       // need whole new system for product future data
       // let futureData = this.liveSimulatedData.assessFuture(this, time)
       // let dayHolder = {}

@@ -1,14 +1,15 @@
 
 # resolutionscience
 
-> An electron-vue project forked to provide a Peer to Peer Graphical Interface
+> An electron-vue project forked as base for DIY HealthScience Toolkit
 
-> The healthscience network is adding 'plugins' charting, simulations to the base funcationality.  See https://github.com/Dsensor/resolutionscience
 
 #### funcationality
-
-> Charting using charts.js
-> Data from healthscience.network cTestNetwork REST API
+> Setup public/private keys
+> Observe data back from wearables to air quality data.
+> Charts, tables and simulations visualisation
+> Data from test datastore and SAFEnetwork (comming soon)
+> Smart dashboards for N=1 experiments
 
 #### Build Setup
 

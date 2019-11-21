@@ -63,11 +63,20 @@ ChartSystem.prototype.structureChartData = function (datatype, cBundle, cData) {
           } else if (datatype.cnrl === 'cnrl-3339949443') {
             datay.push(liveData.SDS_P1)
           } else if (datatype.cnrl === 'cnrl-3339949444') {
-            datay.push(liveData.temperature)
+            // datay.push(liveData.temperature)
+            if (liveData.temperature === undefined) {
+              datay.push(liveData.BME280_temperature)
+            } else {
+              datay.push(liveData.temperature)
+            }
           } else if (datatype.cnrl === 'cnrl-3339949445') {
-            datay.push(liveData.humidity)
+            if (liveData.humidity === undefined) {
+              datay.push(liveData.BME280_humidity)
+            } else {
+              datay.push(liveData.humidity)
+            }
           } else if (datatype.cnrl === 'cnrl-3339949446') {
-            datay.push(liveData['air-pressure'])
+            datay.push(liveData['BME280_pressure'])
           }
         }
       }

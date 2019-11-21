@@ -190,8 +190,9 @@ DataSystem.prototype.datatypeQueryMapping = async function (systemBundle, time) 
           dayHolder.day = sourcerawData
           rawHolder[devI][dtItem.cnrl] = dayHolder
         } else if (dtItem.api === 'luftdatenGet/<publickey>/<token>/<queryTime>/<deviceID>/') {
-          // console.log('air quality data query')
-          let AirsourcerawData = await this.getAirqualityData(devI, time)
+          console.log('air quality data query')
+          console.log(dtItem)
+          let AirsourcerawData = await this.getAirqualityData(devI, time, dtItem.namespace)
           let filterColumnAQ = this.liveFilterData.filterDataTypeSub(dtItem, AirsourcerawData)
           let dayAQHolder = {}
           dayAQHolder.day = filterColumnAQ
@@ -235,9 +236,9 @@ DataSystem.prototype.getRawData = async function (device, startTime) {
 * @method getAirqualityData
 *
 */
-DataSystem.prototype.getAirqualityData = async function (device, startTime) {
+DataSystem.prototype.getAirqualityData = async function (device, startTime, namespace) {
   let endTime = startTime + 86400
-  let statsData = await this.liveTestStorage.getAirQualityData(device, startTime, endTime).catch(function (err) {
+  let statsData = await this.liveTestStorage.getAirQualityData(device, startTime, endTime, namespace).catch(function (err) {
     console.log(err)
   })
   return statsData

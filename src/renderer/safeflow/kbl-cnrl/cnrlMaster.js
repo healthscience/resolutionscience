@@ -590,6 +590,20 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.tableStructure[0] = [{'cnrl': 'cnrl-', 'text': 'publickey', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'datasub', 'text': 'sensordata', 'active': false, 'data': subColumn}]
     dataCNRLbundle.namespace = 'http://165.227.244.213:8881/'
     dataCNRLbundle.index = []
+  } else if (refIN === 'cnrl-33221112') {
+    // CNRL implementation REST API
+    dataCNRLbundle.type = 'dtpackaging'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-33221112', 'text': 'mongo-RESTAPI', 'active': false }
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.device = 'luftdatendevice/<publickey>/'
+    dataCNRLbundle.devicetableStructure = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-', 'text': 'compref', 'active': false}, {'cnrl': 'cnrl-', 'text': 'datatype', 'active': false}, {'cnrl': 'cnrl-', 'text': 'timeseg', 'active': false}, {'cnrl': 'cnrl-', 'text': 'value', 'active': false}, {'cnrl': 'cnrl-', 'text': 'device_mac', 'active': false}, {'cnrl': 'cnrl-', 'text': 'clean', 'active': false}, {'cnrl': 'cnrl-', 'text': 'tidy', 'active': false}]
+    dataCNRLbundle.apistructure = ['luftdatenGet/<publickey>/<token>/<queryTime>/<deviceID>/']
+    let subColumn = [{'cnrl': 'cnrl-3339949442', 'text': 'SDS_P2', 'active': false}, {'cnrl': 'cnrl-3339949443', 'text': 'SDS_P1', 'active': false}, {'cnrl': 'cnrl-3339949444', 'text': 'BME280_temperature', 'active': false}, {'cnrl': 'cnrl-3339949445', 'text': 'BME280_humidity', 'active': false}, {'cnrl': 'cnrl-3339949446', 'text': 'BME280_pressure', 'active': false}]
+    dataCNRLbundle.tableStructure[0] = [{'cnrl': 'cnrl-', 'text': 'publickey', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'datasub', 'text': 'sensordata', 'active': false, 'data': subColumn}]
+    dataCNRLbundle.namespace = 'http://165.227.244.213:8881/'
+    dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-33221103') {
     // CNRL implementation REST API
     dataCNRLbundle.type = 'dtpackaging'

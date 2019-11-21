@@ -51,6 +51,7 @@ DatadeviceSystem.prototype.getLiveDevices = function (devicesIN) {
 */
 DatadeviceSystem.prototype.systemDevice = async function (dapi) {
   // MAP api to REST library functions for the API
+  console.log(dapi)
   let result
   if (dapi.namespace === 'http://165.227.244.213:8882/' && dapi.device === 'contextdata/<publickey>/') {
     result = await this.liveTestStorage.getDeviceData(dapi.namespace)

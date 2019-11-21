@@ -115,6 +115,7 @@ DTSystem.prototype.mapCategoryDataTypes = function (catDTs, packagingDTs, lDTs, 
 *
 */
 DTSystem.prototype.datatypeCheckAPI = function (packagingDTs, lDTs) {
+  console.log(packagingDTs)
   let apiMatch = []
   let apiKeep = {}
   // given datatypes select find match to the query string
@@ -134,6 +135,7 @@ DTSystem.prototype.datatypeCheckAPI = function (packagingDTs, lDTs) {
         packAPImatch.cnrl = result[0].cnrl
         packAPImatch.column = result[0].text
         packAPImatch.api = packagingDTs.apistructure[tableCount]
+        packAPImatch.namespace = packagingDTs.namespace
         apiMatch.push(packAPImatch)
         if (apiMatch.length === lDTs.length) {
           apiKeep = apiMatch

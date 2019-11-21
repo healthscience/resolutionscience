@@ -53,7 +53,6 @@ TestStorageAPI.prototype.LKNtime = function () {
 *
 */
 TestStorageAPI.prototype.getDeviceData = async function (api) {
-  console.log(api)
   //  nosql query but headng towards a gRPC listener on stream socket
   let jsondata = await axios.get(api + 'contextdata/' + this.tempPubkey + '/' + this.tempToken)
   return jsondata.data
@@ -140,9 +139,8 @@ TestStorageAPI.prototype.getAverageData = async function (queryTime, deviceID, c
 * @method getAirQualityData
 *
 */
-TestStorageAPI.prototype.getAirQualityData = async function (luftdatenID, queryTimeStart, queryTimeEnd) {
-  let jsondata = await axios.get(this.baseAPI + '/luftdatenGet/' + this.tempPubkey + '/' + this.tempToken + '/' + luftdatenID + '/' + queryTimeStart + '/' + queryTimeEnd)
-  // console.log(jsondata)
+TestStorageAPI.prototype.getAirQualityData = async function (luftdatenID, queryTimeStart, queryTimeEnd, namespace) {
+  let jsondata = await axios.get(namespace + 'luftdatenGet/' + this.tempPubkey + '/' + this.tempToken + '/' + luftdatenID + '/' + queryTimeStart + '/' + queryTimeEnd)
   return jsondata.data
 }
 

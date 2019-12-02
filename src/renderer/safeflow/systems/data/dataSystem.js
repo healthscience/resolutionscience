@@ -11,7 +11,7 @@
 */
 
 import CNRLmaster from '../../kbl-cnrl/cnrlMaster.js'
-import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
+import TestStorageAPI from './dataprotocols/safenetwork/index.js'
 import LiveSimulatedDataSystem from './simulateddataSystem.js'
 import FilterDataSystem from './filterdataSystem.js'
 

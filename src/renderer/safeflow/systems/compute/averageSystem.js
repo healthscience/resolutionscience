@@ -10,7 +10,7 @@
 * @version    $Id$
 */
 import TimeUtilities from '../timeUtility.js'
-import TestStorageAPI from '../data/dataprotocols/teststorage/testStorage.js'
+import TestStorageAPI from '../data/dataprotocols/safenetwork/index.js'
 import AvgStatisticsSystem from './wasm/average-statistics.js'
 import DataSystem from '../data/dataSystem.js'
 import TidyDataSystem from '../data/tidydataSystem.js'

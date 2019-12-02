@@ -12,7 +12,7 @@
 
 import CALE from '../../CALE/cale-utility.js'
 import CNRLmaster from '../../kbl-cnrl/cnrlMaster.js'
-import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
+import TestStorageAPI from './dataprotocols/safenetwork/index.js'
 const util = require('util')
 const events = require('events')
 

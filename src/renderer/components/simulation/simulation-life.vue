@@ -34,6 +34,11 @@
     components: {
       heartCanvasSim
     },
+    props: {
+      simData: {
+        type: Object
+      }
+    },
     data: () => ({
       canvas: null,
       ctx: null
@@ -44,11 +49,9 @@
       this.simHeart()
       this.simMovement()
       this.startClock()
+      console.log(this.simData)
     },
     computed: {
-      system: function () {
-        return this.$store.state.system
-      }
     },
     methods: {
       simHeart () {

@@ -52,7 +52,7 @@
         <table-Build :tableData="tablecollection"></table-Build>
       </div>
       <div v-if="visSimview" id="sim-view">
-        <simulation-View></simulation-View>
+        <simulation-View :simData="datacollection"></simulation-View>
       </div>
     </div>
   </div>

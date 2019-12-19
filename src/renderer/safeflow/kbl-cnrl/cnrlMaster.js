@@ -225,7 +225,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.tidyList = []
     dataCNRLbundle.tableStructure = []
     dataCNRLbundle.source = 'cnrl-primary'
-    dataCNRLbundle.categories.push()
+    dataCNRLbundle.categories.push({'cnrl': 'cnrl-8356388727', 'text': 'Sleep', 'active': false})
     dataCNRLbundle.categorycodes.push({})
     dataCNRLbundle.resolution = { 'text': '60 seconds', 'active': false }
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-8856388711'
@@ -897,6 +897,7 @@ CNRLmaster.prototype.subSource = function (refIN) {
     dataCNRLbundle.tidyList = [-1, 0, 255]
     dataCNRLbundle.tableStructure = ['id', 'timestamp', 'bmp', 'etc']
     dataCNRLbundle.mobilesource = 'cnrl-primary'
+    dataCNRLbundle.categories.push({'cnrl': 'cnrl-8356388727', 'text': 'Sleep', 'active': false})
     dataCNRLbundle.categorycodes.push({'column': 'raw_kind', 'coding': [{'212': 'lightsleep', '202': 'deepsleep'}]})
     dataCNRLbundle.categorycodes.push({'column': 'raw_intensity', 'coding': [{'312': 'walking', '302': 'running'}]})
     dataCNRLbundle.prime.push({ 'text': 'bpm', 'active': 'true' })

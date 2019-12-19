@@ -1,6 +1,9 @@
 <template>
   <div id="knowledge-context">
     <div id="context-knowledge-holder">
+      <div id="select-knowledge">
+        <a href="" id="open-knowledge" @click.prevent="openKnowledge(ok)">{{ ok.name }}</a>
+      </div>
       <div id="knowlege-boxes" v-if="ok.active">
         <!-- <div id="context-language">
           <ul>
@@ -48,21 +51,6 @@
             </li>
           </ul>
         </div>
-        <div id="context-science" class="context-box">
-          <header>Computations - </header>
-            <ul>
-              <li >
-                <select v-model="selectedCompute" @change="updateSciDTs(selectedCompute)">
-                <option class="science-compute" v-for="scoption in scoptions" v-bind:value="scoption.cid">
-                  {{ scoption.text }}
-                </option>
-              </select>
-              </li>
-              <li>
-                <a href="" id="liveScience.livingpaperLiving" @click.prevent="livingPaper()">Paper: </a>
-              </li>
-            </ul>
-        </div>
         <div id="context-time" class="context-box">
           <header>Time Period:</header>
             <ul>
@@ -80,18 +68,6 @@
             </ul>
         </div>
       </div>
-      <div id="select-knowledge">
-        <a href="" id="open-knowledge" @click.prevent="openKnowledge(ok)" v-bind:class="{ 'active': ok.active}">{{ ok.name }}</a>
-      </div>
-      <div id="history-box">
-        <div id="history-learn" class="live-kelement2">
-          <div id="history-learn-container">
-            <div id="history-view">
-              <a href="" id="history-button" @click.prevent="viewHistory(hist)" v-bind:class="{ 'active': hist.active}">{{ hist.name }}</a>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
     <div id="clear-data-box"></div>
   </div>
@@ -100,7 +76,7 @@
 <script>
   import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
   import { kBus } from '../../main.js'
-  const shell = require('electron').shell
+  // const shell = require('electron').shell
 
   export default {
     name: 'knowledge-context',
@@ -131,14 +107,8 @@
         }],
         ok:
         {
-          name: 'OPEN KNOWLEDGE',
+          name: 'Open data',
           id: 'learn-status',
-          active: false
-        },
-        hist:
-        {
-          name: 'View compute list',
-          id: 'learn-history',
           active: false
         },
         liveScience: {},
@@ -186,16 +156,15 @@
     methods: {
       setAccess () {
         this.languageContext()
-        this.scienceContext()
         this.timeContext()
       },
       openKnowledge (ok) {
         ok.active = !ok.active
         if (ok.active === true) {
-          ok.name = 'Close Knowledge'
+          ok.name = 'Close'
           // this.$emit('clearKbox')
         } else {
-          ok.name = 'OPEN KNOWLEDGE'
+          ok.name = 'Open data'
         }
       },
       selectKnowledge (k) {
@@ -258,9 +227,10 @@
         const localthis = this
         let sciDTHolder = []
         let cnrlIDholderSci = []
+        let sciDTypes = {}
         // loop over science for this context and display range of datatypes, sub types and match to sensor thus device
         for (let scLiv of this.scoptions) {
-          let sciDTypes = this.cnrlLookup(scLiv.cid)
+          sciDTypes = this.cnrlLookup(scLiv.cid)
           sciDTHolder.push(sciDTypes.tableStructure)
         }
         // extract CNRL ids for science
@@ -269,12 +239,10 @@
             cnrlIDholderSci.push(cnlist.cnrl)
           }
         }
+        // look up categories and display if any
+        this.cdtypes = sciDTypes.categories
         // take the two start points and see what is in common
         // this.compareDataTypes(cnrlIDholderSci, cnrlIDholderDev)
-      },
-      scienceContext () {
-        // set the first science priority on start of RS
-        this.scoptions = this.$store.getters.liveScience
       },
       updateSciDTs (sciIN) {
         this.activeEntity = sciIN
@@ -282,7 +250,7 @@
         let sciDTypesSelect = this.GETcnrlScienceDTs(sciIN)
         sciDTypesSelect.cnrl = sciIN
         this.scidtypes = sciDTypesSelect.datatypes
-        this.cdtypes = sciDTypesSelect.categories
+        // this.cdtypes = sciDTypesSelect.categories
         this.liveScience.livingpaper = sciDTypesSelect.contract.livingpaper
         kBus.$emit('setVScience', sciDTypesSelect.contract)
       },
@@ -321,23 +289,12 @@
         }
       },
       livingPaper () {
-        shell.openExternal(this.liveScience.livingpaper)
+        // shell.openExternal(this.liveScience.livingpaper)
       },
       listenkBus () {
         // console.log(kBus)
       },
-      viewHistory (hist) {
-        hist.active = !hist.active
-        if (hist.active === true) {
-          hist.name = 'Close compute list'
-        } else {
-          hist.name = 'View compute list'
-        }
-        this.$emit('viewHistory', hist)
-      },
       updateKBcontext (kbl) {
-        console.log('update the open knowledge')
-        console.log(kbl)
         // set device
         let keepDevices = []
         // remove or update status of existing device
@@ -379,8 +336,7 @@
 
 <style>
 #knowledge-context {
-  margin-left: 0em;
-  border: 0px solid orange;
+  display: inline;
 }
 
 #context-knowledge-holder {
@@ -399,12 +355,11 @@
 }
 
 #select-knowledge {
-  float: right;
   margin-left: 1em;
 }
 
 #knowlege-boxes {
-  background-color: #dfc8f7;
+  background-color: #E8F0F7;
   margin: 0em;
 }
 
@@ -452,9 +407,8 @@
 
 #open-knowledge {
   display: block;
-  background-color: #eedefa; /* #c4afdb;*/
   height: 40px;
-  width: 200px;
+  width: 120px;
   padding-left: 10px;
   padding-top: 10px;
   border: 0px solid black;
@@ -465,9 +419,4 @@
   color: purple;
 }
 
-#history-box {
-  float: right;
-  border: 0px solid green;
-  margin: 10px;
-}
 </style>

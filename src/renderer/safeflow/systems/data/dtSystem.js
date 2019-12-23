@@ -300,6 +300,8 @@ DTSystem.prototype.convertAPIdatatypeToCNRL = function (dtapiList) {
   let convertDTcnrl = []
   for (let dta of dtapiList.datatypes) {
     let conDT = this.liveCNRL.lookupContract(dta.cnrl)
+    console.log('lookup contract dtystemfrom Devcie side')
+    console.log(conDT)
     let convertDT = this.matchConvert(conDT)
     convertDTcnrl.push(convertDT)
   }

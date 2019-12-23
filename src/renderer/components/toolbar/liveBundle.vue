@@ -37,7 +37,7 @@
           <div class="live-item">{{ liveBundle.resolutionLive }}</div>
           <div v-if="feedback.resolution" class="feedback">---</div>
       </div>
-      <knowledge-Context></knowledge-Context>
+      <knowledge-Context :kContext="liveBundle"></knowledge-Context>
     </div>
   </div>
 </template>
@@ -45,7 +45,6 @@
 <script>
   import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
   import KnowledgeContext from '@/components/toolbar/knowledgeContext'
-  import { kBus } from '../../main.js'
 
   export default {
     name: 'knowledge-live',
@@ -73,27 +72,6 @@
       }
     },
     created () {
-      kBus.$on('setVLanguage', (ckData) => {
-        this.languageStatus(ckData)
-      })
-      kBus.$on('setVDevice', (ckData) => {
-        this.deviceStatus(ckData)
-      })
-      kBus.$on('setVDatatypes', (ckData) => {
-        this.datatypeStatus(ckData)
-      })
-      kBus.$on('setVScience', (ckData) => {
-        this.scienceStatus(ckData)
-      })
-      kBus.$on('setVTime', (ckData) => {
-        this.timeStatus(ckData)
-      })
-      kBus.$on('setVResolution', (ckData) => {
-        this.resolutionStatus(ckData)
-      })
-      kBus.$on('setVDataCategory', (ckData) => {
-        this.categoryStatus(ckData)
-      })
     },
     mounted () {
       let sciStartEmpty = {}

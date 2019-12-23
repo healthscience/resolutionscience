@@ -86,9 +86,6 @@
       experimentList: function () {
         return this.$store.state.experimentList
       },
-      eKBundle222: function () {
-        return this.$store.state.experimentStatus
-      },
       progressMessageIN: function () {
         return this.$store.state.experimentProgressStatus
       }

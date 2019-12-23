@@ -192,12 +192,18 @@
       },
       selectDevice (s) {
         s.active = !s.active
-        kBus.$emit('setVDevice', s)
+        kBus.$emit('setVDevice', s, this.kContext.kbid)
         this.dataTypeDevice(s)
       },
       selectDatatypes (std) {
         std.active = !std.active
-        kBus.$emit('setVDatatypes', std)
+        console.log(std)
+        // are there any categories available for this dt?
+        // look up categories and display if any
+        let categorySet = this.GETcnrlLookup(std.cnrl)
+        console.log(categorySet)
+        this.cdtypes = categorySet.categories
+        kBus.$emit('setVDatatypes', std, this.kContext.kbid)
       },
       selectSciDatatypes (std) {
         std.active = !std.active
@@ -205,7 +211,7 @@
       },
       selectResolution (r) {
         r.active = !r.active
-        kBus.$emit('setVResolution', r)
+        kBus.$emit('setVResolution', r, this.kContext.kbid)
       },
       languageContext () {
         let refContext = 'human'
@@ -217,12 +223,10 @@
         // console.log(devC)
         let devDTHolder = []
         let deviceDTypes = this.GETcnrlDeviceDTs(devC.cnrl)
-        // console.log('deviceDTypes')
-        // console.log(deviceDTypes)
         devDTHolder.push(deviceDTypes)
         this.datatypes = devDTHolder[0].datatypes
       },
-      dataType () {
+      dataTypeCompute () {
         // make call to set start dataType for the device sensors
         const localthis = this
         let sciDTHolder = []
@@ -239,8 +243,6 @@
             cnrlIDholderSci.push(cnlist.cnrl)
           }
         }
-        // look up categories and display if any
-        this.cdtypes = sciDTypes.categories
         // take the two start points and see what is in common
         // this.compareDataTypes(cnrlIDholderSci, cnrlIDholderDev)
       },
@@ -276,6 +278,8 @@
       },
       selectTime (tIN) {
         tIN.active = !tIN.active
+        console.log('select time sart')
+        console.log(tIN)
         let tt = {}
         if (tIN.text === 'SELECT') {
           // display start end endPoint
@@ -283,9 +287,9 @@
           tt.text = tIN.text
           tt.start = this.kContext.analysisStart
           tt.end = this.kContext.analysisEnd
-          kBus.$emit('setVTime', tt)
+          kBus.$emit('setVTime', tt, this.kContext.kbid)
         } else {
-          kBus.$emit('setVTime', tIN)
+          kBus.$emit('setVTime', tIN, this.kContext.kbid)
         }
       },
       livingPaper () {

@@ -199,20 +199,20 @@
       kBus.$on('setVLanguage', (ckData) => {
         this.languageStatus(ckData)
       })
-      kBus.$on('setVDevice', (ckData) => {
-        this.deviceStatus(ckData)
+      kBus.$on('setVDevice', (ckData, kbid) => {
+        this.deviceStatus(ckData, kbid)
       })
-      kBus.$on('setVDatatypes', (ckData) => {
-        this.datatypeStatus(ckData)
+      kBus.$on('setVDatatypes', (ckData, kbid) => {
+        this.datatypeStatus(ckData, kbid)
       })
       kBus.$on('setVScience', (ckData) => {
         this.scienceStatus(ckData)
       })
-      kBus.$on('setVTime', (ckData) => {
-        this.timeStatus(ckData)
+      kBus.$on('setVTime', (ckData, kbid) => {
+        this.timeStatus(ckData, kbid)
       })
-      kBus.$on('setVResolution', (ckData) => {
-        this.resolutionStatus(ckData)
+      kBus.$on('setVResolution', (ckData, kbid) => {
+        this.resolutionStatus(ckData, kbid)
       })
       kBus.$on('setVDataCategory', (ckData) => {
         this.categoryStatus(ckData)
@@ -531,10 +531,10 @@
       languageStatus (lIN) {
         this.liveData.languageLive = lIN
       },
-      deviceStatus (dIN) {
-        this.liveDevice(dIN)
+      deviceStatus (dIN, kbid) {
+        this.liveDevice(dIN, kbid)
       },
-      liveDevice (liveD) {
+      liveDevice (liveD, kbid) {
         let deviceLive = []
         if (liveD.active === true) {
           // which liveKBundle is in active mode?
@@ -543,10 +543,11 @@
           // remove device
           this.removeLiveElement(liveD.device_mac)
         }
-        if (this.secondBundle === false) {
-          this.liveData.devicesLive = deviceLive
-        } else {
-          this.liveData2.devicesLive = deviceLive
+        // loop over match kbid and update
+        for (let ldd of this.liveData) {
+          if (ldd.kbid === kbid) {
+            ldd.devicesLive = deviceLive
+          }
         }
       },
       removeLiveElement (remove) {
@@ -559,15 +560,15 @@
         arrayRemove(array, remove)
         return true
       },
-      datatypeStatus (ldt) {
-        this.liveDataTypes(ldt)
+      datatypeStatus (ldt, kbid) {
+        this.liveDataTypes(ldt, kbid)
       },
-      liveDataTypes (liveDT) {
+      liveDataTypes (liveDT, kbid) {
         if (liveDT.active === true) {
-          if (this.secondBundle === false) {
-            this.liveData.datatypesLive.push(liveDT)
-          } else {
-            this.liveData2.datatypesLive.push(liveDT)
+          for (let ldd of this.liveData) {
+            if (ldd.kbid === kbid) {
+              ldd.datatypesLive.push(liveDT)
+            }
           }
         } else if (liveDT.active === false) {
           // remove device
@@ -592,10 +593,14 @@
       scienceStatus (sIN) {
         this.liveCompute = sIN
       },
-      timeStatus (tIN) {
+      timeStatus (tIN, kbid) {
         if (tIN.active === true) {
-          this.liveData.timeLive = []
-          this.liveData.timeLive.push(tIN.text)
+          for (let tbb of this.liveData) {
+            if (tbb.kbid === kbid) {
+              tbb.timeLive = []
+              tbb.timeLive.push(tIN.text)
+            }
+          }
         } else if (tIN.active === false) {
           // remove device
           this.removeLiveTime(tIN)
@@ -605,9 +610,13 @@
         let removeTimeArr = this.liveData.timeLive.filter(item => item !== trIN.text)
         this.liveData.timeLive = removeTimeArr
       },
-      resolutionStatus (rIN) {
+      resolutionStatus (rIN, kbid) {
         if (rIN.active === true) {
-          this.liveData.resolutionLive = rIN.text
+          for (let rbb of this.liveData) {
+            if (rbb.kbid === kbid) {
+              rbb.resolutionLive = rIN.text
+            }
+          }
         } else if (rIN.active === false) {
           // remove device
           this.liveData.resolutionLive = ''
@@ -694,7 +703,6 @@
         this.liveData.push(prePareBundle)
       },
       viewHistory (hist) {
-        console.log('view history')
         hist.active = !hist.active
         if (hist.active === true) {
           hist.name = 'Close compute list'

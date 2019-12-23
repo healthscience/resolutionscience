@@ -54,7 +54,7 @@
     mounted () {
       let sciStartEmpty = {}
       sciStartEmpty.prime = {'text': 'empty'}
-      this.liveBundle.scienceLive = sciStartEmpty
+      // this.liveBundle.scienceLive = sciStartEmpty
       this.liveBundle.categoryLive.push({'active': false, 'cnrl': 'none', 'text': 'none'}) // categoryEmpty
       this.setNaveTime()
     },

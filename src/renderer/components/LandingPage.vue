@@ -4,11 +4,10 @@
     <main>
       <div class="left-side">
         <span id="welcome">
-          <header>Welcome, the DIY HealthScience toolkit allows you</header>
-          <p>1. learn & particpate in Experiments</p>
-          <p>2. contribute science</p>
-          <p>3. build your own dashboards</p>
-          <header>START by securing an account below:</header>
+          <header>Welcome, Lufdaten DIY Data Science Toolkit</header>
+          <p>1. Oberve air qualty data from your area</p>
+          <p>2. Perform data science and visualisation e.g. charts</p>
+          <p>3. Network with other communites to build evidence</p>
         </span>
         <!-- <system-information></system-information>-->
       </div>
@@ -27,41 +26,6 @@
       </div>
     </main>
     <div id="secure-start">
-      <div id="returning-start">
-        <header>Please select private key to self sign-in:</header>
-        <file-reader @load="text = $event" @removeCreatekey="newKeystartseen = $event"></file-reader>
-        <br />
-        <br />
-        <br />
-        <br />
-      </div>
-      <div v-if="newSetup"  id="firsttime-setup">
-        <a href="#" id="newsetup" @click.prevent="setupNewAccount">Setup a new account</a>
-      </div>
-      <div v-if="newKeystartseen"  id="firsttime-start">
-        Create a new account: start by enter a password:
-        <form>
-          <password
-            v-model="password"
-            :toggle="true"
-            @score="showScore"
-            @feedback="showFeedback"/>
-          <p>
-            <div id="pw-feedback">
-              {{ feedbackM }}
-            </div>
-            <div id="pw-warning">
-              {{ warningM }}
-            </div>
-          </p>
-          <p class="control">
-            <button v-if="keybuttonseen"  @click.prevent="createNewkey" class="button is-primary">Create public address & private key</button>
-          </p>
-        </form>
-      </div>
-      <div id="safe-network">
-        <button @click.prevent="connectSAFE" class="button is-primary">Connect to SAFE (fleming) Test Network</button> coming soon
-      </div>
     </div>
   </div>
 </template>

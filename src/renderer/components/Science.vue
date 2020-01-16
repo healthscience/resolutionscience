@@ -1,7 +1,7 @@
 <template>
   <div id="science">
     <h1>DIY Science & Computations</h1>
-    <knowledge-Live :liveData="liveData" :liveCompute="liveCompute" ></knowledge-Live>
+    <knowledge-Live :liveData="liveData" ></knowledge-Live>
     <!-- <section v-if="newScienceSeen" id="new-science"> -->
     <!--<science-contribute  :contributeData="contributeData"></science-contribute>-->
     <!--<science-list></science-list>-->
@@ -23,18 +23,14 @@ export default {
     return {
       liveFlow: null,
       liveData:
-      [{
-        kbid: '1',
+      {
         devicesLive: [],
         datatypesLive: [],
-        categoryLive: [{'active': false, 'cnrl': 'none', 'text': 'none'}],
+        categoryLive: [],
+        scienceLive: {},
         languageLive: {},
         timeLive: [],
         resolutionLive: ''
-      }],
-      liveCompute:
-      {
-        prime: {'text': 'none'}
       },
       avgStatusCompute: false,
       avgStatusCompMessage: '',

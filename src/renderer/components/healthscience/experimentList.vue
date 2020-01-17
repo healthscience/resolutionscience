@@ -1,7 +1,7 @@
 <template>
   <div id="experiment-view">
-    <ul v-if="experimentData.length !== 0" >
-      <li id="experiment-item" v-for="(exp, index) in experimentData">
+    <ul v-if="KLexperimentData.length !== 0" >
+      <li id="experiment-item" v-for="(exp, index) in KLexperimentData">
         <div id="live-experiment-elements">
           <div id="select-ebox" class="live-expelement">
             <div id="select-ebox-container">
@@ -77,6 +77,9 @@
     created () {
     },
     computed: {
+      KLexperimentData: function () {
+        return this.$store.state.experimentList
+      },
       activeKentities: function () {
         return this.$store.state.activeKentities
       },

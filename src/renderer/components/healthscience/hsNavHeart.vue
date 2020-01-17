@@ -10,7 +10,7 @@
         </div>
       </div>
       <div id="experiments" v-if="exper.active">
-        <experiment-List :experimentData="KLexperimentData" ></experiment-List>
+        <experiment-List></experiment-List>
       </div>
     </section>
   </section>
@@ -18,7 +18,7 @@
 
 <script>
   import oracleView from '@/components/oracle/oracleView.vue'
-  import experimentList from '@/components/toolbar/experimentList.vue'
+  import experimentList from './experimentList.vue'
   import { sBus } from '../../main.js'
 
   export default {
@@ -38,9 +38,6 @@
       }
     },
     computed: {
-      KLexperimentData: function () {
-        return this.$store.state.experimentList
-      }
     },
     mounted () {
     },

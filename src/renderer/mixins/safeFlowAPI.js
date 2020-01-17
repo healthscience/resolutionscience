@@ -8,15 +8,96 @@ export default {
     }
   },
   computed: {
-    system: function () {
-      return this.$store.state.system
-    },
     safeMixin: function () {
-      let liveFlow = new SAFEflow(this.system)
+      let liveFlow = new SAFEflow()
       return liveFlow
     }
   },
   methods: {
+    connectNSnetwork (authType, authBundle) {
+      // offline
+      // connected annon
+      // first time setup self verification
+      // connect self verified
+      if (authType === 'safenetwork') {
+        // implement in network release see DIY repo on github.
+      } else if (authType === 'cloud') {
+        this.startCycle(authBundle)
+      }
+    },
+    startCycle (authIN) {
+      // AUTHORISATION KLB entry or non for network KBLedger
+      let defaultCloudAPI = 'cnrl-33221100'
+      let authStatus = this.checkAuthorisation(defaultCloudAPI, authIN)
+      if (authStatus === true) {
+        // What network experiments are in this peers KBLedger? ie. existing joined or setup?
+        // will provide API CONNECTIONS  ->devices ->Datatypes ->Computes --> visualisation
+        // query peer ledger to extract experiments, computes i.e. KBLedger latest
+        this.startNetworkExpMappedKbundles()
+        // this.startKSetting()
+        // loop over active api and extrac devcies, datatypes
+        // this.deviceContext(dataAPIconnected)
+        // this.datatypeContext()
+        // this.cnrlScienceCompute()
+      }
+    },
+    checkAuthorisation (defaultAPI, authBundle) {
+      let auth = false
+      auth = this.safeMixin.networkAuthorisation(defaultAPI, authBundle)
+      return auth
+    },
+    async startNetworkExpMappedKbundles () {
+      let mappedNetworkExpKbundles = await this.safeMixin.experimentKbundles('retreive')
+      // set via store and then pick up in historyData
+      this.$store.dispatch('actionExperimentList', mappedNetworkExpKbundles)
+      // this.$store.dispatch('actionExperimentKBundles', mappedNetworkExpKbundles)
+      // build the UI status object
+      // this.startExperiments()
+    },
+    async startKSetting () {
+      let startKset = await this.latestKBL()
+      // set via store and then pick up in historyData
+      this.$store.dispatch('actionStartKBundles', startKset)
+      this.startKup()
+    },
+    startKup () {
+      const nowTime = moment()
+      let startPeriodTime = moment.utc(nowTime).startOf('day')
+      let MSstartTime = moment(startPeriodTime).format('x')
+      this.$store.dispatch('actionComputeStatus', MSstartTime)
+    },
+    startExperiments () {
+      let experimentList = this.GETexperimentsList()
+      this.$store.dispatch('actionExperimentList', experimentList)
+    },
+    async deviceContext (dataAPIconnected) {
+      let devicesList = []
+      for (let dapi of dataAPIconnected) {
+        // look up the contract
+        let apiDev = this.GETcnrlLookup(dapi)
+        // make call to set start deviceContext for this pubkey
+        const deviceFlag = 'device'
+        let deviceAPI = await this.GETtoolkitDevices(apiDev, deviceFlag)
+        // need to pair device to API source CNRL
+        deviceAPI.cnrl = dapi
+        devicesList.push(deviceAPI)
+      }
+      // merg arrays
+      let flatd = [].concat(...devicesList)
+      this.devices = flatd
+      this.$store.dispatch('actionDeviceDataAPI', this.devices)
+    },
+    dataTypeContext () {
+      // make call to set start dataType for the device sensors
+      const dataTypeFlag = 'dataType'
+      let datatypeList = this.GETtoolkitDatatypes(dataTypeFlag)
+      this.$store.dispatch('actionSetDataTypes', datatypeList)
+    },
+    cnrlScienceCompute () {
+      // call the CNRL api and get network science active
+      let startScienceCompute = this.GetcnrlScienceStart()
+      this.$store.commit('setCNRLscience', startScienceCompute)
+    },
     async SAFEnetworkAuthorisation () {
       await this.safeMixin.SAFEsendAuthRequest()
     },

@@ -27,7 +27,6 @@
   import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
   import Passwordk from 'vue-password-strength-meter'
   // import { sBus } from '../../main.js'
-  const moment = require('moment')
 
   export default {
     name: 'unlockkey-page',
@@ -78,30 +77,13 @@
           localthis.$store.commit('setBoth', tokenJSON)
           localthis.verifyfeedbackM = 'Data token live'
           localthis.viewPkeybuttons = true
-          localthis.connectAPIS()
+          localthis.connectNSnetwork('cloud', tokenJSON)
         }
         reader.readAsText(file)
 
         // Specify a data directory (optional; defaults to ~/.ethereum)
         // var datadir = process.cwd()
         // this.tokenJSONy = (datadir)
-      },
-      autoloadTextFromFile (ev) {
-        // prompt for Password
-        const localthis = this
-        const file = process.cwd() + '/keystore/healthscience-token.json'
-        const reader = new FileReader()
-        reader.onloadend = function () {
-          const tJSONstring = reader.result
-          const tokenJSON = JSON.parse(tJSONstring)
-          // now use getter to store state
-          localthis.token = tokenJSON
-          localthis.$store.commit('setBoth', tokenJSON)
-          localthis.verifyfeedbackM = 'Data token live'
-          localthis.viewPkeybuttons = true
-          localthis.connectAPIS()
-        }
-        reader.readAsText(file)
       },
       verifyKeypw () {
         // verify key password for token
@@ -111,72 +93,6 @@
       },
       viewtToken () {
         this.tokenTView = 'TestToken = ' + this.token.token
-      },
-      connectAPIS () {
-        // get list of all API cnrl contracts connected
-        // let apiCRNLdefault = 'cnrl-33221100'
-        // look up contract and get API info for default
-        // let defaultAPI = this.GETcnrlLookup(apiCRNLdefault)
-        // what data APIs are connected?
-        let dataAPIconnected = ['cnrl-33221101', 'cnrl-33221102']
-        // query peer ledger to extract experiments, computes i.e. KBLedger latest
-        this.startExpMappedKbundles()
-        this.startKSetting()
-        // loop over active api and extrac devcies, datatypes
-        this.deviceContext(dataAPIconnected)
-        // this.datatypeContext()
-        this.cnrlScienceCompute()
-      },
-      async startExpMappedKbundles () {
-        let mappedExpKbundles = await this.mappedKBLexp()
-        // set via store and then pick up in historyData
-        this.$store.dispatch('actionExperimentKBundles', mappedExpKbundles)
-        // build the UI status object
-        this.startExperiments()
-      },
-      async startKSetting () {
-        let startKset = await this.latestKBL()
-        // set via store and then pick up in historyData
-        this.$store.dispatch('actionStartKBundles', startKset)
-        this.startKup()
-      },
-      startKup () {
-        const nowTime = moment()
-        let startPeriodTime = moment.utc(nowTime).startOf('day')
-        let MSstartTime = moment(startPeriodTime).format('x')
-        this.$store.dispatch('actionComputeStatus', MSstartTime)
-      },
-      startExperiments () {
-        let experimentList = this.GETexperimentsList()
-        this.$store.dispatch('actionExperimentList', experimentList)
-      },
-      async deviceContext (dataAPIconnected) {
-        let devicesList = []
-        for (let dapi of dataAPIconnected) {
-          // look up the contract
-          let apiDev = this.GETcnrlLookup(dapi)
-          // make call to set start deviceContext for this pubkey
-          const deviceFlag = 'device'
-          let deviceAPI = await this.GETtoolkitDevices(apiDev, deviceFlag)
-          // need to pair device to API source CNRL
-          deviceAPI.cnrl = dapi
-          devicesList.push(deviceAPI)
-        }
-        // merg arrays
-        let flatd = [].concat(...devicesList)
-        this.devices = flatd
-        this.$store.dispatch('actionDeviceDataAPI', this.devices)
-      },
-      dataTypeContext () {
-        // make call to set start dataType for the device sensors
-        const dataTypeFlag = 'dataType'
-        let datatypeList = this.GETtoolkitDatatypes(dataTypeFlag)
-        this.$store.dispatch('actionSetDataTypes', datatypeList)
-      },
-      cnrlScienceCompute () {
-        // call the CNRL api and get network science active
-        let startScienceCompute = this.GetcnrlScienceStart()
-        this.$store.commit('setCNRLscience', startScienceCompute)
       }
     }
   }

@@ -191,6 +191,52 @@ CNRLmaster.prototype.timeContracts = function (refIN) {
 }
 
 /**
+*  default API's hardwired into toolkit setup
+* @method defautNetworkContracts
+*
+*/
+CNRLmaster.prototype.defautNetworkContracts = function (refIN) {
+  console.log('CRNL default settings contract')
+  console.log(refIN)
+  let dataCNRLbundle = {}
+  dataCNRLbundle.type = ''
+  dataCNRLbundle.livingpaper = ''
+  dataCNRLbundle.prime = {}
+  dataCNRLbundle.history = {}
+  dataCNRLbundle.resolution = {}
+  dataCNRLbundle.source = []
+  dataCNRLbundle.input = []
+  dataCNRLbundle.tidy = false
+  dataCNRLbundle.tidyList = []
+  dataCNRLbundle.apistructure = []
+  dataCNRLbundle.tableStructure = []
+  dataCNRLbundle.categorycodes = []
+  dataCNRLbundle.dtsource = []
+  dataCNRLbundle.categories = []
+  dataCNRLbundle.wasmhash = ''
+  dataCNRLbundle.wasmfile = ''
+  dataCNRLbundle.namespace = ''
+  dataCNRLbundle.index = []
+  dataCNRLbundle.kentities = []
+  if (refIN === 'cnrl-33221100') {
+    // CNRL implementation REST API
+    dataCNRLbundle.type = 'dtpackaging'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-33221100', 'text': 'test-RESTAPI', 'active': false }
+    dataCNRLbundle.tidy = true
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.apistructure = ['kbledger/<publickey>/', 'experimentKBundles/<publickey>/']
+    dataCNRLbundle.tableStructure[0] = [{'cnrl': 'cnrl-8856388713', 'text': 'previoushash', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-', 'text': 'data', 'active': false}, {'cnrl': 'cnrl-', 'text': 'datatype', 'active': false}, {'cnrl': 'cnrl-', 'text': 'compute', 'active': false}, {'cnrl': 'cnrl-', 'text': 'results', 'active': false}, {'cnrl': 'cnrl-', 'text': 'token', 'active': false}]
+    dataCNRLbundle.tableStructure[1] = [{'cnrl': '', 'text': '', 'active': false}]
+    dataCNRLbundle.namespace = 'http://165.227.244.213:8882'
+    dataCNRLbundle.index = []
+  } else if (refIN === 'cnrl-33221100') {
+    // safenetwork seed node or self auth sign in
+  }
+  return dataCNRLbundle
+}
+
+/**
 *  get contract info.
 * @method lookupContract
 *
@@ -548,18 +594,6 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.wasmhash = '2356388733'
     dataCNRLbundle.wasmfile = 'safe://wasm/cnrl-2356388733'
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388733'
-  } else if (refIN === 'cnrl-33221100') {
-    // CNRL implementation REST API
-    dataCNRLbundle.type = 'dtpackaging'
-    dataCNRLbundle.source = 'cnrl-primary'
-    dataCNRLbundle.prime = { 'cnrl': 'cnrl-33221100', 'text': 'test-RESTAPI', 'active': false }
-    dataCNRLbundle.tidy = true
-    dataCNRLbundle.tidyList = []
-    dataCNRLbundle.apistructure = ['kbledger/<publickey>/', 'experimentKBundles/<publickey>/']
-    dataCNRLbundle.tableStructure[0] = [{'cnrl': 'cnrl-8856388713', 'text': 'previoushash', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-', 'text': 'data', 'active': false}, {'cnrl': 'cnrl-', 'text': 'datatype', 'active': false}, {'cnrl': 'cnrl-', 'text': 'compute', 'active': false}, {'cnrl': 'cnrl-', 'text': 'results', 'active': false}, {'cnrl': 'cnrl-', 'text': 'token', 'active': false}]
-    dataCNRLbundle.tableStructure[1] = [{'cnrl': '', 'text': '', 'active': false}]
-    dataCNRLbundle.namespace = 'http://165.227.244.213:8882/'
-    dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-33221101') {
     // CNRL implementation REST API
     dataCNRLbundle.type = 'dtpackaging'

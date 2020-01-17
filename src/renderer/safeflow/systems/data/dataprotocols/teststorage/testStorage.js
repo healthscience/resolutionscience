@@ -21,7 +21,7 @@ const moment = require('moment')
 var TestStorageAPI = function (setUP) {
   events.EventEmitter.call(this)
   this.liveTimeUtil = new TimeUtilities()
-  this.baseAPI = 'http://165.227.244.213:8882'
+  this.baseAPI = setUP.namespace
   this.liveData = {}
   this.datacollection = []
   this.tempPubkey = setUP.publickey
@@ -278,6 +278,10 @@ TestStorageAPI.prototype.removeStartDashboardSettings = async function (removeID
 *
 */
 TestStorageAPI.prototype.getExpKbundles = async function () {
+  console.log('getEXP start')
+  console.log(this.baseAPI)
+  console.log(this.tempPubkey)
+  console.log(this.tempToken)
   let jsondata = await axios.get(this.baseAPI + '/experimentKBundles/' + this.tempPubkey + '/' + this.tempToken + '/')
   // console.log(jsondata)
   return jsondata.data

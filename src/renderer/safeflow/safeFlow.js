@@ -9,30 +9,31 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-// import SAFEapi from './systems/data/dataprotocols/safenetwork/index.js'
-import DTsystem from './systems/data/dtSystem.js'
-import KBLedger from './kbl-cnrl/kbledger.js'
 import CNRLmaster from './kbl-cnrl/cnrlMaster.js'
+import TestStorageAPI from './systems/data/dataprotocols/teststorage/testStorage.js'
+// import SAFEapi from './systems/data/dataprotocols/safenetwork/index.js'
+/* import DTsystem from './systems/data/dtSystem.js'
+import KBLedger from './kbl-cnrl/kbledger.js'
 import TimeUtilities from './systems/timeUtility.js'
 import DataSystem from './systems/data/dataSystem.js'
 import DatadeviceSystem from './systems/data/datadeviceSystem.js'
-import EntitiesManager from './entitiesManager.js'
+import EntitiesManager from './entitiesManager.js' */
 const util = require('util')
 const events = require('events')
 
-var safeFlow = function (setIN) {
+var safeFlow = function () {
   events.EventEmitter.call(this)
   // this.SAFElive = new SAFEapi()
-  this.defaultStorage = setIN.cnrl
-  this.liveKBL = new KBLedger(setIN)
+  this.defaultStorage = ['165.227.244.213:8888'] // know seed peers
   this.liveCNRL = new CNRLmaster()
+  /* this.liveKBL = new KBLedger()
   this.liveTimeUtil = new TimeUtilities()
   this.liveEManager = new EntitiesManager(this.liveKBL)
-  this.liveDataSystem = new DataSystem(setIN)
   this.livedeviceSystem = new DatadeviceSystem(setIN)
-  this.liveDTsystem = new DTsystem(setIN)
-  this.settings = setIN
-  this.peerliveContext = {}
+  this.liveDTsystem = new DTsystem(setIN) */
+  this.api = {}
+  this.settings = {}
+  this.liveTestStorage = {}
 }
 
 /**
@@ -42,11 +43,44 @@ var safeFlow = function (setIN) {
 util.inherits(safeFlow, events.EventEmitter)
 
 /**
-*  get base time from LKN
-* @method LKNtime
+* Network Authorisation
+* @method networkAuthorisation
 *
 */
-safeFlow.prototype.LKNtime = function () {
+safeFlow.prototype.networkAuthorisation = function (apiCNRL, auth) {
+  this.settings = auth
+  this.api = this.liveCNRL.defautNetworkContracts(apiCNRL)
+  let apiBundle = auth
+  apiBundle.namespace = this.api.namespace
+  this.liveTestStorage = new TestStorageAPI(apiBundle)
+  return true
+}
+
+/**
+* mapping of Network Experiments to Kbundles entities save retrieve
+* @method experimentKbundles
+*
+*/
+safeFlow.prototype.experimentKbundles = async function (flag, nxpAPI) {
+  // first time start of device, datatype context for toolkitContext
+  let startStatusData = []
+  if (flag === 'save') {
+    startStatusData = await this.liveDataSystem.saveExpKbundles(nxpAPI)
+  } else if (flag === 'retreive') {
+    let LKBexpStart = await this.liveTestStorage.getExpKbundles(nxpAPI) // await this.liveKBL.latestKBs()
+    // extract the unique CNRL network experiment ids and look up info.
+    let uniqueNXP = [...new Set(LKBexpStart.map(x => x.experimentCNRL))]
+    // lookup CNRL for full info on the NXP
+    let NXPlist = []
+    for (let inxp of uniqueNXP) {
+      let cnrlNXP = this.liveCNRL.lookupContract(inxp)
+      NXPlist.push(cnrlNXP)
+    }
+    startStatusData = NXPlist
+  }
+  console.log('startStatusData')
+  console.log(startStatusData)
+  return startStatusData
 }
 
 /**
@@ -86,22 +120,6 @@ safeFlow.prototype.startSettings = async function (flag, bundle) {
     startStatusData = await this.liveDataSystem.removeStartStatus(bundle)
   } else if (flag === 'removedash') {
     startStatusData = await this.liveDataSystem.removeStartDash(bundle)
-  }
-  return startStatusData
-}
-
-/**
-* mapping of Experiments to Kbundles entities save retrieve
-* @method experimentKbundles
-*
-*/
-safeFlow.prototype.experimentKbundles = async function (flag, bundle) {
-  // first time start of device, datatype context for toolkitContext
-  let startStatusData = []
-  if (flag === 'save') {
-    startStatusData = await this.liveDataSystem.saveExpKbundles(bundle)
-  } else if (flag === 'retreive') {
-    startStatusData = await this.liveKBL.latestKBs()
   }
   return startStatusData
 }

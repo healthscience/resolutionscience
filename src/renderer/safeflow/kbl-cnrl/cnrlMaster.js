@@ -9,11 +9,13 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
+import TestStorageAPI from '../systems/data/dataprotocols/teststorage/testStorage.js'
 const util = require('util')
 const events = require('events')
 
-var CNRLmaster = function () {
+var CNRLmaster = function (apiSettings) {
   events.EventEmitter.call(this)
+  this.liveTestStorage = new TestStorageAPI(apiSettings)
 }
 
 /**
@@ -21,6 +23,56 @@ var CNRLmaster = function () {
 * @method inherits
 */
 util.inherits(CNRLmaster, events.EventEmitter)
+
+/**
+*  default API's hardwired into toolkit setup
+* @method defautNetworkContracts
+*
+*/
+CNRLmaster.prototype.defautNetworkContracts = async function (refIN) {
+  let dataCNRLbundle = {}
+  let defaultCNRLsetup = await this.liveTestStorage.defautCNRL(refIN)
+  dataCNRLbundle = defaultCNRLsetup[0]
+  return dataCNRLbundle
+  /* dataCNRLbundle.type = ''
+  dataCNRLbundle.livingpaper = ''
+  dataCNRLbundle.prime = {}
+  dataCNRLbundle.history = {}
+  dataCNRLbundle.resolution = {}
+  dataCNRLbundle.source = []
+  dataCNRLbundle.input = []
+  dataCNRLbundle.tidy = false
+  dataCNRLbundle.tidyList = []
+  dataCNRLbundle.lbl = []
+  dataCNRLbundle.apistructure = ''
+  dataCNRLbundle.tableStructure = []
+  dataCNRLbundle.categorycodes = []
+  dataCNRLbundle.dtsource = []
+  dataCNRLbundle.categories = []
+  dataCNRLbundle.wasmhash = ''
+  dataCNRLbundle.wasmfile = ''
+  dataCNRLbundle.namespace = ''
+  dataCNRLbundle.index = []
+  dataCNRLbundle.kentities = []
+  if (refIN === 'cnrl-33221100') {
+    // CNRL implementation REST API
+    dataCNRLbundle.type = 'dtpackaging'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-33221100', 'text': 'test-RESTAPI', 'active': false }
+    dataCNRLbundle.tidy = false
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.deviceList = ['cnrl-33221101', 'cnrl-33221102']
+    dataCNRLbundle.computeList = []
+    dataCNRLbundle.kbl = 'experimentKBundles/<publickey>/'
+    dataCNRLbundle.apistructure = ['experimentKBundles/<publickey>/']
+    dataCNRLbundle.tableStructure[0] = [{'cnrl': 'cnrl-8856388713', 'text': 'previoushash', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-', 'text': 'data', 'active': false}, {'cnrl': 'cnrl-', 'text': 'datatype', 'active': false}, {'cnrl': 'cnrl-', 'text': 'compute', 'active': false}, {'cnrl': 'cnrl-', 'text': 'results', 'active': false}, {'cnrl': 'cnrl-', 'text': 'token', 'active': false}]
+    dataCNRLbundle.tableStructure[1] = [{'cnrl': '', 'text': '', 'active': false}]
+    dataCNRLbundle.namespace = 'http://165.227.244.213:8882'
+    dataCNRLbundle.index = []
+  } else if (refIN === 'cnrl-33221100') {
+    // safenetwork seed node or self auth sign in
+  } */
+}
 
 /**
 *  make API call to indexer of the science live on network/plus local history of peers used science
@@ -188,52 +240,6 @@ CNRLmaster.prototype.timeContracts = function (refIN) {
     }]
   }
   return timeIndex
-}
-
-/**
-*  default API's hardwired into toolkit setup
-* @method defautNetworkContracts
-*
-*/
-CNRLmaster.prototype.defautNetworkContracts = function (refIN) {
-  console.log('CRNL default settings contract')
-  console.log(refIN)
-  let dataCNRLbundle = {}
-  dataCNRLbundle.type = ''
-  dataCNRLbundle.livingpaper = ''
-  dataCNRLbundle.prime = {}
-  dataCNRLbundle.history = {}
-  dataCNRLbundle.resolution = {}
-  dataCNRLbundle.source = []
-  dataCNRLbundle.input = []
-  dataCNRLbundle.tidy = false
-  dataCNRLbundle.tidyList = []
-  dataCNRLbundle.apistructure = []
-  dataCNRLbundle.tableStructure = []
-  dataCNRLbundle.categorycodes = []
-  dataCNRLbundle.dtsource = []
-  dataCNRLbundle.categories = []
-  dataCNRLbundle.wasmhash = ''
-  dataCNRLbundle.wasmfile = ''
-  dataCNRLbundle.namespace = ''
-  dataCNRLbundle.index = []
-  dataCNRLbundle.kentities = []
-  if (refIN === 'cnrl-33221100') {
-    // CNRL implementation REST API
-    dataCNRLbundle.type = 'dtpackaging'
-    dataCNRLbundle.source = 'cnrl-primary'
-    dataCNRLbundle.prime = { 'cnrl': 'cnrl-33221100', 'text': 'test-RESTAPI', 'active': false }
-    dataCNRLbundle.tidy = true
-    dataCNRLbundle.tidyList = []
-    dataCNRLbundle.apistructure = ['kbledger/<publickey>/', 'experimentKBundles/<publickey>/']
-    dataCNRLbundle.tableStructure[0] = [{'cnrl': 'cnrl-8856388713', 'text': 'previoushash', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-', 'text': 'data', 'active': false}, {'cnrl': 'cnrl-', 'text': 'datatype', 'active': false}, {'cnrl': 'cnrl-', 'text': 'compute', 'active': false}, {'cnrl': 'cnrl-', 'text': 'results', 'active': false}, {'cnrl': 'cnrl-', 'text': 'token', 'active': false}]
-    dataCNRLbundle.tableStructure[1] = [{'cnrl': '', 'text': '', 'active': false}]
-    dataCNRLbundle.namespace = 'http://165.227.244.213:8882'
-    dataCNRLbundle.index = []
-  } else if (refIN === 'cnrl-33221100') {
-    // safenetwork seed node or self auth sign in
-  }
-  return dataCNRLbundle
 }
 
 /**
@@ -594,35 +600,35 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.wasmhash = '2356388733'
     dataCNRLbundle.wasmfile = 'safe://wasm/cnrl-2356388733'
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388733'
-  } else if (refIN === 'cnrl-33221101') {
+  } else if (refIN === '33221101') {
     // CNRL implementation REST API
     dataCNRLbundle.type = 'dtpackaging'
     dataCNRLbundle.source = 'cnrl-773355992211'
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-33221101', 'text': 'mongo-RESTAPI', 'active': false }
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
-    dataCNRLbundle.device = 'contextdata/<publickey>/'
+    dataCNRLbundle.device = '/contextdata/'
     dataCNRLbundle.devicetableStructure = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-', 'text': 'compref', 'active': false}, {'cnrl': 'cnrl-', 'text': 'datatype', 'active': false}, {'cnrl': 'cnrl-', 'text': 'timeseg', 'active': false}, {'cnrl': 'cnrl-', 'text': 'value', 'active': false}, {'cnrl': 'cnrl-', 'text': 'device_mac', 'active': false}, {'cnrl': 'cnrl-', 'text': 'clean', 'active': false}, {'cnrl': 'cnrl-', 'text': 'tidy', 'active': false}]
     dataCNRLbundle.apistructure = ['computedata/<publickey>/<token>/<queryTime>/<deviceID>/', 'contexttype/<publickey>/', 'average/<publickey>/<token>/<queryTime>/<deviceID>/', 'sum/<publickey>/<token>/<queryTime>/<deviceID>/']
     dataCNRLbundle.tableStructure[0] = [{'cnrl': '', 'text': '_id', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': '', 'text': 'device_mac', 'active': false}, {'cnrl': 'cnrl-', 'text': 'device_id', 'active': false}, {'cnrl': 'cnrl-', 'text': 'user_id', 'active': false}, {'cnrl': 'cnrl-3356388733', 'text': 'raw_intensity', 'active': false}, {'cnrl': 'cnrl-8856388712', 'text': 'steps', 'active': false}, {'cnrl': 'cnrl-3356388722', 'text': 'raw_kind', 'active': false}, {'cnrl': 'cnrl-8856388711', 'text': 'heart_rate', 'active': false}, {'cnrl': 'cnrl-', 'text': 'publickey', 'active': false}, {'cnrl': '', 'text': 'compref', 'active': false}]
     dataCNRLbundle.tableStructure[1] = [{'cnrl': '', 'text': 'device_mac', 'active': false}, {'cnrl': '', 'text': 'firmware', 'active': false}]
     dataCNRLbundle.tableStructure[2] = [{'cnrl': 'cnrl-8856388724', 'text': 'average-bpm', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856388322', 'text': 'average-steps', 'active': false}]
     dataCNRLbundle.tableStructure[3] = [{'cnrl': 'cnrl-8856388924', 'text': 'sum-bpm', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856389322', 'text': 'sum-steps', 'active': false}]
-    dataCNRLbundle.namespace = 'http://165.227.244.213:8882/'
+    dataCNRLbundle.namespace = 'http://165.227.244.213:8882'
     dataCNRLbundle.index = []
-  } else if (refIN === 'cnrl-33221102') {
+  } else if (refIN === '33221102') {
     // CNRL implementation REST API
     dataCNRLbundle.type = 'dtpackaging'
     dataCNRLbundle.source = 'cnrl-primary'
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-33221102', 'text': 'mongo-RESTAPI', 'active': false }
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
-    dataCNRLbundle.device = 'luftdatendevice/<publickey>/'
+    dataCNRLbundle.device = '/luftdatendevice/'
     dataCNRLbundle.devicetableStructure = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-', 'text': 'compref', 'active': false}, {'cnrl': 'cnrl-', 'text': 'datatype', 'active': false}, {'cnrl': 'cnrl-', 'text': 'timeseg', 'active': false}, {'cnrl': 'cnrl-', 'text': 'value', 'active': false}, {'cnrl': 'cnrl-', 'text': 'device_mac', 'active': false}, {'cnrl': 'cnrl-', 'text': 'clean', 'active': false}, {'cnrl': 'cnrl-', 'text': 'tidy', 'active': false}]
     dataCNRLbundle.apistructure = ['luftdatenGet/<publickey>/<token>/<queryTime>/<deviceID>/']
     let subColumn = [{'cnrl': 'cnrl-3339949442', 'text': 'SDS_P2', 'active': false}, {'cnrl': 'cnrl-3339949443', 'text': 'SDS_P1', 'active': false}, {'cnrl': 'cnrl-3339949444', 'text': 'temperature', 'active': false}, {'cnrl': 'cnrl-3339949445', 'text': 'humidity', 'active': false}, {'cnrl': 'cnrl-3339949446', 'text': 'airpressure', 'active': false}]
     dataCNRLbundle.tableStructure[0] = [{'cnrl': 'cnrl-', 'text': 'publickey', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'datasub', 'text': 'sensordata', 'active': false, 'data': subColumn}]
-    dataCNRLbundle.namespace = 'http://165.227.244.213:8881/'
+    dataCNRLbundle.namespace = 'http://165.227.244.213:8881'
     dataCNRLbundle.index = []
   } else if (refIN === 'cnrl-33221112') {
     // CNRL implementation REST API

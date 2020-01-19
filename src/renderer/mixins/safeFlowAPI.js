@@ -14,7 +14,7 @@ export default {
     }
   },
   methods: {
-    connectNSnetwork (authType, authBundle) {
+    async connectNSnetwork (authType, authBundle) {
       // offline
       // connected annon
       // first time setup self verification
@@ -22,40 +22,48 @@ export default {
       if (authType === 'safenetwork') {
         // implement in network release see DIY repo on github.
       } else if (authType === 'cloud') {
-        this.startCycle(authBundle)
+        await this.startCycle(authBundle)
       }
     },
-    startCycle (authIN) {
+    async startCycle (authIN) {
       // AUTHORISATION KLB entry or non for network KBLedger
-      let defaultCloudAPI = 'cnrl-33221100'
-      let authStatus = this.checkAuthorisation(defaultCloudAPI, authIN)
+      let defaultAPI = '33221100'
+      let authStatus = await this.checkAuthorisation(defaultAPI, authIN)
       if (authStatus === true) {
         // What network experiments are in this peers KBLedger? ie. existing joined or setup?
         // will provide API CONNECTIONS  ->devices ->Datatypes ->Computes --> visualisation
         // query peer ledger to extract experiments, computes i.e. KBLedger latest
         this.startNetworkExpMappedKbundles()
-        // this.startKSetting()
-        // loop over active api and extrac devcies, datatypes
-        // this.deviceContext(dataAPIconnected)
+        this.startKSetting()
+        // Independently extract devcies, datatypes, computes etc for Peer
+        this.deviceContext()
         // this.datatypeContext()
         // this.cnrlScienceCompute()
       }
     },
-    checkAuthorisation (defaultAPI, authBundle) {
+    async checkAuthorisation (defaultAPI, authBundle) {
       let auth = false
-      auth = this.safeMixin.networkAuthorisation(defaultAPI, authBundle)
+      auth = await this.safeMixin.networkAuthorisation(defaultAPI, authBundle)
       return auth
     },
     async startNetworkExpMappedKbundles () {
       let mappedNetworkExpKbundles = await this.safeMixin.experimentKbundles('retreive')
+      // extract the unique CNRL network experiment ids and look up info.
+      let uniqueNXP = [...new Set(mappedNetworkExpKbundles.map(x => x.experimentCNRL))]
+      // lookup CNRL for full info on the NXP
+      let NXPlist = []
+      for (let inxp of uniqueNXP) {
+        let cnrlNXP = this.safeMixin.cnrlLookup(inxp)
+        NXPlist.push(cnrlNXP)
+      }
       // set via store and then pick up in historyData
-      this.$store.dispatch('actionExperimentList', mappedNetworkExpKbundles)
-      // this.$store.dispatch('actionExperimentKBundles', mappedNetworkExpKbundles)
-      // build the UI status object
-      // this.startExperiments()
+      this.$store.dispatch('actionExperimentList', NXPlist)
+      this.$store.dispatch('actionExperimentKBundles', mappedNetworkExpKbundles)
+      // what other NXPs are available on the network?
+      this.liveNetworkExperiments()
     },
     async startKSetting () {
-      let startKset = await this.latestKBL()
+      let startKset = await this.safeMixin.startSettings('retreive', null)
       // set via store and then pick up in historyData
       this.$store.dispatch('actionStartKBundles', startKset)
       this.startKup()
@@ -66,26 +74,18 @@ export default {
       let MSstartTime = moment(startPeriodTime).format('x')
       this.$store.dispatch('actionComputeStatus', MSstartTime)
     },
-    startExperiments () {
+    liveNetworkExperiments () {
       let experimentList = this.GETexperimentsList()
-      this.$store.dispatch('actionExperimentList', experimentList)
+      console.log('experimentList')
+      console.log(experimentList)
+      this.$store.dispatch('actionNetworkExperimentList', experimentList)
     },
-    async deviceContext (dataAPIconnected) {
-      let devicesList = []
-      for (let dapi of dataAPIconnected) {
-        // look up the contract
-        let apiDev = this.GETcnrlLookup(dapi)
-        // make call to set start deviceContext for this pubkey
-        const deviceFlag = 'device'
-        let deviceAPI = await this.GETtoolkitDevices(apiDev, deviceFlag)
-        // need to pair device to API source CNRL
-        deviceAPI.cnrl = dapi
-        devicesList.push(deviceAPI)
-      }
-      // merg arrays
-      let flatd = [].concat(...devicesList)
-      this.devices = flatd
-      this.$store.dispatch('actionDeviceDataAPI', this.devices)
+    async deviceContext () {
+      const deviceFlag = 'device'
+      let deviceList = await this.safeMixin.toolkitContext(deviceFlag)
+      console.log('devices')
+      console.log(deviceList)
+      this.$store.dispatch('actionDeviceDataAPI', deviceList)
     },
     dataTypeContext () {
       // make call to set start dataType for the device sensors
@@ -230,10 +230,6 @@ export default {
       let lastestMappedLedger = await this.safeMixin.experimentKbundles('retreive')
       return lastestMappedLedger
     },
-    async latestKBL () {
-      let lastestLedger = await this.safeMixin.startSettings('retreive')
-      return lastestLedger
-    },
     GETcnrlLookup (cnrl) {
       let getContract = this.safeMixin.cnrlLookup(cnrl)
       return getContract
@@ -254,13 +250,9 @@ export default {
       let scienceCompute = this.safeMixin.cnrlScienceStart()
       return scienceCompute
     },
-    async GETtoolkitDevices (dapi, deviceFlag) {
-      let devices = await this.safeMixin.toolkitContext(dapi, deviceFlag)
-      return devices
-    },
     async GETtoolkitDatatypes (dapi, deviceFlag) {
-      let devices = await this.safeMixin.toolkitContext(dapi, deviceFlag)
-      return devices
+      let datatypes = await this.safeMixin.toolkitContext(dapi, deviceFlag)
+      return datatypes
     },
     GETcnrlDeviceDTs (cnrl) {
       let datatypesPerDevice = this.safeMixin.cnrlDeviceDTs(cnrl)

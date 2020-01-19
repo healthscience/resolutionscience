@@ -1,12 +1,12 @@
 <template>
   <div id="key-system">
-    <div id="key-verify" v-if="fileinputSeen">
+    <div id="key-verify" v-if="fileinputSeen" >
       <label class="text-reader">
         Read Key File
         <input type="file" @change="loadTextFromFile">
       </label>
     </div>
-    <div id="pwinput-prompt" v-if="pwinputSeen">
+    <div id="pwinput-prompt" v-if="pwinputSeen" v-on:keyup="veriftyKeyboard">
       Please enter password
       <passwordk v-model="passwordk" :toggle="true" />
       <button @click.prevent="verifyKeypw" class="button is-primary">Verify key ownership</button>
@@ -61,6 +61,12 @@
         var datadir = process.cwd()
         this.keyObject = keythereum.importFromFile(this.pkaddress, datadir)
         this.pwinputSeen = true
+      },
+      veriftyKeyboard (e) {
+        if (e.keyCode === 13) {
+          // also check password has been entered?  TODO
+          this.verifyKeypw()
+        }
       },
       verifyKeypw () {
         // verify key password

@@ -10,14 +10,12 @@
 * @version    $Id$
 */
 
-import CNRLmaster from '../../kbl-cnrl/cnrlMaster.js'
 import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
 const util = require('util')
 const events = require('events')
 
 var DatadeviceSystem = function (setIN) {
   events.EventEmitter.call(this)
-  this.liveCNRL = new CNRLmaster()
   this.liveTestStorage = new TestStorageAPI(setIN)
   this.devicePairs = []
   this.dataRaw = []
@@ -46,19 +44,13 @@ DatadeviceSystem.prototype.getLiveDevices = function (devicesIN) {
 
 /**
 * get the inital context for data required
-* @method systemDevice
+* @method storedDevices
 *
 */
-DatadeviceSystem.prototype.systemDevice = async function (dapi) {
+DatadeviceSystem.prototype.storedDevices = async function (dapi) {
   // MAP api to REST library functions for the API
-  console.log(dapi)
-  let result
-  if (dapi.namespace === 'http://165.227.244.213:8882/' && dapi.device === 'contextdata/<publickey>/') {
-    result = await this.liveTestStorage.getDeviceData(dapi.namespace)
-  } else if (dapi.namespace === 'http://165.227.244.213:8881/' && dapi.device === 'luftdatendevice/<publickey>/') {
-    result = await this.liveTestStorage.getDeviceLuftdatenData(dapi.namespace)
-  }
   let currentDevices = []
+  let result = await this.liveTestStorage.deviceRESTbuilder(dapi)
   currentDevices = this.sortLiveDevices(result)
   return currentDevices
 }

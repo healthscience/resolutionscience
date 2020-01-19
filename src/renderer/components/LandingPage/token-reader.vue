@@ -18,7 +18,7 @@
     <div id="pwinput-prompt" v-if="pwinputSeen">
       Please enter password
       <passwordk v-model="passwordk" :toggle="true" />
-      <button @click.prevent="verifyKeypw" class="button is-primary">Verify key ownership</button>
+      <button @click.prevent="verifyToken" class="button is-primary">Verify key ownership</button>
     </div>
   </div>
 </template>
@@ -85,8 +85,8 @@
         // var datadir = process.cwd()
         // this.tokenJSONy = (datadir)
       },
-      verifyKeypw () {
-        // verify key password for token
+      verifyToken () {
+        // verify token is of right structure TODO
       },
       viewPublickey () {
         this.pubkeyView = 'Publickey = ' + this.token.publickey

@@ -126,8 +126,6 @@
         }
       },
       async learnWork (expCNRL, expStateLive) {
-        // this.CNRLactiveList.push(expCNRL)
-        // let updateStatus = true
         let prepareDashList = []
         let currentEntities = this.startBundlesList
         let liveBundles = this.activeKentities[expCNRL]

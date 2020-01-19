@@ -36,10 +36,10 @@ KBLedger.prototype.genesisKBL = function () {
 
 /**
 *  list of Experiment Live in Ledger
-* @method liveExperimentsLedger
+* @method liveNetworkExperimentLedger
 *
 */
-KBLedger.prototype.liveExperimentsLedger = function () {
+KBLedger.prototype.liveNetworkExperimentLedger = function () {
   console.log('get experiments live in Ledger')
   let liveExperList = ['cnrl-848388553323', 'cnrl-888355992223', 'cnrl-888355992224', 'cnrl-888388992224', 'cnrl-888388232224', 'cnrl-888388233324', 'cnrl-888388443324']
   // await this.liveDataSystem.getExpKbundles()

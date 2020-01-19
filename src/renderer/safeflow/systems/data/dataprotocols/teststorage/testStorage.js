@@ -39,12 +39,23 @@ var TestStorageAPI = function (setUP) {
 util.inherits(TestStorageAPI, events.EventEmitter)
 
 /**
-*  get base time from LKN
-* @method LKNtime
+*  defaultCNRL contract
+* @method defaultCNRL
 *
 */
-TestStorageAPI.prototype.LKNtime = function () {
-  this.baseNow = new Date()
+TestStorageAPI.prototype.defautCNRL = async function (contractID) {
+  let startSettings = await axios.get(this.baseAPI + '/cnrl/' + this.tempPubkey + '/' + this.tempToken + '/' + contractID)
+  return startSettings.data
+}
+
+/**
+*  device REST builder
+* @method deviceRESTbuilder
+*
+*/
+TestStorageAPI.prototype.deviceRESTbuilder = async function (dapi) {
+  let jsondata = await axios.get(dapi.namespace + dapi.device + this.tempPubkey + '/' + this.tempToken)
+  return jsondata.data
 }
 
 /**
@@ -278,10 +289,6 @@ TestStorageAPI.prototype.removeStartDashboardSettings = async function (removeID
 *
 */
 TestStorageAPI.prototype.getExpKbundles = async function () {
-  console.log('getEXP start')
-  console.log(this.baseAPI)
-  console.log(this.tempPubkey)
-  console.log(this.tempToken)
   let jsondata = await axios.get(this.baseAPI + '/experimentKBundles/' + this.tempPubkey + '/' + this.tempToken + '/')
   // console.log(jsondata)
   return jsondata.data

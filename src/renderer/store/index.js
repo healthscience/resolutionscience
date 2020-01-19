@@ -22,7 +22,9 @@ export default new Vuex.Store({
     startBundles: [],
     bundleCounter: 0,
     experimentStatus: {},
+    NXPexperimentStatus: {},
     experimentList: [],
+    NXPexperimentList: [],
     experimentProgressStatus: {},
     expEntities: {},
     mapExperimentKbundles: [],
@@ -45,7 +47,9 @@ export default new Vuex.Store({
     startBundlesList: state => state.startBundles,
     liveBundleCounter: state => state.bundleCounter,
     liveExperimentStats: state => state.experimentStatus,
+    liveNXPExperimentStats: state => state.NXPexperimentStatus,
     liveExperimentList: state => state.experimentList,
+    liveNXPExperimentList: state => state.NXPexperimentList,
     livemapExperimentKbundles: state => state.mapExperimentKbundles,
     liveKentities: state => state.activeKentities,
     liveKComputeStatus: state => state.computeKidStatus
@@ -237,6 +241,36 @@ export default new Vuex.Store({
         }
       }
     },
+    setNetworkExperimentList: (state, inVerified) => {
+      state.NXPexperimentList = inVerified
+      for (let exl of state.NXPexperimentList) {
+        let experBundle = {}
+        experBundle.cnrl = exl.prime.cnrl
+        experBundle.status = false
+        experBundle.contract = exl
+        experBundle.dashKBlist = []
+        let objectPropC = exl.prime.cnrl
+        Vue.set(state.NXPexperimentStatus, objectPropC, experBundle)
+      }
+      /* state.activeKentities = {}
+      for (let budi of state.NXPexperimentList) {
+        let objectPropE = budi.prime.cnrl
+        Vue.set(state.activeKentities, objectPropE, [])
+        for (let expCNRL of state.mapExperimentKbundles) {
+          if (budi.prime.cnrl === expCNRL.experimentCNRL) {
+            let objectProp = budi.prime.cnrl
+            let objectValue = expCNRL.kbid
+            state.activeKentities[objectProp].push(objectValue)
+          }
+          // setup progress message holder object
+          let progressSet = {}
+          progressSet.active = false
+          progressSet.cnrl = objectPropE
+          progressSet.text = 'Visulisation in Progress'
+          Vue.set(state.experimentProgressStatus, objectPropE, progressSet)
+        }
+      } */
+    },
     setMappedExpKbundles: (state, inVerified) => {
       state.mapExperimentKbundles = inVerified
     },
@@ -335,6 +369,10 @@ export default new Vuex.Store({
     actionExperimentList: (context, update) => {
     // update settings to show at startup per bundle item
       context.commit('setExperimentList', update)
+    },
+    actionNetworkExperimentList: (context, update) => {
+    // update settings to show at startup per bundle item
+      context.commit('setNetworkExperimentList', update)
     },
     actionExperimentProgressStatus: (context, update) => {
     // update settings to show at startup per bundle item

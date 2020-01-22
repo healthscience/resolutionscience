@@ -36,9 +36,10 @@ export default {
         this.startNetworkExpMappedKbundles()
         this.startKSetting()
         // Independently extract devcies, datatypes, computes etc for Peer
-        this.deviceContext()
-        // this.datatypeContext()
-        // this.cnrlScienceCompute()
+        await this.deviceContext()
+        this.datatypeContext()
+        this.cnrlComputeIndex()
+        this.timeNav('time-index')
       }
     },
     async checkAuthorisation (defaultAPI, authBundle) {
@@ -75,31 +76,38 @@ export default {
       this.$store.dispatch('actionComputeStatus', MSstartTime)
     },
     liveNetworkExperiments () {
-      let experimentList = this.GETexperimentsList()
-      console.log('experimentList')
-      console.log(experimentList)
+      let experimentList = this.safeMixin.cnrlExperimentIndex()
       this.$store.dispatch('actionNetworkExperimentList', experimentList)
     },
     async deviceContext () {
       const deviceFlag = 'device'
       let deviceList = await this.safeMixin.toolkitContext(deviceFlag)
-      console.log('devices')
-      console.log(deviceList)
       this.$store.dispatch('actionDeviceDataAPI', deviceList)
     },
-    dataTypeContext () {
+    async datatypeContext () {
       // make call to set start dataType for the device sensors
       const dataTypeFlag = 'dataType'
-      let datatypeList = this.GETtoolkitDatatypes(dataTypeFlag)
+      let livePeerDevices = this.$store.getters.liveContext.device
+      let datatypeList = await this.safeMixin.toolkitContext(dataTypeFlag, livePeerDevices)
       this.$store.dispatch('actionSetDataTypes', datatypeList)
     },
-    cnrlScienceCompute () {
+    cnrlComputeIndex () {
       // call the CNRL api and get network science active
-      let startScienceCompute = this.GetcnrlScienceStart()
-      this.$store.commit('setCNRLscience', startScienceCompute)
+      let startScienceCompute = this.safeMixin.cnrlNetworkComputeIndex()
+      // this.$store.commit('setCNRLscience', startScienceCompute)
+      this.$store.dispatch('actionCNRLcompute', startScienceCompute)
     },
-    async SAFEnetworkAuthorisation () {
-      await this.safeMixin.SAFEsendAuthRequest()
+    timeRange () {
+      let rangeHolder = {}
+      rangeHolder.startTime = this.toolbarData.liveOptions.analysisStart
+      rangeHolder.endTime = this.toolbarData.liveOptions.analysisEnd
+      rangeHolder.active = true
+      return rangeHolder
+    },
+    timeNav (navT) {
+      let navTimelist = []
+      navTimelist = this.safeMixin.cnrlTimeIndex(navT)
+      this.$store.dispatch('actionTIMEindex', navTimelist)
     },
     async learnStart (lBundle) {
       // console.log('start Learning')
@@ -121,6 +129,37 @@ export default {
       returnVISvue = await this.diplayFilter(this.activeEntity, 'vis-sc-1', entityGetter)
       returnVISvue.table = entityGetterTable
       return returnVISvue
+    },
+    setFutureUItime (curTime) {
+      let futureTime = curTime + 86400
+      let fTimeFormatted = moment(futureTime * 1000).format('LLLL')
+      return fTimeFormatted
+    },
+    saveStartBundle (bund) {
+      // need up date startStatus Object
+      this.safeMixin.startSettings('save', bund)
+    },
+    removeStartBundle (bund) {
+      // need up date startStatus Object
+      console.log('remove')
+      this.safeMixin.startSettings('remove', bund)
+    },
+    removeStartDashboard (bund) {
+      // need up date startStatus Object
+      console.log('removedash')
+      this.safeMixin.startSettings('removedash', bund)
+    },
+    async SaveexperimentKbundles (mapEKb) {
+      let saveStatus = await this.safeMixin.experimentKbundles('save', mapEKb)
+      return saveStatus
+    },
+    async mappedKBLexp () {
+      let lastestMappedLedger = await this.safeMixin.experimentKbundles('retreive')
+      return lastestMappedLedger
+    },
+    GetcnrlComputeList () {
+      let computeList = this.safeMixin.cnrlNetworkComputeIndex()
+      return computeList
     },
     async diplayFilter (aEID, aVis, entityGetter) {
       // setup return vis Object
@@ -157,17 +196,6 @@ export default {
       }
       return visObjectVUE
     },
-    setFutureUItime (curTime) {
-      let futureTime = curTime + 86400
-      let fTimeFormatted = moment(futureTime * 1000).format('LLLL')
-      return fTimeFormatted
-    },
-    startComputeUpdate () {
-      this.activedevice = this.$store.getters.liveContext
-      this.liveFlow.computationSystem('wasm-sc-2', this.activedevice[0].device_mac)
-      this.avgStatusCompMessage = 'Average compute is taking place'
-      this.avgStatusCompute = true
-    },
     learnListening () {
       var localthis = this
       // listening to give peer info. on computation statusTime
@@ -191,76 +219,6 @@ export default {
       // this.liveOptions.annotation.annotations[0].value = newAHR
       // this.liveOptions.annotation.annotations[1].value = newARHR
       return AvgDailyHolder
-    },
-    timeRange () {
-      let rangeHolder = {}
-      rangeHolder.startTime = this.toolbarData.liveOptions.analysisStart
-      rangeHolder.endTime = this.toolbarData.liveOptions.analysisEnd
-      rangeHolder.active = true
-      return rangeHolder
-    },
-    timeNav (navT) {
-      let navTimelist = []
-      navTimelist = this.safeMixin.cnrlTimeIndex(navT)
-      return navTimelist
-    },
-    GETcnrlLivingKnowledge (cnrlID) {
-      let knowledgeSpace = this.safeMixin.cnrlLivingKnowledge(cnrlID)
-      return knowledgeSpace
-    },
-    saveStartBundle (bund) {
-      // need up date startStatus Object
-      this.safeMixin.startSettings('save', bund)
-    },
-    removeStartBundle (bund) {
-      // need up date startStatus Object
-      console.log('remove')
-      this.safeMixin.startSettings('remove', bund)
-    },
-    removeStartDashboard (bund) {
-      // need up date startStatus Object
-      console.log('removedash')
-      this.safeMixin.startSettings('removedash', bund)
-    },
-    async SaveexperimentKbundles (mapEKb) {
-      let saveStatus = await this.safeMixin.experimentKbundles('save', mapEKb)
-      return saveStatus
-    },
-    async mappedKBLexp () {
-      let lastestMappedLedger = await this.safeMixin.experimentKbundles('retreive')
-      return lastestMappedLedger
-    },
-    GETcnrlLookup (cnrl) {
-      let getContract = this.safeMixin.cnrlLookup(cnrl)
-      return getContract
-    },
-    GETexperimentsList () {
-      let expList = this.safeMixin.cnrlExperimentIndex()
-      return expList
-    },
-    GETdatatypeList () {
-      let dtList = this.safeMixin.cnrlNetworkDatatypeIndex()
-      return dtList
-    },
-    GetcnrlComputeList () {
-      let computeList = this.safeMixin.cnrlNetworkComputeIndex()
-      return computeList
-    },
-    GetcnrlScienceStart () {
-      let scienceCompute = this.safeMixin.cnrlScienceStart()
-      return scienceCompute
-    },
-    async GETtoolkitDatatypes (dapi, deviceFlag) {
-      let datatypes = await this.safeMixin.toolkitContext(dapi, deviceFlag)
-      return datatypes
-    },
-    GETcnrlDeviceDTs (cnrl) {
-      let datatypesPerDevice = this.safeMixin.cnrlDeviceDTs(cnrl)
-      return datatypesPerDevice
-    },
-    GETcnrlScienceDTs (sciIN) {
-      let scieDTs = this.safeMixin.cnrlScienceDTs(sciIN)
-      return scieDTs
     }
   }
 }

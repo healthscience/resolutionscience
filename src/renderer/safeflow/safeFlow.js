@@ -12,8 +12,9 @@
 import CNRLmaster from './kbl-cnrl/cnrlMaster.js'
 import TestStorageAPI from './systems/data/dataprotocols/teststorage/testStorage.js'
 import DatadeviceSystem from './systems/data/datadeviceSystem.js'
+import DTsystem from './systems/data/dtSystem.js'
 // import SAFEapi from './systems/data/dataprotocols/safenetwork/index.js'
-/* import DTsystem from './systems/data/dtSystem.js'
+/*
 import KBLedger from './kbl-cnrl/kbledger.js'
 import TimeUtilities from './systems/timeUtility.js'
 import DataSystem from './systems/data/dataSystem.js'
@@ -27,8 +28,7 @@ var safeFlow = function () {
   this.defaultStorage = ['http://165.227.244.213:8882'] // know seed peers
   /* this.liveKBL = new KBLedger()
   this.liveTimeUtil = new TimeUtilities()
-  this.liveEManager = new EntitiesManager(this.liveKBL)
-  this.liveDTsystem = new DTsystem(setIN) */
+  this.liveEManager = new EntitiesManager(this.liveKBL) */
   this.api = {}
   this.settings = {}
   this.liveTestStorage = {}
@@ -53,6 +53,7 @@ safeFlow.prototype.networkAuthorisation = async function (apiCNRL, auth) {
   this.liveCNRL = new CNRLmaster(this.settings)
   this.liveTestStorage = new TestStorageAPI(this.settings)
   this.livedeviceSystem = new DatadeviceSystem(this.settings)
+  this.liveDTsystem = new DTsystem(this.settings)
   this.api = await this.liveCNRL.defautNetworkContracts(apiCNRL)
   return true
 }
@@ -78,7 +79,7 @@ safeFlow.prototype.experimentKbundles = async function (flag, data) {
 * @method toolkitContext
 *
 */
-safeFlow.prototype.toolkitContext = async function (flag) {
+safeFlow.prototype.toolkitContext = async function (flag, devices) {
   // first time start of device, datatype context for toolkitContext
   let localthis = this
   let apiData = []
@@ -96,13 +97,13 @@ safeFlow.prototype.toolkitContext = async function (flag) {
     let flatd = [].concat(...devicesList)
     apiData = flatd // await this.livedeviceSystem.systemDevice(dapi
   } else if (flag === 'dataType') {
-    let result = await this.liveDataSystem.getDataTypes()
-    // convert sensor names to datatypes
-    apiData = await this.liveCNRL.sensorMappingDatatype(result)
-    // console.log(apiData)
+    let dts = {}
+    for (let dev of devices) {
+      // loop up API and extract all datatypes CNRL ids
+      dts[dev.device_mac] = this.cnrlDeviceDTs(dev.cnrl)
+    }
+    apiData = dts
   }
-  console.log('device live')
-  console.log(apiData)
   return apiData
 }
 
@@ -126,16 +127,6 @@ safeFlow.prototype.startSettings = async function (flag, bundle) {
     startStatusData = await this.liveDataSystem.removeStartDash(bundle)
   }
   return startStatusData
-}
-
-/**
-* call the CNRL index service/peer history log for active science
-* @method cnrlScienceStart
-*
-*/
-safeFlow.prototype.cnrlScienceStart = function () {
-  let startScience = this.liveCNRL.scienceOnNetwork()
-  return startScience
 }
 
 /**

@@ -17,7 +17,7 @@ const events = require('events')
 
 var DTSystem = function (setIN) {
   events.EventEmitter.call(this)
-  this.liveCNRL = new CNRLmaster()
+  this.liveCNRL = new CNRLmaster(setIN)
   this.liveTestStorage = new TestStorageAPI(setIN)
 }
 
@@ -300,8 +300,6 @@ DTSystem.prototype.convertAPIdatatypeToCNRL = function (dtapiList) {
   let convertDTcnrl = []
   for (let dta of dtapiList.datatypes) {
     let conDT = this.liveCNRL.lookupContract(dta.cnrl)
-    console.log('lookup contract dtystemfrom Devcie side')
-    console.log(conDT)
     let convertDT = this.matchConvert(conDT)
     convertDTcnrl.push(convertDT)
   }

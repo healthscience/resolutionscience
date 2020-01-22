@@ -646,7 +646,7 @@
         return true
       },
       setNaveTime () {
-        this.liveNavTime = this.timeNav('datatime-index')
+        // this.liveNavTime = this.timeNav('datatime-index')
       },
       addToExperiment (exB) {
         this.selectedExperiment = exB.target.value

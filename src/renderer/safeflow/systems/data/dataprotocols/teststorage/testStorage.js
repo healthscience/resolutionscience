@@ -81,6 +81,16 @@ TestStorageAPI.prototype.getDeviceLuftdatenData = async function (api) {
 }
 
 /**
+*  datatype REST builder
+* @method datatypeRESTbuilder
+*
+*/
+TestStorageAPI.prototype.datatypeRESTbuilder = async function (dapi) {
+  let jsondata = await axios.get(dapi.namespace + dapi.datatype + this.tempPubkey + '/' + this.tempToken)
+  return jsondata.data
+}
+
+/**
 *  Get dataType Context for each sensor
 * @method getContextType
 *

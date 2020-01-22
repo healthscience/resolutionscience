@@ -10,13 +10,14 @@ export default new Vuex.Store({
     safeFlow: {},
     system: {'publickey': '', 'token': ''},
     context: {},
-    science: {},
+    compute: {},
     tools: {},
     visualisation: ['vis-sc-2'],
     visData: {},
     visOptions: {},
     testString: '',
     time: '',
+    selectTime: [],
     datatypes: [],
     bundle: {},
     startBundles: [],
@@ -35,7 +36,7 @@ export default new Vuex.Store({
     liveSafeFlow: state => state.safeFlow,
     liveSystem: state => state.system,
     liveContext: state => state.context,
-    liveScience: state => state.science,
+    liveCompute: state => state.compute,
     liveTools: state => state.tools,
     liveVis: state => state.visualisation,
     liveVisData: state => state.visData,
@@ -78,11 +79,31 @@ export default new Vuex.Store({
       state.context.device = []
       state.context.device = inVerified
     },
+    updateDeviceState: (state, inVerified) => {
+      // set active Device
+      state.context.livedevice = inVerified.device_mac
+      for (let dev of state.context.device) {
+        if (dev.device_mac === inVerified.device_mac) {
+          inVerified.active = !inVerified.active
+          dev = inVerified
+        }
+      }
+    },
     addDevice: (state, inVerified) => {
       state.context.device.push(inVerified)
     },
     setDatatype: (state, inVerified) => {
       state.context.datatypes = inVerified
+    },
+    updateDTState: (state, inVerified) => {
+      let liveDev = state.context.livedevice
+      let liveDeviceDTs = state.context.datatypes[liveDev]
+      for (let dt of liveDeviceDTs.datatypes) {
+        if (dt.cnrl === inVerified.cnrl) {
+          inVerified.active = !inVerified.active
+          dt = inVerified
+        }
+      }
     },
     setResolutiontype: (state, inVerified) => {
       state.context.resolution = inVerified
@@ -91,15 +112,14 @@ export default new Vuex.Store({
       state.visualisation = inVerified
     },
     setVisualData: (state, inVerified) => {
-      // state.visData = { ...state.visData, inVerified }
       state.visData = Vue.set(state, 'visData', inVerified)
     },
     setVisualOptions: (state, inVerified) => {
       // state.visOptions = { ...state.visOptions, inVerified }
       state.visOptions = Vue.set(state, 'visOptions', inVerified)
     },
-    setCNRLscience: (state, inVerified) => {
-      state.science = inVerified
+    setCNRLcompute: (state, inVerified) => {
+      state.compute = inVerified
     },
     setTools: (state, inVerified) => {
       state.liveTools = inVerified
@@ -107,8 +127,16 @@ export default new Vuex.Store({
     setTeststring: (state, inVerified) => {
       state.testString = inVerified
     },
-    setTime: (state, inVerifed) => {
-      state.time = inVerifed
+    setSelectTime: (state, inVerifed) => {
+      state.selectTime = inVerifed
+    },
+    setTimeOptionState: (state, inVerified) => {
+      for (let ts of state.selectTime) {
+        if (ts.id === inVerified.id) {
+          inVerified.active = !inVerified.active
+          ts = inVerified
+        }
+      }
     },
     setLiveBundle: (state, inVerified) => {
       state.bundle = Vue.set(state, 'bundle', inVerified)
@@ -196,8 +224,6 @@ export default new Vuex.Store({
         // Vue.set(state.experimentStatus, objectProp, kel)
         Vue.set(state.experimentStatus[objectProp], 'dashKBlist', newData)
         Vue.set(state.experimentStatus[objectProp], 'status', true)
-        console.log('experiment status uptated')
-        console.log(state.experimentStatus)
       }
     },
     setExperimentStatusc: (state, inVerified) => {
@@ -275,9 +301,7 @@ export default new Vuex.Store({
       state.mapExperimentKbundles = inVerified
     },
     setMappedExpKbundlesItem: (state, inVerified) => {
-      console.log('set mapping iteam')
       state.mapExperimentKbundles.push(inVerified)
-      console.log(state.mapExperimentKbundles)
     },
     removeMappedExpKbundlesItem: (state, inVerified) => {
       const items = state.mapExperimentKbundles
@@ -437,6 +461,21 @@ export default new Vuex.Store({
     actionUpdateChartOptions: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL
       context.commit('updateChartOptions', update)
+    },
+    actionCNRLcompute: (context, update) => {
+      context.commit('setCNRLcompute', update)
+    },
+    actionTIMEindex: (context, update) => {
+      context.commit('setSelectTime', update)
+    },
+    actionUpateTimeOption: (context, update) => {
+      context.commit('setTimeOptionState', update)
+    },
+    actionUpateDeviceState: (context, update) => {
+      context.commit('updateDeviceState', update)
+    },
+    actionUpateDTState: (context, update) => {
+      context.commit('updateDTState', update)
     }
   },
   modules,

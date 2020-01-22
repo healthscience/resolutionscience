@@ -87,74 +87,6 @@ CNRLmaster.prototype.scienceOnNetwork = function () {
 }
 
 /**
-*  info on storage data structure
-* @method storageInformation
-*
-*/
-CNRLmaster.prototype.storageInformation = function (sid) {
-  let storageInfo = {}
-  storageInfo['cnrl-229837373701'] = [{'lightLED': '/devicedata/<device>'}, {'accelerometer': '/devicedata/<device>'}, {'devices': '/contextdata/<device>'}, {'sensors': '/contexttype/<device>'}]
-  return storageInfo
-}
-
-/**
-*  list of live dataTypes in network
-* @method cnrlNetworkDatatypes
-*
-*/
-CNRLmaster.prototype.cnrlNetworkDatatypes = function () {
-  let listDataTypes = []
-  return listDataTypes
-}
-
-/**
-*  mock up of semantic / ontology describing knowledge
-* @method livingKnowledge
-*
-*/
-CNRLmaster.prototype.livingKnowledge = function (refIN) {
-  // if contract has links, follow those to source TODO
-  let dataCNRLbundle = {}
-  if (refIN === 'cnrl-k1') {
-    dataCNRLbundle.prime = {'word': ['heart', 'movement activity steps']}
-    dataCNRLbundle.science = {'science': 'mathematics'}
-    dataCNRLbundle.resolution = []
-    dataCNRLbundle.source = []
-    dataCNRLbundle.input = []
-    dataCNRLbundle.tidy = false
-    dataCNRLbundle.tidyList = []
-    dataCNRLbundle.tableStructure = []
-    dataCNRLbundle.mobilesource = ''
-    dataCNRLbundle.categorycodes = []
-    dataCNRLbundle.index = []
-    dataCNRLbundle.categories = []
-  } else if (refIN === 'cnrl-k2') {
-    dataCNRLbundle.prime = {'word': ['Pollution', 'Particle size']}
-    dataCNRLbundle.science = {'science': 'mathematics'}
-    dataCNRLbundle.resolution = []
-    dataCNRLbundle.source = []
-    dataCNRLbundle.input = []
-    dataCNRLbundle.tidy = false
-    dataCNRLbundle.tidyList = []
-    dataCNRLbundle.tableStructure = []
-    dataCNRLbundle.categories.push()
-    dataCNRLbundle.categorycodes = []
-  } else if (refIN === 'cnrl-k3') {
-    dataCNRLbundle.prime = {'word': 'spacial map'}
-    dataCNRLbundle.science = ['science', 'mathematics', 'statistics', 'mean', 'mode', 'median']
-    dataCNRLbundle.resolution = []
-    dataCNRLbundle.source = []
-    dataCNRLbundle.input = []
-    dataCNRLbundle.tidy = false
-    dataCNRLbundle.tidyList = []
-    dataCNRLbundle.tableStructure = []
-    dataCNRLbundle.categories.push()
-    dataCNRLbundle.categorycodes = []
-  }
-  return dataCNRLbundle
-}
-
-/**
 *  get time datatypes for UI
 * @method timeContracts
 *
@@ -240,6 +172,58 @@ CNRLmaster.prototype.timeContracts = function (refIN) {
     }]
   }
   return timeIndex
+}
+
+/**
+* Index of datatypes
+* @method indexDatatypes
+*
+*/
+CNRLmaster.prototype.indexDatatypes = function () {
+  // index datatype live in network by cnrl // id
+  let indexDTlive = ['cnrl-8856388711', 'cnrl-8856388712', 'cnrl-8856388713', 'cnrl-8856388723', 'cnrl-8856388727', 'cnrl-8356388727', 'cnrl-8326388727', 'cnrl-8326328727', 'cnrl-3356388722', 'cnrl-3356388733', 'cnrl-8856388724', 'cnrl-8856388322', 'cnrl-8856388924', 'cnrl-8856389322', 'cnrl-8856388725']
+  return indexDTlive
+}
+
+/**
+* Index of science computations
+* @method indexCompute
+*
+*/
+CNRLmaster.prototype.indexCompute = function () {
+  // index datatype live in network by cnrl // id
+  let indexComputelive = ['cnrl-2356388731', 'cnrl-2356388737', 'cnrl-2356388732', 'cnrl-2356383848']
+  return indexComputelive
+}
+
+/**
+* Index of experiments
+* @method indexExperiments
+*
+*/
+CNRLmaster.prototype.indexExperiments = function () {
+  // index datatype live in network by cnrl // id
+  let indexExperimentslive = []
+  indexExperimentslive.push('cnrl-848388553323', 'cnrl-888388992224', 'cnrl-888388443324', 'cnrl-888355992223', 'cnrl-88735d99d228', 'cnrl-888388233324', 'cnrl-888388232224', 'cnrl-848388554344', 'cnrl-848388553329', 'cnrl-888355992224')
+  return indexExperimentslive
+}
+
+/**
+* Sensor to Datatype Mapping as per CNRL contracts
+* @method sensorMappingDatatype
+*
+*/
+CNRLmaster.prototype.sensorMappingDatatype = function (sensorTypes) {
+  // get detail on spec for data source
+  let dataFilter = []
+  for (let sen of sensorTypes) {
+    if (sen.device_sensorid === 'lightLED') {
+      dataFilter.push({'text': 'bpm', 'active': 'true'})
+    } else if (sen.device_sensorid === 'accelerometer') {
+      dataFilter.push({'text': 'steps', 'active': 'true'})
+    }
+  }
+  return dataFilter
 }
 
 /**
@@ -558,7 +542,6 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.wasmfile = 'none'
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388731'
   } else if (refIN === 'cnrl-2356388737') {
-    console.log('sum compute')
     dataCNRLbundle.type = 'compute'
     dataCNRLbundle.livingpaper = 'http://www.healthscience.network/sum'
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-2356388737', 'text': 'Sum per time', 'active': false }
@@ -600,11 +583,11 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.wasmhash = '2356388733'
     dataCNRLbundle.wasmfile = 'safe://wasm/cnrl-2356388733'
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388733'
-  } else if (refIN === '33221101') {
+  } else if (refIN === '33221101' || refIN === 'cnrl-33221101') {
     // CNRL implementation REST API
     dataCNRLbundle.type = 'dtpackaging'
     dataCNRLbundle.source = 'cnrl-773355992211'
-    dataCNRLbundle.prime = { 'cnrl': 'cnrl-33221101', 'text': 'mongo-RESTAPI', 'active': false }
+    dataCNRLbundle.prime = { 'cnrl': '33221101', 'text': 'mongo-RESTAPI', 'active': false }
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
     dataCNRLbundle.device = '/contextdata/'
@@ -616,11 +599,11 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.tableStructure[3] = [{'cnrl': 'cnrl-8856388924', 'text': 'sum-bpm', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856389322', 'text': 'sum-steps', 'active': false}]
     dataCNRLbundle.namespace = 'http://165.227.244.213:8882'
     dataCNRLbundle.index = []
-  } else if (refIN === '33221102') {
+  } else if (refIN === '33221102' || refIN === 'cnrl-33221102') {
     // CNRL implementation REST API
     dataCNRLbundle.type = 'dtpackaging'
     dataCNRLbundle.source = 'cnrl-primary'
-    dataCNRLbundle.prime = { 'cnrl': 'cnrl-33221102', 'text': 'mongo-RESTAPI', 'active': false }
+    dataCNRLbundle.prime = { 'cnrl': '33221102', 'text': 'mongo-RESTAPI', 'active': false }
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
     dataCNRLbundle.device = '/luftdatendevice/'
@@ -630,11 +613,11 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.tableStructure[0] = [{'cnrl': 'cnrl-', 'text': 'publickey', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'datasub', 'text': 'sensordata', 'active': false, 'data': subColumn}]
     dataCNRLbundle.namespace = 'http://165.227.244.213:8881'
     dataCNRLbundle.index = []
-  } else if (refIN === 'cnrl-33221112') {
+  } else if (refIN === '33221112' || refIN === 'cnrl-33221112') {
     // CNRL implementation REST API
     dataCNRLbundle.type = 'dtpackaging'
     dataCNRLbundle.source = 'cnrl-primary'
-    dataCNRLbundle.prime = { 'cnrl': 'cnrl-33221112', 'text': 'mongo-RESTAPI', 'active': false }
+    dataCNRLbundle.prime = { 'cnrl': '33221112', 'text': 'mongo-RESTAPI', 'active': false }
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
     dataCNRLbundle.device = 'luftdatendevice/<publickey>/'
@@ -644,11 +627,11 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.tableStructure[0] = [{'cnrl': 'cnrl-', 'text': 'publickey', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'datasub', 'text': 'sensordata', 'active': false, 'data': subColumn}]
     dataCNRLbundle.namespace = 'http://165.227.244.213:8881/'
     dataCNRLbundle.index = []
-  } else if (refIN === 'cnrl-33221103') {
+  } else if (refIN === '33221103') {
     // CNRL implementation REST API
     dataCNRLbundle.type = 'dtpackaging'
     dataCNRLbundle.source = 'cnrl-primary'
-    dataCNRLbundle.prime = { 'cnrl': 'cnrl-33221103', 'text': 'luftaten-archive-RESTAPI', 'active': false }
+    dataCNRLbundle.prime = { 'cnrl': '33221103', 'text': 'luftaten-archive-RESTAPI', 'active': false }
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = []
     dataCNRLbundle.device = ''
@@ -829,86 +812,6 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
 }
 
 /**
-* Index of datatypes
-* @method indexDatatypes
-*
-*/
-CNRLmaster.prototype.indexDatatypes = function () {
-  // index datatype live in network by cnrl // id
-  let indexDTlive = ['cnrl-8856388711', 'cnrl-8856388712', 'cnrl-8856388713', 'cnrl-8856388723', 'cnrl-8856388727', 'cnrl-8356388727', 'cnrl-8326388727', 'cnrl-8326328727', 'cnrl-3356388722', 'cnrl-3356388733', 'cnrl-8856388724', 'cnrl-8856388322', 'cnrl-8856388924', 'cnrl-8856389322', 'cnrl-8856388725']
-  return indexDTlive
-}
-
-/**
-* Index of science computations
-* @method indexCompute
-*
-*/
-CNRLmaster.prototype.indexCompute = function () {
-  // index datatype live in network by cnrl // id
-  let indexComputelive = ['cnrl-2356388731', 'cnrl-2356388737', 'cnrl-2356388732', 'cnrl-2356383848']
-  return indexComputelive
-}
-
-/**
-* Index of data packaging
-* @method indexDatapackaging
-*
-*/
-CNRLmaster.prototype.indexDatapackaging = function () {
-  // index datatype live in network by cnrl // id
-  let indexDataPacklive = []
-  indexDataPacklive.push('cnrl-')
-  return indexDataPacklive
-}
-
-/**
-* Index of experiments
-* @method indexExperiments
-*
-*/
-CNRLmaster.prototype.indexExperiments = function () {
-  // index datatype live in network by cnrl // id
-  let indexExperimentslive = []
-  indexExperimentslive.push('cnrl-848388553323', 'cnrl-888388992224', 'cnrl-888388443324', 'cnrl-888355992223', 'cnrl-88735d99d228', 'cnrl-888388233324', 'cnrl-888388232224', 'cnrl-848388554344', 'cnrl-848388553329', 'cnrl-888355992224')
-  return indexExperimentslive
-}
-
-/**
-* Sensor to Datatype Mapping as per CNRL contracts
-* @method sensorMappingDatatype
-*
-*/
-CNRLmaster.prototype.sensorMappingDatatype = function (sensorTypes) {
-  // get detail on spec for data source
-  let dataFilter = []
-  for (let sen of sensorTypes) {
-    if (sen.device_sensorid === 'lightLED') {
-      dataFilter.push({'text': 'bpm', 'active': 'true'})
-    } else if (sen.device_sensorid === 'accelerometer') {
-      dataFilter.push({'text': 'steps', 'active': 'true'})
-    }
-  }
-  return dataFilter
-}
-
-/**
-* Data Types linked to Devices/Data Source/ Storage
-* @method dataMatchtypes
-*
-*/
-CNRLmaster.prototype.dataMatchtypes = function (sourceID, sensorID) {
-  // get detail on spec for data source
-  let dataFilter
-  if (sensorID === 'heartchain/heart/bpm') {
-    dataFilter = [1, 0]
-  } else if (sensorID === 'heartchain/heart/activity/steps') {
-    dataFilter = [1, 5]
-  }
-  return dataFilter
-}
-
-/**
 *  mock up of mobile sqlite table structure CNRL info
 * @method mobileSource
 *
@@ -928,7 +831,7 @@ CNRLmaster.prototype.subSource = function (refIN) {
   dataCNRLbundle.categories = []
   dataCNRLbundle.categorycodes = []
   let dataTypePrimary = []
-  if (refIN === 'cnrl-8856388711') {
+  if (refIN === 'cnrl-8856388711' || refIN === '8856388711') {
     // return dataType mapping arrays
     dataTypePrimary.push({'bpm': ''})
     dataTypePrimary.push({'steps': ''})
@@ -950,55 +853,50 @@ CNRLmaster.prototype.subSource = function (refIN) {
 }
 
 /**
-*  mock up of mobile sqlite table structure CNRL info
-* @method sensorSource
+*  mock up of semantic / ontology describing knowledge
+* @method livingKnowledge
 *
 */
-CNRLmaster.prototype.sensorSource = function (refIN) {
-  console.log('CRNL----lookup for sensor structure e..g blue toothstandards')
+CNRLmaster.prototype.livingKnowledge = function (refIN) {
   // if contract has links, follow those to source TODO
   let dataCNRLbundle = {}
-  dataCNRLbundle.prime = []
-  dataCNRLbundle.resolution = []
-  dataCNRLbundle.source = []
-  dataCNRLbundle.input = []
-  dataCNRLbundle.tidy = false
-  dataCNRLbundle.tidyList = []
-  dataCNRLbundle.tableStructure = []
-  dataCNRLbundle.mobilesource = ''
-  dataCNRLbundle.categorycodes = []
-  let dataTypePrimary = []
-  if (refIN === 'cnrl-2256388711') {
-    // return dataType mapping arrays
-    dataTypePrimary.push({'heartrate': ''})
-    dataTypePrimary.push({'movement': ''})
-    // dataTypePrimary.push({'time': ''})
-    dataCNRLbundle.tidy = true
+  if (refIN === 'cnrl-k1') {
+    dataCNRLbundle.prime = {'word': ['heart', 'movement activity steps']}
+    dataCNRLbundle.science = {'science': 'mathematics'}
+    dataCNRLbundle.resolution = []
+    dataCNRLbundle.source = []
+    dataCNRLbundle.input = []
+    dataCNRLbundle.tidy = false
     dataCNRLbundle.tidyList = []
     dataCNRLbundle.tableStructure = []
-    dataCNRLbundle.mobilesource = 'cnrl-sensor'
-    dataCNRLbundle.categorycodes.push()
-    dataCNRLbundle.categorycodes.push()
-    dataCNRLbundle.prime.push()
-    dataCNRLbundle.resolution.push()
-    dataCNRLbundle.prime.push()
-    dataCNRLbundle.source.push(dataTypePrimary)
-    dataCNRLbundle.input.push(dataTypePrimary)
+    dataCNRLbundle.mobilesource = ''
+    dataCNRLbundle.categorycodes = []
+    dataCNRLbundle.index = []
+    dataCNRLbundle.categories = []
+  } else if (refIN === 'cnrl-k2') {
+    dataCNRLbundle.prime = {'word': ['Pollution', 'Particle size']}
+    dataCNRLbundle.science = {'science': 'mathematics'}
+    dataCNRLbundle.resolution = []
+    dataCNRLbundle.source = []
+    dataCNRLbundle.input = []
+    dataCNRLbundle.tidy = false
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.tableStructure = []
+    dataCNRLbundle.categories.push()
+    dataCNRLbundle.categorycodes = []
+  } else if (refIN === 'cnrl-k3') {
+    dataCNRLbundle.prime = {'word': 'spacial map'}
+    dataCNRLbundle.science = ['science', 'mathematics', 'statistics', 'mean', 'mode', 'median']
+    dataCNRLbundle.resolution = []
+    dataCNRLbundle.source = []
+    dataCNRLbundle.input = []
+    dataCNRLbundle.tidy = false
+    dataCNRLbundle.tidyList = []
+    dataCNRLbundle.tableStructure = []
+    dataCNRLbundle.categories.push()
+    dataCNRLbundle.categorycodes = []
   }
   return dataCNRLbundle
-}
-
-/**
-*  take CNRL contract and follows to source API and filters out categor codes
-* @method drillDowntoLogic
-*
-*/
-CNRLmaster.prototype.drillDowntoLogic = function (refIN) {
-  let drillDownFilter = {}
-  if (refIN === 'cnrl-3356388722') {
-    drillDownFilter.code = 112
-  }
-  return drillDownFilter
 }
 
 /**

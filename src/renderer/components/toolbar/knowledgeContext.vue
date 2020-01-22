@@ -21,19 +21,7 @@
             </ul>
         </div>
         <div id="context-datatypes" class="context-box">
-          <!-- <header>Live Datatypes</header>
-          <ul>
-            <li id="data-type-live" class="knowledge-item" v-for="lts in livedtypes">
-              <a class="" href="" id="cnrl-data" @click.prevent="selectDatatypes(sdts)" v-bind:class="{ 'active': false }" >{{ lts.text }}</a>
-            </li>
-          </ul> -->
           <header>Datatypes</header>
-          <ul>
-            <li id="data-type-live" class="knowledge-item" v-for="sdts in scidtypes">
-              <a class="" href="" id="bmp-data" @click.prevent="selectSciDatatypes(sdts)" v-bind:class="{ 'active':sdts.active }">{{ sdts.text }}</a>
-            </li>
-          </ul>
-          <header>Device DataTypes - </header>
             <ul>
               <li id="data-type-live" class="knowledge-item" v-for="dts in datatypes">
                 <a class="" href="" id="bmp-data" @click.prevent="selectDatatypes(dts)" v-bind:class="{ 'active': dts.active}">{{ dts.text }}</a>
@@ -52,21 +40,21 @@
           <header>Computations - </header>
             <ul>
               <li >
-                <select v-model="selectedCompute" @change="updateSciDTs(selectedCompute)">
-                <option class="science-compute" v-for="scoption in scoptions" v-bind:value="scoption.cid">
-                  {{ scoption.text }}
+                <select v-model="selectedCompute"  @change="updateComputeDTs(selectedCompute)">
+                <option class="science-compute" v-for="scoption in computeAvailable" v-bind:value="scoption.prime.cnrl">
+                  {{ scoption.prime.text }}
                 </option>
               </select>
               </li>
               <li>
-                <a href="" id="liveScience.livingpaperLiving" @click.prevent="livingPaper()">Paper: </a>
+                <!-- <a href="" id="liveScience.livingpaperLiving" @click.prevent="livingPaper()">Paper: </a> -->
               </li>
             </ul>
         </div>
         <div id="context-time" class="context-box">
           <header>Time Period:</header>
             <ul>
-              <li v-if="timeSeg" v-for="t in timeSeg" class="context-time">
+              <li v-if="timeOptions" v-for="t in timeOptions" class="context-time">
                 <a href="" id="" @click.prevent="selectTime(t)" v-bind:class="{ 'active': t.active}" class="knowledge-item">{{ t.text }}</a>
               </li>
             </ul>
@@ -143,7 +131,6 @@
         },
         liveScience: {},
         knowledgeSummary: '',
-        sensors: [],
         datatypes: [],
         scidtypes: [],
         cdtypes: [],
@@ -153,7 +140,6 @@
         kwords: {},
         subcontextholder: [],
         subcontext: [],
-        timeSeg: [],
         resolution:
         [{
           text: 'per minute',
@@ -166,7 +152,6 @@
       }
     },
     created () {
-      this.setAccess()
       kBus.$on('closeKnowledge', (cData) => {
         this.ok.active = true
         this.openKnowledge(this.ok)
@@ -178,17 +163,21 @@
     computed: {
       devices: function () {
         return this.$store.getters.liveContext.device
+      },
+      datatypesAvailable: function () {
+        return this.$store.state.context.datatypes
+      },
+      computeAvailable: function () {
+        return this.$store.state.compute
+      },
+      timeOptions: function () {
+        return this.$store.state.selectTime
       }
     },
     mounted () {
     },
     mixins: [liveMixinSAFEflow],
     methods: {
-      setAccess () {
-        this.languageContext()
-        this.scienceContext()
-        this.timeContext()
-      },
       openKnowledge (ok) {
         ok.active = !ok.active
         if (ok.active === true) {
@@ -203,18 +192,14 @@
         // display language for
         this.displayLanugage(k.id)
       },
-      timeContext () {
-        // call the CNRL for time segment option live in SAFEnetwork
-        this.timeSeg = this.timeNav('time-index')
-      },
       displayLanugage (cnrlID) {
         // loop over match and display words or display human body graphic
         this.kwords = []
-        let lanuageCNRL = this.GETcnrlLivingKnowledge(cnrlID)
-        let wordsPlacer = {}
-        wordsPlacer.word = lanuageCNRL.prime.word
+        // let lanuageCNRL = this.GETcnrlLivingKnowledge(cnrlID)
+        // let wordsPlacer = {}
+        // wordsPlacer.word = lanuageCNRL.prime.word
         // wordsPlacer.wordconnect = lanuageCNRL.prime[1].word
-        this.kwords = wordsPlacer
+        // this.kwords = wordsPlacer
       },
       selectLanguage (l) {
         l.active = !l.active
@@ -222,12 +207,12 @@
         // this.$emit('setVLanguage', l)
       },
       selectDevice (s) {
-        s.active = !s.active
+        this.$store.dispatch('actionUpateDeviceState', s)
         kBus.$emit('setVDevice', s)
         this.dataTypeDevice(s)
       },
       selectDatatypes (std) {
-        std.active = !std.active
+        this.$store.dispatch('actionUpateDTState', std)
         kBus.$emit('setVDatatypes', std)
       },
       selectSciDatatypes (std) {
@@ -239,52 +224,37 @@
         kBus.$emit('setVResolution', r)
       },
       languageContext () {
-        let refContext = 'human'
-        let lanuageCNRL = this.GETcnrlLivingKnowledge(refContext)
-        this.kwords = lanuageCNRL
+        // let refContext = 'human'
+        // let lanuageCNRL = this.GETcnrlLivingKnowledge(refContext)
+        // this.kwords = lanuageCNRL
       },
       dataTypeDevice (devC) {
-        // console.log('dt per devcies')
-        // console.log(devC)
-        let devDTHolder = []
-        let deviceDTypes = this.GETcnrlDeviceDTs(devC.cnrl)
-        // console.log('deviceDTypes')
-        // console.log(deviceDTypes)
-        devDTHolder.push(deviceDTypes)
-        this.datatypes = devDTHolder[0].datatypes
+        console.log('dt per devcies')
+        console.log(devC)
+        console.log(this.datatypesAvailable)
+        this.datatypes = this.datatypesAvailable[devC.device_mac].datatypes
+        // check if categories exist for this DT?
+        this.cdtypes = [] // this.extractCategories(this.datatypesAvailable[devC.device_mac].sourcedts)
       },
-      dataType () {
-        // make call to set start dataType for the device sensors
-        const localthis = this
-        let sciDTHolder = []
-        let cnrlIDholderSci = []
-        // loop over science for this context and display range of datatypes, sub types and match to sensor thus device
-        for (let scLiv of this.scoptions) {
-          let sciDTypes = this.cnrlLookup(scLiv.cid)
-          sciDTHolder.push(sciDTypes.tableStructure)
+      extractCategories (sourceDTs) {
+        let categories = []
+        for (let cts of sourceDTs.categories) {
+          console.log(cts)
         }
-        // extract CNRL ids for science
-        for (let cnrli of localthis.scidtypes) {
-          for (let cnlist of cnrli) {
-            cnrlIDholderSci.push(cnlist.cnrl)
+        return categories
+      },
+      updateComputeDTs (computeIN) {
+        console.log(computeIN)
+        this.activeEntity = computeIN
+        // match to CNRL compute contract
+        let computeContract = {}
+        for (let ccL of this.computeAvailable) {
+          if (computeIN === ccL.prime.cnrl) {
+            computeContract = ccL
           }
         }
-        // take the two start points and see what is in common
-        // this.compareDataTypes(cnrlIDholderSci, cnrlIDholderDev)
-      },
-      scienceContext () {
-        // set the first science priority on start of RS
-        this.scoptions = this.$store.getters.liveScience
-      },
-      updateSciDTs (sciIN) {
-        this.activeEntity = sciIN
-        // use cid to look up datatype for this scienceEntities
-        let sciDTypesSelect = this.GETcnrlScienceDTs(sciIN)
-        sciDTypesSelect.cnrl = sciIN
-        this.scidtypes = sciDTypesSelect.datatypes
-        this.cdtypes = sciDTypesSelect.categories
-        this.liveScience.livingpaper = sciDTypesSelect.contract.livingpaper
-        kBus.$emit('setVScience', sciDTypesSelect.contract)
+        // this.liveScience.livingpaper = computeContract.livingpaper
+        kBus.$emit('setVScience', computeContract)
       },
       compareDataTypes (sciArr, devArr) {
         // compare two array datatypes and return common to setBoth
@@ -307,7 +277,8 @@
         this.subcontext = this.subcontextholder.columncodes
       },
       selectTime (tIN) {
-        tIN.active = !tIN.active
+        // dispatch to store up update state of time options
+        this.$store.dispatch('actionUpateTimeOption', tIN)
         let tt = {}
         if (tIN.text === 'SELECT') {
           // display start end endPoint
@@ -369,7 +340,7 @@
             }
           }
         }
-        this.timeSeg = updatedTimeSeg
+        this.selectTime = updatedTimeSeg
         // set resolution
         this.resolution[0].active = true
       }

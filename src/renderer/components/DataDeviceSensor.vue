@@ -152,25 +152,6 @@
         </li>
       </ul>
     </div>
-    <div id="add-new-network">
-      <header>CNRL network contributions</header>
-      <ul>
-        <li>
-          <button class="new-describe-cnrl" @click.prevent="newDesAPI($event)">{{ newAPIseen.text }}</button>
-        </li>
-        <li>
-          <button class="view-cnrl" id="experimentCNRL" @click.prevent="viewCNRL($event)">{{ CNRLexperimentseen.text }}</button>
-        </li>
-        <li>
-          <button class="view-cnrl" id="datatypesCNRL" @click.prevent="viewCNRL($event)">{{ CNRLdatatypesseen.text }}</button>
-        </li>
-        <li>
-          <button class="view-cnrl"  id="computeCNRL" @click.prevent="viewCNRL($event)">{{ CNRLcomputeseen.text }}</button>
-        </li>
-      </ul>
-      <new-API v-if="newAPIseen.active"></new-API>
-      <view-CNRL v-if="statusCNRL.active" :cnrlLive="CNRLdata"></view-CNRL>
-    </div>
   </div>
 </template>
 
@@ -180,29 +161,16 @@
   import TokenReader from './LandingPage/token-reader.vue'
   import FirstToken from './LandingPage/token-first.vue'
   import deviceList from './healthscience/deviceData.vue'
-  import newAPI from './healthscience/newAPI.vue'
-  import viewCNRL from './healthscience/viewCNRL.vue'
 
   export default {
     name: 'data-page',
     components: {
       TokenReader,
       FirstToken,
-      deviceList,
-      newAPI,
-      viewCNRL
+      deviceList
     },
     mixins: [liveMixinSAFEflow],
     computed: {
-      computeCNRL: function () {
-        return this.$store.state.compute
-      },
-      datatypesCNRL: function () {
-        return this.$store.state.datatypesCNRL
-      },
-      nxpCNRL: function () {
-        return this.$store.state.NXPexperimentList
-      }
     },
     data: () => ({
       viewPkey: false,
@@ -228,32 +196,6 @@
       {
         seen: false,
         text: 'view'
-      },
-      newAPIseen:
-      {
-        active: false,
-        text: 'Add new'
-      },
-      CNRLdata: [],
-      statusCNRL:
-      {
-        active: false,
-        type: ''
-      },
-      CNRLexperimentseen:
-      {
-        active: false,
-        text: 'Experiments'
-      },
-      CNRLdatatypesseen:
-      {
-        active: false,
-        text: 'Datatypes'
-      },
-      CNRLcomputeseen:
-      {
-        active: false,
-        text: 'Compute'
       },
       otherDevices:
       {

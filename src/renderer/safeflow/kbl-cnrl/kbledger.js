@@ -14,8 +14,6 @@ const util = require('util')
 const events = require('events')
 
 var KBLedger = function (setIN) {
-  console.log('KBL start')
-  console.log(setIN)
   events.EventEmitter.call(this)
   this.liveDataSystem = new DataSystem(setIN)
 }

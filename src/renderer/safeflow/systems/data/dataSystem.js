@@ -19,8 +19,6 @@ const events = require('events')
 const moment = require('moment')
 
 var DataSystem = function (setIN) {
-  console.log('data system')
-  console.log(setIN)
   events.EventEmitter.call(this)
   this.liveTestStorage = new TestStorageAPI(setIN)
   this.liveSimulatedData = new LiveSimulatedDataSystem(setIN)

@@ -1,6 +1,15 @@
 <template>
   <div id="science">
     <h1>DIY Science & Computations</h1>
+    <nxp-controls></nxp-controls>
+    <!--
+    <nxp-existing></nxp-existing>
+    <nxp-existing></nxp-existing>
+    <nxp-data></nxp-data>
+    <nxp-results></nxp-results>
+    <nxp-visualise></nxp-visualise>
+    <nxp-evolve></nxp-evolve>
+    -->
     <knowledge-Live :liveData="liveData" ></knowledge-Live>
     <!-- <section v-if="newScienceSeen" id="new-science"> -->
     <!--<science-contribute  :contributeData="contributeData"></science-contribute>-->
@@ -9,13 +18,15 @@
 </template>
 
 <script>
+import NxpControls from '@/components/healthscience/NxpControls.vue'
 import scienceList from '@/components/healthscience/scienceData.vue'
 import KnowledgeLive from '@/components/toolbar/knowledgeLive'
 const moment = require('moment')
 
 export default {
-  name: 'Science',
+  name: 'NXP-builder',
   components: {
+    NxpControls,
     KnowledgeLive,
     scienceList
   },

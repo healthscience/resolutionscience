@@ -77,24 +77,16 @@
     <div id="k-toolkit">
       <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
       <div id="add-experiment">
-        Dashboard:
-        <select v-model="liveexerimentList" class="button-expadd" href="" id="add-exp-button" @change="addToExperiment($event)">
-          <option class="science-compute" v-for="expi in liveexerimentList" v-bind:value="expi.prime.cnrl">
-            {{ expi.prime.text }}
-          </option>
-        </select>
-        <div id="add-button">
-          <button v-model="liveexerimentList" class="button-expadd" href="" id="add-exp-button" @click.prevent="experADD($event)">Add</button>
-          <transition name="fade" >
-            <div v-if="saveStatusEK.active === true" id="confirm-add-experiment">{{ saveStatusEK.text }}</div>
-          </transition>
-        </div>
         <div v-if="timeSelect" id="time-select" >
           <div id="start-point" class="context-selecttime">Start: {{ kContext.analysisStart }}</div>
           <div id="end-point" class="context-selecttime">End: {{ kContext.analysisEnd }}</div>
         </div>
         <div id="save-component">
             <button @click.prevent="startStatusSave()">SAVE</button>
+            <button v-model="liveexerimentList" class="button-expadd" href="" id="add-exp-button" @click.prevent="experADD($event)">Add</button>
+            <transition name="fade" >
+              <div v-if="saveStatusEK.active === true" id="confirm-add-experiment">{{ saveStatusEK.text }}</div>
+            </transition>
         </div>
       </div>
       <multipane class="custom-resizer" layout="vertical">
@@ -202,12 +194,6 @@
         liveTimeV: '',
         liveTimeVFuture: '',
         timeStateLast: '',
-        saveStatusEK: {},
-        saveExpKid:
-        {
-          active: false,
-          text: ''
-        },
         buildTimeBundles: []
       }
     },
@@ -655,19 +641,6 @@
       },
       setNaveTime () {
         // this.liveNavTime = this.timeNav('datatime-index')
-      },
-      addToExperiment (exB) {
-        this.selectedExperiment = exB.target.value
-      },
-      experADD (expA) {
-        // need to keep permanent store of experiments to Ecomponents linked (save, delete, update also)
-        const localthis = this
-        console.log(this.selectedExperiment)
-        this.saveMappingExpKB(this.selectedExperiment)
-        // this.$emit('experimentMap', this.selectedExperiment)
-        setTimeout(function () {
-          localthis.saveStatusEK.active = false
-        }, 3000) // hide the message after 3 seconds
       },
       async saveMappingExpKB (expMapIN) {
         let mappingEKB = {}

@@ -11,9 +11,6 @@ export default {
   name: 'chart-page',
   components: { heartPlugin },
   methods: {
-    open (link) {
-      // this.$electron.shell.openExternal(link)
-    }
   }
 }
 </script>

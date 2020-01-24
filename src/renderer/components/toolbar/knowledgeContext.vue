@@ -310,7 +310,7 @@
         console.log('update the open knowledge')
         console.log(kbl)
         // set device
-        let keepDevices = []
+        /* let keepDevices = []
         // remove or update status of existing device
         for (let dvl of this.devices) {
           for (let adev of kbl.devices) {
@@ -342,7 +342,7 @@
         }
         this.selectTime = updatedTimeSeg
         // set resolution
-        this.resolution[0].active = true
+        this.resolution[0].active = true */
       }
     }
   }

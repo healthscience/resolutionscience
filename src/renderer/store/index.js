@@ -19,6 +19,7 @@ export default new Vuex.Store({
     time: '',
     selectTime: [],
     datatypes: [],
+    datatypesCNRL: [],
     bundle: {},
     startBundles: [],
     bundleCounter: 0,
@@ -349,6 +350,9 @@ export default new Vuex.Store({
     ExperimentProgressStatusFalse: (state, inVerified) => {
       let setFalseCNRL = inVerified.cnrl
       Vue.set(state.experimentProgressStatus[setFalseCNRL], 'active', false)
+    },
+    setDTcnrl: (state, inVerified) => {
+      state.datatypesCNRL = inVerified
     }
   },
   actions: {
@@ -476,6 +480,9 @@ export default new Vuex.Store({
     },
     actionUpateDTState: (context, update) => {
       context.commit('updateDTState', update)
+    },
+    actionDTlist: (context, update) => {
+      context.commit('setDTcnrl', update)
     }
   },
   modules,

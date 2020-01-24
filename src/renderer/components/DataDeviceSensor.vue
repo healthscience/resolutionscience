@@ -193,6 +193,17 @@
       viewCNRL
     },
     mixins: [liveMixinSAFEflow],
+    computed: {
+      computeCNRL: function () {
+        return this.$store.state.compute
+      },
+      datatypesCNRL: function () {
+        return this.$store.state.datatypesCNRL
+      },
+      nxpCNRL: function () {
+        return this.$store.state.NXPexperimentList
+      }
+    },
     data: () => ({
       viewPkey: false,
       firstTimetokenseen: false,
@@ -342,11 +353,11 @@
         this.statusCNRL.type = cnrle.target.id
         let cnrlActive = cnrle.target.id
         if (cnrlActive === 'experimentCNRL') {
-          this.CNRLdata = this.GETexperimentsList()
+          this.CNRLdata = this.nxpCNRL
         } else if (cnrlActive === 'datatypesCNRL') {
-          this.CNRLdata = this.GETdatatypeList()
+          this.CNRLdata = this.datatypesCNRL
         } else if (cnrlActive === 'computeCNRL') {
-          this.CNRLdata = this.GetcnrlComputeList()
+          this.CNRLdata = this.computeCNRL
         }
       }
     }

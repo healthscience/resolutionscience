@@ -13,12 +13,8 @@ import CNRLmaster from './kbl-cnrl/cnrlMaster.js'
 import TestStorageAPI from './systems/data/dataprotocols/teststorage/testStorage.js'
 import DatadeviceSystem from './systems/data/datadeviceSystem.js'
 import DTsystem from './systems/data/dtSystem.js'
-// import SAFEapi from './systems/data/dataprotocols/safenetwork/index.js'
-/*
 import KBLedger from './kbl-cnrl/kbledger.js'
-import TimeUtilities from './systems/timeUtility.js'
-import DataSystem from './systems/data/dataSystem.js'
-import EntitiesManager from './entitiesManager.js' */
+import EntitiesManager from './entitiesManager.js'
 const util = require('util')
 const events = require('events')
 
@@ -26,9 +22,6 @@ var safeFlow = function () {
   events.EventEmitter.call(this)
   // this.SAFElive = new SAFEapi()
   this.defaultStorage = ['http://165.227.244.213:8882'] // know seed peers
-  /* this.liveKBL = new KBLedger()
-  this.liveTimeUtil = new TimeUtilities()
-  this.liveEManager = new EntitiesManager(this.liveKBL) */
   this.api = {}
   this.settings = {}
   this.liveTestStorage = {}
@@ -54,6 +47,8 @@ safeFlow.prototype.networkAuthorisation = async function (apiCNRL, auth) {
   this.liveTestStorage = new TestStorageAPI(this.settings)
   this.livedeviceSystem = new DatadeviceSystem(this.settings)
   this.liveDTsystem = new DTsystem(this.settings)
+  this.liveKBL = new KBLedger(this.settings)
+  this.liveEManager = new EntitiesManager(this.liveKBL)
   this.api = await this.liveCNRL.defautNetworkContracts(apiCNRL)
   return true
 }
@@ -163,7 +158,7 @@ safeFlow.prototype.setpeerContext = function (bundleIN) {
   let timeBundle = {}
   timeBundle.time = bundleIN.time
   timeBundle.realtime = bundleIN.time.realtime
-  ecsIN.time = timeBundle.time // this.liveTimeUtil.timeConversionUtility(timeBundle)
+  ecsIN.time = timeBundle.time
   ecsIN.science = bundleIN.science
   ecsIN.resolution = bundleIN.resolution
   ecsIN.devices = bundleIN.devices
@@ -238,6 +233,8 @@ safeFlow.prototype.cnrlTimeIndex = function (refIN) {
 */
 safeFlow.prototype.cnrlExperimentIndex = function () {
   let cnrlDetail = []
+  console.log('live cnrl')
+  console.log(this.liveCNRL)
   let index = this.liveCNRL.indexExperiments()
   for (let ie of index) {
     // lookup contracts

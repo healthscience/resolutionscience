@@ -51,7 +51,6 @@
     components: {
     },
     data: () => ({
-      liveSafeFlow: {},
       computeFlag: '',
       sensors: []
     }),

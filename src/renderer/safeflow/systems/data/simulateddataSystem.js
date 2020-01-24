@@ -11,7 +11,6 @@
 */
 
 import CALE from '../../CALE/cale-utility.js'
-import CNRLmaster from '../../kbl-cnrl/cnrlMaster.js'
 import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
 const util = require('util')
 const events = require('events')
@@ -19,7 +18,6 @@ const events = require('events')
 var SimulatedDataSystem = function (setIN) {
   events.EventEmitter.call(this)
   this.liveCALE = new CALE(setIN)
-  this.liveCNRL = new CNRLmaster()
   this.liveTestStorage = new TestStorageAPI(setIN)
   this.simulatedData = []
 }

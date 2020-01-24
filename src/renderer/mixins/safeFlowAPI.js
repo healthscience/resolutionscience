@@ -40,6 +40,8 @@ export default {
         this.datatypeContext()
         this.cnrlComputeIndex()
         this.timeNav('time-index')
+        // cnrl indexes data
+        this.GETdatatypeList()
       }
     },
     async checkAuthorisation (defaultAPI, authBundle) {
@@ -94,7 +96,6 @@ export default {
     cnrlComputeIndex () {
       // call the CNRL api and get network science active
       let startScienceCompute = this.safeMixin.cnrlNetworkComputeIndex()
-      // this.$store.commit('setCNRLscience', startScienceCompute)
       this.$store.dispatch('actionCNRLcompute', startScienceCompute)
     },
     timeRange () {
@@ -109,26 +110,13 @@ export default {
       navTimelist = this.safeMixin.cnrlTimeIndex(navT)
       this.$store.dispatch('actionTIMEindex', navTimelist)
     },
-    async learnStart (lBundle) {
-      // console.log('start Learning')
-      // console.log(lBundle)
-      let returnVISvue = {}
-      this.chartmessage.text = 'Visualisation being prepared'
-      this.chartmessage.active = true
-      this.liveBundle = lBundle
-      this.activeEntity = lBundle.kbid
-      // set the visualisation require (need to be more complex ie. type, type chart colors etc)
-      this.activevis = this.$store.getters.liveVis[0]
-      // make the Entity
-      await this.safeMixin.scienceEntities(lBundle)
-      // this.learnListening()
-      let entityGetter = await this.safeMixin.entityGetter(this.activeEntity, 'vis-sc-1')
-      let entityGetterTable = await this.safeMixin.entityGetter(this.activeEntity, 'vis-sc-2')
-      this.chartmessage.active = false
-      // get the table visulisation
-      returnVISvue = await this.diplayFilter(this.activeEntity, 'vis-sc-1', entityGetter)
-      returnVISvue.table = entityGetterTable
-      return returnVISvue
+    GETexperimentsList () {
+      let nxpList = this.safeMixin.cnrlExperimentIndex()
+      this.$store.dispatch('actionNXPindex', nxpList)
+    },
+    GETdatatypeList () {
+      let dtList = this.safeMixin.cnrlNetworkDatatypeIndex()
+      this.$store.dispatch('actionDTlist', dtList)
     },
     setFutureUItime (curTime) {
       let futureTime = curTime + 86400
@@ -157,9 +145,26 @@ export default {
       let lastestMappedLedger = await this.safeMixin.experimentKbundles('retreive')
       return lastestMappedLedger
     },
-    GetcnrlComputeList () {
-      let computeList = this.safeMixin.cnrlNetworkComputeIndex()
-      return computeList
+    async learnStart (lBundle) {
+      // console.log('start Learning')
+      // console.log(lBundle)
+      let returnVISvue = {}
+      this.chartmessage.text = 'Visualisation being prepared'
+      this.chartmessage.active = true
+      this.liveBundle = lBundle
+      this.activeEntity = lBundle.kbid
+      // set the visualisation require (need to be more complex ie. type, type chart colors etc)
+      this.activevis = this.$store.getters.liveVis[0]
+      // make the Entity
+      await this.safeMixin.scienceEntities(lBundle)
+      // this.learnListening()
+      let entityGetter = await this.safeMixin.entityGetter(this.activeEntity, 'vis-sc-1')
+      let entityGetterTable = await this.safeMixin.entityGetter(this.activeEntity, 'vis-sc-2')
+      this.chartmessage.active = false
+      // get the table visulisation
+      returnVISvue = await this.diplayFilter(this.activeEntity, 'vis-sc-1', entityGetter)
+      returnVISvue.table = entityGetterTable
+      return returnVISvue
     },
     async diplayFilter (aEID, aVis, entityGetter) {
       // setup return vis Object

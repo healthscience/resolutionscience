@@ -10,16 +10,12 @@
 * @version    $Id$
 */
 import Entity from './scienceEntities.js'
-import TimeUtilities from './systems/timeUtility.js'
-import CNRLmaster from './kbl-cnrl/cnrlMaster.js'
 // import KBLedger from './cnrl/kbledger.js'
 const util = require('util')
 const events = require('events')
 
 var EntitiesManager = function (KBL) {
   events.EventEmitter.call(this)
-  this.liveTimeUtil = new TimeUtilities()
-  this.liveCNRL = new CNRLmaster()
   this.liveKBL = KBL
   this.liveSEntities = {}
 }

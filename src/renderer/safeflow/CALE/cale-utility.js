@@ -10,13 +10,11 @@
 * @version    $Id$  0.01
 */
 
-import CNRLmaster from '../kbl-cnrl/cnrlMaster.js'
 const util = require('util')
 const events = require('events')
 
 var CALE = function (setIN) {
   events.EventEmitter.call(this)
-  this.liveCNRL = new CNRLmaster()
   this.liveDataSystem = {}
   this.caledata = []
 }

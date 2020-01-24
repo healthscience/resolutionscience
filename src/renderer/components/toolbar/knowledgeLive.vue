@@ -189,7 +189,6 @@
           id: 'learn-history',
           active: false
         },
-        // historyData: this.$store.getters.startBundlesList,
         experimentData: [],
         bundleuuid: '',
         kContext: {},
@@ -213,6 +212,7 @@
       }
     },
     created () {
+      this.authorisation()
       kBus.$on('setVLanguage', (ckData) => {
         this.languageStatus(ckData)
       })
@@ -244,6 +244,14 @@
     },
     mixins: [liveMixinSAFEflow],
     methods: {
+      async authorisation () {
+        let defaultAPI = '33221100'
+        let authIN = this.$store.getters.liveSystem
+        let authStatus = await this.checkAuthorisation(defaultAPI, authIN)
+        if (authStatus === true) {
+          console.log('yes authorisation passed')
+        }
+      },
       async filterLearn (s) {
         // close the knowledge
         kBus.$emit('closeKnowledge')
@@ -371,20 +379,6 @@
         updateTbundle.timevis = this.liveData.timeLive
         return updateTbundle
       },
-      async startFuture (liveBundle, fTime) {
-        // start the future
-        liveBundle.time.startperiod = 'simulateData'
-        liveBundle.time.futureperiod = moment(fTime)
-        let visDataBack = await this.learnStart(liveBundle)
-        this.futureliveDataCollection = visDataBack.liveDataCollection
-        this.futureliveOptions = visDataBack.liveOptions
-        // this.futurekContext = visDataBack.kContext
-        // this.liveTimeV = visDataBack.displayTime
-        this.liveTimeVFuture = visDataBack.displayTimeF
-      },
-      saveLearnHistory (lBundle) {
-        this.historyData.push(lBundle)
-      },
       createKBID (addressIN) {
         // hash Object
         let kbundleHash = hashObject(addressIN)
@@ -399,6 +393,20 @@
         // const bytes = bs58.decode(addressde)
         // console.log(bytes.toString('base64'))
         return tempTokenG
+      },
+      async startFuture (liveBundle, fTime) {
+        // start the future
+        liveBundle.time.startperiod = 'simulateData'
+        liveBundle.time.futureperiod = moment(fTime)
+        let visDataBack = await this.learnStart(liveBundle)
+        this.futureliveDataCollection = visDataBack.liveDataCollection
+        this.futureliveOptions = visDataBack.liveOptions
+        // this.futurekContext = visDataBack.kContext
+        // this.liveTimeV = visDataBack.displayTime
+        this.liveTimeVFuture = visDataBack.displayTimeF
+      },
+      saveLearnHistory (lBundle) {
+        this.historyData.push(lBundle)
       },
       async navTimeLearn (uSeg) {
         let updateTbundle = {}
@@ -674,11 +682,6 @@
       },
       viewHistoryLive (ch) {
         this.computehist = ch
-      },
-      addnewScience () {
-        let scienceStart = {}
-        scienceStart.formSeen = true
-        this.contributeData = scienceStart
       },
       startStatusSave (se) {
         // change start status and save or delete settings

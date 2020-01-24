@@ -10,7 +10,6 @@
 * @version    $Id$
 */
 
-import CNRLmaster from '../../kbl-cnrl/cnrlMaster.js'
 import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
 import LiveSimulatedDataSystem from './simulateddataSystem.js'
 import FilterDataSystem from './filterdataSystem.js'
@@ -20,8 +19,9 @@ const events = require('events')
 const moment = require('moment')
 
 var DataSystem = function (setIN) {
+  console.log('data system')
+  console.log(setIN)
   events.EventEmitter.call(this)
-  this.liveCNRL = new CNRLmaster()
   this.liveTestStorage = new TestStorageAPI(setIN)
   this.liveSimulatedData = new LiveSimulatedDataSystem(setIN)
   this.liveFilterData = new FilterDataSystem(setIN)

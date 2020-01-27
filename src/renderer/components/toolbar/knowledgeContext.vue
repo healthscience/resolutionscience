@@ -71,15 +71,6 @@
       <div id="select-knowledge">
         <a href="" id="open-knowledge" @click.prevent="openKnowledge(ok)" v-bind:class="{ 'active': ok.active}">{{ ok.name }}</a>
       </div>
-      <div id="history-box">
-        <div id="history-learn" class="live-kelement2">
-          <div id="history-learn-container">
-            <div id="history-view">
-              <a href="" id="history-button" @click.prevent="viewHistory(hist)" v-bind:class="{ 'active': hist.active}">{{ hist.name }}</a>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
     <div id="clear-data-box"></div>
   </div>
@@ -121,12 +112,6 @@
         {
           name: 'OPEN KNOWLEDGE',
           id: 'learn-status',
-          active: false
-        },
-        hist:
-        {
-          name: 'View compute list',
-          id: 'learn-history',
           active: false
         },
         liveScience: {},
@@ -296,15 +281,6 @@
       },
       listenkBus () {
         // console.log(kBus)
-      },
-      viewHistory (hist) {
-        hist.active = !hist.active
-        if (hist.active === true) {
-          hist.name = 'Close compute list'
-        } else {
-          hist.name = 'View compute list'
-        }
-        this.$emit('viewHistory', hist)
       },
       updateKBcontext (kbl) {
         console.log('update the open knowledge')

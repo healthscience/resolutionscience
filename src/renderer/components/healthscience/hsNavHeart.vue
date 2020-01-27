@@ -26,7 +26,7 @@
 <script>
   import oracleView from '@/components/oracle/oracleView.vue'
   import experimentList from './experimentList.vue'
-  import NXPexperimentList from './NXPexperimentList.vue'
+  import NXPexperimentList from './nxp/NXPexperimentList.vue'
   import { sBus } from '../../main.js'
 
   export default {

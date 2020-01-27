@@ -1,25 +1,26 @@
 <template>
-  <div id="science">
-    <h1>DIY Science & Computations</h1>
+  <div id="nxp-diy-science">
+    <h1>DIY TOOLKIT</h1>
     <nxp-controls></nxp-controls>
-    <!--
-    <nxp-existing></nxp-existing>
-    <nxp-existing></nxp-existing>
-    <nxp-data></nxp-data>
-    <nxp-results></nxp-results>
-    <nxp-visualise></nxp-visualise>
-    <nxp-evolve></nxp-evolve>
-    -->
-    <knowledge-Live :liveData="liveData" ></knowledge-Live>
-    <!-- <section v-if="newScienceSeen" id="new-science"> -->
-    <!--<science-contribute  :contributeData="contributeData"></science-contribute>-->
-    <!--<science-list></science-list>-->
+    <div v-if="NXPnew">
+      <nxp-template :contributeData="contributeData"></nxp-template>
+    </div>
+    <div v-if="NXPlive"> {{ NXPlive }}
+      <!--<nxp-existing></nxp-existing> -->
+      <nxp-question></nxp-question>
+      <!-- <nxp-outcome></nxp-outcome> -->
+      <!-- <nxp-data></nxp-data> -->
+      <knowledge-Live :liveData="liveData" ></knowledge-Live>
+      <!-- <nxp-visualise></nxp-visualise> -->
+      <!-- <nxp-evolve></nxp-evolve> -->
+    </div>
   </div>
 </template>
 
 <script>
-import NxpControls from '@/components/healthscience/NxpControls.vue'
-import scienceList from '@/components/healthscience/scienceData.vue'
+import NxpControls from '@/components/healthscience/nxp/NxpControls.vue'
+import nxpTemplate from '@/components/healthscience/nxp/nxpTemplate.vue'
+import nxpQuestion from '@/components/healthscience/nxp/nxpQuestion.vue'
 import KnowledgeLive from '@/components/toolbar/knowledgeLive'
 const moment = require('moment')
 
@@ -28,11 +29,14 @@ export default {
   components: {
     NxpControls,
     KnowledgeLive,
-    scienceList
+    nxpTemplate,
+    nxpQuestion
   },
   data () {
     return {
       liveFlow: null,
+      nxpSelected: false,
+      NXPnew: false,
       liveData:
       {
         devicesLive: [],
@@ -45,7 +49,7 @@ export default {
       },
       avgStatusCompute: false,
       avgStatusCompMessage: '',
-      newScienceSeen: false,
+      newNXPSeen: false,
       contributeData: {},
       updatecompute:
       {
@@ -71,6 +75,9 @@ export default {
   computed: {
     system: function () {
       return this.$store.state.system
+    },
+    NXPlive: function () {
+      return this.$store.state.liveNXP
     }
   },
   created () {

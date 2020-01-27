@@ -51,7 +51,7 @@
 
 <script>
   import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
-  import edashboard from '@/components/healthscience/edashBoard'
+  import edashboard from '@/components/healthscience/datastructure/edashBoard'
 
   export default {
     name: 'experiment-list',

@@ -129,6 +129,7 @@
   import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
   import progressMessage from '@/components/toolbar/inProgress'
   // import { sBus } from '../../main.js'
+  const moment = require('moment')
 
   export default {
     name: 'knowledge-history',
@@ -180,6 +181,35 @@
     },
     mixins: [liveMixinSAFEflow],
     methods: {
+      async makeLiveKnowledge (lBund) {
+        // set live Bundle for context
+        // first close the computelist
+        this.computehist.active = false
+        this.computehist.name = 'View compute list'
+        this.bundleuuid = lBund.kbid
+        this.$store.dispatch('actionLiveBundle', lBund)
+        // update bundle start time
+        const nowTime = moment()
+        let updatestartPeriodTime = moment.utc(nowTime).startOf('day')
+        this.$store.dispatch('actionUpdateStartTime', updatestartPeriodTime)
+        this.$store.dispatch('actionUpdateSciCompute', lBund.cnrl)
+        this.entityPrepareStatus.active = true
+        // set the active knowledge boxes
+        // lBund.visualisation = ['vis-sc-1', 'vis-sc-2']
+        let updatedKBundleSet = this.$store.getters.liveBundle
+        this.setKnowledgtBox(updatedKBundleSet)
+        let visDataBack = await this.learnStart(updatedKBundleSet)
+        // remove compute in progress Message
+        this.$store.dispatch('actionstopComputeStatus', updatedKBundleSet.kbid)
+        this.entityPrepareStatus.active = false
+        this.liveDataCollection = visDataBack.liveDataCollection
+        this.liveOptions = visDataBack.liveOptions
+        // this.kContext = visDataBack.kContext
+        this.liveTimeV = visDataBack.displayTime
+        this.liveTimeVFuture = visDataBack.displayTimeF
+        this.liveTable = visDataBack.table
+        // this.startFuture(lBund, visDataBack.displayTimeF)
+      },
       async makeKLive (status) {
         // loop over array of bundles and match bid number and make active
         if (status.target.checked === true) {

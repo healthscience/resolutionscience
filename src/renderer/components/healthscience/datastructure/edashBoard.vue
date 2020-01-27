@@ -39,8 +39,8 @@
   import progressMessage from '@/components/toolbar/inProgress'
   import learnReport from '@/components/reports/LearnReport'
   import learnAction from '@/components/reports/LearnAction'
-  import expvisual from '@/components/healthscience/expVisual'
-  import expfuturevisual from '@/components/healthscience/expfutureVisual'
+  import expvisual from '@/components/healthscience/datastructure/expVisual'
+  import expfuturevisual from '@/components/healthscience/datastructure/expfutureVisual'
   // const moment = require('moment')
 
   export default {

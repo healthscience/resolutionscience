@@ -10,6 +10,7 @@ export default new Vuex.Store({
     safeFlow: {},
     system: {'publickey': '', 'token': ''},
     context: {},
+    liveNXP: '',
     compute: {},
     tools: {},
     visualisation: ['vis-sc-2'],
@@ -37,6 +38,7 @@ export default new Vuex.Store({
     liveSafeFlow: state => state.safeFlow,
     liveSystem: state => state.system,
     liveContext: state => state.context,
+    liveNXPset: state => state.liveNXP,
     liveCompute: state => state.compute,
     liveTools: state => state.tools,
     liveVis: state => state.visualisation,
@@ -353,6 +355,9 @@ export default new Vuex.Store({
     },
     setDTcnrl: (state, inVerified) => {
       state.datatypesCNRL = inVerified
+    },
+    setLiveNXP: (state, inVerified) => {
+      state.liveNXP = inVerified
     }
   },
   actions: {
@@ -483,6 +488,9 @@ export default new Vuex.Store({
     },
     actionDTlist: (context, update) => {
       context.commit('setDTcnrl', update)
+    },
+    actionSetNXP: (context, update) => {
+      context.commit('setLiveNXP', update)
     }
   },
   modules,

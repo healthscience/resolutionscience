@@ -160,7 +160,7 @@
   import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
   import TokenReader from './LandingPage/token-reader.vue'
   import FirstToken from './LandingPage/token-first.vue'
-  import deviceList from './healthscience/deviceData.vue'
+  import deviceList from './healthscience/datastructure/deviceData.vue'
 
   export default {
     name: 'data-page',
@@ -288,18 +288,6 @@
         } else {
           this.newAPIseen.active = false
           this.newAPIseen.text = 'Add new'
-        }
-      },
-      viewCNRL (cnrle) {
-        this.statusCNRL.active = true
-        this.statusCNRL.type = cnrle.target.id
-        let cnrlActive = cnrle.target.id
-        if (cnrlActive === 'experimentCNRL') {
-          this.CNRLdata = this.nxpCNRL
-        } else if (cnrlActive === 'datatypesCNRL') {
-          this.CNRLdata = this.datatypesCNRL
-        } else if (cnrlActive === 'computeCNRL') {
-          this.CNRLdata = this.computeCNRL
         }
       }
     }

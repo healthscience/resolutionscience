@@ -1,17 +1,17 @@
 <template>
-  <div id="question-nxp">
-    <header>QUESTION:</header>
-    <div id="prime-question">
-      <form id="question_form" name="question_form" method="post" action="#">
+  <div id="compute-nxp">
+    <header>COMPUTE:</header>
+    <div id="prime-compute">
+      <form id="compute_form" name="compute_form" method="post" action="#">
         <ul>
           <li>
-            Prime question:<input v-model="question.text" placeholder="prime">
+            Prime compute:<input v-model="compute.text" placeholder="prime">
           </li>
           <li>
-            Forum discussion:<input v-model="question.forum" placeholder="forum link">
+            Forum discussion:<input v-model="compute.forum" placeholder="forum link">
           </li>
           <li>
-            <button @click.prevent="saveQuestion($event)">Save Question</button>
+            <button @click.prevent="saveCompute($event)">Save Compute</button>
           </li>
         </ul>
       </form>
@@ -25,7 +25,7 @@
     components: {
     },
     data: () => ({
-      question:
+      compute:
       {
         text: '',
         forum: ''
@@ -38,24 +38,24 @@
     computed: {
     },
     methods: {
-      saveQuestion () {
-        console.log('save question')
+      saveCompute () {
+        console.log('save compute')
       }
     }
   }
 </script>
 
 <style>
-#question-nxp {
+#compute-nxp {
   margin: 1em;
   border: 1px solid grey;
 }
 
-#question-nxp header{
+#compute-nxp header{
   font-weight: bold;
 }
 
-#prime-question {
+#prime-compute {
   margin: 1em;
 }
 </style>

@@ -72,7 +72,6 @@
       <div id="learn-close"></div>
     </div>
     <knowledge-Context :kContext="kContext" @clearKbox="clearKnowledgeBox"></knowledge-Context>
-    <visualise-context></visualise-context>
   </div>
 </template>
 
@@ -81,7 +80,6 @@
   import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
   import scienceContribute from '@/components/healthscience/cnrl/scienceContribute.vue'
   import KnowledgeContext from '@/components/toolbar/knowledgeContext'
-  import visualiseContext from '@/components/toolbar/visualiseContext'
   import { kBus } from '../../main.js'
   const moment = require('moment')
   const crypto = require('crypto')
@@ -93,8 +91,7 @@
     components: {
       Reactive,
       scienceContribute,
-      KnowledgeContext,
-      visualiseContext
+      KnowledgeContext
     },
     props: {
       liveData: {
@@ -559,13 +556,13 @@
 
 #live-knowledge-elements {
   border: 0px solid blue;
-  background-color: #dfc8f7;
+  background-color: #eae6ed;
 }
 
 #live-knowledge-holder {
   float: left;
   border: 1px solid purple;
-  background-color: #eedefa;
+  background-color: white;
   margin: 6px;
 }
 

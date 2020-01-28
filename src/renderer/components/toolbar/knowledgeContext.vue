@@ -351,7 +351,7 @@
 }
 
 #knowlege-boxes {
-  background-color: #dfc8f7;
+  background-color: #eae6ed;
   margin: 0em;
 }
 
@@ -368,7 +368,7 @@
 }
 
 .context-box header {
-  background-color: #d7e6f5;
+  background-color: #eae6ed;
   border-bottom: 2px dotted #6F6B63;
   margin: 4px;
 }
@@ -399,7 +399,7 @@
 
 #open-knowledge {
   display: block;
-  background-color: #eedefa; /* #c4afdb;*/
+  background-color: #eae6ed; /* #c4afdb;*/
   height: 40px;
   width: 200px;
   padding-left: 10px;
@@ -408,7 +408,7 @@
 }
 
 #open-knowledge.active {
-  background-color: #eedefa;
+  background-color: #eae6ed;
   color: purple;
 }
 

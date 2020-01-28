@@ -11,7 +11,9 @@
       <!-- <nxp-outcome></nxp-outcome> -->
       <!-- <nxp-data></nxp-data> -->
       <knowledge-Live :liveData="liveData" ></knowledge-Live>
-      <!-- <nxp-visualise></nxp-visualise> -->
+      <nxp-compute></nxp-compute>
+      <nxp-visualise></nxp-visualise>
+      <nxp-communicate></nxp-communicate>
       <!-- <nxp-evolve></nxp-evolve> -->
     </div>
   </div>
@@ -22,6 +24,9 @@ import NxpControls from '@/components/healthscience/nxp/NxpControls.vue'
 import nxpTemplate from '@/components/healthscience/nxp/nxpTemplate.vue'
 import nxpQuestion from '@/components/healthscience/nxp/nxpQuestion.vue'
 import KnowledgeLive from '@/components/toolbar/knowledgeLive'
+import nxpCompute from '@/components/healthscience/nxp/nxpCompute.vue'
+import nxpVisualise from '@/components/healthscience/nxp/nxpVisualise.vue'
+import nxpCommunicate from '@/components/healthscience/nxp/nxpCommunicate.vue'
 const moment = require('moment')
 
 export default {
@@ -30,7 +35,10 @@ export default {
     NxpControls,
     KnowledgeLive,
     nxpTemplate,
-    nxpQuestion
+    nxpQuestion,
+    nxpCompute,
+    nxpVisualise,
+    nxpCommunicate
   },
   data () {
     return {

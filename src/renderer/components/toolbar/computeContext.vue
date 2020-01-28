@@ -9,8 +9,8 @@
           <ul>
             <li >
               <select v-model="selectedCompute" @change="updateSciDTs(selectedCompute)">
-              <option class="science-compute" v-for="scoption in scoptions" v-bind:value="scoption.cid">
-                {{ scoption.text }}
+              <option class="science-compute" v-for="comp in nxpComputes" v-bind:value="comp.prime.cnrl">
+                {{ comp.prime.text }}
               </option>
             </select>
             </li>
@@ -36,6 +36,11 @@
         type: Object
       }
     },
+    computed: {
+      nxpComputes: function () {
+        return this.$store.state.compute
+      }
+    },
     data () {
       return {
         oc:
@@ -50,8 +55,6 @@
     },
     created () {
       this.setAccess()
-    },
-    computed: {
     },
     mounted () {
     },

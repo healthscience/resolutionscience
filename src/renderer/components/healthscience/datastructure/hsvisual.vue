@@ -1,17 +1,6 @@
 <template>
   <div id="visual-view">PAST
     <div id="diy-science">
-      <div id="visulation-select">
-        <ul>
-          <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis1)" v-bind:class="{ 'active': vis1.active}">{{ vis1.name }}</a></li>
-          <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis2)" v-bind:class="{ 'active': vis2.active}">{{ vis2.name }}</a></li>
-          <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis3)" v-bind:class="{ 'active': vis3.active}">{{ vis3.name }}</a></li>
-          <li id="tool-bar">
-            <header>Tools</header>
-            <a class="" href="" id="toolbarholder" @click.prevent="toolsSwitch(toolbar)" v-bind:class="{ 'active': toolbar.active}">{{ toolbar.text }}</a>
-          </li>
-        </ul>
-      </div>
       <div v-if="visChartview" id="charts-live">
         <reactive :chartData="datacollection" :options="options" :width="1200" :height="600"></reactive>
       </div>
@@ -20,6 +9,10 @@
           <ul>
             <li v-for="tv in navTime" class="context-time">
               <button class="button is-primary" @click.prevent="setTimeData(tv)">{{ tv.text }}</button>
+            </li>
+            <li id="tool-bar">
+              <header>Tools</header>
+              <a class="" href="" id="toolbarholder" @click.prevent="toolsSwitch(toolbar)" v-bind:class="{ 'active': toolbar.active}">{{ toolbar.text }}</a>
             </li>
           </ul>
         </div>
@@ -48,12 +41,6 @@
           </li>
         </ul>
       </div>
-      <div v-if="visTableview" id="table-view">
-        <table-Build :tableData="tablecollection"></table-Build>
-      </div>
-      <div v-if="visSimview" id="sim-view">
-        <simulation-View :simData="datacollection"></simulation-View>
-      </div>
     </div>
   </div>
 </template>
@@ -65,8 +52,6 @@
   import Reactive from '@/components/charts/Reactive'
   import Reactivestats from '@/components/charts/Reactivestats'
   import ToolbarTools from '@/components/toolbar/statisticstools'
-  import tableBuild from '@/components/table/tableBuilder'
-  import simulationView from '@/components/simulation/simulation-life'
   import DatePicker from 'vue2-datepicker'
   // const moment = require('moment')
 
@@ -76,8 +61,6 @@
       Reactive,
       Reactivestats,
       ToolbarTools,
-      tableBuild,
-      simulationView,
       DatePicker
     },
     props: {
@@ -100,24 +83,6 @@
     },
     data () {
       return {
-        vis1:
-        {
-          name: 'chart',
-          id: 'vis-sc-1',
-          active: true
-        },
-        vis2:
-        {
-          name: 'table',
-          id: 'vis-sc-2',
-          active: false
-        },
-        vis3:
-        {
-          name: 'simulation',
-          id: 'vis-sc-3',
-          active: false
-        },
         toolbar:
         {
           active: false,
@@ -136,8 +101,6 @@
         liveChartoptions: null,
         visChartview: true,
         liveTime: '',
-        visTableview: false,
-        visSimview: false,
         timeVis: [],
         selectedExperiment: '',
         confirmAddE: '---',
@@ -178,47 +141,6 @@
     mounted () {
     },
     methods: {
-      selectVis (visIN) {
-        if (visIN.id === 'vis-sc-1') {
-          if (visIN.active === true) {
-            this.visChartview = false
-            this.vis1.active = false
-          } else {
-            this.vis1.active = true
-            this.visChartview = true
-          }
-        } else if (visIN.id === 'vis-sc-2') {
-          if (visIN.active === true) {
-            this.visTableview = false
-            this.vis2.active = false
-          } else {
-            this.vis2.active = true
-            this.visTableview = true
-          }
-        } else if (visIN.id === 'vis-sc-3') {
-          if (visIN.active === true) {
-            this.visSimview = false
-            this.vis3.active = false
-          } else {
-            this.vis3.active = true
-            this.visSimview = true
-          }
-        }
-        // filter what visualisation is active
-        this.filterVisualisation()
-      },
-      filterVisualisation () {
-        let visLive = []
-        if (this.vis1.active === true) {
-          visLive.push(this.vis1.id)
-        }
-        if (this.vis2.active === true) {
-          visLive.push(this.vis2.id)
-        }
-        if (this.vis3.active === true) {
-          visLive.push(this.vis3.id)
-        }
-      },
       toolsSwitch (ts) {
         ts.active = !ts.active
         if (ts.active === true) {

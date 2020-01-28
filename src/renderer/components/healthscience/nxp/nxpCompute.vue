@@ -6,6 +6,7 @@
         <ul>
           <li>
             Prime compute:<input v-model="compute.text" placeholder="prime">
+          <compute-context></compute-context>
           </li>
           <li>
             Forum discussion:<input v-model="compute.forum" placeholder="forum link">
@@ -20,9 +21,12 @@
 </template>
 
 <script>
+  import computeContext from '@/components/toolbar/computeContext.vue'
+
   export default {
     name: 'nxp-question',
     components: {
+      computeContext
     },
     data: () => ({
       compute:

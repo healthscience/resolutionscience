@@ -3,9 +3,6 @@
     <div id="diy-future-science">
       <div id="visulation-select">
         <ul>
-          <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis1)" v-bind:class="{ 'active': vis1.active}">{{ vis1.name }}</a></li>
-          <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis2)" v-bind:class="{ 'active': vis2.active}">{{ vis2.name }}</a></li>
-          <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis3)" v-bind:class="{ 'active': vis3.active}">{{ vis3.name }}</a></li>
           <li id="tool-bar">
             <header>Tools</header>
             <a class="" href="" id="toolbarholder" @click.prevent="toolsSwitch(toolbar)" v-bind:class="{ 'active': toolbar.active}">{{ toolbar.text }}</a>
@@ -14,12 +11,6 @@
       </div>
       <div v-if="visChartview" id="charts-live">
         <reactive :chartData="datacollection" :options="options" :width="1200" :height="600"></reactive>
-      </div>
-      <div v-if="visTableview" id="table-view">
-        <table-Build></table-Build>
-      </div>
-      <div v-if="visSimview" id="sim-view">
-        <simulation-View></simulation-View>
       </div>
     </div>
     <div id="time-context">
@@ -48,8 +39,6 @@
   import Reactive from '@/components/charts/Reactive'
   import Reactivestats from '@/components/charts/Reactivestats'
   import ToolbarTools from '@/components/toolbar/statisticstools'
-  import tableBuild from '@/components/table/tableBuilder'
-  import simulationView from '@/components/simulation/simulation-life'
   import DatePicker from 'vue2-datepicker'
   // const moment = require('moment')
 
@@ -59,8 +48,6 @@
       Reactive,
       Reactivestats,
       ToolbarTools,
-      tableBuild,
-      simulationView,
       DatePicker
     },
     props: {
@@ -82,24 +69,6 @@
     },
     data () {
       return {
-        vis1:
-        {
-          name: 'chart',
-          id: 'vis-sc-1',
-          active: true
-        },
-        vis2:
-        {
-          name: 'table',
-          id: 'vis-sc-2',
-          active: false
-        },
-        vis3:
-        {
-          name: 'simulation',
-          id: 'vis-sc-3',
-          active: false
-        },
         toolbar:
         {
           active: false,
@@ -111,8 +80,6 @@
         liveChartoptions: null,
         visChartview: true,
         liveTime: '',
-        visTableview: false,
-        visSimview: false,
         timeVis: [],
         selectedExperiment: '',
         confirmAddE: '---',
@@ -129,9 +96,6 @@
       }
     },
     computed: {
-      liveexerimentList: function () {
-        return this.$store.state.experimentList
-      }
     },
     created () {
     },
@@ -200,17 +164,6 @@
       setTimeData (seg) {
         // back and forward and time
         this.$emit('updateLearn', seg)
-      },
-      addToExperiment (exB) {
-        this.selectedExperiment = exB.target.value
-      },
-      experADD (expA) {
-        // need to keep permanent store of experiments to Ecomponents linked (save, delete, update also)
-        const localthis = this
-        this.$emit('experimentMap', this.selectedExperiment)
-        setTimeout(function () {
-          localthis.saveExpKid.active = false
-        }, 3000) // hide the message after 3 seconds
       }
     }
   }

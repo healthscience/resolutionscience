@@ -1,7 +1,19 @@
 <template>
   <div id="k-toolkit">
-    VISUALISE
-    <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
+    VISUALISE:
+    <div id="chart-type">
+      <ul>
+        <li>
+          Bar
+        </li>
+        <li>
+          Line
+        </li>
+        <li>
+          Mixed
+        </li>
+      </ul>
+    </div>
     <div id="add-experiment">
       <div v-if="timeSelect" id="time-select" >
         <div id="start-point" class="context-selecttime">Start: {{ kContext.analysisStart }}</div>
@@ -18,7 +30,7 @@
       <multipane-resizer></multipane-resizer>
       <div class="pane" :style="{ width: '50%', maxWidth: '100%' }">
         <div>
-          <hsvisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime" :makeTimeBundles="buildTimeBundles" :tablecollection="liveTable"></hsvisual>
+          <hsvisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime" :makeTimeBundles="buildTimeBundles"></hsvisual>
         </div>
       </div>
       <multipane-resizer></multipane-resizer>
@@ -32,28 +44,19 @@
 </template>
 
 <script>
-  import progressMessage from '@/components/toolbar/inProgress'
   import hsvisual from '@/components/healthscience/datastructure/hsvisual'
   import hsfuturevisual from '@/components/healthscience/datastructure/hsfuturevisual'
-  import pastfuture from '@/components/healthscience/datastructure/pastfuture'
   import { Multipane, MultipaneResizer } from 'vue-multipane'
 
   export default {
     name: 'nxp-question',
     components: {
-      progressMessage,
       hsvisual,
       hsfuturevisual,
       Multipane,
-      MultipaneResizer,
-      pastfuture
+      MultipaneResizer
     },
     data: () => ({
-      entityPrepareStatus:
-      {
-        active: false,
-        text: 'Preparing visualisation'
-      },
       timeSelect: true,
       kContext: {},
       saveStatusEK: {}

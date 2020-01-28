@@ -36,21 +36,6 @@
             </li>
           </ul>
         </div>
-        <div id="context-science" class="context-box">
-          <header>Computations - </header>
-            <ul>
-              <li >
-                <select v-model="selectedCompute"  @change="updateComputeDTs(selectedCompute)">
-                <option class="science-compute" v-for="scoption in computeAvailable" v-bind:value="scoption.prime.cnrl">
-                  {{ scoption.prime.text }}
-                </option>
-              </select>
-              </li>
-              <li>
-                <!-- <a href="" id="liveScience.livingpaperLiving" @click.prevent="livingPaper()">Paper: </a> -->
-              </li>
-            </ul>
-        </div>
         <div id="context-time" class="context-box">
           <header>Time Period:</header>
             <ul>
@@ -110,7 +95,7 @@
         }],
         ok:
         {
-          name: 'OPEN KNOWLEDGE',
+          name: 'OPEN Data',
           id: 'learn-status',
           active: false
         },
@@ -166,10 +151,10 @@
       openKnowledge (ok) {
         ok.active = !ok.active
         if (ok.active === true) {
-          ok.name = 'Close Knowledge'
+          ok.name = 'Close Data'
           // this.$emit('clearKbox')
         } else {
-          ok.name = 'OPEN KNOWLEDGE'
+          ok.name = 'OPEN Data'
         }
       },
       selectKnowledge (k) {

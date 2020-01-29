@@ -1,12 +1,11 @@
 <template>
   <div id="compute-nxp">
-    <header>COMPUTE:</header>
+    <header>ANSWER-COMPUTE:</header>
     <div id="prime-compute">
       <form id="compute_form" name="compute_form" method="post" action="#">
         <ul>
           <li>
             Prime compute:<input v-model="compute.text" placeholder="prime">
-          <compute-context></compute-context>
           </li>
           <li>
             Forum discussion:<input v-model="compute.forum" placeholder="forum link">
@@ -17,14 +16,15 @@
         </ul>
       </form>
     </div>
+    <compute-context></compute-context>
   </div>
 </template>
 
 <script>
-  import computeContext from '@/components/toolbar/computeContext.vue'
+  import computeContext from '../compute/computeContext.vue'
 
   export default {
-    name: 'nxp-question',
+    name: 'nxp-compute',
     components: {
       computeContext
     },

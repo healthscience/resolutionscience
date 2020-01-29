@@ -2,7 +2,7 @@
   <div id="nxp-toolbar">Controls over NXPs
     <div id="nxp-master-toolbar">
       <select v-model="liveexerimentList" class="button-expadd" href="" id="add-exp-button" @change="selectNXP($event)">
-        <option class="science-compute" v-for="expi in liveexerimentList" v-bind:value="expi.prime.cnrl">
+        <option class="science-nxp" v-for="expi in liveexerimentList" v-bind:value="expi.prime.cnrl">
           {{ expi.prime.text }}
         </option>
       </select>
@@ -15,15 +15,15 @@
       <div class="control-buttons">
         <button v-model="computehist" class="button-view-computelist" href="" id="computelist-view-button" @click.prevent="viewComputeHistory(computehist)">{{ computehist.name }}</button>
       </div>
-    </div>
-    <cnrl-controls v-if="viewCNRL.active" class="control-buttons"></cnrl-controls>
-    <div id="history" v-if="computehist.active">
-      <history-List class="control-buttons" :historyData="historyData" @setLiveBundle="makeLiveKnowledge"></history-List>
-    </div>
-    <div id="live-learn" class="control-buttons">
-      <div id="live-learn-container">
-        <div id="learn">
-          <button class="" href="" id="learn-button" @click.prevent="filterLearn(learn)">{{ learn.name }}</button>
+      <cnrl-controls v-if="viewCNRL.active" class="control-buttons"></cnrl-controls>
+      <div id="history" v-if="computehist.active">
+        <history-List class="control-buttons" :historyData="historyData" @setLiveBundle="makeLiveKnowledge"></history-List>
+      </div>
+      <div id="live-learn" class="control-buttons">
+        <div id="live-learn-container">
+          <div id="learn">
+            <button class="" href="" id="learn-button" @click.prevent="filterLearn(learn)">{{ learn.name }}</button>
+          </div>
         </div>
       </div>
     </div>
@@ -34,6 +34,7 @@
   import cnrlControls from '../cnrl/cnrlControls.vue'
   import historyList from '@/components/healthscience/historyList.vue'
   import { kBus } from '../../../main.js'
+  const moment = require('moment')
 
   export default {
     name: 'nxp-controls',
@@ -87,12 +88,11 @@
     methods: {
       selectNXP (exB) {
         // dispatch select to store
+        console.log('select NXP')
+        console.log(exB.target.value)
         this.$store.dispatch('actionSetNXP', exB.target.value)
-        // this.selectedExperiment = exB.target.value
       },
       viewCNRLlibrary (cnrlv) {
-        console.log('view the CNRL to add view delelte etc')
-        console.log(cnrlv)
         cnrlv.active = !cnrlv.active
         if (cnrlv.active === true) {
           this.viewCNRL.name = 'Close CNRL'
@@ -101,7 +101,6 @@
         }
       },
       viewComputeHistory (hist) {
-        console.log(hist)
         hist.active = !hist.active
         if (hist.active === true) {
           this.computehist.name = 'Close compute list'
@@ -169,6 +168,93 @@
           console.log('elelment not selelted')
         }
       },
+      async navTimeLearn (uSeg) {
+        let updateTbundle = {}
+        let timeAsk = []
+        // did UI give nav segment or date from calendar?
+        if (uSeg.text === 'selectd') {
+          updateTbundle.visualisation = ['vis-sc-1', 'vis-sc-2']
+          // convert time to correct format
+          timeAsk.push('day')
+          let updateTime = {}
+          updateTime.startperiod = uSeg.selectDate
+          updateTime.timeseg = this.liveData.timeLive
+          updateTime.timevis = timeAsk
+          updateTime.laststartperiod = this.liveTimeV
+          updateTbundle.time = updateTime
+          this.$store.dispatch('actionLiveBundleNav', updateTbundle)
+          let updatedBundleSet = this.$store.getters.liveBundle
+          this.entityPrepareStatus.active = true
+          this.learnManager(updatedBundleSet)
+        } else if (uSeg.text === 'timeList') {
+          let updateTime = {}
+          updateTime.startperiod = uSeg.selectDate
+          updateTime.timeseg = this.liveData.timeLive
+          updateTime.timevis = timeAsk
+          updateTime.laststartperiod = this.liveTimeV
+          updateTbundle.time = updateTime
+          this.prepareMultiLearn(updateTbundle, uSeg.timelist)
+        } else {
+          // time setTimeSegments
+          // updateTbundle.visualisation = ['vis-sc-1', 'vis-sc-2']
+          timeAsk.push(uSeg.text)
+          // timeAsk.push('day')
+          let updateTimen = {}
+          updateTimen.startperiod = 'relative'
+          updateTimen.timeseg = this.liveData.timeLive
+          updateTimen.timevis = timeAsk
+          updateTimen.laststartperiod = this.liveTimeV
+          updateTbundle.time = updateTimen
+          this.$store.dispatch('actionLiveBundleNav', updateTbundle)
+          let updatedBundleSetN = this.$store.getters.liveBundle
+          this.entityPrepareStatus.active = true
+          this.learnManager(updatedBundleSetN)
+        }
+        // pass on to learn safeFlow
+      },
+      async learnManager (updateTbundle) {
+        let visDataBack = await this.learnStart(updateTbundle)
+        // remove compute in progress Message
+        this.$store.dispatch('actionstopComputeStatus', updateTbundle.kbid)
+        this.entityPrepareStatus.active = false
+        this.liveDataCollection = visDataBack.liveDataCollection
+        this.liveOptions = visDataBack.liveOptions
+        // this.kContext = visDataBack.kContext
+        this.liveTimeV = visDataBack.displayTime
+        this.liveTimeVFuture = visDataBack.displayTimeF
+        this.liveTable = visDataBack.table
+        // this.startFuture(updateTbundle, visDataBack.displayTimeF)
+      },
+      async startFuture (liveBundle, fTime) {
+        // start the future
+        liveBundle.time.startperiod = 'simulateData'
+        liveBundle.time.futureperiod = moment(fTime)
+        let visDataBack = await this.learnStart(liveBundle)
+        this.futureliveDataCollection = visDataBack.liveDataCollection
+        this.futureliveOptions = visDataBack.liveOptions
+        // this.futurekContext = visDataBack.kContext
+        // this.liveTimeV = visDataBack.displayTime
+        this.liveTimeVFuture = visDataBack.displayTimeF
+      },
+      async prepareMultiLearn (liveKB, timeList) {
+        let updateTbundle = {}
+        let timeAsk = []
+        this.buildTimeBundles = []
+        for (let tl of timeList) {
+          let updateTime = {}
+          timeAsk.push('day')
+          updateTime.startperiod = tl
+          updateTime.timeseg = this.liveData.timeLive
+          updateTime.timevis = timeAsk
+          updateTime.laststartperiod = this.liveTimeV
+          updateTbundle.time = updateTime
+          this.$store.dispatch('actionLiveBundleNav', updateTbundle)
+          let updatedBundleSet = this.$store.getters.liveBundle
+          let visDataBack = await this.learnStart(updatedBundleSet)
+          this.buildTimeBundles.push(visDataBack)
+        }
+        return true
+      },
       checkLiveElements (bundle) {
         let statusCheck = {}
         statusCheck.status = true
@@ -225,6 +311,10 @@
           this.feedback.visulisation = true
         }
         return statusCheck
+      },
+      nxpNew () {
+        console.log('set up new NXP')
+        this.$store.dispatch('actionNewNXP', true)
       }
     }
   }

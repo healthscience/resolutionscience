@@ -1,16 +1,16 @@
 <template>
   <div id="k-toolkit">
-    VISUALISE:
+    Charts:
     <div id="chart-type">
       <ul>
         <li>
-          Bar
+          <button @click.prevent="chartSelect()">Bar</button>
         </li>
         <li>
-          Line
+          <button @click.prevent="chartSelect()">Line</button>
         </li>
         <li>
-          Mixed
+          <button @click.prevent="chartSelect()">Mixed</button>
         </li>
       </ul>
     </div>
@@ -68,68 +68,8 @@
     computed: {
     },
     methods: {
-      async navTimeLearn (uSeg) {
-        let updateTbundle = {}
-        let timeAsk = []
-        // did UI give nav segment or date from calendar?
-        if (uSeg.text === 'selectd') {
-          updateTbundle.visualisation = ['vis-sc-1', 'vis-sc-2']
-          // convert time to correct format
-          timeAsk.push('day')
-          let updateTime = {}
-          updateTime.startperiod = uSeg.selectDate
-          updateTime.timeseg = this.liveData.timeLive
-          updateTime.timevis = timeAsk
-          updateTime.laststartperiod = this.liveTimeV
-          updateTbundle.time = updateTime
-          this.$store.dispatch('actionLiveBundleNav', updateTbundle)
-          let updatedBundleSet = this.$store.getters.liveBundle
-          this.entityPrepareStatus.active = true
-          this.learnManager(updatedBundleSet)
-        } else if (uSeg.text === 'timeList') {
-          let updateTime = {}
-          updateTime.startperiod = uSeg.selectDate
-          updateTime.timeseg = this.liveData.timeLive
-          updateTime.timevis = timeAsk
-          updateTime.laststartperiod = this.liveTimeV
-          updateTbundle.time = updateTime
-          this.prepareMultiLearn(updateTbundle, uSeg.timelist)
-        } else {
-          // time setTimeSegments
-          // updateTbundle.visualisation = ['vis-sc-1', 'vis-sc-2']
-          timeAsk.push(uSeg.text)
-          // timeAsk.push('day')
-          let updateTimen = {}
-          updateTimen.startperiod = 'relative'
-          updateTimen.timeseg = this.liveData.timeLive
-          updateTimen.timevis = timeAsk
-          updateTimen.laststartperiod = this.liveTimeV
-          updateTbundle.time = updateTimen
-          this.$store.dispatch('actionLiveBundleNav', updateTbundle)
-          let updatedBundleSetN = this.$store.getters.liveBundle
-          this.entityPrepareStatus.active = true
-          this.learnManager(updatedBundleSetN)
-        }
-        // pass on to learn safeFlow
-      },
-      async prepareMultiLearn (liveKB, timeList) {
-        let updateTbundle = {}
-        let timeAsk = []
-        this.buildTimeBundles = []
-        for (let tl of timeList) {
-          let updateTime = {}
-          timeAsk.push('day')
-          updateTime.startperiod = tl
-          updateTime.timeseg = this.liveData.timeLive
-          updateTime.timevis = timeAsk
-          updateTime.laststartperiod = this.liveTimeV
-          updateTbundle.time = updateTime
-          this.$store.dispatch('actionLiveBundleNav', updateTbundle)
-          let updatedBundleSet = this.$store.getters.liveBundle
-          let visDataBack = await this.learnStart(updatedBundleSet)
-          this.buildTimeBundles.push(visDataBack)
-        }
-        return true
+      chartSelect () {
+        console.log('chart select type bar line mixed')
       }
     }
   }

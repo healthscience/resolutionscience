@@ -5,9 +5,9 @@
     <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
       <div id="visulation-select">
         <ul>
-          <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis1)" v-bind:class="{ 'active': vis1.active}">{{ vis1.name }}</a></li>
-          <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis2)" v-bind:class="{ 'active': vis2.active}">{{ vis2.name }}</a></li>
-          <li id="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis3)" v-bind:class="{ 'active': vis3.active}">{{ vis3.name }}</a></li>
+          <li class="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis1)" v-bind:class="{ 'active': vis1.active}">{{ vis1.name }}</a></li>
+          <li class="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis2)" v-bind:class="{ 'active': vis2.active}">{{ vis2.name }}</a></li>
+          <li class="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis3)" v-bind:class="{ 'active': vis3.active}">{{ vis3.name }}</a></li>
         </ul>
       </div>
       <chart-context v-if="vis1.active"></chart-context>
@@ -147,5 +147,9 @@
 
 #prime-visualise {
   margin: 1em;
+}
+
+.visualisation-type {
+  display: inline-block;
 }
 </style>

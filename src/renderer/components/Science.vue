@@ -3,7 +3,7 @@
     <h1>DIY TOOLKIT</h1>
     <nxp-controls></nxp-controls>
     <div v-if="NXPnew">
-      <nxp-template :contributeData="contributeData"></nxp-template>
+      <nxp-template></nxp-template>
     </div>
     <div v-if="NXPlive"> {{ NXPlive }}
       <!--<nxp-existing></nxp-existing> -->
@@ -14,7 +14,7 @@
       <knowledge-Live :liveData="liveData" ></knowledge-Live>
       <nxp-visualise></nxp-visualise>
       <nxp-communicate></nxp-communicate>
-      <!-- <nxp-evolve></nxp-evolve> -->
+      <nxp-evolve></nxp-evolve>
     </div>
   </div>
 </template>
@@ -27,6 +27,7 @@ import nxpQuestion from '@/components/healthscience/nxp/nxpQuestion.vue'
 import KnowledgeLive from '@/components/toolbar/knowledgeLive'
 import nxpVisualise from '@/components/healthscience/nxp/nxpVisualise.vue'
 import nxpCommunicate from '@/components/healthscience/nxp/nxpCommunicate.vue'
+import nxpEvolve from '@/components/healthscience/nxp/nxpEvolve.vue'
 const moment = require('moment')
 
 export default {
@@ -38,7 +39,8 @@ export default {
     nxpQuestion,
     nxpCompute,
     nxpVisualise,
-    nxpCommunicate
+    nxpCommunicate,
+    nxpEvolve
   },
   computed: {
     system: function () {
@@ -46,13 +48,15 @@ export default {
     },
     NXPlive: function () {
       return this.$store.state.liveNXP
+    },
+    NXPnew: function () {
+      return this.$store.state.newNXP
     }
   },
   data () {
     return {
       liveFlow: null,
       nxpSelected: false,
-      NXPnew: false,
       liveData:
       {
         devicesLive: [],
@@ -66,7 +70,6 @@ export default {
       avgStatusCompute: false,
       avgStatusCompMessage: '',
       newNXPSeen: false,
-      contributeData: {},
       updatecompute:
       {
         name: 'Update Computations',
@@ -93,38 +96,6 @@ export default {
   methods: {
     selectContext (s) {
       s.active = !s.active
-    },
-    filterDeviceActive () {
-      if (this.device1.active === true) {
-        this.activedevice = this.device1.id
-      } else if (this.device2.active === true) {
-        this.activedevice = this.device2.id
-      }
-    },
-    filterSensorActive () {
-      if (this.sensor1.active === true) {
-        this.activesensor = this.sensor1.id
-      } else if (this.sensor2.active === true) {
-        this.activesensor = this.sensor2.id
-      }
-    },
-    filterScienceActive () {
-      if (this.compute1.active === true) {
-        this.activecompute = this.compute1.id
-      } else if (this.compute2.active === true) {
-        this.activecompute = this.compute2.id
-      } else if (this.compute3.active === true) {
-        this.activecompute = this.compute3.id
-      } else if (this.compute4.active === true) {
-        this.activecompute = this.compute4.id
-      }
-    },
-    filterVisActive () {
-      if (this.vis1.active === true) {
-        this.activevis = this.vis1.id
-      } else if (this.vis2.active === true) {
-        this.activevis = this.vis2.id
-      }
     },
     learnUpdate (uSeg) {
       let updateTbundle = {}

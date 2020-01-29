@@ -55,6 +55,10 @@
             <div class="live-item">{{ liveData.resolutionLive }}</div>
             <div v-if="feedback.resolution" class="feedback">---</div>
         </div>
+        <div id="context-results" class="live-dtresults">
+          <header>Results:</header>
+            <div class="live-dtresults">auto {{ }}</div>
+        </div>
       </div>
       <a href="#" >add</a>
       <div id="learn-close"></div>
@@ -183,32 +187,8 @@
         // console.log(bytes.toString('base64'))
         return tempTokenG
       },
-      async startFuture (liveBundle, fTime) {
-        // start the future
-        liveBundle.time.startperiod = 'simulateData'
-        liveBundle.time.futureperiod = moment(fTime)
-        let visDataBack = await this.learnStart(liveBundle)
-        this.futureliveDataCollection = visDataBack.liveDataCollection
-        this.futureliveOptions = visDataBack.liveOptions
-        // this.futurekContext = visDataBack.kContext
-        // this.liveTimeV = visDataBack.displayTime
-        this.liveTimeVFuture = visDataBack.displayTimeF
-      },
       saveLearnHistory (lBundle) {
         this.historyData.push(lBundle)
-      },
-      async learnManager (updateTbundle) {
-        let visDataBack = await this.learnStart(updateTbundle)
-        // remove compute in progress Message
-        this.$store.dispatch('actionstopComputeStatus', updateTbundle.kbid)
-        this.entityPrepareStatus.active = false
-        this.liveDataCollection = visDataBack.liveDataCollection
-        this.liveOptions = visDataBack.liveOptions
-        // this.kContext = visDataBack.kContext
-        this.liveTimeV = visDataBack.displayTime
-        this.liveTimeVFuture = visDataBack.displayTimeF
-        this.liveTable = visDataBack.table
-        // this.startFuture(updateTbundle, visDataBack.displayTimeF)
       },
       setKnowledgtBox (liveKbid) {
         // first clear existing knowledge in box
@@ -386,6 +366,38 @@
             this.saveStartBundle(iB)
           }
         }
+      },
+      filterDeviceActive () {
+        if (this.device1.active === true) {
+          this.activedevice = this.device1.id
+        } else if (this.device2.active === true) {
+          this.activedevice = this.device2.id
+        }
+      },
+      filterSensorActive () {
+        if (this.sensor1.active === true) {
+          this.activesensor = this.sensor1.id
+        } else if (this.sensor2.active === true) {
+          this.activesensor = this.sensor2.id
+        }
+      },
+      filterScienceActive () {
+        if (this.compute1.active === true) {
+          this.activecompute = this.compute1.id
+        } else if (this.compute2.active === true) {
+          this.activecompute = this.compute2.id
+        } else if (this.compute3.active === true) {
+          this.activecompute = this.compute3.id
+        } else if (this.compute4.active === true) {
+          this.activecompute = this.compute4.id
+        }
+      },
+      filterVisActive () {
+        if (this.vis1.active === true) {
+          this.activevis = this.vis1.id
+        } else if (this.vis2.active === true) {
+          this.activevis = this.vis2.id
+        }
       }
     }
   }
@@ -424,6 +436,14 @@
 }
 
 .live-kelement {
+  display: inline-block;
+  vertical-align: top;
+  border: 0px solid red;
+  margin-left: 20px;
+  width: 180px;
+}
+
+.live-dtresults {
   display: inline-block;
   vertical-align: top;
   border: 0px solid red;
@@ -482,45 +502,4 @@
   opacity: 0;
 }
 
-.custom-resizer {
-  width: 100%;
-  height: 4000px;
-}
-
-.custom-resizer > .pane {
-  text-align: left;
-  padding: 1px;
-  overflow: scroll;
-  overflow-y:scroll;
-  background: #eee;
-  border: 1px solid #ccc;
-}
-
-.custom-resizer > .pane ~ .pane {
-}
-
-.custom-resizer > .multipane-resizer {
-  margin: 0; left: 0;
-  position: relative;
-
-  &:before {
-    display: block;
-    content: "";
-    width: 3px;
-    height: 40px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-top: -20px;
-    margin-left: -1.5px;
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
-  }
-
-  &:hover {
-    &:before {
-      border-color: #999;
-    }
-  }
-}
 </style>

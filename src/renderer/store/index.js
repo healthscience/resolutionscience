@@ -7,10 +7,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    safeFlow: {},
-    system: {'publickey': '', 'token': ''},
-    context: {},
     liveNXP: '',
+    newNXP: false,
     compute: {},
     tools: {},
     visualisation: ['vis-sc-2'],
@@ -35,9 +33,6 @@ export default new Vuex.Store({
     computeKidStatus: {}
   },
   getters: {
-    liveSafeFlow: state => state.safeFlow,
-    liveSystem: state => state.system,
-    liveContext: state => state.context,
     liveNXPset: state => state.liveNXP,
     liveCompute: state => state.compute,
     liveTools: state => state.tools,
@@ -60,23 +55,8 @@ export default new Vuex.Store({
   },
   mutations: {
     // Mutations
-    setSafeflow: (state, inVerified) => {
-      state.safeFlow = inVerified
-    },
-    setBoth: (state, inVerified) => {
-      state.system = inVerified
-    },
-    setPublickey: (state, inVerified) => {
-      state.system.publickey = inVerified
-    },
-    setToken: (state, inVerified) => {
-      state.system.token = inVerified
-    },
     setScience: (state, inVerified) => {
       state.context.science = inVerified
-    },
-    setDevice: (state, inVerified) => {
-      state.context.device = Vue.set(state, 'device', inVerified)
     },
     updateDevice: (state, inVerified) => {
       state.context.device = []
@@ -94,9 +74,6 @@ export default new Vuex.Store({
     },
     addDevice: (state, inVerified) => {
       state.context.device.push(inVerified)
-    },
-    setDatatype: (state, inVerified) => {
-      state.context.datatypes = inVerified
     },
     updateDTState: (state, inVerified) => {
       let liveDev = state.context.livedevice
@@ -358,6 +335,9 @@ export default new Vuex.Store({
     },
     setLiveNXP: (state, inVerified) => {
       state.liveNXP = inVerified
+    },
+    setNewNXP: (state, inVerified) => {
+      state.newNXP = inVerified
     }
   },
   actions: {
@@ -451,10 +431,6 @@ export default new Vuex.Store({
     // filter a list of Kentity bundles given the Experiment CNRL
       context.commit('stopComputeStatus', update)
     },
-    actionDeviceDataAPI: (context, update) => {
-    // filter a list of Kentity bundles given the Experiment CNRL
-      context.commit('setDevice', update)
-    },
     actionDeviceUpdateOK: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL
       context.commit('updateDevice', update)
@@ -462,10 +438,6 @@ export default new Vuex.Store({
     actionAddDeviceDataAPI: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL
       context.commit('addDevice', update)
-    },
-    actionSetDataTypes: (context, update) => {
-    // filter a list of Kentity bundles given the Experiment CNRL
-      context.commit('setDatatype', update)
     },
     actionUpdateChartOptions: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL
@@ -491,6 +463,9 @@ export default new Vuex.Store({
     },
     actionSetNXP: (context, update) => {
       context.commit('setLiveNXP', update)
+    },
+    actionNewNXP: (context, update) => {
+      context.commit('setNewNXP', update)
     }
   },
   modules,

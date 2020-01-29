@@ -1,23 +1,28 @@
 <template>
   <div id="compute-context">
-    <div id="context-compute" class="context-box">
-      <header>Computations - </header>
-        <ul>
-          <li>
-            <select v-model="selectedCompute" @change="updateSciDTs(selectedCompute)">
-            <option class="science-compute" v-for="comp in nxpComputes" v-bind:value="comp.prime.cnrl">
-              {{ comp.prime.text }}
-            </option>
-          </select>
-          </li>
-          <li>
-            <!-- <a href="" id="liveScience.livingpaperLiving" @click.prevent="livingPaper()">Paper: </a> -->
-          </li>
+    <div id="select-compute-options" v-if="oc.active">
+      <div id="context-compute" class="compute-code">
+        <header>Computations - </header>
+          <ul>
+            <li>
+              <select v-model="selectedCompute" @change="updateSciDTs(selectedCompute)">
+              <option class="science-compute" v-for="comp in nxpComputes" v-bind:value="comp.prime.cnrl">
+                {{ comp.prime.text }}
+              </option>
+            </select>
+            </li>
+            <!-- <li>
+              <a href="" id="liveScience.livingpaperLiving" @click.prevent="livingPaper()">Paper: </a>
+            </li> -->
         </ul>
+      </div>
+      <div class="compute-code">
+        <a href="#" id="add-compute" >add</a>
+      </div>
+      <compute-controls></compute-controls>
     </div>
-    <compute-controls></compute-controls>
-    <div id="compute-controls-setup">
-      <header>Control panel setup </header>
+    <div id="view-controls-compute">
+      <a href="#" id="open-compute" @click.prevent="openCompute(oc)">{{ oc.name }}</a>
     </div>
     <div class="clear-compute"></div>
   </div>
@@ -42,7 +47,13 @@
     },
     data () {
       return {
-        selectedCompute: 'A'
+        selectedCompute: 'A',
+        oc:
+        {
+          name: 'open compute',
+          id: 'compute-status',
+          active: false
+        }
       }
     },
     created () {
@@ -51,6 +62,14 @@
     },
     mixins: [liveMixinSAFEflow],
     methods: {
+      openCompute (oc) {
+        oc.active = !oc.active
+        if (oc.active === true) {
+          oc.name = 'Close compute'
+        } else {
+          oc.name = 'Open compute'
+        }
+      },
       updateSciDTs (sciIN) {
         this.activeEntity = sciIN
         // use cid to look up datatype for this scienceEntities
@@ -66,8 +85,17 @@
 </script>
 
 <style>
-#select-compute {
+#view-controls-compute {
   float: right;
+  margin-bottom: 10px;
+}
+
+#open-compute {
+  background-color: #eae6ed;
+}
+
+.compute-code {
+  display: inline-block;
 }
 
 .clear-compute {

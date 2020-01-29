@@ -1,25 +1,28 @@
 <template>
   <div id="compute-controlpanel">
-    <header>controls</header>
-    <div class="compute-control-item">
-      <header>Status:</header>
-        <div id="update-status">
-        </div>
+    <div id="compute-controls-setup">
+      <header>Control panel setup </header>
+      <a href="#" id="design-controls" >design</a>
     </div>
-    <div class="compute-control-button">
-      <button @click.prevent="startLearn($event)"  v-bind:value="cnrlkbid" id="compute-start">Start</button>
-    </div>
-    <div class="compute-control-button">
-      <button id="compute-stop">Stop:</button>
-    </div>
-    <div class="compute-control-item" id="repeat-select">
-      <header>Repeat</header>
-      <div>
-        <b>Manual</b>  AUTO
+    <div id="controls">
+      <header>controls</header>
+      <div class="compute-control-item">
+        <header>Status:</header>
+          <div id="update-status">
+          </div>
       </div>
-    </div>
-    <div id="view-controls-compute">
-      <a href="" id="open-compute" @click.prevent="openCompute(oc)">{{ oc.name }}</a>
+      <div class="compute-control-button">
+        <button @click.prevent="startLearn($event)"  v-bind:value="cnrlkbid" id="compute-start">Start</button>
+      </div>
+      <div class="compute-control-button">
+        <button id="compute-stop">Stop:</button>
+      </div>
+      <div class="compute-control-item" id="repeat-select">
+        <header>Repeat</header>
+        <div>
+          <b>Manual</b>  AUTO
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -30,13 +33,7 @@ export default {
   components: {
   },
   data: () => ({
-    cnrlkbid: '',
-    oc:
-    {
-      name: 'open compute',
-      id: 'compute-status',
-      active: false
-    }
+    cnrlkbid: ''
   }),
   created () {
   },
@@ -47,20 +44,16 @@ export default {
   methods: {
     startLearn () {
       console.log('start the Learning')
-    },
-    openCompute (oc) {
-      oc.active = !oc.active
-      if (oc.active === true) {
-        oc.name = 'Close compute'
-      } else {
-        oc.name = 'Open compute'
-      }
     }
   }
 }
 </script>
 
 <style>
+#compute-controlpanel{
+  background-color: #eae6ed;
+}
+
 #compute-control-panel {
   background-color: #f2f6fa;
 }

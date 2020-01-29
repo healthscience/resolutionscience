@@ -27,7 +27,7 @@
 </template>
 
 <script>
-  import heartCanvasSim from '@/components/simulation/heartCanvasSim.vue'
+  import heartCanvasSim from '@/components/visualise/simulation/heartCanvasSim.vue'
 
   export default {
     name: 'simulation-view',

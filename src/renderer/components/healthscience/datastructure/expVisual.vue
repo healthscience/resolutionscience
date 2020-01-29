@@ -45,11 +45,11 @@
 
 <script>
   import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
-  import Reactive from '@/components/charts/Reactive'
-  import Reactivestats from '@/components/charts/Reactivestats'
+  import Reactive from '@/components/visualise/charts/Reactive'
+  import Reactivestats from '@/components/visualise/charts/Reactivestats'
   import ToolbarTools from '@/components/toolbar/statisticstools'
-  import tableBuild from '@/components/table/tableBuilder'
-  import simulationView from '@/components/simulation/simulation-life'
+  import tableBuild from '@/components/visualise/table/tableBuilder'
+  import simulationView from '@/components/visualise/simulation/simulation-life'
   // const moment = require('moment')
 
   export default {

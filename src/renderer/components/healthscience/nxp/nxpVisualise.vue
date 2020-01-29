@@ -23,9 +23,9 @@
 
 <script>
   import progressMessage from '@/components/toolbar/inProgress'
-  import chartContext from '@/components/toolbar/visualiseContext'
-  import tableBuild from '@/components/table/tableBuilder'
-  import simulationView from '@/components/simulation/simulation-life'
+  import chartContext from '@/components/visualise/visualiseContext'
+  import tableBuild from '@/components/visualise/table/tableBuilder'
+  import simulationView from '@/components/visualise/simulation/simulation-life'
 
   export default {
     name: 'nxp-question',

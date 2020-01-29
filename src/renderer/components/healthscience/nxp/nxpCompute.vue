@@ -4,13 +4,13 @@
     <div id="prime-compute">
       <form id="compute_form" name="compute_form" method="post" action="#">
         <ul>
-          <li>
+          <li class="compute-summary">
             Prime compute:<input v-model="compute.text" placeholder="prime">
           </li>
-          <li>
-            Forum discussion:<input v-model="compute.forum" placeholder="forum link">
+          <li class="compute-summary">
+            Github discussion:<input v-model="compute.forum" placeholder="git link">
           </li>
-          <li>
+          <li class="compute-summary">
             <button @click.prevent="saveCompute($event)">Save Compute</button>
           </li>
         </ul>
@@ -61,5 +61,9 @@
 
 #prime-compute {
   margin: 1em;
+}
+
+.compute-summary {
+  display: inline-block;
 }
 </style>

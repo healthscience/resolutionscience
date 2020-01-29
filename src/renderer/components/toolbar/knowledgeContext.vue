@@ -122,10 +122,6 @@
       }
     },
     created () {
-      kBus.$on('closeKnowledge', (cData) => {
-        this.ok.active = true
-        this.openKnowledge(this.ok)
-      })
       kBus.$on('newLiveKBundle', (KBdata) => {
         this.updateKBcontext(KBdata)
       })

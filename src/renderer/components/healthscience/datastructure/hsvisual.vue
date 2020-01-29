@@ -49,8 +49,8 @@
   // import LineChart from '@/components/charts/LineChart'
   // import BarChart from '@/components/charts/BarChart'
   // import BubbleChart from '@/components/charts/BubbleChart'
-  import Reactive from '@/components/charts/Reactive'
-  import Reactivestats from '@/components/charts/Reactivestats'
+  import Reactive from '@/components/visualise/charts/Reactive'
+  import Reactivestats from '@/components/visualise/charts/Reactivestats'
   import ToolbarTools from '@/components/toolbar/statisticstools'
   import DatePicker from 'vue2-datepicker'
   // const moment = require('moment')

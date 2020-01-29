@@ -68,7 +68,6 @@
 </template>
 
 <script>
-  import Reactive from '@/components/charts/Reactive'
   import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
   import scienceContribute from '@/components/healthscience/cnrl/scienceContribute.vue'
   import KnowledgeContext from '@/components/toolbar/knowledgeContext'
@@ -81,7 +80,6 @@
   export default {
     name: 'knowledge-live',
     components: {
-      Reactive,
       scienceContribute,
       KnowledgeContext
     },

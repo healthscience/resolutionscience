@@ -15,6 +15,8 @@ import DatadeviceSystem from './systems/data/datadeviceSystem.js'
 import DTsystem from './systems/data/dtSystem.js'
 import KBLedger from './kbl-cnrl/kbledger.js'
 import EntitiesManager from './entitiesManager.js'
+import CALE from './CALE/cale-utility.js'
+
 const util = require('util')
 const events = require('events')
 
@@ -49,6 +51,7 @@ safeFlow.prototype.networkAuthorisation = async function (apiCNRL, auth) {
   this.liveDTsystem = new DTsystem(this.settings)
   this.liveKBL = new KBLedger(this.settings)
   this.liveEManager = new EntitiesManager(this.liveKBL)
+  this.liveCALE = new CALE(this.settings)
   this.api = await this.liveCNRL.defautNetworkContracts(apiCNRL)
   return true
 }

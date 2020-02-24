@@ -1,6 +1,5 @@
 <template>
-  <section class="container">
-    <!-- <oracle-View></oracle-View> -->
+  <div id="dashboard">
     <section id="knowledge">
       <div id="experiment-learn" class="live-button-explist">
         <div id="experiment-learn-container">
@@ -10,21 +9,22 @@
           <div id="NXPexperiment-view">
             <a href="" id="NXPexperiment-button" @click.prevent="viewNXPExperiment(NXPexper)" v-bind:class="{ 'active': NXPexper.active}">{{ NXPexper.name }}</a>
           </div>
+          <div id="holistic">
+            <a href="" id="holistic-start" @click.prevent="startHolistic()" v-bind:class="{ 'active': holistic.active}">{{ holistic.name }}</a>
+          </div>
         </div>
       </div>
       <div id="experiments" v-if="exper.active">
         <experiment-List></experiment-List>
       </div>
-      ------------
       <div id="NXPexperiments" v-if="NXPexper.active">
         <NXPexperiment-List></NXPexperiment-List>
       </div>
     </section>
-  </section>
+  </div>
 </template>
 
 <script>
-  import oracleView from '@/components/oracle/oracleView.vue'
   import experimentList from './experimentList.vue'
   import NXPexperimentList from './nxp/NXPexperimentList.vue'
   import { sBus } from '../../main.js'
@@ -32,12 +32,17 @@
   export default {
     name: 'hs-prepare',
     components: {
-      oracleView,
       experimentList,
       NXPexperimentList
     },
     data () {
       return {
+        holistic:
+        {
+          name: 'Holitic',
+          id: 'learn-holistic',
+          active: true
+        },
         exper:
         {
           name: 'View experiments',
@@ -49,7 +54,8 @@
           name: 'View NXP experiments',
           id: 'learn-nxpexperiments',
           active: false
-        }
+        },
+        contextGrid: {}
       }
     },
     computed: {

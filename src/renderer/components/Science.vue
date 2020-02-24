@@ -8,11 +8,12 @@
     <div v-if="NXPlive"> {{ NXPlive }}
       <!--<nxp-existing></nxp-existing> -->
       <nxp-question></nxp-question>
+      <!--<nxp-education></nxp-education> -->
       <nxp-compute></nxp-compute>
-      <!-- <nxp-outcome></nxp-outcome> -->
-      <!-- <nxp-data></nxp-data> -->
-      <knowledge-Live :liveData="liveData" ></knowledge-Live>
-      <nxp-visualise></nxp-visualise>
+      <nxp-sciencereview></nxp-sciencereview>
+      <nxp-control></nxp-control>
+      <nxp-lifestylemedicine></nxp-lifestylemedicine>
+      <nxp-prescription></nxp-prescription>
       <nxp-communicate></nxp-communicate>
       <nxp-evolve></nxp-evolve>
     </div>
@@ -23,22 +24,25 @@
 import NxpControls from '@/components/healthscience/nxp/NxpControls.vue'
 import nxpTemplate from '@/components/healthscience/nxp/nxpTemplate.vue'
 import nxpCompute from '@/components/healthscience/nxp/nxpCompute.vue'
+import nxpSciencereview from '@/components/healthscience/nxp/nxpSciencereview.vue'
+import nxpControl from '@/components/healthscience/nxp/nxpControl.vue'
 import nxpQuestion from '@/components/healthscience/nxp/nxpQuestion.vue'
-import KnowledgeLive from '@/components/toolbar/knowledgeLive'
-import nxpVisualise from '@/components/healthscience/nxp/nxpVisualise.vue'
+import nxpLifestylemedicine from '@/components/healthscience/nxp/nxpLifestylemedicine.vue'
+import nxpPrescription from '@/components/healthscience/nxp/nxpPrescription.vue'
 import nxpCommunicate from '@/components/healthscience/nxp/nxpCommunicate.vue'
 import nxpEvolve from '@/components/healthscience/nxp/nxpEvolve.vue'
-const moment = require('moment')
 
 export default {
   name: 'NXP-builder',
   components: {
     NxpControls,
-    KnowledgeLive,
     nxpTemplate,
     nxpQuestion,
     nxpCompute,
-    nxpVisualise,
+    nxpSciencereview,
+    nxpControl,
+    nxpLifestylemedicine,
+    nxpPrescription,
     nxpCommunicate,
     nxpEvolve
   },
@@ -57,16 +61,6 @@ export default {
     return {
       liveFlow: null,
       nxpSelected: false,
-      liveData:
-      {
-        devicesLive: [],
-        datatypesLive: [],
-        categoryLive: [],
-        scienceLive: {},
-        languageLive: {},
-        timeLive: [],
-        resolutionLive: ''
-      },
       avgStatusCompute: false,
       avgStatusCompMessage: '',
       newNXPSeen: false,
@@ -96,40 +90,6 @@ export default {
   methods: {
     selectContext (s) {
       s.active = !s.active
-    },
-    learnUpdate (uSeg) {
-      let updateTbundle = {}
-      let timeAsk = []
-      timeAsk.push(uSeg.text)
-      updateTbundle.timevis = timeAsk
-      updateTbundle.startperiod = 'relative'
-      updateTbundle.timeseg = []
-      const nowTime = moment()
-      let realTime = moment.utc(nowTime)
-      let liveBundleUpdate = {}
-      liveBundleUpdate.cnrl = this.liveBundle.cnrl
-      liveBundleUpdate.language = this.liveBundle.language
-      liveBundleUpdate.devices = this.liveBundle.devices
-      liveBundleUpdate.datatypes = this.liveBundle.datatypes
-      liveBundleUpdate.categories = this.liveBundle.categories
-      liveBundleUpdate.science = this.liveBundle.science
-      liveBundleUpdate.time = updateTbundle
-      liveBundleUpdate.realtime = realTime
-      liveBundleUpdate.resolution = this.liveBundle.resolution
-      liveBundleUpdate.visualisation = this.liveBundle.visualisation
-      this.learnStart(liveBundleUpdate)
-    },
-    toolsSwitch (tss) {
-      if (tss === true) {
-        let updateCopyTemp = this.liveDataCollection
-        this.liveDataCollection = {}
-        let updateOptions = this.liveOptions
-        updateOptions.annotation = this.liveAnnotations
-        this.liveOptions = updateOptions
-        this.liveDataCollection = updateCopyTemp
-      } else if (tss === false) {
-        this.liveOptions.annotation = {}
-      }
     }
   }
 }

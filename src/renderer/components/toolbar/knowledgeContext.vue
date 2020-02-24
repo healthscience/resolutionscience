@@ -71,9 +71,6 @@
     components: {
     },
     props: {
-      kContext: {
-        type: Object
-      }
     },
     data () {
       return {
@@ -127,6 +124,9 @@
       })
     },
     computed: {
+      kContext: function () {
+        return this.$store.state.context
+      },
       devices: function () {
         return this.$store.getters.liveContext.device
       },
@@ -173,7 +173,7 @@
         // this.$emit('setVLanguage', l)
       },
       selectDevice (s) {
-        this.$store.dispatch('actionUpateDeviceState', s)
+        // this.$store.dispatch('actionUpateDeviceState', s)
         kBus.$emit('setVDevice', s)
         this.dataTypeDevice(s)
       },

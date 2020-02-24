@@ -10,14 +10,12 @@
 * @version    $Id$
 */
 
-import CALE from '../../CALE/cale-utility.js'
 import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
 const util = require('util')
 const events = require('events')
 
 var SimulatedDataSystem = function (setIN) {
   events.EventEmitter.call(this)
-  this.liveCALE = new CALE(setIN)
   this.liveTestStorage = new TestStorageAPI(setIN)
   this.simulatedData = []
 }
@@ -34,7 +32,7 @@ util.inherits(SimulatedDataSystem, events.EventEmitter)
 *
 */
 SimulatedDataSystem.prototype.assessFuture = function (dataSystem, timeInfo) {
-  let futureData = this.liveCALE.learn('tomorrow', dataSystem, timeInfo)
+  let futureData = 9 // this.liveCALE.learn('tomorrow', dataSystem, timeInfo)
   return futureData
 }
 

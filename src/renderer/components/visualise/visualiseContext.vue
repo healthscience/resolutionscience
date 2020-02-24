@@ -1,5 +1,5 @@
 <template>
-  <div id="k-toolkit">
+  <div id="k-toolkit"> {{ nxpKbidsList }} {{ nxpKbids }}
     Charts:
     <div id="chart-type">
       <ul>
@@ -11,6 +11,9 @@
         </li>
         <li>
           <button @click.prevent="chartSelect()">Mixed</button>
+        </li>
+        <li>
+          <button @click.prevent="chartSelect()">Tools</button>
         </li>
       </ul>
     </div>
@@ -30,13 +33,13 @@
       <multipane-resizer></multipane-resizer>
       <div class="pane" :style="{ width: '50%', maxWidth: '100%' }">
         <div>
-          <hsvisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="liveDataCollection" :options="liveOptions" :displayTime="liveTimeV" :navTime="liveNavTime" :makeTimeBundles="buildTimeBundles"></hsvisual>
+          <hsvisual :datacollection="liveData.Collection" :options="liveData.Options" :displayTime="liveData.TimeV" :navTime="liveData.NavTime" :makeTimeBundles="liveData.buildTimeBundles"></hsvisual>
         </div>
       </div>
       <multipane-resizer></multipane-resizer>
       <div class="pane" :style="{ flexGrow: 1, width: '10%', maxWidth: '100%' }">
         <div>
-          <hsfuturevisual @experimentMap="saveMappingExpKB" @updateLearn="navTimeLearn" :datacollection="futureliveDataCollection" :options="futureliveOptions" :displayTime="liveTimeVFuture" :navTime="liveNavTime" :makeTimeBundles="buildTimeBundles"></hsfuturevisual>
+          <hsfuturevisual :datacollection="futureliveDataCollection" :options="futureliveOptions" :displayTime="liveTimeVFuture" :navTime="liveNavTime" :makeTimeBundles="buildTimeBundles"></hsfuturevisual>
         </div>
       </div>
     </multipane>
@@ -44,8 +47,8 @@
 </template>
 
 <script>
-  import hsvisual from '@/components/healthscience/datastructure/hsvisual'
-  import hsfuturevisual from '@/components/healthscience/datastructure/hsfuturevisual'
+  import hsvisual from '@/components/visualise/hsvisual'
+  import hsfuturevisual from '@/components/visualise/hsfuturevisual'
   import { Multipane, MultipaneResizer } from 'vue-multipane'
 
   export default {
@@ -56,17 +59,26 @@
       Multipane,
       MultipaneResizer
     },
-    data: () => ({
-      timeSelect: true,
-      kContext: {},
-      saveStatusEK: {}
-    }),
     created () {
     },
     mounted () {
     },
     computed: {
+      nxpKbidsList: function () {
+        return this.$store.state.liveNXPbundleList
+      },
+      nxpKbids: function () {
+        return this.$store.state.liveNXPbundle
+      },
+      liveData: function () {
+        return this.$store.state.liveBundleData
+      }
     },
+    data: () => ({
+      timeSelect: true,
+      kContext: {},
+      saveStatusEK: {}
+    }),
     methods: {
       chartSelect () {
         console.log('chart select type bar line mixed')

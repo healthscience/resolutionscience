@@ -7,7 +7,7 @@
             <div id="select-ebox-container">
               <div id="select-status" class="exp-item">
                 <header>Select</header>
-                <input type="checkbox" v-bind:id="exp.prime.cnrl" v-bind:value="exp.prime.cnrl" v-model="eboxSelect" @change="makeELive($event)" >
+                <input type="checkbox" v-bind:id="exp.prime.cnrl" v-bind:value="exp.prime.cnrl" v-model="eboxSelect" @change="makeDashlive($event)" >
                 <label for="e-select">{{ }}</label>
               </div>
             </div>
@@ -44,7 +44,7 @@
           </div>
           <div id="experiment-close"></div>
         </div>
-        <edashboard v-if="eKBundle[exp.prime.cnrl] || progressMessageIN[exp.prime.cnrl]" :dashCNRL="exp.prime.cnrl" :experimentDash="eKBundle[exp.prime.cnrl]" ></edashboard>
+        <edashboard :dashCNRL="exp.prime.cnrl"></edashboard>
       </li>
     </ul>
   </div>
@@ -60,9 +60,6 @@
       edashboard
     },
     props: {
-      experimentData: {
-        type: Array
-      }
     },
     mixins: [liveMixinSAFEflow],
     data () {
@@ -91,122 +88,20 @@
       },
       progressMessageIN: function () {
         return this.$store.state.experimentProgressStatus
+      },
+      activeexperimentStatus: function () {
+        return this.$store.state.experimentStatus
       }
     },
     mounted () {
     },
     methods: {
-      async makeELive (status) {
-        let expCNRL = status.target.id
-        this.liveExpActive = expCNRL
-        let expStateLive = this.experimentState(expCNRL)
-        // are any of the other experiments OPEN?  If so keep them open
-        if (this.activeKentities[expCNRL].length > 0) {
-          if (status.target.checked === true) {
-            this.setProgressMessage(expCNRL)
-            let expDataFresh = await this.learnWork(expCNRL, expStateLive)
-            let expState = {}
-            expState.cnrl = expCNRL
-            expState.status = true
-            expState.dashKBlist = expDataFresh
-            expState.contract = expStateLive
-            this.$set(this.eKBundle, expCNRL, expState)
-            this.StopprogressMessage(expCNRL)
-          } else {
-            // this.removeCNRLlist(expCNRL)
-            let expState = {}
-            expState.cnrl = expCNRL
-            expState.status = false
-            expState.dashKBlist = []
-            expState.contract = expStateLive
-            this.$set(this.eKBundle, expCNRL, expState)
-          }
-        } else {
-          console.log('nothing set to show')
-        }
-      },
-      async learnWork (expCNRL, expStateLive) {
-        let prepareDashList = []
-        let currentEntities = this.startBundlesList
-        let liveBundles = this.activeKentities[expCNRL]
-        // console.log(currentEntities)
-        // console.log(liveBundles)
-        for (let expEB of liveBundles) {
-          for (let iee of currentEntities) {
-            if (expEB === iee.kbid) {
-              if (iee) {
-                let visDataBack = await this.learnStart(iee)
-                prepareDashList.push(visDataBack)
-              } else {
-                // updateStatus = false
-              }
-            }
-          }
-        }
-        return prepareDashList
-      },
-      experimentState (expCNRL) {
-        // match to contract CNRL
-        let liveContract = {}
-        for (let lx of this.experimentList) {
-          if (lx.prime.cnrl === expCNRL) {
-            liveContract = lx
-          }
-        }
-        return liveContract
-      },
-      updateStoreExpStateTrue (expCNRL, expStateLive, learnDlist) {
-        let expState = {}
-        expState.cnrl = expCNRL
-        expState.view = true
-        expState.dashKBlist = learnDlist
-        expState.contract = expStateLive
-        // this.$store.dispatch('actionUpdateExperiment', expState)
-      },
-      updateStoreExpStateFalse (expCNRL, expStateLive) {
-        let expState = {}
-        expState.cnrl = expCNRL
-        expState.view = false
-        expState.dashKBlist = []
-        expState.contract = expStateLive
-        // this.$store.dispatch('actionUpdateExperimentC', expState)
-        return true
-      },
-      setProgressMessage (CNRL) {
-        let progressSet = {}
-        progressSet.active = true
-        progressSet.cnrl = CNRL
-        progressSet.text = 'Preparing visualisation'
-        this.$store.dispatch('actionExperimentProgressStatus', progressSet)
-      },
-      StopprogressMessage (CNRL) {
-        let progressSet = {}
-        progressSet.active = false
-        progressSet.cnrl = CNRL
-        progressSet.text = 'Preparing visualisation'
-        this.$store.dispatch('actionExperimentProgressStatusFalse', progressSet)
-      },
-      removeCNRLlist (expCNRL) {
-        let updateCNRLlist = []
-        for (let exc of this.CNRLactiveList) {
-          if (exc !== expCNRL) {
-            updateCNRLlist.push()
-          }
-        }
-        this.CNRLactiveList = updateCNRLlist
-      },
-      leaveClearExpClose () {
-        // set experiment and progress Status to false
-        for (let expCNRL of this.CNRLactiveList) {
-          let expStateLive = this.experimentState(expCNRL)
-          this.updateStoreExpStateFalse(expCNRL, expStateLive)
-          // this.StopprogressMessage(expCNRL)
-        }
+      makeDashlive (ne) {
+        console.log('open dashboard me NXP')
+        let dashStatus = ne.target.id
+        // dispatch a store to prepare data for this dashboard
+        this.$store.dispatch('actionDashboardState', dashStatus)
       }
-    },
-    beforeDestroy: function () {
-      console.log('leaving page')
-      this.leaveClearExpClose()
     }
   }
 </script>

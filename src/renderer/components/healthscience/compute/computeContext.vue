@@ -1,30 +1,28 @@
 <template>
   <div id="compute-context">
-    <div id="select-compute-options" v-if="oc.active">
-      <div id="context-compute" class="compute-code">
-        <header>Computations - </header>
-          <ul>
-            <li>
-              <select v-model="selectedCompute" @change="updateSciDTs(selectedCompute)">
-              <option class="science-compute" v-for="comp in nxpComputes" v-bind:value="comp.prime.cnrl">
-                {{ comp.prime.text }}
-              </option>
-            </select>
-            </li>
-            <!-- <li>
-              <a href="" id="liveScience.livingpaperLiving" @click.prevent="livingPaper()">Paper: </a>
-            </li> -->
-        </ul>
+    <div id="live-computes">
+      {{ liveCompute.prime.text }}
+      <div id="select-compute-options">
+        <compute-controls>cc</compute-controls>
       </div>
-      <div class="compute-code">
-        <a href="#" id="add-compute" >add</a>
-      </div>
-      <compute-controls></compute-controls>
-    </div>
-    <div id="view-controls-compute">
-      <a href="#" id="open-compute" @click.prevent="openCompute(oc)">{{ oc.name }}</a>
     </div>
     <div class="clear-compute"></div>
+    <!-- setup new compuation -->
+    <div v-if="liveCompute.edit" id="context-compute" class="compute-code">
+      <header>Computations - </header>
+        <ul>
+          <li>
+            <select v-model="selectedCompute" @change="updateSciDTs(selectedCompute)">
+            <option class="science-compute" v-for="comp in nxpComputes" v-bind:value="comp.prime.cnrl">
+              {{ comp.prime.text }}
+            </option>
+          </select>
+          </li>
+          <!-- <li>
+            <a href="" id="liveScience.livingpaperLiving" @click.prevent="livingPaper()">Paper: </a>
+          </li> -->
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -39,6 +37,9 @@
       computeControls
     },
     props: {
+      liveCompute: {
+        type: Object
+      }
     },
     computed: {
       nxpComputes: function () {

@@ -1,6 +1,6 @@
 <template>
   <div id="new-nxp-setup">
-    <header>Contribute Network Experiment</header>
+    <header>Network Experiment</header>
     <div class="nxp-new-buttons">
       <button class="nxp-buttons" type="submit"  id="dmap-save-new-mapping" >Save</button>
       <button class="nxp-buttons" type="submit" id="dmap-test-new-mapping" >Test NXP</button>
@@ -14,7 +14,7 @@
           </li>
           <li>
             <label for="dmap-add-name">Name:</label>
-            <input id="dmap-mapping-name" placeholder="experiment name" required="" type="text">
+            <input id="dmap-mapping-name" placeholder="experiment name" required="" type="text"> {{ activeNXP.prime.text }}
           </li>
           <li>
             <label for="dmap-add-description">Description:</label>
@@ -31,13 +31,16 @@
     name: 'nxp-page',
     components: {
     },
+    computed: {
+      activeNXP: function () {
+        return this.$store.state.liveNXPcontract
+      }
+    },
     data: () => ({
     }),
     created () {
     },
     mounted () {
-    },
-    computed: {
     },
     methods: {
     }

@@ -2,7 +2,7 @@
   <div id="visualise-nxp">
     <header>VISUALISE:</header>
     <div id="prime-visualise">
-    <progress-Message :progressMessage="entityPrepareStatus"></progress-Message>
+    <!-- <progress-Message :progressMessage="entityPrepareStatus"></progress-Message> -->
       <div id="visulation-select">
         <ul>
           <li class="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis1)" v-bind:class="{ 'active': vis1.active}">{{ vis1.name }}</a></li>
@@ -85,6 +85,8 @@
             this.visChartview = false
             this.vis1.active = false
           } else {
+            // dispatch and prepare bundleData
+            this.$store.dispatch('actionBundleData', 'prepare')
             this.vis1.active = true
             this.visChartview = true
           }
@@ -93,6 +95,8 @@
             this.visTableview = false
             this.vis2.active = false
           } else {
+            // dispatch and prepare bundleData
+            this.$store.dispatch('actionBundleData', 'prepare')
             this.vis2.active = true
             this.visTableview = true
           }
@@ -101,6 +105,8 @@
             this.visSimview = false
             this.vis3.active = false
           } else {
+            // dispatch and prepare bundleData
+            this.$store.dispatch('actionBundleData', 'prepare')
             this.vis3.active = true
             this.visSimview = true
           }

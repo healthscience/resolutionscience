@@ -8,7 +8,17 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     liveNXP: '',
+    liveNXPcontract: {},
+    liveNXPbundle: {},
+    dashboardNXP: {},
+    liveNXPbundleList: [],
     newNXP: false,
+    gridDefault: [
+      { 'x': 0, 'y': 0, 'w': 20, 'h': 2, 'i': '0', static: true },
+      { 'x': 0, 'y': 0, 'w': 2, 'h': 5, 'i': '1', static: false },
+      { 'x': 4, 'y': 0, 'w': 2, 'h': 5, 'i': '2', static: false },
+      { 'x': 5, 'y': 0, 'w': 2, 'h': 5, 'i': '3', static: false }
+    ],
     compute: {},
     tools: {},
     visualisation: ['vis-sc-2'],
@@ -335,9 +345,51 @@ export default new Vuex.Store({
     },
     setLiveNXP: (state, inVerified) => {
       state.liveNXP = inVerified
+      for (let nxpC of state.NXPexperimentList) {
+        if (nxpC.prime.cnrl === inVerified) {
+          state.liveNXPcontract = nxpC
+        }
+      }
+    },
+    setLiveNXPBundle: (state, inVerified) => {
+      state.liveNXPbundle = {}
+      state.liveNXPbundleList = []
+      let kBidlive = []
+      for (let kItem of state.mapExperimentKbundles) {
+        if (kItem.experimentCNRL === inVerified) {
+          kBidlive.push(kItem.kbid)
+        }
+      }
+      // loop up kBID and extract elements mapExperimentKbundles
+      let KbidsList = []
+      for (let kBentry of state.startBundles) {
+        for (let kitem of kBidlive) {
+          if (kBentry.kbid === kitem) {
+            KbidsList.push(kitem)
+            Vue.set(state.liveNXPbundle, kitem, kBentry)
+          }
+        }
+      }
+      state.liveNXPbundleList = KbidsList
     },
     setNewNXP: (state, inVerified) => {
       state.newNXP = inVerified
+    },
+    setDashboardNXP: (state, inVerified) => {
+      let dStatus = state.experimentStatus[inVerified].active
+      dStatus = !dStatus
+      console.log(dStatus)
+      Vue.set(state.experimentStatus[inVerified], 'active', dStatus)
+    },
+    setPrepareBundle: (state, inVerified) => {
+      console.log('prepare data for bundle')
+      console.log(state.liveNXP)
+      console.log(state.liveNXPcontract)
+      console.log(state.liveNXPbundle)
+    },
+    setLayoutGrid: (state, inVerified) => {
+      console.log('update gride')
+      state.gridDefault = inVerified
     }
   },
   actions: {
@@ -463,9 +515,20 @@ export default new Vuex.Store({
     },
     actionSetNXP: (context, update) => {
       context.commit('setLiveNXP', update)
+      context.commit('setLiveNXPBundle', update)
     },
     actionNewNXP: (context, update) => {
       context.commit('setNewNXP', update)
+      context.commit('setLiveNXPBundle', update)
+    },
+    actionDashboardState: (context, update) => {
+      context.commit('setDashboardNXP', update)
+    },
+    actionBundleData: (context, update) => {
+      context.commit('setPrepareBundle', update)
+    },
+    actionGrideupdate: (context, update) => {
+      context.commit('setLayoutGrid', update)
     }
   },
   modules,

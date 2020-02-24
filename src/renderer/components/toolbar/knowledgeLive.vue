@@ -11,7 +11,7 @@
         <div id="live-context-devices" class="live-kelement">
           <header>Devices:</header>
             <ul>
-              <li v-for="dev in liveData.devicesLive">
+              <li v-for="dev in liveData.devices">
                  <div class="live-item">{{ dev.device_name }}</div>
               </li>
             </ul>
@@ -26,7 +26,7 @@
             </ul>
           <header>Y-axis</header>
             <ul>
-              <li id="bmp-data-sensor" v-for="dts in liveData.datatypesLive">
+              <li id="bmp-data-sensor" v-for="dts in liveData.datatypes">
                 <div class="live-item">{{ dts.text }}</div>
               </li>
             </ul>
@@ -35,7 +35,7 @@
         <div id="live-context-category" class="live-kelement">
           <header>Category</header>
             <ul>
-              <li id="cat-items" v-for="catL in liveData.categoryLive">
+              <li id="cat-items" v-for="catL in liveData.category">
                 <div class="live-item">{{ catL.text }}</div>
               </li>
             </ul>
@@ -44,7 +44,7 @@
         <div id="context-time" class="live-kelement">
           <header>Time Period:</header>
             <ul>
-              <li v-for="ts in liveData.timeLive">
+              <li v-for="ts in liveData.time">
                  <div class="live-item">{{ ts }}</div>
               </li>
             </ul>
@@ -52,7 +52,7 @@
         </div>
         <div id="context-resolution" class="live-kelement">
           <header>Resolution:</header>
-            <div class="live-item">{{ liveData.resolutionLive }}</div>
+            <div class="live-item">{{ liveData.resolution }}</div>
             <div v-if="feedback.resolution" class="feedback">---</div>
         </div>
         <div id="context-results" class="live-dtresults">
@@ -63,7 +63,7 @@
       <a href="#" >add</a>
       <div id="learn-close"></div>
     </div>
-    <knowledge-Context :kContext="kContext" @clearKbox="clearKnowledgeBox"></knowledge-Context>
+    <knowledge-Context></knowledge-Context>
   </div>
 </template>
 
@@ -333,7 +333,6 @@
         const localthis = this
         console.log(this.selectedExperiment)
         this.saveMappingExpKB(this.selectedExperiment)
-        // this.$emit('experimentMap', this.selectedExperiment)
         setTimeout(function () {
           localthis.saveStatusEK.active = false
         }, 3000) // hide the message after 3 seconds

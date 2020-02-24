@@ -15,31 +15,71 @@
           </li>
         </ul>
       </form>
+      <div id="view-controls-compute">
+        <a href="#" id="open-compute" @click.prevent="openCompute(oc)">{{ oc.name }}</a>
+      </div>
+      <div class="compute-code">
+        <a href="#" id="add-compute" >add</a>
+      </div>
     </div>
-    <compute-context></compute-context>
+    <div id="existing-computes">
+      <ul>
+        <li v-for="kbidl in nxpKbidsList">
+          <compute-context :liveCompute="nxpKbids[kbidl].science"></compute-context>
+          <!-- <nxp-outcome></nxp-outcome> -->
+          <!-- <nxp-data></nxp-data> -->
+          <knowledge-Live :liveData="nxpKbids[kbidl]" ></knowledge-Live>
+          <nxp-visualise></nxp-visualise>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script>
   import computeContext from '../compute/computeContext.vue'
+  import KnowledgeLive from '@/components/toolbar/knowledgeLive'
+  import nxpVisualise from '@/components/healthscience/nxp/nxpVisualise.vue'
 
   export default {
     name: 'nxp-compute',
     components: {
-      computeContext
+      computeContext,
+      KnowledgeLive,
+      nxpVisualise
+    },
+    computed: {
+      nxpKbidsList: function () {
+        return this.$store.state.liveNXPbundleList
+      },
+      nxpKbids: function () {
+        return this.$store.state.liveNXPbundle
+      }
     },
     data: () => ({
       compute:
       {
         text: '',
         forum: ''
+      },
+      liveData:
+      {
+        devicesLive: [],
+        datatypesLive: [],
+        categoryLive: [],
+        scienceLive: {},
+        languageLive: {},
+        timeLive: [],
+        resolutionLive: ''
+      },
+      oc:
+      {
+        name: 'open'
       }
     }),
     created () {
     },
     mounted () {
-    },
-    computed: {
     },
     methods: {
       saveCompute () {

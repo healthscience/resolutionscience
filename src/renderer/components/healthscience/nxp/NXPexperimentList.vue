@@ -59,9 +59,6 @@
       edashboard
     },
     props: {
-      experimentData: {
-        type: Array
-      }
     },
     mixins: [liveMixinSAFEflow],
     data () {

@@ -1,7 +1,7 @@
 <template>
   <div id="compute-controlpanel">
     <div id="compute-controls-setup">
-      <header>Control panel setup </header>
+      <header>Control panel</header>
       <a href="#" id="design-controls" >design</a>
     </div>
     <div id="controls">

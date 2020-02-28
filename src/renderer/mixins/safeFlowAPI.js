@@ -8,7 +8,7 @@ export default {
     }
   },
   computed: {
-    safeMixin: function () {
+    safeAPI: function () {
       let liveFlow = new SAFEflow()
       return liveFlow
     }
@@ -30,18 +30,17 @@ export default {
       let defaultAPI = '33221100'
       let authStatus = await this.checkAuthorisation(defaultAPI, authIN)
       if (authStatus === true) {
-        // What network experiments are in this peers KBLedger? ie. existing joined or setup?
-        // will provide API CONNECTIONS  ->devices ->Datatypes ->Computes --> visualisation
-        // query peer ledger to extract experiments, computes i.e. KBLedger latest
-        this.startNetworkExpMappedKbundles()
-        this.startKSetting()
+        // What network experiments entries are indexed in KBLedger?
+        this.safeAPI.startKBL()
+        // this.startNetworkExpMappedKbundles()
+        // this.startKSetting()
         // Independently extract devcies, datatypes, computes etc for Peer
-        await this.deviceContext()
-        this.datatypeContext()
-        this.cnrlComputeIndex()
-        this.timeNav('time-index')
+        // await this.deviceContext()
+        // this.datatypeContext()
+        // this.cnrlComputeIndex()
+        // this.timeNav('time-index')
         // cnrl indexes data
-        this.GETdatatypeList()
+        // this.GETdatatypeList()
       }
     },
     async checkAuthorisation (defaultAPI, authBundle) {
@@ -180,9 +179,9 @@ export default {
         this.feedback.visulisation = false
         this.feedback.resolution = false
         // create unquie ID for kbundle and use to save
-        let uuidBundle = this.createKBID(liveBundle)
-        liveBundle.kbid = uuidBundle
-        this.bundleuuid = uuidBundle
+        // let uuidBundle = this.createKBID(liveBundle)
+        // liveBundle.kbid = uuidBundle
+        // this.bundleuuid = uuidBundle
         // this.saveLearnHistory(liveBundle)
         this.$store.dispatch('actionLiveBundle', liveBundle)
         // this.$store.dispatch('actionLiveBundleNav', liveBundle)

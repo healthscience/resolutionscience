@@ -9,10 +9,6 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import CNRLmaster from './kbl-cnrl/cnrlMaster.js'
-import TestStorageAPI from './systems/data/dataprotocols/teststorage/testStorage.js'
-import DatadeviceSystem from './systems/data/datadeviceSystem.js'
-import DTsystem from './systems/data/dtSystem.js'
 import KBLedger from './kbl-cnrl/kbledger.js'
 import EntitiesManager from './entitiesManager.js'
 import CALE from './CALE/cale-utility.js'
@@ -24,11 +20,7 @@ var safeFlow = function () {
   events.EventEmitter.call(this)
   // this.SAFElive = new SAFEapi()
   this.defaultStorage = ['http://165.227.244.213:8882'] // know seed peers
-  this.api = {}
   this.settings = {}
-  this.liveTestStorage = {}
-  this.livedeviceSystem = {}
-  this.liveCNRL = {}
 }
 
 /**
@@ -45,86 +37,19 @@ util.inherits(safeFlow, events.EventEmitter)
 safeFlow.prototype.networkAuthorisation = async function (apiCNRL, auth) {
   auth.namespace = this.defaultStorage[0]
   this.settings = auth
-  this.liveCNRL = new CNRLmaster(this.settings)
-  this.liveTestStorage = new TestStorageAPI(this.settings)
-  this.livedeviceSystem = new DatadeviceSystem(this.settings)
-  this.liveDTsystem = new DTsystem(this.settings)
-  this.liveKBL = new KBLedger(this.settings)
+  this.liveKBL = new KBLedger(apiCNRL, this.settings)
   this.liveEManager = new EntitiesManager(this.liveKBL)
   this.liveCALE = new CALE(this.settings)
-  this.api = await this.liveCNRL.defautNetworkContracts(apiCNRL)
   return true
 }
 
 /**
-* mapping of Network Experiments to Kbundles entities save retrieve
-* @method experimentKbundles
+* get the latest KBL state
+* @method startKBL
 *
 */
-safeFlow.prototype.experimentKbundles = async function (flag, data) {
-  // first time start of device, datatype context for toolkitContext
-  let startStatusData = []
-  if (flag === 'save') {
-    startStatusData = await this.liveTestStorage.saveExpKbundles(data)
-  } else if (flag === 'retreive') {
-    startStatusData = await this.liveTestStorage.getExpKbundles()
-  }
-  return startStatusData
-}
-
-/**
-* build context for Toolkit
-* @method toolkitContext
-*
-*/
-safeFlow.prototype.toolkitContext = async function (flag, devices) {
-  // first time start of device, datatype context for toolkitContext
-  let localthis = this
-  let apiData = []
-  if (flag === 'device') {
-    let devicesList = []
-    for (let dapi of localthis.api.devicelist) {
-      // look up the contract
-      let apiDevice = this.liveCNRL.lookupContract(dapi)
-      let getDevice = await this.livedeviceSystem.storedDevices(apiDevice)
-      // need to pair device to API source CNRL
-      getDevice.cnrl = dapi
-      devicesList.push(getDevice)
-    }
-    // merg arrays
-    let flatd = [].concat(...devicesList)
-    apiData = flatd // await this.livedeviceSystem.systemDevice(dapi
-  } else if (flag === 'dataType') {
-    let dts = {}
-    for (let dev of devices) {
-      // loop up API and extract all datatypes CNRL ids
-      dts[dev.device_mac] = this.cnrlDeviceDTs(dev.cnrl)
-    }
-    apiData = dts
-  }
-  return apiData
-}
-
-/**
-* save or get start Status data
-* @method startSettings
-*
-*/
-safeFlow.prototype.startSettings = async function (flag, bundle) {
-  console.log(flag)
-  console.log(bundle)
-  // first time start of device, datatype context for toolkitContext
-  let startStatusData = []
-  if (flag === 'save') {
-    startStatusData = await this.liveDataSystem.saveStartStatus(bundle)
-  } else if (flag === 'retreive') {
-    startStatusData = await this.liveTestStorage.getStartSettings() // await this.liveDataSystem.getStartStatus()
-  } else if (flag === 'remove') {
-    startStatusData = await this.liveDataSystem.removeStartStatus(bundle)
-  } else if (flag === 'removedash') {
-    startStatusData = await this.liveDataSystem.removeStartDash(bundle)
-  }
-  return startStatusData
+safeFlow.prototype.startKBL = async function () {
+  // latest nxp and ledger entries, CNRL contract look ups
 }
 
 /**
@@ -207,119 +132,6 @@ safeFlow.prototype.entityChartGetter = async function (eid) {
 safeFlow.prototype.entityCurrentAverageHR = async function (eid, category) {
   let currentAverageHR = await this.liveEManager.GetaverageCurrentDailyStatistics(eid, category)
   return currentAverageHR
-}
-
-/**
-* call the CNRL on startup to get live science in network
-* @method cnrlLivingKnowledge
-*
-*/
-safeFlow.prototype.cnrlLivingKnowledge = function (refIN) {
-  let startSemantics = this.liveCNRL.livingKnowledge(refIN)
-  return startSemantics
-}
-
-/**
-* compute time options
-* @method cnrlTimeIndex
-*
-*/
-safeFlow.prototype.cnrlTimeIndex = function (refIN) {
-  let timeSegments = this.liveCNRL.timeContracts(refIN)
-  return timeSegments
-}
-
-/**
-* experiment index query
-* @method cnrlExperimentIndex
-*
-*/
-safeFlow.prototype.cnrlExperimentIndex = function () {
-  let cnrlDetail = []
-  console.log('live cnrl')
-  console.log(this.liveCNRL)
-  let index = this.liveCNRL.indexExperiments()
-  for (let ie of index) {
-    // lookup contracts
-    let cnrlContract = this.liveCNRL.lookupContract(ie)
-    cnrlDetail.push(cnrlContract)
-  }
-  return cnrlDetail
-}
-
-/**
-* datatype on CNRL network index query
-* @method cnrlNetworkDatatypeIndex
-*
-*/
-safeFlow.prototype.cnrlNetworkDatatypeIndex = function () {
-  let cnrlDetail = []
-  let index = this.liveCNRL.indexDatatypes()
-  for (let ie of index) {
-    // lookup contracts
-    let cnrlContract = this.liveCNRL.lookupContract(ie)
-    cnrlDetail.push(cnrlContract)
-  }
-  return cnrlDetail
-}
-
-/**
-* computes on CNRL network index query
-* @method cnrlNetworkComputeIndex
-*
-*/
-safeFlow.prototype.cnrlNetworkComputeIndex = function () {
-  let cnrlDetail = []
-  let index = this.liveCNRL.indexCompute()
-  for (let ie of index) {
-    // lookup contracts
-    let cnrlContract = this.liveCNRL.lookupContract(ie)
-    cnrlDetail.push(cnrlContract)
-  }
-  return cnrlDetail
-}
-
-/**
-* call the CNRL and return data types for this science
-* @method cnrlLookup
-*
-*/
-safeFlow.prototype.cnrlLookup = function (cid) {
-  let cnrlContract = this.liveCNRL.lookupContract(cid)
-  return cnrlContract
-}
-
-/**
-* look up device data types and return in CNRL format
-* @method cnrlDeviceDTs
-*
-*/
-safeFlow.prototype.cnrlDeviceDTs = function (cid) {
-  let cnrlContract = this.liveDTsystem.DTtableStructure(cid)
-  // now convert to CNRL speak
-  let convertedDTs = this.liveDTsystem.convertAPIdatatypeToCNRL(cnrlContract)
-  cnrlContract.datatypes = convertedDTs
-  return cnrlContract
-}
-
-/**
-* look up science data types and return in CNRL format
-* @method cnrlScienceDTs
-*
-*/
-safeFlow.prototype.cnrlScienceDTs = function (cid) {
-  let cnrlContract = this.liveDTsystem.DTscienceStructure(cid)
-  return cnrlContract
-}
-
-/**
-* authorise the SAFEnetwork
-* @method SAFEsendAuthRequest
-*
-*/
-safeFlow.prototype.SAFEsendAuthRequest = function () {
-  let authorisation = this.SAFEapi.sendAuthRequest()
-  return authorisation
 }
 
 export default safeFlow

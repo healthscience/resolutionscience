@@ -9,9 +9,11 @@
       <!--<nxp-existing></nxp-existing> -->
       <nxp-question></nxp-question>
       <!--<nxp-education></nxp-education> -->
+      <!--<nxp-app></nxp-app> -->
       <nxp-compute></nxp-compute>
       <nxp-sciencereview></nxp-sciencereview>
       <nxp-control></nxp-control>
+      <!--<nxp-errormanagement></nxp-errormanagement> -->
       <nxp-lifestylemedicine></nxp-lifestylemedicine>
       <nxp-prescription></nxp-prescription>
       <nxp-communicate></nxp-communicate>

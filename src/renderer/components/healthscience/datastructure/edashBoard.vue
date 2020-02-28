@@ -1,7 +1,7 @@
 <template>
   <div id="dashboard-holder" v-if="dashState.active === true"> dd {{ dashCNRL }} state {{ dashState }}
-  {{ currentLayout }} ----
-  {{ layout }}
+  -- {{ layout}}
+  === {{ currentLayout }}
     <div id="dashboard-grid" >
       <div class='layoutJSON'>
           Displayed as <code>[x, y, w, h]</code>
@@ -38,7 +38,7 @@
                      :i='item.i'
                   >
               <!-- <span class='text'>{{itemTitle(item)}}</span> -->
-              <!-- <nxp-visualise></nxp-visualise> -->
+              <nxp-visualise></nxp-visualise>
               {{ item.i }}
           </grid-item>
       </grid-layout>
@@ -88,7 +88,7 @@
       currentLayout: {
         get () {
           console.log('compute current')
-          this.layout = this.$store.state.gridDefault
+          // this.layout = this.$store.state.gridDefault
           return this.$store.state.gridDefault
         },
         set (newLayout) {
@@ -96,7 +96,6 @@
           // this.$store.dispatch('grideUpdate', newLayout) setLayoutGrid
           this.$store.commit('setLayoutGrid', newLayout)
         }
-        // return this.$store.state.gridDefault
       }
     },
     watch: {

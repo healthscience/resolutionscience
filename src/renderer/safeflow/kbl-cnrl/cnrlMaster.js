@@ -253,6 +253,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
   dataCNRLbundle.namespace = ''
   dataCNRLbundle.index = []
   dataCNRLbundle.kentities = []
+  dataCNRLbundle.modules = []
   if (refIN === 'cnrl-8856388711') {
     dataCNRLbundle.type = 'datatype'
     dataCNRLbundle.history = {'proposed': 157118400, 'accepted': 15728400, 'votes': 343}
@@ -671,6 +672,7 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-888355992223'
     dataCNRLbundle.index = []
     dataCNRLbundle.kentities = ['cnrl-2356388731']
+    dataCNRLbundle.modules = []
   } else if (refIN === 'cnrl-88735d99d228') {
     // CNRL implementation contract e.g. from mobile phone sqlite table structure
     dataCNRLbundle.type = 'experiment'
@@ -806,8 +808,70 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.namespace = 'safe://cnrl/848388554344'
     dataCNRLbundle.index = []
     dataCNRLbundle.kentities = ['']
+  } else if (refIN === 'cnrl-001234543212') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'module'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-001234543212', 'text': 'Question', 'active': false }
+    dataCNRLbundle.livingpaper = {'link': ''}
+    dataCNRLbundle.namespace = 'safe://cnrl-001234543212'
+  } else if (refIN === 'cnrl-001234543213') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'module'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-001234543213', 'text': 'Education', 'active': false }
+    dataCNRLbundle.livingpaper = {'link': ''}
+    dataCNRLbundle.namespace = 'safe://cnrl-001234543213'
+  } else if (refIN === 'cnrl-001234543214') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'module'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-001234543214', 'text': 'Compute', 'active': false }
+    dataCNRLbundle.livingpaper = {'link': ''}
+    dataCNRLbundle.namespace = 'safe://cnrl-001234543214'
+  } else if (refIN === 'cnrl-001234543215') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'module'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-001234543215', 'text': 'ScienceReview', 'active': false }
+    dataCNRLbundle.livingpaper = {'link': ''}
+    dataCNRLbundle.namespace = 'safe://cnrl-001234543215'
+  } else if (refIN === 'cnrl-001234543216') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'module'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-001234543216', 'text': 'Control', 'active': false }
+    dataCNRLbundle.livingpaper = {'link': ''}
+    dataCNRLbundle.namespace = 'safe://cnrl-001234543216'
+  } else if (refIN === 'cnrl-001234543217') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'module'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-001234543217', 'text': 'ErrorMgt', 'active': false }
+    dataCNRLbundle.livingpaper = {'link': ''}
+    dataCNRLbundle.namespace = 'safe://cnrl-001234543217'
+  } else if (refIN === 'cnrl-001234543218') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'module'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-001234543218', 'text': 'LifestyleMedicine', 'active': false }
+    dataCNRLbundle.livingpaper = {'link': ''}
+    dataCNRLbundle.namespace = 'safe://cnrl-001234543218'
+  } else if (refIN === 'cnrl-001234543219') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'module'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-001234543219', 'text': 'Prescription', 'active': false }
+    dataCNRLbundle.livingpaper = {'link': ''}
+    dataCNRLbundle.namespace = 'safe://cnrl-001234543219'
+  } else if (refIN === 'cnrl-001234543220') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'module'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-001234543220', 'text': 'Communicate', 'active': false }
+    dataCNRLbundle.livingpaper = {'link': ''}
+    dataCNRLbundle.namespace = 'safe://cnrl-001234543220'
   }
-
   return dataCNRLbundle
 }
 

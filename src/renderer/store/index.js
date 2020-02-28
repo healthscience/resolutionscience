@@ -17,7 +17,7 @@ export default new Vuex.Store({
       { 'x': 0, 'y': 0, 'w': 20, 'h': 2, 'i': '0', static: true },
       { 'x': 0, 'y': 0, 'w': 2, 'h': 5, 'i': '1', static: false },
       { 'x': 4, 'y': 0, 'w': 2, 'h': 5, 'i': '2', static: false },
-      { 'x': 5, 'y': 0, 'w': 2, 'h': 5, 'i': '3', static: false }
+      { 'x': 6, 'y': 0, 'w': 2, 'h': 5, 'i': '3', static: false }
     ],
     compute: {},
     tools: {},
@@ -378,7 +378,6 @@ export default new Vuex.Store({
     setDashboardNXP: (state, inVerified) => {
       let dStatus = state.experimentStatus[inVerified].active
       dStatus = !dStatus
-      console.log(dStatus)
       Vue.set(state.experimentStatus[inVerified], 'active', dStatus)
     },
     setPrepareBundle: (state, inVerified) => {
@@ -522,7 +521,10 @@ export default new Vuex.Store({
       context.commit('setLiveNXPBundle', update)
     },
     actionDashboardState: (context, update) => {
+      context.commit('setLiveNXP', update)
+      context.commit('setLiveNXPBundle', update)
       context.commit('setDashboardNXP', update)
+      context.commit('setPrepareBundle', update)
     },
     actionBundleData: (context, update) => {
       context.commit('setPrepareBundle', update)

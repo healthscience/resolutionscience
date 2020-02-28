@@ -73,9 +73,6 @@
   import KnowledgeContext from '@/components/toolbar/knowledgeContext'
   import { kBus } from '../../main.js'
   const moment = require('moment')
-  const crypto = require('crypto')
-  const bs58 = require('bs58')
-  const hashObject = require('object-hash')
 
   export default {
     name: 'knowledge-live',
@@ -169,21 +166,6 @@
         updateTbundle.startperiod = startPeriodTime
         updateTbundle.timevis = this.liveData.timeLive
         return updateTbundle
-      },
-      createKBID (addressIN) {
-        // hash Object
-        let kbundleHash = hashObject(addressIN)
-        let tempTokenG = ''
-        let salt = crypto.randomBytes(16).toString('base64')
-        // let hashs = crypto.createHmac('sha256',salt).update(password).digest('base64')
-        let hash = crypto.createHmac('sha256', salt).update(kbundleHash).digest()
-        // const bytes = Buffer.from('003c176e659bea0f29a3e9bf7880c112b1b31b4dc826268187', 'hex')
-        tempTokenG = bs58.encode(hash)
-        // decode
-        // const addressde = address
-        // const bytes = bs58.decode(addressde)
-        // console.log(bytes.toString('base64'))
-        return tempTokenG
       },
       saveLearnHistory (lBundle) {
         this.historyData.push(lBundle)

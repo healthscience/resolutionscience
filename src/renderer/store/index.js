@@ -1,7 +1,10 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-
+import LiveMixinSAFEflow from '@/mixins/safeFlowAPI'
 import modules from './modules'
+
+const safeAPI = new LiveMixinSAFEflow()
+console.log(safeAPI)
 
 Vue.use(Vuex)
 
@@ -65,6 +68,12 @@ export default new Vuex.Store({
   },
   mutations: {
     // Mutations
+    setAuthorisation: (state, inVerified) => {
+      console.log('authorisation')
+      console.log(inVerified)
+      console.log(safeAPI)
+      safeAPI.connectNSnetwork(inVerified.network, inVerified.settings)
+    },
     setScience: (state, inVerified) => {
       state.context.science = inVerified
     },
@@ -392,6 +401,9 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    connectNSnetwork: (context, update) => {
+      context.commit('setAuthorisation', update)
+    },
     actionVisualOptions: (context, update) => {
       context.commit('setVisualOptions', update)
     },

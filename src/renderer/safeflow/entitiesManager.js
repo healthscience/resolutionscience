@@ -10,13 +10,11 @@
 * @version    $Id$
 */
 import Entity from './scienceEntities.js'
-// import KBLedger from './cnrl/kbledger.js'
 const util = require('util')
 const events = require('events')
 
-var EntitiesManager = function (KBL) {
+var EntitiesManager = function () {
   events.EventEmitter.call(this)
-  this.liveKBL = KBL
   this.liveSEntities = {}
 }
 
@@ -27,11 +25,11 @@ var EntitiesManager = function (KBL) {
 util.inherits(EntitiesManager, events.EventEmitter)
 
 /**
-*  create new Science entity
-* @method addScienceEntity
+*  create new HS entity
+* @method addHSEntity
 *
 */
-EntitiesManager.prototype.addScienceEntity = async function (ecsIN, setIN) {
+EntitiesManager.prototype.addHSentity = async function (ecsIN, setIN) {
   // console.log('kbundle in to entity manager')
   // console.log(ecsIN)
   let cid = ecsIN.kbid

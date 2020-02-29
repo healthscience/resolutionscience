@@ -7,13 +7,10 @@
 </template>
 
 <script>
-  import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
-
   export default {
     name: 'safenetwork-page',
     components: {
     },
-    mixins: [liveMixinSAFEflow],
     data: () => ({
     }),
     created () {
@@ -22,11 +19,6 @@
     },
     methods: {
       connectSAFE () {
-        console.log('connect to safe network please')
-        let selfAuth = {}
-        selfAuth.secret = '1234'
-        selfAuth.password = '4568'
-        this.connectNSnetwork('safeNetwork', selfAuth)
       }
     }
   }

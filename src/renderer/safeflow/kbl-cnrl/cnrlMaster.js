@@ -9,13 +9,12 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import TestStorageAPI from '../systems/data/dataprotocols/teststorage/testStorage.js'
 const util = require('util')
 const events = require('events')
 
-var CNRLmaster = function (apiSettings) {
+var CNRLmaster = function (apiSettings, cnrlStore) {
   events.EventEmitter.call(this)
-  this.liveTestStorage = new TestStorageAPI(apiSettings)
+  this.liveCNRLStore = cnrlStore
 }
 
 /**
@@ -31,47 +30,9 @@ util.inherits(CNRLmaster, events.EventEmitter)
 */
 CNRLmaster.prototype.defautNetworkContracts = async function (refIN) {
   let dataCNRLbundle = {}
-  let defaultCNRLsetup = await this.liveTestStorage.defautCNRL(refIN)
+  let defaultCNRLsetup = await this.liveCNRLStore.defautCNRL(refIN)
   dataCNRLbundle = defaultCNRLsetup[0]
   return dataCNRLbundle
-  /* dataCNRLbundle.type = ''
-  dataCNRLbundle.livingpaper = ''
-  dataCNRLbundle.prime = {}
-  dataCNRLbundle.history = {}
-  dataCNRLbundle.resolution = {}
-  dataCNRLbundle.source = []
-  dataCNRLbundle.input = []
-  dataCNRLbundle.tidy = false
-  dataCNRLbundle.tidyList = []
-  dataCNRLbundle.lbl = []
-  dataCNRLbundle.apistructure = ''
-  dataCNRLbundle.tableStructure = []
-  dataCNRLbundle.categorycodes = []
-  dataCNRLbundle.dtsource = []
-  dataCNRLbundle.categories = []
-  dataCNRLbundle.wasmhash = ''
-  dataCNRLbundle.wasmfile = ''
-  dataCNRLbundle.namespace = ''
-  dataCNRLbundle.index = []
-  dataCNRLbundle.kentities = []
-  if (refIN === 'cnrl-33221100') {
-    // CNRL implementation REST API
-    dataCNRLbundle.type = 'dtpackaging'
-    dataCNRLbundle.source = 'cnrl-primary'
-    dataCNRLbundle.prime = { 'cnrl': 'cnrl-33221100', 'text': 'test-RESTAPI', 'active': false }
-    dataCNRLbundle.tidy = false
-    dataCNRLbundle.tidyList = []
-    dataCNRLbundle.deviceList = ['cnrl-33221101', 'cnrl-33221102']
-    dataCNRLbundle.computeList = []
-    dataCNRLbundle.kbl = 'experimentKBundles/<publickey>/'
-    dataCNRLbundle.apistructure = ['experimentKBundles/<publickey>/']
-    dataCNRLbundle.tableStructure[0] = [{'cnrl': 'cnrl-8856388713', 'text': 'previoushash', 'active': false}, {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-', 'text': 'data', 'active': false}, {'cnrl': 'cnrl-', 'text': 'datatype', 'active': false}, {'cnrl': 'cnrl-', 'text': 'compute', 'active': false}, {'cnrl': 'cnrl-', 'text': 'results', 'active': false}, {'cnrl': 'cnrl-', 'text': 'token', 'active': false}]
-    dataCNRLbundle.tableStructure[1] = [{'cnrl': '', 'text': '', 'active': false}]
-    dataCNRLbundle.namespace = 'http://165.227.244.213:8882'
-    dataCNRLbundle.index = []
-  } else if (refIN === 'cnrl-33221100') {
-    // safenetwork seed node or self auth sign in
-  } */
 }
 
 /**

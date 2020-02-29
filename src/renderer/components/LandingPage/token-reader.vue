@@ -24,7 +24,6 @@
 </template>
 
 <script>
-  import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
   import Passwordk from 'vue-password-strength-meter'
   // import { sBus } from '../../main.js'
 
@@ -42,7 +41,6 @@
     },
     created () {
     },
-    mixins: [liveMixinSAFEflow],
     mounted () {
     },
     computed: {
@@ -77,10 +75,12 @@
           localthis.$store.commit('setBoth', tokenJSON)
           localthis.verifyfeedbackM = 'Data token live'
           localthis.viewPkeybuttons = true
-          localthis.connectNSnetwork('cloud', tokenJSON)
+          let authBundle = {}
+          authBundle.network = 'cloud'
+          authBundle.settings = tokenJSON
+          localthis.$store.dispatch('connectNSnetwork', authBundle)
         }
         reader.readAsText(file)
-
         // Specify a data directory (optional; defaults to ~/.ethereum)
         // var datadir = process.cwd()
         // this.tokenJSONy = (datadir)

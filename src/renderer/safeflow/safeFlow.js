@@ -9,8 +9,8 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import KBLedger from './kbl-cnrl/kbledger.js'
 import EntitiesManager from './entitiesManager.js'
+import KBLedger from './kbl-cnrl/kbledger.js'
 import CALE from './CALE/cale-utility.js'
 
 const util = require('util')
@@ -18,9 +18,9 @@ const events = require('events')
 
 var safeFlow = function () {
   events.EventEmitter.call(this)
-  // this.SAFElive = new SAFEapi()
   this.defaultStorage = ['http://165.227.244.213:8882'] // know seed peers
   this.settings = {}
+  this.KBLlive = {}
 }
 
 /**
@@ -34,35 +34,41 @@ util.inherits(safeFlow, events.EventEmitter)
 * @method networkAuthorisation
 *
 */
-safeFlow.prototype.networkAuthorisation = async function (apiCNRL, auth) {
+safeFlow.prototype.networkAuthorisation = function (apiCNRL, auth) {
   auth.namespace = this.defaultStorage[0]
   this.settings = auth
-  this.liveKBL = new KBLedger(apiCNRL, this.settings)
-  this.liveEManager = new EntitiesManager(this.liveKBL)
+  this.liveEManager = new EntitiesManager(apiCNRL, auth)
+  this.KBLlive = new KBLedger(apiCNRL, auth)
   this.liveCALE = new CALE(this.settings)
   return true
 }
 
 /**
-* get the latest KBL state
-* @method startKBL
+* Read KBL and setup defaults for this peer
+* @method peerKBLstart
 *
 */
-safeFlow.prototype.startKBL = async function () {
-  // latest nxp and ledger entries, CNRL contract look ups
+safeFlow.prototype.peerKBLstart = async function () {
+  // read peer kbledger
+  let nxpList = await this.KBLlive.startKBL()
+  console.log(nxpList)
+  // feed defaults into ECS
+  // for (let nxp of nxpList) {
+  // this.makeEntities()
+  // }
 }
 
 /**
-* what science components are active
-* @method scienceEntities
+* create Entities
+* @method makeEntities
 *
 */
-safeFlow.prototype.scienceEntities = async function (contextIN) {
+safeFlow.prototype.makeEntities = async function (contextIN) {
   // first prepare input in ECS format
   // console.log('start---scienceEntitiees')
   // console.log(contextIN)
   let ecsIN = this.setpeerContext(contextIN)
-  await this.liveEManager.addScienceEntity(ecsIN, this.settings).then(function (bk) {
+  await this.liveEManager.addHSentity(ecsIN).then(function (bk) {
     console.log('SAFEFLOW-new entitycomplete')
     console.log(bk)
     return true

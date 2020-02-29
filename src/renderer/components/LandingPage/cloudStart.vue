@@ -4,13 +4,10 @@
 </template>
 
 <script>
-  import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
-
   export default {
     name: 'cloud-page',
     components: {
     },
-    mixins: [liveMixinSAFEflow],
     data: () => ({
     }),
     created () {

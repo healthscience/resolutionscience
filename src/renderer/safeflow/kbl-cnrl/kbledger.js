@@ -10,24 +10,24 @@
 * @version    $Id$
 */
 import CNRLmaster from './cnrlMaster.js'
-import TestStorageAPI from '../systems/data/dataprotocols/teststorage/testStorage.js'
-import DatadeviceSystem from '../systems/data/datadeviceSystem.js'
-import DTsystem from '../systems/data/dtSystem.js'
-import DataSystem from '../systems/data/dataSystem.js'
+import KBLstorage from './kblStorage.js'
+// import DatadeviceSystem from '../systems/data/datadeviceSystem.js'
+// import DTsystem from '../systems/data/dtSystem.js'
+// import DataSystem from '../systems/data/dataSystem.js'
 const util = require('util')
 const events = require('events')
 const crypto = require('crypto')
 const bs58 = require('bs58')
 const hashObject = require('object-hash')
 
-var KBLedger = async function (apiCNRL, setIN) {
+var KBLedger = function (apiCNRL, setIN) {
   events.EventEmitter.call(this)
-  this.liveCNRL = new CNRLmaster(setIN)
-  this.api = await this.liveCNRL.defautNetworkContracts(apiCNRL)
-  this.livedeviceSystem = new DatadeviceSystem(this.settings)
-  this.liveDataSystem = new DataSystem(setIN)
-  this.liveDTsystem = new DTsystem(this.settings)
-  this.liveTestStorage = new TestStorageAPI(this.settings)
+  this.liveKBLStorage = new KBLstorage(setIN)
+  this.liveCNRL = new CNRLmaster(setIN, this.liveKBLStorage)
+  this.liveAPI = apiCNRL
+  // this.livedeviceSystem = new DatadeviceSystem(this.settings)
+  // this.liveDataSystem = new DataSystem(setIN)
+  // this.liveDTsystem = new DTsystem(this.settings)
 }
 
 /**
@@ -44,6 +44,17 @@ util.inherits(KBLedger, events.EventEmitter)
 KBLedger.prototype.genesisKBL = function () {
   let newLedger = 'new'
   return newLedger
+}
+
+/**
+* get the latest KBL state
+* @method startKBL
+*
+*/
+KBLedger.prototype.startKBL = async function () {
+  // latest nxp and ledger entries, CNRL contract look ups
+  let startLedger = await this.liveKBLStorage.getKBLindex()
+  return startLedger
 }
 
 /**
@@ -103,7 +114,7 @@ KBLedger.prototype.startSettings = async function (flag, bundle) {
 }
 
 /**
-*  list of Experiment Live in Ledger
+*  create a new entity to hold KBIDs
 * @method createKBID
 *
 */
@@ -130,7 +141,7 @@ KBLedger.prototype.createKBID = function (addressIN) {
 */
 KBLedger.prototype.liveNetworkExperimentLedger = function () {
   console.log('get experiments live in Ledger')
-  let liveExperList = ['cnrl-848388553323', 'cnrl-888355992223', 'cnrl-888355992224', 'cnrl-888388992224', 'cnrl-888388232224', 'cnrl-888388233324', 'cnrl-888388443324']
+  let liveExperList = 0 // ['cnrl-848388553323', 'cnrl-888355992223', 'cnrl-888355992224', 'cnrl-888388992224', 'cnrl-888388232224', 'cnrl-888388233324', 'cnrl-888388443324']
   // await this.liveDataSystem.getExpKbundles()
   return liveExperList
 }
@@ -163,7 +174,7 @@ KBLedger.prototype.latestKBs = async function () {
 }
 
 /**
-*  extract Computations
+*  extract MODLUES from ledger NXP
 * @method extractComputations
 *
 */

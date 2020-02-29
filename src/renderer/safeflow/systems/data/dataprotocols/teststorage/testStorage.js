@@ -22,14 +22,8 @@ var TestStorageAPI = function (setUP) {
   events.EventEmitter.call(this)
   this.liveTimeUtil = new TimeUtilities()
   this.baseAPI = setUP.namespace
-  this.liveData = {}
-  this.datacollection = []
   this.tempPubkey = setUP.publickey
   this.tempToken = setUP.token
-  this.liveStarttime = 0
-  this.activeContext = []
-  this.devicePairs = {}
-  this.activeDatatypes = []
 }
 
 /**
@@ -37,16 +31,6 @@ var TestStorageAPI = function (setUP) {
 * @method inherits
 */
 util.inherits(TestStorageAPI, events.EventEmitter)
-
-/**
-*  defaultCNRL contract
-* @method defaultCNRL
-*
-*/
-TestStorageAPI.prototype.defautCNRL = async function (contractID) {
-  let startSettings = await axios.get(this.baseAPI + '/cnrl/' + this.tempPubkey + '/' + this.tempToken + '/' + contractID)
-  return startSettings.data
-}
 
 /**
 *  device REST builder

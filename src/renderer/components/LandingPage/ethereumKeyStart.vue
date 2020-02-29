@@ -39,7 +39,6 @@
   import Password from 'vue-password-strength-meter'
   import FileReader from '../LandingPage/file-reader.vue'
   import keythereum from 'keythereum'
-  import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
 
   export default {
     name: 'tokenfirst-page',
@@ -47,7 +46,6 @@
       Password,
       FileReader
     },
-    mixins: [liveMixinSAFEflow],
     data: () => ({
       password: null,
       text: '',

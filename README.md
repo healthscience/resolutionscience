@@ -1,7 +1,7 @@
 
 # resolutionscience
 > This a proof of concept Prototype to create a Peer Network Learning Experience
-> The UI is writtin in Vue.js and safeFlow in JS and a test data REST api in node.js
+> The UI is written in Vue.js and safeFlow in JS and a test data REST api in node.js
 > The peer network learning experience will upgraded to be network based at https://github.com/healthscience/diyhstoolkit and run on the SAFEnetwork https://safenetwork.org/
 > safeFlow prototype code explores bringing the ideas of an ECS (entity component system) together with modular Ledger called the Knowledge Bundle Ledger that facilitaties performing DML (Decentrlised Machine Learning).  https://github.com/healthscience/safeflow will be a rust implemenation.
 > Demos and commentary at https://medium.com/@DIYHSLAB

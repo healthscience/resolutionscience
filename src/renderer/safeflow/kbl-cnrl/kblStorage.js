@@ -41,8 +41,8 @@ KBLdatabaseUtility.prototype.peerNXPmodules = async function (contractID) {
 * @method kblEntry
 *
 */
-KBLdatabaseUtility.prototype.kblEntry = async function (dapi) {
-  let jsondata = await axios.get(this.baseAPI + '/kblentry/' + this.tempPubkey + '/' + this.tempToken + '/')
+KBLdatabaseUtility.prototype.kblEntry = async function (kbid) {
+  let jsondata = await axios.get(this.baseAPI + '/kblentry/' + this.tempPubkey + '/' + this.tempToken + '/' + kbid)
   return jsondata.data
 }
 

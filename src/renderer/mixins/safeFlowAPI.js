@@ -58,15 +58,6 @@ safeFlowAPI.prototype.startCycle = async function (authIN) {
   if (authStatus === true) {
     // What network experiments entries are indexed in KBLedger?
     await this.SAPI.peerKBLstart()
-    // this.startNetworkExpMappedKbundles()
-    // this.startKSetting()
-    // Independently extract devcies, datatypes, computes etc for Peer
-    // await this.deviceContext()
-    // this.datatypeContext()
-    // this.cnrlComputeIndex()
-    // this.timeNav('time-index')
-    // cnrl indexes data
-    // this.GETdatatypeList()
   }
 }
 

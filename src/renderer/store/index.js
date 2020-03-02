@@ -70,8 +70,6 @@ export default new Vuex.Store({
     // Mutations
     setAuthorisation: (state, inVerified) => {
       console.log('authorisation')
-      console.log(inVerified)
-      console.log(safeAPI)
       safeAPI.connectNSnetwork(inVerified.network, inVerified.settings)
     },
     setScience: (state, inVerified) => {

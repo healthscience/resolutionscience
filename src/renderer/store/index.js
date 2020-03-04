@@ -70,7 +70,73 @@ export default new Vuex.Store({
     // Mutations
     setAuthorisation: (state, inVerified) => {
       console.log('authorisation')
-      safeAPI.connectNSnetwork(inVerified.network, inVerified.settings)
+      state.experimentList = inVerified
+      for (let exl of state.experimentList) {
+        let experBundle = {}
+        experBundle.cnrl = exl.prime.cnrl
+        experBundle.status = false
+        experBundle.contract = exl
+        experBundle.modules = exl.modules
+        let objectPropC = exl.prime.cnrl
+        Vue.set(state.experimentStatus, objectPropC, experBundle)
+      }
+      state.NXPexperimentList = inVerified
+    },
+    setNetworkExperimentList: (state, inVerified) => {
+      state.NXPexperimentList = inVerified
+      for (let exl of state.NXPexperimentList) {
+        let experBundle = {}
+        experBundle.cnrl = exl.prime.cnrl
+        experBundle.status = false
+        experBundle.contract = exl
+        experBundle.modules = []
+        let objectPropC = exl.prime.cnrl
+        Vue.set(state.NXPexperimentStatus, objectPropC, experBundle)
+      }
+    },
+    setLiveNXP: (state, inVerified) => {
+      state.liveNXP = inVerified
+      for (let nxpC of state.NXPexperimentList) {
+        if (nxpC.prime.cnrl === inVerified) {
+          state.liveNXPcontract = nxpC
+        }
+      }
+    },
+    setLiveNXPModules: (state, inVerified) => {
+      console.log('set NXP status live')
+      console.log(inVerified)
+      Vue.set(state.NXPexperimentStatus, inVerified.cnrl, inVerified.modules)
+      console.log('moudels state')
+      console.log(state.NXPexperimentStatus)
+    },
+    setLiveNXPBundle: (state, inVerified) => {
+      state.liveNXPbundle = {}
+      state.liveNXPbundleList = []
+      let kBidlive = []
+      for (let kItem of state.mapExperimentKbundles) {
+        if (kItem.experimentCNRL === inVerified) {
+          kBidlive.push(kItem.kbid)
+        }
+      }
+      // loop up kBID and extract elements mapExperimentKbundles
+      let KbidsList = []
+      for (let kBentry of state.startBundles) {
+        for (let kitem of kBidlive) {
+          if (kBentry.kbid === kitem) {
+            KbidsList.push(kitem)
+            Vue.set(state.liveNXPbundle, kitem, kBentry)
+          }
+        }
+      }
+      state.liveNXPbundleList = KbidsList
+    },
+    setNewNXP: (state, inVerified) => {
+      state.newNXP = inVerified
+    },
+    setDashboardNXP: (state, inVerified) => {
+      let dStatus = state.experimentStatus[inVerified].active
+      dStatus = !dStatus
+      Vue.set(state.experimentStatus[inVerified], 'active', dStatus)
     },
     setScience: (state, inVerified) => {
       state.context.science = inVerified
@@ -264,36 +330,6 @@ export default new Vuex.Store({
         }
       }
     },
-    setNetworkExperimentList: (state, inVerified) => {
-      state.NXPexperimentList = inVerified
-      for (let exl of state.NXPexperimentList) {
-        let experBundle = {}
-        experBundle.cnrl = exl.prime.cnrl
-        experBundle.status = false
-        experBundle.contract = exl
-        experBundle.dashKBlist = []
-        let objectPropC = exl.prime.cnrl
-        Vue.set(state.NXPexperimentStatus, objectPropC, experBundle)
-      }
-      /* state.activeKentities = {}
-      for (let budi of state.NXPexperimentList) {
-        let objectPropE = budi.prime.cnrl
-        Vue.set(state.activeKentities, objectPropE, [])
-        for (let expCNRL of state.mapExperimentKbundles) {
-          if (budi.prime.cnrl === expCNRL.experimentCNRL) {
-            let objectProp = budi.prime.cnrl
-            let objectValue = expCNRL.kbid
-            state.activeKentities[objectProp].push(objectValue)
-          }
-          // setup progress message holder object
-          let progressSet = {}
-          progressSet.active = false
-          progressSet.cnrl = objectPropE
-          progressSet.text = 'Visulisation in Progress'
-          Vue.set(state.experimentProgressStatus, objectPropE, progressSet)
-        }
-      } */
-    },
     setMappedExpKbundles: (state, inVerified) => {
       state.mapExperimentKbundles = inVerified
     },
@@ -350,43 +386,6 @@ export default new Vuex.Store({
     setDTcnrl: (state, inVerified) => {
       state.datatypesCNRL = inVerified
     },
-    setLiveNXP: (state, inVerified) => {
-      state.liveNXP = inVerified
-      for (let nxpC of state.NXPexperimentList) {
-        if (nxpC.prime.cnrl === inVerified) {
-          state.liveNXPcontract = nxpC
-        }
-      }
-    },
-    setLiveNXPBundle: (state, inVerified) => {
-      state.liveNXPbundle = {}
-      state.liveNXPbundleList = []
-      let kBidlive = []
-      for (let kItem of state.mapExperimentKbundles) {
-        if (kItem.experimentCNRL === inVerified) {
-          kBidlive.push(kItem.kbid)
-        }
-      }
-      // loop up kBID and extract elements mapExperimentKbundles
-      let KbidsList = []
-      for (let kBentry of state.startBundles) {
-        for (let kitem of kBidlive) {
-          if (kBentry.kbid === kitem) {
-            KbidsList.push(kitem)
-            Vue.set(state.liveNXPbundle, kitem, kBentry)
-          }
-        }
-      }
-      state.liveNXPbundleList = KbidsList
-    },
-    setNewNXP: (state, inVerified) => {
-      state.newNXP = inVerified
-    },
-    setDashboardNXP: (state, inVerified) => {
-      let dStatus = state.experimentStatus[inVerified].active
-      dStatus = !dStatus
-      Vue.set(state.experimentStatus[inVerified], 'active', dStatus)
-    },
     setPrepareBundle: (state, inVerified) => {
       console.log('prepare data for bundle')
       console.log(state.liveNXP)
@@ -399,8 +398,26 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    connectNSnetwork: (context, update) => {
-      context.commit('setAuthorisation', update)
+    async connectNSnetwork (context, update) {
+      let NXPstart = await safeAPI.connectNSnetwork(update.network, update.settings)
+      context.commit('setAuthorisation', NXPstart)
+    },
+    async actionDashboardState (context, update) {
+      context.commit('setLiveNXP', update)
+      console.log('actions')
+      console.log(this.state.experimentStatus)
+      console.log(update)
+      let extractModules = this.state.experimentStatus[update].modules
+      let modules = await safeAPI.NXPmodules(extractModules)
+      console.log('modules')
+      console.log(modules)
+      let modBundle = {}
+      modBundle.cnrl = update
+      modBundle.modules = modules
+      context.commit('setLiveNXPModules', modBundle)
+      context.commit('setLiveNXPBundle', update)
+      context.commit('setDashboardNXP', update)
+      context.commit('setPrepareBundle', update)
     },
     actionVisualOptions: (context, update) => {
       context.commit('setVisualOptions', update)
@@ -529,12 +546,6 @@ export default new Vuex.Store({
     actionNewNXP: (context, update) => {
       context.commit('setNewNXP', update)
       context.commit('setLiveNXPBundle', update)
-    },
-    actionDashboardState: (context, update) => {
-      context.commit('setLiveNXP', update)
-      context.commit('setLiveNXPBundle', update)
-      context.commit('setDashboardNXP', update)
-      context.commit('setPrepareBundle', update)
     },
     actionBundleData: (context, update) => {
       context.commit('setPrepareBundle', update)

@@ -1,13 +1,13 @@
 <template>
   <div id="experiment-view">
-    <ul v-if="KLexperimentData.length !== 0" >
-      <li id="experiment-item" v-for="(exp, index) in KLexperimentData">
+    <ul v-if="NXPexperimentData.length !== 0" >
+      <li id="experiment-item" v-for="(exp, index) in NXPexperimentData">
         <div id="live-experiment-elements">
           <div id="select-ebox" class="live-expelement">
             <div id="select-ebox-container">
               <div id="select-status" class="exp-item">
                 <header>JOIN</header>
-                <input type="checkbox" v-bind:id="exp.prime.cnrl" v-bind:value="exp.prime.cnrl" v-model="eboxSelect" @change="makeELive($event)" >
+                <input type="checkbox" v-bind:id="exp.prime.cnrl" v-bind:value="exp.prime.cnrl" v-model="eboxSelect" @change="joinDashlive($event)" >
                 <label for="e-select">{{ }}</label>
               </div>
             </div>
@@ -50,17 +50,15 @@
 </template>
 
 <script>
-  import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
   import edashboard from '@/components/healthscience/datastructure/edashBoard'
 
   export default {
-    name: 'experiment-list',
+    name: 'networkexperiment-list',
     components: {
       edashboard
     },
     props: {
     },
-    mixins: [liveMixinSAFEflow],
     data () {
       return {
         eboxSelect: [],
@@ -73,22 +71,18 @@
     created () {
     },
     computed: {
-      KLexperimentData: function () {
+      NXPexperimentData: function () {
         return this.$store.state.NXPexperimentList
       }
     },
     mounted () {
     },
     methods: {
-      experimentState (expCNRL) {
-        // match to contract CNRL
-        let liveContract = {}
-        for (let lx of this.NXPexperimentList) {
-          if (lx.prime.cnrl === expCNRL) {
-            liveContract = lx
-          }
-        }
-        return liveContract
+      joinDashlive (ne) {
+        console.log('open dashboard me NXP')
+        let dashStatus = ne.target.id
+        // dispatch a store to prepare data for this dashboard
+        this.$store.dispatch('actionJoinDashboardState', dashStatus)
       }
     }
   }

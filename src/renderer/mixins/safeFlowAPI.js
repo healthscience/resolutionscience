@@ -32,6 +32,7 @@ util.inherits(safeFlowAPI, events.EventEmitter)
 */
 safeFlowAPI.prototype.connectNSnetwork = async function (authNetwork, authBundle) {
   console.log('ask connect to HS NETWORK')
+  let startNXP = {}
   // offline
   // connected annon
   // first time setup self verification
@@ -39,8 +40,9 @@ safeFlowAPI.prototype.connectNSnetwork = async function (authNetwork, authBundle
   if (authNetwork === 'safenetwork') {
     // implement in network release see DIY repo on github.
   } else if (authNetwork === 'cloud') {
-    await this.startCycle(authBundle)
+    startNXP = await this.startCycle(authBundle)
   }
+  return startNXP
 }
 
 /**
@@ -50,6 +52,7 @@ safeFlowAPI.prototype.connectNSnetwork = async function (authNetwork, authBundle
 */
 safeFlowAPI.prototype.startCycle = async function (authIN) {
   console.log('start cycle')
+  let entityData = {}
   // AUTHORISATION KLB entry or non for network KBLedger
   let defaultAPI = '33221100'
   let authStatus = this.checkAuthorisation(defaultAPI, authIN)
@@ -57,8 +60,9 @@ safeFlowAPI.prototype.startCycle = async function (authIN) {
   console.log(authStatus)
   if (authStatus === true) {
     // What network experiments entries are indexed in KBLedger?
-    await this.SAPI.peerKBLstart()
+    entityData = await this.SAPI.peerKBLstart()
   }
+  return entityData
 }
 
 /**
@@ -77,8 +81,9 @@ safeFlowAPI.prototype.checkAuthorisation = function (defaultAPI, authBundle) {
 * @method
 *
 */
-safeFlowAPI.prototype.one = async function (authNetwork, authBundle) {
-  console.log('')
+safeFlowAPI.prototype.NXPmodules = async function (modList) {
+  let modules = this.SAPI.NXPmodules(modList)
+  return modules
 }
 
 /**

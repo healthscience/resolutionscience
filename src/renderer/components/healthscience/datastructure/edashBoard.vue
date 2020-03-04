@@ -1,7 +1,21 @@
 <template>
-  <div id="dashboard-holder" v-if="dashState.active === true"> dd {{ dashCNRL }} state {{ dashState }}
-  -- {{ layout}}
-  === {{ currentLayout }}
+  <div id="dashboard-holder" v-if="dashState.active === true">
+    <div id="dash-modules" v-if="dashState.modules">
+      <ul v-for='mod of moduleContent' :key='mod.id'>
+        <li>
+          <module-board @close="closeModule">
+            <template v-slot:header>
+            <!-- The code below goes into the header slot -->
+              MODULE {{ mod.prime.text }}
+            </template>
+            <template v-slot:body>
+            <!-- The code below goes into the header slot -->
+              <header>CONTENT</header>
+            </template>
+          </module-board>
+        </li>
+      </ul>
+    </div>
     <div id="dashboard-grid" >
       <div class='layoutJSON'>
           Displayed as <code>[x, y, w, h]</code>
@@ -50,7 +64,7 @@
 </template>
 
 <script>
-  import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
+  import ModuleBoard from './moduleBoard.vue'
   import VueGridLayout from 'vue-grid-layout'
   import progressMessage from '@/components/toolbar/inProgress'
   import learnReport from '@/components/reports/LearnReport'
@@ -61,6 +75,7 @@
   export default {
     name: 'visual-dashview',
     components: {
+      ModuleBoard,
       GridLayout: VueGridLayout.GridLayout,
       GridItem: VueGridLayout.GridItem,
       progressMessage,
@@ -76,11 +91,10 @@
         let dashStateNXP = this.$store.state.experimentStatus
         return dashStateNXP[this.dashCNRL]
       },
-      experimentDash: function () {
-        return this.$store.state.context
-      },
-      dashBundles: function () {
-        return this.$store.state.context
+      moduleContent: function () {
+        console.log(this.$store.state.NXPexperimentStatus)
+        let contentModule = this.$store.state.NXPexperimentStatus
+        return contentModule[this.dashCNRL]
       },
       progressMessageIN: function () {
         return this.$store.state.experimentProgressStatus
@@ -126,8 +140,10 @@
     },
     mounted () {
     },
-    mixins: [liveMixinSAFEflow],
     methods: {
+      closeModule () {
+        console.log('close module')
+      },
       updateLayout (newLayout) {
         let filtered
         filtered = newLayout.map((item) => { return { x: item.x, y: item.y, w: item.w, h: item.h, i: item.i } })

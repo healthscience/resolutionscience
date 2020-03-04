@@ -50,14 +50,21 @@ safeFlow.prototype.networkAuthorisation = function (apiCNRL, auth) {
 */
 safeFlow.prototype.peerKBLstart = async function () {
   // read peer kbledger
-  let entityModule = {}
+  // let entityModule = {}
   let nxpList = await this.KBLlive.startKBL()
-  console.log(nxpList)
-  // feed defaults into ECS
-  // for (let nxp of nxpList) {
-  // this.makeEntities()
-  // }
-  return entityModule
+  return nxpList
+}
+
+/**
+* modules per NXP cnrl
+* @method NXPmodules
+*
+*/
+safeFlow.prototype.NXPmodules = async function (mList) {
+  // read peer kbledger
+  // let entityModule = {}
+  let nxpList = await this.KBLlive.modulesCNRL(mList)
+  return nxpList
 }
 
 /**

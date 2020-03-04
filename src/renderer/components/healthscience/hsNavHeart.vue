@@ -13,7 +13,7 @@
             <a href="" id="holistic-start" @click.prevent="startHolistic()" v-bind:class="{ 'active': holistic.active}">{{ holistic.name }}</a>
           </div>
         </div>
-      </div>
+      </div> {{ exper }} ----
       <div id="experiments" v-if="exper.active">
         <experiment-List></experiment-List>
       </div>
@@ -27,7 +27,6 @@
 <script>
   import experimentList from './experimentList.vue'
   import NXPexperimentList from './nxp/NXPexperimentList.vue'
-  import { sBus } from '../../main.js'
 
   export default {
     name: 'hs-prepare',
@@ -63,15 +62,12 @@
     mounted () {
     },
     created () {
-      sBus.$on('saveLBundle', (cData) => {
-        console.log('NOT USED')
-      })
     },
     methods: {
       viewExperiment (exper) {
         exper.active = !exper.active
         // query CNRL to get live EXPERIMENTS
-        this.$emit('liveExperiments')
+        // this.$emit('liveExperiments')
         if (exper.active === true) {
           exper.name = 'Close experiment'
         } else {

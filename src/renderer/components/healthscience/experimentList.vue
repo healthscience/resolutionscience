@@ -1,7 +1,7 @@
 <template>
   <div id="experiment-view">
-    <ul v-if="KLexperimentData.length !== 0" >
-      <li id="experiment-item" v-for="(exp, index) in KLexperimentData">
+    <ul v-if="PeerexperimentData.length !== 0" >
+      <li id="experiment-item" v-for="(exp, index) in PeerexperimentData">
         <div id="live-experiment-elements">
           <div id="select-ebox" class="live-expelement">
             <div id="select-ebox-container">
@@ -51,7 +51,6 @@
 </template>
 
 <script>
-  import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
   import edashboard from '@/components/healthscience/datastructure/edashBoard'
 
   export default {
@@ -59,9 +58,6 @@
     components: {
       edashboard
     },
-    props: {
-    },
-    mixins: [liveMixinSAFEflow],
     data () {
       return {
         eboxSelect: [],
@@ -74,20 +70,8 @@
     created () {
     },
     computed: {
-      KLexperimentData: function () {
+      PeerexperimentData: function () {
         return this.$store.state.experimentList
-      },
-      activeKentities: function () {
-        return this.$store.state.activeKentities
-      },
-      startBundlesList: function () {
-        return this.$store.state.startBundles
-      },
-      experimentList: function () {
-        return this.$store.state.experimentList
-      },
-      progressMessageIN: function () {
-        return this.$store.state.experimentProgressStatus
       },
       activeexperimentStatus: function () {
         return this.$store.state.experimentStatus

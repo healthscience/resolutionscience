@@ -16,9 +16,6 @@ import KBLstorage from './kblStorage.js'
 // import DataSystem from '../systems/data/dataSystem.js'
 const util = require('util')
 const events = require('events')
-const crypto = require('crypto')
-const bs58 = require('bs58')
-const hashObject = require('object-hash')
 
 var KBLedger = function (apiCNRL, setIN) {
   events.EventEmitter.call(this)
@@ -55,10 +52,10 @@ KBLedger.prototype.startKBL = async function () {
   // latest nxp and ledger entries, CNRL contract look ups
   let kbIndex = []
   let NXPlist = []
-  let NXPModuleEntry = {}
-  let NXPComponentData = {}
+  // let NXPModuleEntry = {}
+  // let NXPComponentData = {}
   let startLedger = await this.liveKBLStorage.getKBLindex()
-  // loop over and fill out CNRL contract  (TODO expand based on signed and KBID address ie. crytop verification)
+  // loop over and filter out CNRL contract  (TODO expand based on signed and KBID address ie. crytop verification)
   for (let kb of startLedger) {
     let cnrlType = this.liveCNRL.lookupContract(kb.cnrl)
     let kBundle = {}
@@ -68,16 +65,25 @@ KBLedger.prototype.startKBL = async function () {
   }
   // filter for NXP and Kbid entry
   for (let ki of kbIndex) {
-    if (ki.cnrl.modules.length > 0) {
+    if (ki.cnrl.type === 'experiment') {
+      NXPlist.push(ki.cnrl)
+    }
+  }
+  /* for (let ki of kbIndex) {
+    console.log(ki)
+    if (ki.cnrl.type === 'experiment') {
       // look up module cnrls
       for (let km of ki.cnrl.modules) {
         let cnrlModule = this.liveCNRL.lookupContract(km)
         NXPlist.push(cnrlModule)
       }
+      NXPModuleEntry[ki.cnrl.prime.cnrl] = (NXPlist)
+      NXPlist = []
     }
   }
+  console.log(NXPModuleEntry) */
   // now query index to entries for the NXP
-  let kbidList = []
+  /* let kbidList = []
   for (let ke of NXPlist) {
     for (let ki of kbIndex) {
       if (ke.prime.cnrl === ki.cnrl.prime.cnrl) {
@@ -96,6 +102,44 @@ KBLedger.prototype.startKBL = async function () {
     NXPComponentData[ci.prime.cnrl] = NXPStartData
   }
   return NXPComponentData
+  */
+  return NXPlist
+}
+
+/**
+* get modules per NXP cnrl
+* @method modulesCNRL
+*
+*/
+KBLedger.prototype.modulesCNRL = async function (mList) {
+  // modules for NXP cnrl contract
+  let moduleList = []
+  // look up module cnrls
+  for (let km of mList) {
+    let cnrlModule = this.liveCNRL.lookupContract(km)
+    moduleList.push(cnrlModule)
+  }
+  return moduleList
+  // now query index to entries for the NXP
+  /* let kbidList = []
+  for (let ke of NXPlist) {
+    for (let ki of kbIndex) {
+      if (ke.prime.cnrl === ki.cnrl.prime.cnrl) {
+        // match add entry to Module
+        kbidList.push(ki.kbid)
+      }
+    }
+  }
+  return kbidList */
+  /* console.log('kids')
+  console.log(NXPModuleEntry)
+  // lookup KIBs and individual components
+  for (let ci of NXPlist) {
+    let NXPStartData = await this.kbidReader(NXPModuleEntry[ci.prime.cnrl])
+    NXPComponentData[ci.prime.cnrl] = NXPStartData
+  }
+  return NXPComponentData
+  */
 }
 
 /**
@@ -167,27 +211,6 @@ KBLedger.prototype.startSettings = async function (flag, bundle) {
     startStatusData = await this.liveDataSystem.removeStartDash(bundle)
   }
   return startStatusData
-}
-
-/**
-*  create a new entity to hold KBIDs
-* @method createKBID
-*
-*/
-KBLedger.prototype.createKBID = function (addressIN) {
-  // hash Object
-  let kbundleHash = hashObject(addressIN)
-  let tempTokenG = ''
-  let salt = crypto.randomBytes(16).toString('base64')
-  // let hashs = crypto.createHmac('sha256',salt).update(password).digest('base64')
-  let hash = crypto.createHmac('sha256', salt).update(kbundleHash).digest()
-  // const bytes = Buffer.from('003c176e659bea0f29a3e9bf7880c112b1b31b4dc826268187', 'hex')
-  tempTokenG = bs58.encode(hash)
-  // decode
-  // const addressde = address
-  // const bytes = bs58.decode(addressde)
-  // console.log(bytes.toString('base64'))
-  return tempTokenG
 }
 
 /**

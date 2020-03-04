@@ -12,6 +12,9 @@
 import Entity from './scienceEntities.js'
 const util = require('util')
 const events = require('events')
+const crypto = require('crypto')
+const bs58 = require('bs58')
+const hashObject = require('object-hash')
 
 var EntitiesManager = function () {
   events.EventEmitter.call(this)
@@ -29,45 +32,22 @@ util.inherits(EntitiesManager, events.EventEmitter)
 * @method addHSEntity
 *
 */
-EntitiesManager.prototype.addHSentity = async function (ecsIN, setIN) {
-  // console.log('kbundle in to entity manager')
-  // console.log(ecsIN)
-  let cid = ecsIN.kbid
-  let timeBundle = ecsIN.time // starting time ms
-  let visID = ecsIN.visID[0] // limited to one for now will free up TODO
-  if (this.liveSEntities[cid]) {
-    console.log('entity' + cid + 'already exists')
-    // does the data exist for this visualisation and time?
-    let checkDataExist = this.checkForVisualData(cid, timeBundle.startperiod, visID)
-    if (checkDataExist === true) {
-      console.log('data already ready')
-      this.liveSEntities[cid].liveTimeC.setStartPeriod(timeBundle.startperiod)
-      this.liveSEntities[cid].liveTimeC.setRealtime(timeBundle.realtime)
-      this.liveSEntities[cid].liveTimeC.setLastTimeperiod(timeBundle.laststartperiod)
-      this.liveSEntities[cid].liveTimeC.setTimeList(timeBundle.startperiod)
-      this.liveSEntities[cid].liveTimeC.setTimeSegments(timeBundle.timeseg)
-      this.liveSEntities[cid].liveTimeC.setTimeVis(timeBundle.timevis)
-      this.liveSEntities[cid].liveDataC.setDatatypesLive(ecsIN.datatypes)
-      this.liveSEntities[cid].liveDataC.setCategories(ecsIN.categories)
-    } else {
-      // new data call required for this visualisation time
-      console.log('need to prepare new visualisation data')
-      this.liveSEntities[cid].liveTimeC.setStartPeriod(timeBundle.startperiod)
-      this.liveSEntities[cid].liveTimeC.setRealtime(timeBundle.realtime)
-      this.liveSEntities[cid].liveTimeC.setLastTimeperiod(timeBundle.laststartperiod)
-      this.liveSEntities[cid].liveTimeC.setTimeList(timeBundle.startperiod)
-      this.liveSEntities[cid].liveTimeC.setTimeSegments(timeBundle.timeseg)
-      this.liveSEntities[cid].liveTimeC.setTimeVis(timeBundle.timevis)
-      this.liveSEntities[cid].liveDataC.setDatatypesLive(ecsIN.datatypes)
-      this.liveSEntities[cid].liveDataC.setCategories(ecsIN.categories)
-      await this.controlFlow(ecsIN).then(function (cFlow) {
-      })
-    }
+EntitiesManager.prototype.addHSentity = async function (ecsIN) {
+  console.log('kbundle in to entity manager')
+  console.log(ecsIN)
+  // take the KIB hash of the Bundle for entity // ID
+  let kbid = this.createKBID(ecsIN)
+  // extract types of modules from keys
+  let moduleCNRL = Object.keys(ecsIN)
+  console.log(moduleCNRL)
+  if (this.liveSEntities[kbid]) {
+    console.log('entity' + kbid + 'already exists')
+    this.entityExists()
   } else {
-    console.log('entity' + cid + 'is new')
-    // start workflow for setting up entity, compute and vis/sim etc.
+    console.log('entity' + kbid + 'is new')
+    // start workflow for setting up entity components, compute and vis/sim etc.
     // console.log(ecsIN)
-    this.liveSEntities[cid] = new Entity(ecsIN, setIN)
+    this.liveSEntities[kbid] = new Entity(ecsIN)
     // default input set on setting up of component
     await this.controlFlow(ecsIN)
     // console.log(cFlow)
@@ -81,17 +61,17 @@ EntitiesManager.prototype.addHSentity = async function (ecsIN, setIN) {
 * @method controlFlow
 *
 */
-EntitiesManager.prototype.controlFlow = async function (cflowIN) {
+EntitiesManager.prototype.controlFlow = async function (kbid, cflowIN) {
   let cid = cflowIN.kbid
   console.log('EMANAGER0-----beginCONTROL-FLOW')
   // set the MASTER TIME CLOCK for entity
-  this.liveSEntities[cid].liveTimeC.setMasterClock()
-  this.liveSEntities[cid].liveDatatypeC.dataTypeMapping()
-  this.liveSEntities[cid].liveTimeC.timeProfiling()
-  await this.liveSEntities[cid].liveDataC.sourceData(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveTimeC)
+  this.liveSEntities[kbid].liveTimeC.setMasterClock()
+  this.liveSEntities[kbid].liveDatatypeC.dataTypeMapping()
+  this.liveSEntities[kbid].liveTimeC.timeProfiling()
+  await this.liveSEntities[kbid].liveDataC.sourceData(this.liveSEntities[kbid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[kbid].liveTimeC)
   this.emit('computation', 'in-progress')
-  await this.liveSEntities[cid].liveTimeC.startTimeSystem(this.liveSEntities[cid].liveDatatypeC, this.liveSEntities[cid].liveDataC.liveData)
-  this.computeStatus = await this.liveSEntities[cid].liveComputeC.filterCompute(this.liveSEntities[cid].liveTimeC, this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive)
+  await this.liveSEntities[kbid].liveTimeC.startTimeSystem(this.liveSEntities[kbid].liveDatatypeC, this.liveSEntities[kbid].liveDataC.liveData)
+  this.computeStatus = await this.liveSEntities[kbid].liveComputeC.filterCompute(this.liveSEntities[kbid].liveTimeC, this.liveSEntities[kbid].liveDatatypeC.datatypeInfoLive)
   this.emit('computation', 'finished')
   if (this.computeStatus === true) {
   // go direct and get raw data direct
@@ -100,6 +80,49 @@ EntitiesManager.prototype.controlFlow = async function (cflowIN) {
   this.liveSEntities[cid].liveVisualC.filterVisual(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveDataC.liveData, this.liveSEntities[cid].liveTimeC)
   console.log('visCompenent--FINISHED')
   return true
+}
+
+/**
+*  if the entity already exists
+* @method entityExists
+*
+*/
+EntitiesManager.prototype.entityExists = function (kbid, dataIn) {
+  // does the data exist for this visualisation and time?
+  let checkDataExist = this.checkForVisualData(kbid, dataIn)
+  if (checkDataExist === true) {
+    console.log('data already ready')
+    this.liveSEntities[kbid].liveTimeC.setStartPeriod(dataIn.startperiod)
+    this.liveSEntities[kbid].liveTimeC.setRealtime(dataIn.realtime)
+    this.liveSEntities[kbid].liveTimeC.setLastTimeperiod(dataIn.laststartperiod)
+    this.liveSEntities[kbid].liveTimeC.setTimeList(dataIn.startperiod)
+    this.liveSEntities[kbid].liveTimeC.setTimeSegments(dataIn.timeseg)
+    this.liveSEntities[kbid].liveTimeC.setTimeVis(dataIn.timevis)
+    this.liveSEntities[kbid].liveDataC.setDatatypesLive(dataIn.datatypes)
+    this.liveSEntities[kbid].liveDataC.setCategories(dataIn.categories)
+  }
+  return true
+}
+
+/**
+*  create a new entity to hold KBIDs
+* @method createKBID
+*
+*/
+EntitiesManager.prototype.createKBID = function (addressIN) {
+  // hash Object
+  let kbundleHash = hashObject(addressIN)
+  let tempTokenG = ''
+  let salt = crypto.randomBytes(16).toString('base64')
+  // let hashs = crypto.createHmac('sha256',salt).update(password).digest('base64')
+  let hash = crypto.createHmac('sha256', salt).update(kbundleHash).digest()
+  // const bytes = Buffer.from('003c176e659bea0f29a3e9bf7880c112b1b31b4dc826268187', 'hex')
+  tempTokenG = bs58.encode(hash)
+  // decode
+  // const addressde = address
+  // const bytes = bs58.decode(addressde)
+  // console.log(bytes.toString('base64'))
+  return tempTokenG
 }
 
 /**

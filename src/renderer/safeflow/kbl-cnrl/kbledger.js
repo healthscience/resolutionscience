@@ -54,8 +54,9 @@ KBLedger.prototype.startKBL = async function () {
   let NXPlist = []
   // let NXPModuleEntry = {}
   // let NXPComponentData = {}
-  let startLedger = await this.liveKBLStorage.getKBLindex()
+  let startLedger = await this.liveKBLStorage.getKBLindex('c')
   // loop over and filter out CNRL contract  (TODO expand based on signed and KBID address ie. crytop verification)
+  console.log(startLedger)
   for (let kb of startLedger) {
     let cnrlType = this.liveCNRL.lookupContract(kb.cnrl)
     let kBundle = {}
@@ -69,41 +70,31 @@ KBLedger.prototype.startKBL = async function () {
       NXPlist.push(ki.cnrl)
     }
   }
-  /* for (let ki of kbIndex) {
-    console.log(ki)
-    if (ki.cnrl.type === 'experiment') {
-      // look up module cnrls
-      for (let km of ki.cnrl.modules) {
-        let cnrlModule = this.liveCNRL.lookupContract(km)
-        NXPlist.push(cnrlModule)
-      }
-      NXPModuleEntry[ki.cnrl.prime.cnrl] = (NXPlist)
-      NXPlist = []
-    }
-  }
-  console.log(NXPModuleEntry) */
-  // now query index to entries for the NXP
-  /* let kbidList = []
-  for (let ke of NXPlist) {
-    for (let ki of kbIndex) {
-      if (ke.prime.cnrl === ki.cnrl.prime.cnrl) {
-        // match add entry to Module
-        kbidList.push(ki.kbid)
-      }
-    }
-    NXPModuleEntry[ke.prime.cnrl] = kbidList
-    kbidList = []
-  }
-  console.log('kids')
-  console.log(NXPModuleEntry)
-  // lookup KIBs and individual components
-  for (let ci of NXPlist) {
-    let NXPStartData = await this.kbidReader(NXPModuleEntry[ci.prime.cnrl])
-    NXPComponentData[ci.prime.cnrl] = NXPStartData
-  }
-  return NXPComponentData
-  */
   return NXPlist
+}
+
+/**
+*
+* @method kbIndexQuery
+*
+*/
+KBLedger.prototype.kbIndexQuery = async function (cnrlList) {
+  // latest nxp and ledger entries, CNRL contract look ups
+  console.log(cnrlList)
+  let KBIDlist = []
+  for (let cl of cnrlList) {
+    console.log(cl)
+    let indexLedger = await this.liveKBLStorage.getKBLindex(cl)
+    // filter for index for CNRL entry
+    console.log(indexLedger)
+    for (let ki of indexLedger) {
+      console.log(ki)
+      if (ki.cnrl && ki.cnrl === cl) {
+        KBIDlist.push(ki.kbid)
+      }
+    }
+  }
+  return KBIDlist
 }
 
 /**
@@ -120,26 +111,6 @@ KBLedger.prototype.modulesCNRL = async function (mList) {
     moduleList.push(cnrlModule)
   }
   return moduleList
-  // now query index to entries for the NXP
-  /* let kbidList = []
-  for (let ke of NXPlist) {
-    for (let ki of kbIndex) {
-      if (ke.prime.cnrl === ki.cnrl.prime.cnrl) {
-        // match add entry to Module
-        kbidList.push(ki.kbid)
-      }
-    }
-  }
-  return kbidList */
-  /* console.log('kids')
-  console.log(NXPModuleEntry)
-  // lookup KIBs and individual components
-  for (let ci of NXPlist) {
-    let NXPStartData = await this.kbidReader(NXPModuleEntry[ci.prime.cnrl])
-    NXPComponentData[ci.prime.cnrl] = NXPStartData
-  }
-  return NXPComponentData
-  */
 }
 
 /**
@@ -148,10 +119,13 @@ KBLedger.prototype.modulesCNRL = async function (mList) {
 *
 */
 KBLedger.prototype.kbidReader = async function (kbidList) {
+  console.log(kbidList)
   let kbCompList = []
   // extract LIST and loop through object KBIDS
   for (let kbi of kbidList) {
-    let kbComponents = await this.liveKBLStorage.kblEntry(kbi.kbid)
+    console.log('kbi')
+    console.log(kbi)
+    let kbComponents = await this.liveKBLStorage.kblEntry(kbi)
     kbCompList.push(kbComponents)
   }
   return kbCompList
@@ -196,8 +170,6 @@ KBLedger.prototype.toolkitContext = async function (flag, devices) {
 *
 */
 KBLedger.prototype.startSettings = async function (flag, bundle) {
-  console.log(flag)
-  console.log(bundle)
   // first time start of device, datatype context for toolkitContext
   // let uuidBundle = this.createKBID(liveBundle)
   let startStatusData = []

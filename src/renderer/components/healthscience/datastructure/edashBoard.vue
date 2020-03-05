@@ -1,6 +1,6 @@
 <template>
   <div id="dashboard-holder" v-if="dashState.active === true">
-    <div id="dash-modules" v-if="dashState.modules">
+    <div id="dash-modules" v-if="moduleContent"> {{ kBundles }}
       <ul v-for='mod of moduleContent' :key='mod.id'>
         <li>
           <module-board @close="closeModule">
@@ -26,10 +26,10 @@
           </div>
       </div>
     </div>
-    <div id='content'>
-      <!-- <button @click='decreaseWidth'>Decrease Width</button>
+    <!-- <div id='content'>
+      <button @click='decreaseWidth'>Decrease Width</button>
       <button @click='increaseWidth'>Increase Width</button> -->
-      <button @click='addItem'>Add an item</button>
+      <!-- <button @click='addItem'>Add an item</button>
       <input type='checkbox' v-model='draggable'/> Draggable
       <input type='checkbox' v-model='resizable'/> Resizable
       <br/>
@@ -51,37 +51,34 @@
                      :h='item.h'
                      :i='item.i'
                   >
-              <!-- <span class='text'>{{itemTitle(item)}}</span> -->
-              <nxp-visualise></nxp-visualise>
+              <span class='text'>{{itemTitle(item)}}</span> -->
+              <!-- <nxp-visualise></nxp-visualise>
               {{ item.i }}
           </grid-item>
       </grid-layout>
-    </div>
-    <div id="progess">
-      <!-- <progress-Message></progress-Message> -->
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
   import ModuleBoard from './moduleBoard.vue'
-  import VueGridLayout from 'vue-grid-layout'
-  import progressMessage from '@/components/toolbar/inProgress'
-  import learnReport from '@/components/reports/LearnReport'
-  import learnAction from '@/components/reports/LearnAction'
-  import nxpVisualise from '@/components/healthscience/nxp/nxpVisualise.vue'
+  // import VueGridLayout from 'vue-grid-layout'
+  // import progressMessage from '@/components/toolbar/inProgress'
+  // import learnReport from '@/components/reports/LearnReport'
+  // import learnAction from '@/components/reports/LearnAction'
+  // import nxpVisualise from '@/components/healthscience/nxp/nxpVisualise.vue'
   // const moment = require('moment')
 
   export default {
     name: 'visual-dashview',
     components: {
-      ModuleBoard,
-      GridLayout: VueGridLayout.GridLayout,
-      GridItem: VueGridLayout.GridItem,
-      progressMessage,
-      nxpVisualise,
-      learnReport,
-      learnAction
+      ModuleBoard
+      //  GridLayout: VueGridLayout.GridLayout,
+      // GridItem: VueGridLayout.GridItem,
+      // progressMessage,
+      // nxpVisualise,
+      // learnReport,
+      // learnAction
     },
     props: {
       dashCNRL: ''
@@ -92,21 +89,19 @@
         return dashStateNXP[this.dashCNRL]
       },
       moduleContent: function () {
-        console.log(this.$store.state.NXPexperimentStatus)
         let contentModule = this.$store.state.NXPexperimentStatus
         return contentModule[this.dashCNRL]
       },
-      progressMessageIN: function () {
-        return this.$store.state.experimentProgressStatus
+      kBundles: function () {
+        let cnrlKBIDS = this.$store.state.NXPexperimentKBundles
+        return cnrlKBIDS[this.dashCNRL]
       },
       currentLayout: {
         get () {
-          console.log('compute current')
           // this.layout = this.$store.state.gridDefault
           return this.$store.state.gridDefault
         },
         set (newLayout) {
-          console.log('compuute SET')
           // this.$store.dispatch('grideUpdate', newLayout) setLayoutGrid
           this.$store.commit('setLayoutGrid', newLayout)
         }

@@ -4,7 +4,6 @@ import LiveMixinSAFEflow from '@/mixins/safeFlowAPI'
 import modules from './modules'
 
 const safeAPI = new LiveMixinSAFEflow()
-console.log(safeAPI)
 
 Vue.use(Vuex)
 
@@ -37,6 +36,7 @@ export default new Vuex.Store({
     bundleCounter: 0,
     experimentStatus: {},
     NXPexperimentStatus: {},
+    NXPexperimentKBundles: {},
     experimentList: [],
     NXPexperimentList: [],
     experimentProgressStatus: {},
@@ -103,11 +103,12 @@ export default new Vuex.Store({
       }
     },
     setLiveNXPModules: (state, inVerified) => {
-      console.log('set NXP status live')
-      console.log(inVerified)
       Vue.set(state.NXPexperimentStatus, inVerified.cnrl, inVerified.modules)
-      console.log('moudels state')
       console.log(state.NXPexperimentStatus)
+    },
+    setPrepareBundle: (state, inVerified) => {
+      console.log('set KIB data')
+      Vue.set(state.NXPexperimentKBundles, inVerified.cnrl, inVerified.kbid)
     },
     setLiveNXPBundle: (state, inVerified) => {
       state.liveNXPbundle = {}
@@ -137,6 +138,7 @@ export default new Vuex.Store({
       let dStatus = state.experimentStatus[inVerified].active
       dStatus = !dStatus
       Vue.set(state.experimentStatus[inVerified], 'active', dStatus)
+      console.log(state.experimentStatus)
     },
     setScience: (state, inVerified) => {
       state.context.science = inVerified
@@ -386,12 +388,6 @@ export default new Vuex.Store({
     setDTcnrl: (state, inVerified) => {
       state.datatypesCNRL = inVerified
     },
-    setPrepareBundle: (state, inVerified) => {
-      console.log('prepare data for bundle')
-      console.log(state.liveNXP)
-      console.log(state.liveNXPcontract)
-      console.log(state.liveNXPbundle)
-    },
     setLayoutGrid: (state, inVerified) => {
       console.log('update gride')
       state.gridDefault = inVerified
@@ -403,12 +399,11 @@ export default new Vuex.Store({
       context.commit('setAuthorisation', NXPstart)
     },
     async actionDashboardState (context, update) {
-      context.commit('setLiveNXP', update)
-      console.log('actions')
-      console.log(this.state.experimentStatus)
+      console.log('update')
       console.log(update)
+      context.commit('setLiveNXP', update)
       let extractModules = this.state.experimentStatus[update].modules
-      let modules = await safeAPI.NXPmodules(extractModules)
+      let modules = await safeAPI.getNXPmodules(extractModules)
       console.log('modules')
       console.log(modules)
       let modBundle = {}
@@ -417,7 +412,13 @@ export default new Vuex.Store({
       context.commit('setLiveNXPModules', modBundle)
       context.commit('setLiveNXPBundle', update)
       context.commit('setDashboardNXP', update)
-      context.commit('setPrepareBundle', update)
+      let kbidData = await safeAPI.moduleKBID(extractModules)
+      let kbidBundle = {}
+      kbidBundle.cnrl = update
+      kbidBundle.kbid = kbidData
+      console.log('kbidBundle')
+      console.log(kbidBundle)
+      context.commit('setPrepareBundle', kbidBundle)
     },
     actionVisualOptions: (context, update) => {
       context.commit('setVisualOptions', update)
@@ -538,17 +539,6 @@ export default new Vuex.Store({
     },
     actionDTlist: (context, update) => {
       context.commit('setDTcnrl', update)
-    },
-    actionSetNXP: (context, update) => {
-      context.commit('setLiveNXP', update)
-      context.commit('setLiveNXPBundle', update)
-    },
-    actionNewNXP: (context, update) => {
-      context.commit('setNewNXP', update)
-      context.commit('setLiveNXPBundle', update)
-    },
-    actionBundleData: (context, update) => {
-      context.commit('setPrepareBundle', update)
     },
     actionGrideupdate: (context, update) => {
       context.commit('setLayoutGrid', update)

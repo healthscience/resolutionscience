@@ -72,9 +72,6 @@
     computed: {
       PeerexperimentData: function () {
         return this.$store.state.experimentList
-      },
-      activeexperimentStatus: function () {
-        return this.$store.state.experimentStatus
       }
     },
     mounted () {

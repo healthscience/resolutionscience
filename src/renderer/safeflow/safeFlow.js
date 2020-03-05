@@ -68,6 +68,30 @@ safeFlow.prototype.NXPmodules = async function (mList) {
 }
 
 /**
+* knowledge Bundle Index Module CNRL matches
+* @method CNRLmodKBID
+*
+*/
+safeFlow.prototype.CNRLmodKBID = async function (cnrl) {
+  // read peer kbledger
+  // let entityModule = {}
+  let kbidList = await this.KBLlive.kbIndexQuery(cnrl)
+  return kbidList
+}
+
+/**
+* knowledge Bundle Ledger Entry Data extraction
+* @method kibEntry
+*
+*/
+safeFlow.prototype.kbidEntry = async function (kbid) {
+  // read peer kbledger
+  // let entityModule = {}
+  let kbidList = await this.KBLlive.kbidReader(kbid)
+  return kbidList
+}
+
+/**
 * create Entities
 * @method makeEntities
 *

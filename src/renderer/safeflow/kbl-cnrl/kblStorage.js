@@ -42,7 +42,9 @@ KBLdatabaseUtility.prototype.peerNXPmodules = async function (contractID) {
 *
 */
 KBLdatabaseUtility.prototype.kblEntry = async function (kbid) {
-  let jsondata = await axios.get(this.baseAPI + '/kblentry/' + this.tempPubkey + '/' + this.tempToken + '/' + kbid)
+  console.log(kbid)
+  let jsondata = await axios.get(this.baseAPI + '/kbl/' + this.tempPubkey + '/' + this.tempToken + '/' + kbid)
+  console.log(jsondata.data)
   return jsondata.data
 }
 
@@ -51,9 +53,9 @@ KBLdatabaseUtility.prototype.kblEntry = async function (kbid) {
 * @method getKBLindex
 *
 */
-KBLdatabaseUtility.prototype.getKBLindex = async function () {
+KBLdatabaseUtility.prototype.getKBLindex = async function (cnrl) {
   //  nosql query but headng towards a gRPC listener on stream socket
-  let jsondata = await axios.get(this.baseAPI + '/kblindex/' + this.tempPubkey + '/' + this.tempToken)
+  let jsondata = await axios.get(this.baseAPI + '/kblindex/' + this.tempPubkey + '/' + this.tempToken + '/' + cnrl)
   return jsondata.data
 }
 

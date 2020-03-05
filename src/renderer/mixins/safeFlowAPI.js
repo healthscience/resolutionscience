@@ -81,7 +81,7 @@ safeFlowAPI.prototype.checkAuthorisation = function (defaultAPI, authBundle) {
 * @method
 *
 */
-safeFlowAPI.prototype.NXPmodules = async function (modList) {
+safeFlowAPI.prototype.getNXPmodules = async function (modList) {
   let modules = this.SAPI.NXPmodules(modList)
   return modules
 }
@@ -91,8 +91,9 @@ safeFlowAPI.prototype.NXPmodules = async function (modList) {
 * @method
 *
 */
-safeFlowAPI.prototype.three = async function (authNetwork, authBundle) {
-  console.log('')
+safeFlowAPI.prototype.moduleKBID = async function (cnrl) {
+  let kbidData = this.SAPI.CNRLmodKBID(cnrl)
+  return kbidData
 }
 
 /**

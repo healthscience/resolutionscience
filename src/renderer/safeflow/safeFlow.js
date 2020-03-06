@@ -10,7 +10,6 @@
 * @version    $Id$
 */
 import EntitiesManager from './entitiesManager.js'
-import KBLedger from './kbl-cnrl/kbledger.js'
 import CALE from './CALE/cale-utility.js'
 
 const util = require('util')
@@ -20,7 +19,8 @@ var safeFlow = function () {
   events.EventEmitter.call(this)
   this.defaultStorage = ['http://165.227.244.213:8882'] // know seed peers
   this.settings = {}
-  this.KBLlive = {}
+  this.liveEManager = {}
+  this.liveCALE = {}
 }
 
 /**
@@ -38,103 +38,39 @@ safeFlow.prototype.networkAuthorisation = function (apiCNRL, auth) {
   auth.namespace = this.defaultStorage[0]
   this.settings = auth
   this.liveEManager = new EntitiesManager(apiCNRL, auth)
-  this.KBLlive = new KBLedger(apiCNRL, auth)
   this.liveCALE = new CALE(this.settings)
   return true
 }
 
 /**
-* Read KBL and setup defaults for this peer
-* @method peerKBLstart
+* Start FLOW
+* @method startFlow
 *
 */
-safeFlow.prototype.peerKBLstart = async function () {
-  // read peer kbledger
-  // let entityModule = {}
-  let nxpList = await this.KBLlive.startKBL()
-  return nxpList
+safeFlow.prototype.startFlow = function (apiCNRL, auth) {
+  let startData = this.liveEManager.peerKBLstart()
+  return startData
 }
 
 /**
-* modules per NXP cnrl
-* @method NXPmodules
+* peer input into ECS
+* @method PeerInput
 *
 */
-safeFlow.prototype.NXPmodules = async function (mList) {
-  // read peer kbledger
-  // let entityModule = {}
-  let nxpList = await this.KBLlive.modulesCNRL(mList)
-  return nxpList
-}
-
-/**
-* knowledge Bundle Index Module CNRL matches
-* @method CNRLmodKBID
-*
-*/
-safeFlow.prototype.CNRLmodKBID = async function (cnrl) {
-  // read peer kbledger
-  // let entityModule = {}
-  let kbidList = await this.KBLlive.kbIndexQuery(cnrl)
-  return kbidList
-}
-
-/**
-* knowledge Bundle Ledger Entry Data extraction
-* @method kibEntry
-*
-*/
-safeFlow.prototype.kbidEntry = async function (kbid) {
-  // read peer kbledger
-  // let entityModule = {}
-  let kbidList = await this.KBLlive.kbidReader(kbid)
-  return kbidList
-}
-
-/**
-* create Entities
-* @method makeEntities
-*
-*/
-safeFlow.prototype.makeEntities = async function (contextIN) {
-  // first prepare input in ECS format
-  // console.log('start---scienceEntitiees')
-  // console.log(contextIN)
-  let ecsIN = this.setpeerContext(contextIN)
-  await this.liveEManager.addHSentity(ecsIN).then(function (bk) {
-    console.log('SAFEFLOW-new entitycomplete')
-    console.log(bk)
-    return true
-  })
-}
-
-/**
-* input context from UI
-* @method peerContext
-*
-*/
-safeFlow.prototype.setpeerContext = function (bundleIN) {
-  // console.log('setpeer context')
-  // console.log(bundleIN)
-  let ecsIN = {}
-  ecsIN.kbid = bundleIN.kbid
-  ecsIN.cid = bundleIN.cnrl
-  ecsIN.storageAPI = bundleIN.devices
-  ecsIN.visID = bundleIN.visualisation
-  // convert all the time to millisecons format
-  let timeBundle = {}
-  timeBundle.time = bundleIN.time
-  timeBundle.realtime = bundleIN.time.realtime
-  ecsIN.time = timeBundle.time
-  ecsIN.science = bundleIN.science
-  ecsIN.resolution = bundleIN.resolution
-  ecsIN.devices = bundleIN.devices
-  ecsIN.datatypes = bundleIN.datatypes
-  ecsIN.categories = bundleIN.categories
-  ecsIN.language = bundleIN.language
-  // console.log('end peer')
-  // console.log(ecsIN)
-  return ecsIN
+safeFlow.prototype.peerInput = async function (input) {
+  // what type of input  CNRL NXP  Module or KBID entry???
+  console.log('peer input')
+  console.log(input)
+  let modKbids = {}
+  let entityData = {}
+  // now filter for type?
+  let modules = await this.liveEManager.NXPmodules(input.modules)
+  for (let md of modules) {
+    let kbidInfo = await this.liveEManager.CNRLmodKBID(md.prime.cnrl)
+    modKbids[md.prime.cnrl] = kbidInfo
+  }
+  entityData[input.cnrl] = this.liveEManager.addHSentity(modKbids)
+  return entityData
 }
 
 /**
@@ -144,9 +80,7 @@ safeFlow.prototype.setpeerContext = function (bundleIN) {
 */
 safeFlow.prototype.entityGetter = async function (eid, visStyle) {
   let dataVue = {}
-  await this.liveEManager.entityDataReturn(eid, visStyle).then(function (eData) {
-    dataVue = eData
-  })
+  dataVue = this.liveEManager.entityDataReturn(eid, visStyle)
   return dataVue
 }
 
@@ -157,9 +91,7 @@ safeFlow.prototype.entityGetter = async function (eid, visStyle) {
 */
 safeFlow.prototype.entityChartGetter = async function (eid) {
   let dataVue = {}
-  await this.liveEManager.entityChartReturn(eid).then(function (eData) {
-    dataVue = eData
-  })
+  dataVue = await this.liveEManager.entityChartReturn(eid)
   return dataVue
 }
 
@@ -171,6 +103,33 @@ safeFlow.prototype.entityChartGetter = async function (eid) {
 safeFlow.prototype.entityCurrentAverageHR = async function (eid, category) {
   let currentAverageHR = await this.liveEManager.GetaverageCurrentDailyStatistics(eid, category)
   return currentAverageHR
+}
+
+/**
+*  return chart data from an entity
+* @method GetaverageCurrentDailyStatistics
+*
+*/
+safeFlow.prototype.GetaverageCurrentDailyStatistics = async function (eid, category) {
+  let averageCurrentAHR = this.liveSEntities[eid].liveComputeC.liveComputeSystem.liveAverage.avgliveStatistics.averageCurrentDailyStatistics('1', this.liveSEntities[eid].seid.devices[0].device_mac, 'cnrl-2356388732', 'cnrl-8856388724', 'day', category)
+  return averageCurrentAHR
+}
+
+/**
+*  return observation entity data
+* @method listenRHRdataEvent
+*
+*/
+safeFlow.prototype.listenRHRdataEvent = async function () {
+  const localthis = this
+  // let dataOlive = {}
+  // listener
+  this.liveSEntities['cnrl-2356388733'].liveComputeC.liveCompute.liveRecoveryHR.on('liveobserve', function (call) {
+    localthis.liveSEntities['cnrl-2356388733'].liveComputeC.liveCompute.liveRecoveryHR.data = localthis.liveSEntities['cnrl-2356388731'].liveDataC.tidyData[0]
+    // console.log(localthis.liveSEntities['cnrl-2356388731'])
+    // dataOlive = localthis.liveSEntities['cnrl-2356388731'].liveDataC.tidyData[0]
+    // console.log(dataOlive)
+  })
 }
 
 export default safeFlow

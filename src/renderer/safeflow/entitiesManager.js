@@ -9,6 +9,7 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
+import KBLedger from './kbl-cnrl/kbledger.js'
 import Entity from './scienceEntities.js'
 const util = require('util')
 const events = require('events')
@@ -16,8 +17,10 @@ const crypto = require('crypto')
 const bs58 = require('bs58')
 const hashObject = require('object-hash')
 
-var EntitiesManager = function () {
+var EntitiesManager = function (apiCNRL, auth) {
   events.EventEmitter.call(this)
+  this.auth = auth
+  this.KBLlive = new KBLedger(apiCNRL, auth)
   this.liveSEntities = {}
 }
 
@@ -28,31 +31,124 @@ var EntitiesManager = function () {
 util.inherits(EntitiesManager, events.EventEmitter)
 
 /**
+* Read KBL and setup defaults for this peer
+* @method peerKBLstart
+*
+*/
+EntitiesManager.prototype.peerKBLstart = async function () {
+  // read peer kbledger
+  // let entityModule = {}
+  let nxpList = await this.KBLlive.startKBL()
+  // should return light data to UI or go ahead and prepare entity for this NXP?
+  return nxpList
+}
+
+/**
+* modules per NXP cnrl
+* @method NXPmodules
+*
+*/
+EntitiesManager.prototype.NXPmodules = async function (mList) {
+  // read peer kbledger
+  // let entityModule = {}
+  let nxpList = await this.KBLlive.modulesCNRL(mList)
+  return nxpList
+}
+
+/**
+* knowledge Bundle Index Module CNRL matches
+* @method CNRLmodKBID
+*
+*/
+EntitiesManager.prototype.CNRLmodKBID = async function (cnrl) {
+  // read peer kbledger
+  let moduleKBIDdata = {}
+  let kbidList = await this.KBLlive.kbIndexQuery(cnrl)
+  for (let ki of kbidList) {
+    moduleKBIDdata[ki] = await this.kbidEntry(ki)
+  }
+  return moduleKBIDdata
+}
+
+/**
+* knowledge Bundle Ledger Entry Data extraction
+* @method kbidEntry
+*
+*/
+EntitiesManager.prototype.kbidEntry = async function (kbid) {
+  // read peer kbledger
+  let kbidData = await this.KBLlive.kbidReader(kbid)
+  return kbidData
+}
+
+/**
+* input context from UI
+* @method peerContext
+*
+*/
+EntitiesManager.prototype.prepareECSinput = function (cnrl, bundleIN) {
+  console.log('prepare input for ECS')
+  console.log(bundleIN)
+  let ecsIN = {}
+  ecsIN.kbid = bundleIN.kbid
+  ecsIN.cid = cnrl
+  ecsIN.storageAPI = bundleIN.device
+  // ecsIN.devices = bundleIN.devices
+  ecsIN.visID = 'chart'
+  // convert all the time to millisecons format
+  let timeBundle = {}
+  timeBundle.time = bundleIN.time.startperiod
+  timeBundle.realtime = bundleIN.time.realtime
+  ecsIN.time = timeBundle
+  ecsIN.compute = bundleIN.compute
+  ecsIN.data = bundleIN.data
+  // ecsIN.language = bundleIN.language
+  // console.log(ecsIN)
+  return ecsIN
+}
+
+/**
 *  create new HS entity
 * @method addHSEntity
 *
 */
 EntitiesManager.prototype.addHSentity = async function (ecsIN) {
-  console.log('kbundle in to entity manager')
+  console.log('ENTITY maker')
   console.log(ecsIN)
-  // take the KIB hash of the Bundle for entity // ID
-  let kbid = this.createKBID(ecsIN)
-  // extract types of modules from keys
-  let moduleCNRL = Object.keys(ecsIN)
-  console.log(moduleCNRL)
+  let kbid = this.entityID(ecsIN)
   if (this.liveSEntities[kbid]) {
     console.log('entity' + kbid + 'already exists')
     this.entityExists()
   } else {
     console.log('entity' + kbid + 'is new')
-    // start workflow for setting up entity components, compute and vis/sim etc.
-    // console.log(ecsIN)
-    this.liveSEntities[kbid] = new Entity(ecsIN)
+    // start workflow for setting up entity
+    this.liveSEntities[kbid] = new Entity(ecsIN, this.auth)
     // default input set on setting up of component
-    await this.controlFlow(ecsIN)
-    // console.log(cFlow)
+    // extract types of modules from keys
+    // feed into ECS entity maker
+    let modules = Object.keys(ecsIN)
+    console.log(modules)
+    for (let kl of modules) {
+      console.log(kl)
+      let moduleState = await this.moduleFlow(kl)
+      console.log(moduleState)
+    }
   }
   return true
+}
+
+/**
+*  examines each module and prepares path through
+* @method moduleFlow
+*
+*/
+EntitiesManager.prototype.moduleFlow = async function (mkids) {
+  console.log('module flow')
+  console.log(mkids)
+  // assess type and build components and systems
+  // let preparedBundle = this.prepareECSinput(ecsIN[kl])
+  // await this.controlFlow(preparedBundle)
+  return false
 }
 
 /**
@@ -109,7 +205,7 @@ EntitiesManager.prototype.entityExists = function (kbid, dataIn) {
 * @method createKBID
 *
 */
-EntitiesManager.prototype.createKBID = function (addressIN) {
+EntitiesManager.prototype.entityID = function (addressIN) {
   // hash Object
   let kbundleHash = hashObject(addressIN)
   let tempTokenG = ''
@@ -204,33 +300,6 @@ EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
 */
 EntitiesManager.prototype.entityChartReturn = async function (eid) {
   return this.liveSEntities[eid].liveVisualC
-}
-
-/**
-*  return chart data from an entity
-* @method GetaverageCurrentDailyStatistics
-*
-*/
-EntitiesManager.prototype.GetaverageCurrentDailyStatistics = async function (eid, category) {
-  let averageCurrentAHR = this.liveSEntities[eid].liveComputeC.liveComputeSystem.liveAverage.avgliveStatistics.averageCurrentDailyStatistics('1', this.liveSEntities[eid].seid.devices[0].device_mac, 'cnrl-2356388732', 'cnrl-8856388724', 'day', category)
-  return averageCurrentAHR
-}
-
-/**
-*  return observation entity data
-* @method listenRHRdataEvent
-*
-*/
-EntitiesManager.prototype.listenRHRdataEvent = async function () {
-  const localthis = this
-  // let dataOlive = {}
-  // listener
-  this.liveSEntities['cnrl-2356388733'].liveComputeC.liveCompute.liveRecoveryHR.on('liveobserve', function (call) {
-    localthis.liveSEntities['cnrl-2356388733'].liveComputeC.liveCompute.liveRecoveryHR.data = localthis.liveSEntities['cnrl-2356388731'].liveDataC.tidyData[0]
-    // console.log(localthis.liveSEntities['cnrl-2356388731'])
-    // dataOlive = localthis.liveSEntities['cnrl-2356388731'].liveDataC.tidyData[0]
-    // console.log(dataOlive)
-  })
 }
 
 /**

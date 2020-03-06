@@ -22,9 +22,6 @@ var KBLedger = function (apiCNRL, setIN) {
   this.liveKBLStorage = new KBLstorage(setIN)
   this.liveCNRL = new CNRLmaster(setIN, this.liveKBLStorage)
   this.liveAPI = apiCNRL
-  // this.livedeviceSystem = new DatadeviceSystem(this.settings)
-  // this.liveDataSystem = new DataSystem(setIN)
-  // this.liveDTsystem = new DTsystem(this.settings)
 }
 
 /**
@@ -52,11 +49,8 @@ KBLedger.prototype.startKBL = async function () {
   // latest nxp and ledger entries, CNRL contract look ups
   let kbIndex = []
   let NXPlist = []
-  // let NXPModuleEntry = {}
-  // let NXPComponentData = {}
   let startLedger = await this.liveKBLStorage.getKBLindex('c')
   // loop over and filter out CNRL contract  (TODO expand based on signed and KBID address ie. crytop verification)
-  console.log(startLedger)
   for (let kb of startLedger) {
     let cnrlType = this.liveCNRL.lookupContract(kb.cnrl)
     let kBundle = {}
@@ -78,20 +72,14 @@ KBLedger.prototype.startKBL = async function () {
 * @method kbIndexQuery
 *
 */
-KBLedger.prototype.kbIndexQuery = async function (cnrlList) {
+KBLedger.prototype.kbIndexQuery = async function (cnrl) {
   // latest nxp and ledger entries, CNRL contract look ups
-  console.log(cnrlList)
   let KBIDlist = []
-  for (let cl of cnrlList) {
-    console.log(cl)
-    let indexLedger = await this.liveKBLStorage.getKBLindex(cl)
-    // filter for index for CNRL entry
-    console.log(indexLedger)
-    for (let ki of indexLedger) {
-      console.log(ki)
-      if (ki.cnrl && ki.cnrl === cl) {
-        KBIDlist.push(ki.kbid)
-      }
+  let indexLedger = await this.liveKBLStorage.getKBLindex(cnrl)
+  // filter for index for CNRL entry
+  for (let ki of indexLedger) {
+    if (ki.cnrl && ki.cnrl === cnrl) {
+      KBIDlist.push(ki.kbid)
     }
   }
   return KBIDlist
@@ -118,17 +106,10 @@ KBLedger.prototype.modulesCNRL = async function (mList) {
 * @method kbidReader
 *
 */
-KBLedger.prototype.kbidReader = async function (kbidList) {
-  console.log(kbidList)
-  let kbCompList = []
-  // extract LIST and loop through object KBIDS
-  for (let kbi of kbidList) {
-    console.log('kbi')
-    console.log(kbi)
-    let kbComponents = await this.liveKBLStorage.kblEntry(kbi)
-    kbCompList.push(kbComponents)
-  }
-  return kbCompList
+KBLedger.prototype.kbidReader = async function (kbid) {
+  let kbData = await this.liveKBLStorage.kblEntry(kbid)
+  // expandout CNRL references
+  return kbData[0]
 }
 
 /**
@@ -191,7 +172,6 @@ KBLedger.prototype.startSettings = async function (flag, bundle) {
 *
 */
 KBLedger.prototype.liveNetworkExperimentLedger = function () {
-  console.log('get experiments live in Ledger')
   let liveExperList = 0 // ['cnrl-848388553323', 'cnrl-888355992223', 'cnrl-888355992224', 'cnrl-888388992224', 'cnrl-888388232224', 'cnrl-888388233324', 'cnrl-888388443324']
   // await this.liveDataSystem.getExpKbundles()
   return liveExperList
@@ -219,7 +199,6 @@ KBLedger.prototype.experimentKbundles = async function (flag, data) {
 *
 */
 KBLedger.prototype.latestKBs = async function () {
-  console.log('latestKBs')
   let lastestKBs = await this.liveDataSystem.getExpKbundles()
   return lastestKBs
 }
@@ -230,7 +209,6 @@ KBLedger.prototype.latestKBs = async function () {
 *
 */
 KBLedger.prototype.extractComputations = function () {
-  console.log('extractComputations')
   let livecomputeList = ['cnrl-2356388731', 'cnrl-2356388737', 'cnrl-2356388732', 'cnrl-2356383848']
   return livecomputeList
 }

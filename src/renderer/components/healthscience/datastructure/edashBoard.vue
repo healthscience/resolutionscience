@@ -10,21 +10,22 @@
             </template>
             <template v-slot:body>
             <!-- The code below goes into the header slot -->
+            What module to embed
               <header>CONTENT</header>
+              <div id="dashboard-grid" >
+                <div class='layoutJSON'>
+                    Displayed as <code>[x, y, w, h]</code>
+                    <div class='columns'>
+                        <div class='layoutItem' v-for='item in currentLayout' :key='item.id'>
+                            <b>{{item.i}}</b>:  [{{item.x}}, {{item.y}}, {{item.w}}, {{item.h}}]
+                        </div>
+                    </div>
+                </div>
+              </div>
             </template>
           </module-board>
         </li>
       </ul>
-    </div>
-    <div id="dashboard-grid" >
-      <div class='layoutJSON'>
-          Displayed as <code>[x, y, w, h]</code>
-          <div class='columns'>
-              <div class='layoutItem' v-for='item in currentLayout' :key='item.id'>
-                  <b>{{item.i}}</b>:  [{{item.x}}, {{item.y}}, {{item.w}}, {{item.h}}]
-              </div>
-          </div>
-      </div>
     </div>
     <!-- <div id='content'>
       <button @click='decreaseWidth'>Decrease Width</button>

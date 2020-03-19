@@ -107,9 +107,44 @@ KBLedger.prototype.modulesCNRL = async function (mList) {
 *
 */
 KBLedger.prototype.kbidReader = async function (kbid) {
+  let expandCNRLrefs = {}
   let kbData = await this.liveKBLStorage.kblEntry(kbid)
-  // expandout CNRL references
-  return kbData[0]
+  // expandout CNRL references yes
+  // go through and extract cnrl contracts
+  let cnrlTypes = Object.keys(kbData[0])
+  for (let ct of cnrlTypes) {
+    // fixed path structure of parsing ledger entry
+    if (ct === 'data') {
+      let dataCNRLrefs = {}
+      let dataIndex = Object.keys(kbData[0][ct])
+      for (let de of dataIndex) {
+        dataCNRLrefs[de] = this.liveCNRL.lookupContract(kbData[0][ct][de])
+      }
+      expandCNRLrefs[ct] = dataCNRLrefs
+    } else if (ct === 'time') {
+      let timeCNRLrefs = {}
+      for (let ti of kbData[0][ct].timeseg) {
+        timeCNRLrefs[ti] = this.liveCNRL.lookupContract(ti)
+      }
+      let timeBundle = {}
+      timeBundle.startperiod = kbData[0][ct].startperiod
+      timeBundle.realtime = kbData[0][ct].realtime
+      timeBundle.timeseg = timeCNRLrefs
+      expandCNRLrefs[ct] = timeBundle
+    } else if (ct === 'compute') {
+      expandCNRLrefs[ct] = this.liveCNRL.lookupContract(kbData[0][ct].cnrl)
+    } else if (ct === 'visualise') {
+      let visCNRLrefs = {}
+      let visIndex = Object.keys(kbData[0][ct])
+      for (let ve of visIndex) {
+        for (let ii of kbData[0][ct][ve]) {
+          visCNRLrefs[ve] = this.liveCNRL.lookupContract(ii)
+        }
+      }
+      expandCNRLrefs[ct] = visCNRLrefs
+    }
+  }
+  return expandCNRLrefs
 }
 
 /**
@@ -291,26 +326,6 @@ KBLedger.prototype.cnrlDeviceDTs = function (cid) {
   // now convert to CNRL speak
   let convertedDTs = this.liveDTsystem.convertAPIdatatypeToCNRL(cnrlContract)
   cnrlContract.datatypes = convertedDTs
-  return cnrlContract
-}
-
-/**
-* look up science data types and return in CNRL format
-* @method cnrlScienceDTs
-*
-*/
-KBLedger.prototype.cnrlScienceDTs = function (cid) {
-  let cnrlContract = this.liveDTsystem.DTscienceStructure(cid)
-  return cnrlContract
-}
-
-/**
-* call the CNRL and return data types for this science
-* @method cnrlLookup
-*
-*/
-KBLedger.prototype.cnrlLookup = function (cid) {
-  let cnrlContract = this.liveCNRL.lookupContract(cid)
   return cnrlContract
 }
 

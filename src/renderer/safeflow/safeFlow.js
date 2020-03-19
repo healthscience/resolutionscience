@@ -53,34 +53,13 @@ safeFlow.prototype.startFlow = function (apiCNRL, auth) {
 }
 
 /**
-* peer input into ECS
-* @method PeerInput
-*
-*/
-safeFlow.prototype.peerInput = async function (input) {
-  // what type of input  CNRL NXP  Module or KBID entry???
-  console.log('peer input')
-  console.log(input)
-  let modKbids = {}
-  let entityData = {}
-  // now filter for type?
-  let modules = await this.liveEManager.NXPmodules(input.modules)
-  for (let md of modules) {
-    let kbidInfo = await this.liveEManager.CNRLmodKBID(md.prime.cnrl)
-    modKbids[md.prime.cnrl] = kbidInfo
-  }
-  entityData[input.cnrl] = this.liveEManager.addHSentity(modKbids)
-  return entityData
-}
-
-/**
 * build context for Toolkit
 * @method entityGetter
 *
 */
-safeFlow.prototype.entityGetter = async function (eid, visStyle) {
+safeFlow.prototype.entityGetter = async function (shellID) {
   let dataVue = {}
-  dataVue = this.liveEManager.entityDataReturn(eid, visStyle)
+  dataVue = this.liveEManager.entityDataReturn(shellID)
   return dataVue
 }
 

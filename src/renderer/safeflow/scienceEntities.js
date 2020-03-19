@@ -21,9 +21,9 @@ const events = require('events')
 var ScienceEntities = function (EID, dAccess) {
   events.EventEmitter.call(this)
   this.seid = EID
-  this.liveDataC = new DataComponent(EID, dAccess)
   this.liveTimeC = new TimeComponent(EID, dAccess)
   this.liveDatatypeC = new DatatypeComponent(EID, dAccess)
+  this.liveDataC = new DataComponent(EID, dAccess)
   this.liveComputeC = new ComputeComponent(EID, dAccess)
   this.liveVisualC = new VisualComponent(EID)
   // this.liveSimC = new SimComponent()

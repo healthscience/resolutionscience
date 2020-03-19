@@ -28,15 +28,6 @@ var ComputeComponent = function (EID, setIN) {
 util.inherits(ComputeComponent, events.EventEmitter)
 
 /**
-*  query CNRL for live compute IDs or import local list of computes per peer
-* @method computeList
-*
-*/
-ComputeComponent.prototype.computeList = async function () {
-  this.computeCNRLlist = this.liveComputeSystem.CNRLquery()
-}
-
-/**
 *
 * @method filterCompute
 *

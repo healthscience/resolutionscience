@@ -12,8 +12,6 @@
 
 import { extendMoment } from 'moment-range'
 import TimeUtilities from '../timeUtility.js'
-import CNRLmaster from '../../kbl-cnrl/cnrlMaster.js'
-import DataSystem from '../data/dataSystem.js'
 import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
 const util = require('util')
 const events = require('events')
@@ -23,8 +21,6 @@ const moment = extendMoment(Moment)
 var TimeSystem = function (setIN) {
   events.EventEmitter.call(this)
   this.liveTimeUtil = new TimeUtilities()
-  this.liveCNRL = new CNRLmaster()
-  this.liveDataSystem = new DataSystem(setIN)
   this.liveTestStorage = new TestStorageAPI(setIN)
 }
 

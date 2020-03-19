@@ -74,8 +74,6 @@ export default new Vuex.Store({
       state.authorised = true
     },
     setExperimentList: (state, inVerified) => {
-      console.log('set Experiment LIST')
-      console.log(inVerified)
       state.experimentList = inVerified
       for (let exl of state.experimentList) {
         let experBundle = {}
@@ -364,10 +362,18 @@ export default new Vuex.Store({
     setLayoutGrid: (state, inVerified) => {
       console.log('update gride')
       state.gridDefault = inVerified
+      console.log('upodated grid---')
+      console.log(state.gridDefault)
+    },
+    setLayoutGridItem: (state, inVerified) => {
+      console.log('update gride ITEM')
+      state.gridDefault.push(inVerified)
+      console.log('upodated grid---')
+      console.log(state.gridDefault)
     }
   },
   actions: {
-    async connectNSnetwork (context, update) {
+    async startconnectNSnetwork (context, update) {
       let NXPstart = await safeAPI.connectNSnetwork(update.network, update.settings)
       context.commit('setAuthorisation', true)
       context.commit('setExperimentList', NXPstart)
@@ -377,11 +383,19 @@ export default new Vuex.Store({
       console.log(update)
       context.commit('setLiveNXP', update)
       let inputBundle = this.state.experimentStatus[update]
-      let peerInput = await safeAPI.ECSinput(inputBundle)
-      console.log(peerInput)
-      // context.commit('setLiveNXPModules', peerInput)
-      // context.commit('setDashboardNXP', peerInput)
-      // context.commit('setPrepareBundle', peerInput)
+      console.log(inputBundle)
+      let entityReturn = await safeAPI.ECSinput(inputBundle)
+      console.log(entityReturn)
+      if (entityReturn !== 'failed') {
+        // go ahead and get data and display modules and set listeniners for changes in entity
+        context.commit('setDashboardNXP', update)
+        let dataFlow = await safeAPI.displayFilter(entityReturn)
+        let Dholder = {}
+        Dholder.cnrl = update
+        Dholder.modules = dataFlow
+        context.commit('setLiveNXPModules', Dholder)
+        // context.commit('setPrepareBundle', peerInput)
+      }
     },
     actionVisualOptions: (context, update) => {
       context.commit('setVisualOptions', update)
@@ -504,7 +518,14 @@ export default new Vuex.Store({
       context.commit('setDTcnrl', update)
     },
     actionGrideupdate: (context, update) => {
+      console.log('add new box')
+      console.log(update)
       context.commit('setLayoutGrid', update)
+    },
+    actionGrideupdateItem: (context, update) => {
+      console.log('add itemgrid')
+      console.log(update)
+      context.commit('setLayoutGridItem', update)
     }
   },
   modules,

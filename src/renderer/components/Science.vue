@@ -5,7 +5,7 @@
     <div v-if="NXPnew">
       <nxp-template></nxp-template>
     </div>
-    <div v-if="NXPlive"> {{ NXPlive }}
+    <div v-if="NXPlive"> lll {{ NXPlive }}
       <!--<nxp-existing></nxp-existing> -->
       <nxp-question></nxp-question>
       <!--<nxp-education></nxp-education> -->
@@ -18,6 +18,7 @@
       <nxp-prescription></nxp-prescription>
       <nxp-communicate></nxp-communicate>
       <nxp-evolve></nxp-evolve>
+      <!-- <subscription></subscription> -->
     </div>
   </div>
 </template>
@@ -25,10 +26,10 @@
 <script>
 import NxpControls from '@/components/healthscience/nxp/NxpControls.vue'
 import nxpTemplate from '@/components/healthscience/nxp/nxpTemplate.vue'
-import nxpCompute from '@/components/healthscience/nxp/nxpCompute.vue'
-import nxpSciencereview from '@/components/healthscience/nxp/nxpSciencereview.vue'
-import nxpControl from '@/components/healthscience/nxp/nxpControl.vue'
 import nxpQuestion from '@/components/healthscience/nxp/nxpQuestion.vue'
+import nxpCompute from '@/components/healthscience/nxp/nxpCompute.vue'
+import nxpControl from '@/components/healthscience/nxp/nxpControl.vue'
+import nxpSciencereview from '@/components/healthscience/nxp/nxpSciencereview.vue'
 import nxpLifestylemedicine from '@/components/healthscience/nxp/nxpLifestylemedicine.vue'
 import nxpPrescription from '@/components/healthscience/nxp/nxpPrescription.vue'
 import nxpCommunicate from '@/components/healthscience/nxp/nxpCommunicate.vue'
@@ -49,9 +50,6 @@ export default {
     nxpEvolve
   },
   computed: {
-    system: function () {
-      return this.$store.state.system
-    },
     NXPlive: function () {
       return this.$store.state.liveNXP
     },

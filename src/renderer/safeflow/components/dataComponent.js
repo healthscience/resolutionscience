@@ -33,10 +33,10 @@ var DataComponent = function (DID, setIN) {
   this.dataRaw = {}
   this.tidyData = {}
   this.categoryData = {}
-  this.setDevicesLive()
-  this.setCNRLsciencemapping()
-  this.setDatatypesLive(this.did.datatypes)
-  this.setCategories(this.did.categories)
+  // this.setDevicesLive()
+  // this.setCNRLsciencemapping()
+  // this.setDatatypesLive(this.did.datatypes)
+  // this.setCategories(this.did.categories)
 }
 
 /**

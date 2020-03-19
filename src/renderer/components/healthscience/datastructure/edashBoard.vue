@@ -1,6 +1,6 @@
 <template>
-  <div id="dashboard-holder" v-if="dashState.active === true">
-    <div id="dash-modules" v-if="moduleContent"> {{ kBundles }}
+  <div id="dashboard-holder"> mc {{ moduleContent }} <!-- v-if="moduleContent" -->
+    <div id="dash-modules">
       <ul v-for='mod of moduleContent' :key='mod.id'>
         <li>
           <module-board @close="closeModule">
@@ -10,60 +10,57 @@
             </template>
             <template v-slot:body>
             <!-- The code below goes into the header slot -->
-            What module to embed
+            What module to embed:
               <header>CONTENT</header>
               <div id="dashboard-grid" >
-                <div class='layoutJSON'>
+                <!-- <div class='layoutJSON'>
                     Displayed as <code>[x, y, w, h]</code>
-                    <div class='columns'>
+                    <div class='columns'> currstart--- {{ currentLayout }}
                         <div class='layoutItem' v-for='item in currentLayout' :key='item.id'>
                             <b>{{item.i}}</b>:  [{{item.x}}, {{item.y}}, {{item.w}}, {{item.h}}]
                         </div>
                     </div>
-                </div>
+                </div> -->
               </div>
+              <!-- <button @click='decreaseWidth'>Decrease Width</button>
+              <button @click='increaseWidth'>Increase Width</button> -->
+              <button @click='addItem'>Add an item</button>
+              <input type='checkbox' v-model='draggable'/> Draggable
+              <input type='checkbox' v-model='resizable'/> Resizable
+              <br/> layout-- {{ layout }} <!-- @changes="updateLayout"  -->
+              <grid-layout v-if="layout"
+                           :layout='layout'
+                           :col-num='12'
+                           :row-height='30'
+                           :is-draggable='draggable'
+                           :is-resizable='resizable'
+                           :vertical-compact='true'
+                           :use-css-transforms='true'
+              >
+                  <grid-item v-for='item in layout' :key='item.id'
+                             :static='item.static'
+                             :x='item.x'
+                             :y='item.y'
+                             :w='item.w'
+                             :h='item.h'
+                             :i='item.i'
+                          >
+                      <span class='text'>{{itemTitle(item)}}</span>
+                      <!-- <nxp-visualise></nxp-visualise> -->
+                      {{ item.i }}
+                  </grid-item>
+              </grid-layout>
             </template>
           </module-board>
         </li>
       </ul>
     </div>
-    <!-- <div id='content'>
-      <button @click='decreaseWidth'>Decrease Width</button>
-      <button @click='increaseWidth'>Increase Width</button> -->
-      <!-- <button @click='addItem'>Add an item</button>
-      <input type='checkbox' v-model='draggable'/> Draggable
-      <input type='checkbox' v-model='resizable'/> Resizable
-      <br/>
-      <grid-layout @changes="updateLayout"
-                   :layout='layout'
-                   v-if="layout"
-                   :col-num='12'
-                   :row-height='30'
-                   :is-draggable='draggable'
-                   :is-resizable='resizable'
-                   :vertical-compact='true'
-                   :use-css-transforms='true'
-      >
-          <grid-item v-for='item in layout' :key='item.id'
-                     :static='item.static'
-                     :x='item.x'
-                     :y='item.y'
-                     :w='item.w'
-                     :h='item.h'
-                     :i='item.i'
-                  >
-              <span class='text'>{{itemTitle(item)}}</span> -->
-              <!-- <nxp-visualise></nxp-visualise>
-              {{ item.i }}
-          </grid-item>
-      </grid-layout>
-    </div> -->
   </div>
 </template>
 
 <script>
   import ModuleBoard from './moduleBoard.vue'
-  // import VueGridLayout from 'vue-grid-layout'
+  import VueGridLayout from 'vue-grid-layout'
   // import progressMessage from '@/components/toolbar/inProgress'
   // import learnReport from '@/components/reports/LearnReport'
   // import learnAction from '@/components/reports/LearnAction'
@@ -73,9 +70,9 @@
   export default {
     name: 'visual-dashview',
     components: {
-      ModuleBoard
-      //  GridLayout: VueGridLayout.GridLayout,
-      // GridItem: VueGridLayout.GridItem,
+      ModuleBoard,
+      GridLayout: VueGridLayout.GridLayout,
+      GridItem: VueGridLayout.GridItem
       // progressMessage,
       // nxpVisualise,
       // learnReport,
@@ -97,30 +94,38 @@
         let cnrlKBIDS = this.$store.state.NXPexperimentKBundles
         return cnrlKBIDS[this.dashCNRL]
       },
-      currentLayout: {
+      layout2: {
         get () {
-          // this.layout = this.$store.state.gridDefault
-          return this.$store.state.gridDefault
-        },
-        set (newLayout) {
-          // this.$store.dispatch('grideUpdate', newLayout) setLayoutGrid
-          this.$store.commit('setLayoutGrid', newLayout)
+          // console.log('current start layout')
+          // console.log(this.$store.state.gridDefault)
+          this.layout = this.$store.state.gridDefault
+          // return this.$store.state.gridDefault
         }
+        /*,
+        set (newLayout) {
+          // console.l
+          this.$store.dispatch('actionGrideupdate', newLayout)
+        } */
       }
     },
     watch: {
-      currentLayout (val) {
-        console.log('watch weatch')
-        console.log(this.currentLayout)
+      layout2 (val) {
+        console.log('val')
         console.log(val)
-        if (val) {
+        /* if (val) {
           this.layout = JSON.parse(JSON.stringify(this.currentLayout))
-        }
+        } */
       }
     },
     data () {
       return {
         layout: [],
+        layout6: [
+          { 'x': 0, 'y': 0, 'w': 20, 'h': 2, 'i': '0', static: true },
+          { 'x': 0, 'y': 0, 'w': 2, 'h': 5, 'i': '1', static: false },
+          { 'x': 4, 'y': 0, 'w': 2, 'h': 5, 'i': '2', static: false },
+          { 'x': 6, 'y': 0, 'w': 2, 'h': 5, 'i': '3', static: false }
+        ],
         draggable: true,
         resizable: true,
         index: 0,
@@ -140,11 +145,13 @@
       closeModule () {
         console.log('close module')
       },
-      updateLayout (newLayout) {
+      /* updateLayout (newLayout) {
+        console.log('update function')
+        console.log(newLayout)
         let filtered
         filtered = newLayout.map((item) => { return { x: item.x, y: item.y, w: item.w, h: item.h, i: item.i } })
         this.$store.dispatch('grideUpdate', filtered)
-      },
+      }, */
       itemTitle (item) {
         var result = item.i
         if (item.static) {
@@ -172,7 +179,8 @@
         // console.log('### LENGTH: ' + this.layout.length);
         var item = { 'x': 0, 'y': 0, 'w': 2, 'h': 2, 'i': this.index + '', whatever: 'bbb' }
         this.index++
-        this.layout.push(item)
+        // this.layout.push(item)
+        this.$store.dispatch('actionGrideupdateItem', item)
       },
       setDashTime () {
         // call action to update state

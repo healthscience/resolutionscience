@@ -49,62 +49,6 @@ DataSystem.prototype.getLiveDevices = function (devicesIN) {
 }
 
 /**
-* save the inital start settings set
-* @method saveStartStatus
-*
-*/
-DataSystem.prototype.saveStartStatus = async function (bundle) {
-  // make query to network for context data per devices
-  let startStatusresult = await this.liveTestStorage.saveStartSettings(bundle)
-  return startStatusresult
-}
-
-/**
-* remove a starting bundle
-* @method removeStartStatus
-*
-*/
-DataSystem.prototype.removeStartStatus = async function (bundle) {
-  // make query to network for context data per devices
-  let startStatusresult = await this.liveTestStorage.removeStartSettings(bundle)
-  return startStatusresult
-}
-
-/**
-* remove a starting dashboard
-* @method removeStartDash
-*
-*/
-DataSystem.prototype.removeStartDash = async function (bundle) {
-  // make query to network for context data per devices
-  let startStatusresult = await this.liveTestStorage.removeStartDashboardSettings(bundle)
-  return startStatusresult
-}
-
-/**
-* get the inital context for data required
-* @method getStartStatus
-*
-*/
-DataSystem.prototype.getStartStatus = async function () {
-  // make query to network for context data per devices
-  let startStatusresult = await this.liveTestStorage.getStartSettings()
-  let updateKBstart = this.updateTimesStart(startStatusresult)
-  return updateKBstart
-}
-
-/**
-* get mappings experimetns to Kbundles
-* @method getExpKbundles
-*
-*/
-DataSystem.prototype.getExpKbundles = async function () {
-  // make query to network for context data per devices
-  let startStatusresult = await this.liveTestStorage.getExpKbundles()
-  return startStatusresult
-}
-
-/**
 *  update times to present of exising Knowledge Bundles saved
 * @method updateTimesStart
 *
@@ -122,17 +66,6 @@ DataSystem.prototype.updateTimesStart = function (kbList) {
     updateTimeKB.push(oKB)
   }
   return updateTimeKB
-}
-
-/**
-* save the inital start settings set
-* @method saveExpKbundles
-*
-*/
-DataSystem.prototype.saveExpKbundles = async function (bundle) {
-  // make query to network for context data per devices
-  let startStatusresult = await this.liveTestStorage.saveExpKbundles(bundle)
-  return startStatusresult
 }
 
 /**
@@ -340,26 +273,6 @@ DataSystem.prototype.getHRrecovery = async function (bundleIN, dtAsked) {
 }
 
 /**
-* extract out the data type colum and timestamp
-* @method extractDTcolumn
-*
-*/
-DataSystem.prototype.extractDTcolumn = function (sourceDT, arrayIN) {
-  let singleArray = []
-  let intData = 0
-  for (let sing of arrayIN) {
-    if (sourceDT.cnrl === 'cnrl-8856388711') {
-      intData = parseInt(sing.heart_rate, 10)
-      singleArray.push(intData)
-    } else if (sourceDT.cnrl === 'cnrl-8856388712') {
-      intData = parseInt(sing.steps, 10)
-      singleArray.push(intData)
-    }
-  }
-  return singleArray
-}
-
-/**
 * context Device Pairing
 * @method deviceUtility
 *
@@ -382,41 +295,6 @@ DataSystem.prototype.deviceUtility = function (device) {
     deviceMacslist.push(devOb.device_mac)
   }
   return deviceMacslist
-}
-
-/**
-*  return array of active sensors
-* @method extractSensors
-*
-*/
-DataSystem.prototype.extractSensors = function (sensorsIN) {
-  let datatypeList = []
-  for (let dt of sensorsIN) {
-    if (dt.active === true) {
-      datatypeList.push(dt.compref)
-    }
-  }
-  return datatypeList
-}
-
-/**
-* Chunck data
-* @method chunkUtilty
-*
-*/
-DataSystem.prototype.chunkUtilty = function (dataIn) {
-  let perChunk = 1440 // items per chunk
-  var resultArrayHolder = []
-  let inputArray = dataIn
-  resultArrayHolder = inputArray.reduce((resultArray, item, index) => {
-    const chunkIndex = Math.floor(index / perChunk)
-    if (!resultArray[chunkIndex]) {
-      resultArray[chunkIndex] = [] // start a new chunk
-    }
-    resultArray[chunkIndex].push(item)
-    return resultArray
-  }, [])
-  return resultArrayHolder
 }
 
 export default DataSystem

@@ -24,7 +24,7 @@
     </div>
     <div id="existing-computes">
       <ul>
-        <li v-for="kbidl in nxpKbidsList">
+        <li v-for="kbidl in nxpKbidsList"> kbids {{ nxpKbidsList }} {{ nxpKbids }}
           <compute-context :liveCompute="nxpKbids[kbidl].science"></compute-context>
           <!-- <nxp-outcome></nxp-outcome> -->
           <!-- <nxp-data></nxp-data> -->
@@ -84,6 +84,14 @@
     methods: {
       saveCompute () {
         console.log('save compute')
+      },
+      openCompute (oc) {
+        oc.active = !oc.active
+        if (oc.active === true) {
+          oc.name = 'Close compute'
+        } else {
+          oc.name = 'Open compute'
+        }
       }
     }
   }

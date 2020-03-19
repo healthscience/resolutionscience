@@ -36,106 +36,6 @@ CNRLmaster.prototype.defautNetworkContracts = async function (refIN) {
 }
 
 /**
-*  make API call to indexer of the science live on network/plus local history of peers used science
-* @method scienceOnNetwork
-*
-*/
-CNRLmaster.prototype.scienceOnNetwork = function () {
-  let science = [{ active: false, text: 'Observation data', description: 'Display of source data from a devies sensors.', value: 'A', cid: 'cnrl-2356388731', wasm: 'wasm-sc-1', livingpaper: 'http://www.healthscience.network/observation', verified: true }, { active: false, text: 'Sum data', description: 'Add up quantities on a time basis', value: 'F', cid: 'cnrl-2356388737', wasm: 'wasm-sc-6', livingpaper: 'http://www.healthscience.network/sum', verified: true }, { active: false, text: 'Average', description: 'A statisticial average calculated on BMP and steps on a daily basis.', value: 'B', cid: 'cnrl-2356388732', wasm: 'wasm-sc-2', livingpaper: 'http://www.healthscience.network/average', verified: false }, { active: false, text: 'Correlation', description: 'A statisticial way to compare how to variables are connected.', value: 'G', cid: 'cnrl-2356383848', wasm: 'wasm-sc-7', livingpaper: 'http://www.healthscience.network/correlation', verified: false }]
-  return science
-  // , { active: false, text: 'error data', description: 'Data Error numbers and statistics', value: 'D', cid: 'cnrl-2356388734', wasm: 'wasm-sc-4', verified: false }, { active: false, text: 'HealthSpan', description: 'Combines all network machine learning of the scientific computations to build a simulation of a human heart', value: 'E', cid: 'cnrl-2356388736', wasm: 'wasm-sc-5', verified: false }
-  // , { active: false, text: 'Resting HR Recovery', description: 'The use of bayesian statistical methods to show the time it take for the heart to reach resting heart rate value after activity.', value: 'C', cid: 'cnrl-2356388733', wasm: 'wasm-sc-3', livingpaper: 'https://docs.google.com/document/d/11JWcbBrwgLIqPc7V7GpI_WbACuIS_4h630zdT66Re3s/edit', verified: false },
-}
-
-/**
-*  get time datatypes for UI
-* @method timeContracts
-*
-*/
-CNRLmaster.prototype.timeContracts = function (refIN) {
-  // console.log('CRNL----TIMElook')
-  let timeIndex = []
-  if (refIN === 'time-index') {
-    timeIndex =
-    [{
-      text: 'day',
-      id: 'cnrl-t1',
-      active: false
-    },
-    {
-      text: 'week',
-      id: 'cnrl-t2',
-      active: false
-    },
-    {
-      text: 'month',
-      id: 'cnrl-t3',
-      active: false
-    },
-    {
-      text: 'year',
-      id: 'cnrl-t4',
-      active: false
-    },
-    {
-      text: 'SELECT',
-      id: 'cnrl-t5',
-      active: false
-    }]
-  } else if (refIN === 'datatime-index') {
-    // navigate data time buttons
-    /* {
-      text: '-year',
-      id: 'cnrl-t66',
-      active: false
-    },
-    {
-      text: '-month',
-      id: 'cnrl-t22',
-      active: false
-    },
-    ,
-    {
-      text: '+month',
-      id: 'cnrl-t4',
-      active: false
-    },
-    {
-      text: '+year',
-      id: 'cnrl-t5',
-      active: false
-    } */
-    timeIndex =
-    [{
-      text: '-week',
-      id: 'cnrl-t33',
-      active: false
-    },
-    {
-      text: '-day',
-      id: 'cnrl-t44',
-      active: false
-    },
-    {
-      text: 'day',
-      id: 'cnrl-t1',
-      active: false
-    },
-    {
-      text: '+day',
-      id: 'cnrl-t2',
-      active: false
-    },
-    {
-      text: '+week',
-      id: 'cnrl-t3',
-      active: false
-    }]
-  }
-  return timeIndex
-}
-
-/**
 * Index of datatypes
 * @method indexDatatypes
 *
@@ -193,7 +93,6 @@ CNRLmaster.prototype.sensorMappingDatatype = function (sensorTypes) {
 *
 */
 CNRLmaster.prototype.lookupContract = function (refIN) {
-  // console.log('CRNL----lookup')
   let dataCNRLbundle = {}
   dataCNRLbundle.type = ''
   dataCNRLbundle.livingpaper = ''
@@ -219,15 +118,8 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.type = 'datatype'
     dataCNRLbundle.history = {'proposed': 157118400, 'accepted': 15728400, 'votes': 343}
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-8856388711', 'text': 'bpm', 'active': false }
-    dataCNRLbundle.tidy = true
-    dataCNRLbundle.tidyList = []
-    dataCNRLbundle.tableStructure = []
     dataCNRLbundle.source = 'cnrl-primary'
-    dataCNRLbundle.categories.push({'cnrl': 'cnrl-8356388727', 'text': 'Sleep', 'active': false})
-    dataCNRLbundle.categorycodes.push({})
-    dataCNRLbundle.resolution = { 'text': '60 seconds', 'active': false }
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-8856388711'
-    dataCNRLbundle.index = ['cnrl-']
   } else if (refIN === 'cnrl-8856388712') {
     dataCNRLbundle.type = 'datatype'
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-8856388712', 'text': 'steps', 'active': false }
@@ -495,11 +387,6 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.type = 'compute'
     dataCNRLbundle.livingpaper = 'http://www.healthscience.network/observation'
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-2356388731', 'text': 'Observations', 'active': false }
-    dataCNRLbundle.tidy = true
-    dataCNRLbundle.tidyList = []
-    dataCNRLbundle.datatypes = [ /* {'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856388712', 'text': 'steps', 'active': false}, {'cnrl': 'cnrl-8856388711', 'text': 'beats per minute', 'active': false}, {'cnrl': 'cnrl-3339949442', 'text': 'SDS_P2', 'active': false}, {'cnrl': 'cnrl-3339949443', 'text': 'p10', 'active': false}, {'cnrl': 'cnrl-3339949444', 'text': 'temperature', 'active': false}, {'cnrl': 'cnrl-3339949445', 'text': 'humidity', 'active': false}, {'cnrl': 'cnrl-3339949446', 'text': 'airpressure', 'active': false} */ ]
-    dataCNRLbundle.categories.push({'cnrl': 'cnrl-8356388727', 'text': 'Sleep', 'active': false})
-    dataCNRLbundle.resolution = {}
     dataCNRLbundle.wasmhash = 'none'
     dataCNRLbundle.wasmfile = 'none'
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388731'
@@ -507,11 +394,6 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.type = 'compute'
     dataCNRLbundle.livingpaper = 'http://www.healthscience.network/sum'
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-2356388737', 'text': 'Sum per time', 'active': false }
-    dataCNRLbundle.tidy = false
-    dataCNRLbundle.tidyList = []
-    dataCNRLbundle.datatypes = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856389322', 'text': 'sum-steps', 'active': false}, {'cnrl': 'cnrl-8856388924', 'text': 'sum-heartrate', 'active': false}]
-    dataCNRLbundle.categories.push({'cnrl': 'cnrl-8356388727', 'text': 'Sleep', 'active': false})
-    dataCNRLbundle.resolution = {}
     dataCNRLbundle.wasmhash = '2356388737'
     dataCNRLbundle.wasmfile = 'safe://wasm/cnrl-2356388737'
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388737'
@@ -519,8 +401,6 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.type = 'compute'
     dataCNRLbundle.livingpaper = 'http://www.healthscience.network/average'
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-2356388732', 'text': 'average', 'active': false }
-    dataCNRLbundle.datatypes = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856388322', 'text': 'average-steps', 'active': false}, {'cnrl': 'cnrl-8856388724', 'text': 'average-bpm', 'active': false}]
-    dataCNRLbundle.categories.push({'cnrl': 'cnrl-8356388727', 'text': 'Sleep', 'active': false})
     dataCNRLbundle.wasmhash = '2356388732'
     dataCNRLbundle.wasmfile = 'safe://wasm/cnrl-2356388732'
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388732'
@@ -528,10 +408,6 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.type = 'compute'
     dataCNRLbundle.livingpaper = ''
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-2356383848', 'text': 'correlation', 'active': false }
-    dataCNRLbundle.tidy = false
-    dataCNRLbundle.resolution = {'text': 'xx seconds', 'active': 'fase'}
-    dataCNRLbundle.datatypes = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856388748', 'text': 'p-value', 'active': false}]
-    dataCNRLbundle.categories.push({'cnrl': 'cnrl-8356388727', 'text': 'Sleep', 'active': false})
     dataCNRLbundle.wasmhash = '2356388733'
     dataCNRLbundle.wasmfile = 'safe://wasm/cnrl-2356383848'
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356383848'
@@ -539,9 +415,6 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.type = 'compute'
     dataCNRLbundle.livingpaper = 'https://docs.google.com/document/d/11JWcbBrwgLIqPc7V7GpI_WbACuIS_4h630zdT66Re3s/edit'
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-2356388733', 'text': 'recovery-heartrate', 'active': false }
-    dataCNRLbundle.tidy = false
-    dataCNRLbundle.resolution = {'text': 'xx seconds', 'active': 'fase'}
-    dataCNRLbundle.datatypes = [{'cnrl': 'cnrl-8856388713', 'text': 'timestamp', 'active': false}, {'cnrl': 'cnrl-8856388725', 'text': 'recovery-heartrate', 'active': false}]
     dataCNRLbundle.wasmhash = '2356388733'
     dataCNRLbundle.wasmfile = 'safe://wasm/cnrl-2356388733'
     dataCNRLbundle.namespace = 'safe://cnrl/cnrl-2356388733'
@@ -833,6 +706,50 @@ CNRLmaster.prototype.lookupContract = function (refIN) {
     dataCNRLbundle.prime = { 'cnrl': 'cnrl-001234543220', 'text': 'Communicate', 'active': false }
     dataCNRLbundle.livingpaper = {'link': ''}
     dataCNRLbundle.namespace = 'safe://cnrl-001234543220'
+  } else if (refIN === 'cnrl-chart') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'visualise'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-chart', 'text': 'Chart.js', 'active': false }
+    dataCNRLbundle.livingpaper = {'link': ''}
+    dataCNRLbundle.namespace = 'safe://cnrl-chart'
+  } else if (refIN === 'cnrl-table') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'visualise'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-table', 'text': 'vue-grid', 'active': false }
+    dataCNRLbundle.livingpaper = {'link': ''}
+    dataCNRLbundle.namespace = 'safe://cnrl-table'
+  } else if (refIN === 'cnrl-simulation') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'visualise'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-simulation', 'text': 'simulation', 'active': false }
+    dataCNRLbundle.livingpaper = {'link': ''}
+    dataCNRLbundle.namespace = 'safe://cnrl-simulation'
+  } else if (refIN === 'cnrl-t0') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'time'
+    dataCNRLbundle.source = 'cnrl-primary'
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-t0', 'text': 'second', 'active': false, 'unit': 1 }
+    dataCNRLbundle.livingpaper = {'link': ''}
+    dataCNRLbundle.namespace = 'safe://cnrl-t0'
+  } else if (refIN === 'cnrl-t1') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'time'
+    dataCNRLbundle.source = 'cnrl-derived'
+    dataCNRLbundle.dtsource = ['cnrl-t0']
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-t1', 'text': 'day', 'active': false, 'unit': 86400 }
+    dataCNRLbundle.livingpaper = {'link': ''}
+    dataCNRLbundle.namespace = 'safe://cnrl-t1'
+  } else if (refIN === 'cnrl-t2') {
+    // CNRL implementation contract e.g. from mobile phone sqlite table structure
+    dataCNRLbundle.type = 'time'
+    dataCNRLbundle.source = 'cnrl-derive'
+    dataCNRLbundle.dtsource = ['cnrl-t1']
+    dataCNRLbundle.prime = { 'cnrl': 'cnrl-t2', 'text': 'week', 'active': false, 'unit': 604800 }
+    dataCNRLbundle.livingpaper = {'link': ''}
+    dataCNRLbundle.namespace = 'safe://cnrl-t2'
   }
   return dataCNRLbundle
 }
@@ -861,7 +778,6 @@ CNRLmaster.prototype.subSource = function (refIN) {
     // return dataType mapping arrays
     dataTypePrimary.push({'bpm': ''})
     dataTypePrimary.push({'steps': ''})
-    // dataTypePrimary.push({'time': ''})
     dataCNRLbundle.tidy = true
     dataCNRLbundle.tidyList = [-1, 0, 255]
     dataCNRLbundle.tableStructure = ['id', 'timestamp', 'bmp', 'etc']
@@ -923,6 +839,107 @@ CNRLmaster.prototype.livingKnowledge = function (refIN) {
     dataCNRLbundle.categorycodes = []
   }
   return dataCNRLbundle
+}
+
+/**
+*  get time datatypes for UI
+* @method timeContracts
+*
+*/
+CNRLmaster.prototype.timeContracts = function (refIN) {
+  console.log('CRNL----TIMElook')
+  console.log(refIN)
+  let timeIndex = []
+  if (refIN === 'time-index') {
+    timeIndex =
+    [{
+      text: 'day',
+      id: 'cnrl-t1',
+      active: false
+    },
+    {
+      text: 'week',
+      id: 'cnrl-t2',
+      active: false
+    },
+    {
+      text: 'month',
+      id: 'cnrl-t3',
+      active: false
+    },
+    {
+      text: 'year',
+      id: 'cnrl-t4',
+      active: false
+    },
+    {
+      text: 'SELECT',
+      id: 'cnrl-t5',
+      active: false
+    }]
+  } else if (refIN === 'datatime-index') {
+    // navigate data time buttons
+    /* {
+      text: '-year',
+      id: 'cnrl-t66',
+      active: false
+    },
+    {
+      text: '-month',
+      id: 'cnrl-t22',
+      active: false
+    },
+    ,
+    {
+      text: '+month',
+      id: 'cnrl-t4',
+      active: false
+    },
+    {
+      text: '+year',
+      id: 'cnrl-t5',
+      active: false
+    } */
+    timeIndex =
+    [{
+      text: '-week',
+      id: 'cnrl-t33',
+      active: false
+    },
+    {
+      text: '-day',
+      id: 'cnrl-t44',
+      active: false
+    },
+    {
+      text: 'day',
+      id: 'cnrl-t1',
+      active: false
+    },
+    {
+      text: '+day',
+      id: 'cnrl-t2',
+      active: false
+    },
+    {
+      text: '+week',
+      id: 'cnrl-t3',
+      active: false
+    }]
+  }
+  return timeIndex
+}
+
+/**
+*  make API call to indexer of the science live on network/plus local history of peers used science
+* @method scienceOnNetwork
+*
+*/
+CNRLmaster.prototype.scienceOnNetwork = function () {
+  let science = [{ active: false, text: 'Observation data', description: 'Display of source data from a devies sensors.', value: 'A', cid: 'cnrl-2356388731', wasm: 'wasm-sc-1', livingpaper: 'http://www.healthscience.network/observation', verified: true }, { active: false, text: 'Sum data', description: 'Add up quantities on a time basis', value: 'F', cid: 'cnrl-2356388737', wasm: 'wasm-sc-6', livingpaper: 'http://www.healthscience.network/sum', verified: true }, { active: false, text: 'Average', description: 'A statisticial average calculated on BMP and steps on a daily basis.', value: 'B', cid: 'cnrl-2356388732', wasm: 'wasm-sc-2', livingpaper: 'http://www.healthscience.network/average', verified: false }, { active: false, text: 'Correlation', description: 'A statisticial way to compare how to variables are connected.', value: 'G', cid: 'cnrl-2356383848', wasm: 'wasm-sc-7', livingpaper: 'http://www.healthscience.network/correlation', verified: false }]
+  return science
+  // , { active: false, text: 'error data', description: 'Data Error numbers and statistics', value: 'D', cid: 'cnrl-2356388734', wasm: 'wasm-sc-4', verified: false }, { active: false, text: 'HealthSpan', description: 'Combines all network machine learning of the scientific computations to build a simulation of a human heart', value: 'E', cid: 'cnrl-2356388736', wasm: 'wasm-sc-5', verified: false }
+  // , { active: false, text: 'Resting HR Recovery', description: 'The use of bayesian statistical methods to show the time it take for the heart to reach resting heart rate value after activity.', value: 'C', cid: 'cnrl-2356388733', wasm: 'wasm-sc-3', livingpaper: 'https://docs.google.com/document/d/11JWcbBrwgLIqPc7V7GpI_WbACuIS_4h630zdT66Re3s/edit', verified: false },
 }
 
 /**

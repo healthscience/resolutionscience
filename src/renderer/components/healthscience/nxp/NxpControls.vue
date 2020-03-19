@@ -1,9 +1,9 @@
-u<template>
+<template>
   <div id="nxp-toolbar">Controls over NXPs
-    <div id="nxp-master-toolbar">
-      <select class="button-expadd" href="" id="add-exp-button" @change="selectNXP($event)">
+    <div id="nxp-master-toolbar"> dd {{ liveexerimentList }}
+      <select class="button-expadd" href="" id="add-exp-button" v-model="nxpSelect"  @change="selectNXP()">
         <option class="science-nxp" v-for="expi in liveexerimentList" v-bind:value="expi.prime.cnrl">
-          {{ expi.prime.text }}
+         {{ expi.prime.text }}
         </option>
       </select>
       <div class="control-buttons" id="new-button">
@@ -47,6 +47,7 @@ u<template>
     },
     data () {
       return {
+        nxpSelect: '',
         learn:
         {
           name: 'learn',
@@ -84,8 +85,9 @@ u<template>
       selectNXP (exB) {
         // dispatch select to store
         console.log('select NXP')
-        console.log(exB.target.value)
-        this.$store.dispatch('actionSetNXP', exB.target.value)
+        console.log(this.nxpSelect)
+        // this.$store.dispatch('actionSetNXP', this.nxpSelect)
+        this.$store.dispatch('actionDashboardState', this.nxpSelect)
       },
       nxpNew () {
         console.log('set up new NXP')

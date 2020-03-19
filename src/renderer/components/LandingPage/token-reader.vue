@@ -78,7 +78,7 @@
           let authBundle = {}
           authBundle.network = 'cloud'
           authBundle.settings = tokenJSON
-          localthis.$store.dispatch('connectNSnetwork', authBundle)
+          localthis.$store.dispatch('startconnectNSnetwork', authBundle)
         }
         reader.readAsText(file)
         // Specify a data directory (optional; defaults to ~/.ethereum)

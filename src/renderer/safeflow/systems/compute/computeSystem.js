@@ -9,7 +9,6 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import CNRLmaster from '../../kbl-cnrl/cnrlMaster.js'
 import SumSystem from './sumSystem.js'
 import AverageSystem from './averageSystem.js'
 import RecoveryHeartrate from './wasm/recovery-heartrate.js'
@@ -18,7 +17,6 @@ const events = require('events')
 
 var ComputeSystem = function (setIN) {
   events.EventEmitter.call(this)
-  this.liveCNRL = new CNRLmaster()
   this.liveSum = new SumSystem(setIN)
   this.liveAverage = new AverageSystem(setIN)
   this.liveRecoveryHR = new RecoveryHeartrate(setIN)
@@ -31,16 +29,6 @@ var ComputeSystem = function (setIN) {
 */
 util.inherits(ComputeSystem, events.EventEmitter)
 
-/**
-* return query form CNRL or peers list of computations
-* @method CNRLquery
-*
-*/
-ComputeSystem.prototype.CNRLquery = function () {
-  // query CNRL for active computes
-  let computeList = this.liveCNRL.scienceOnNetwork()
-  return computeList
-}
 /**
 * computation gateway
 * @method computationSystem

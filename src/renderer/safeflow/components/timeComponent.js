@@ -33,6 +33,17 @@ var TimeComponent = function (DID, setIN) {
 util.inherits(TimeComponent, events.EventEmitter)
 
 /**
+*  convert UI status to entity master clock
+* @method setMasterClock
+*
+*/
+
+TimeComponent.prototype.setMasterClock = function () {
+  this.livedate = this.liveTimeUtil.timeConversionUtility(this.livedate)
+  return true
+}
+
+/**
 *  set the live date active in the UI
 * @method setStartPeriod
 *
@@ -94,19 +105,8 @@ TimeComponent.prototype.setTimeVis = function (liveVis) {
 }
 
 /**
-*  convert UI status to entity master clock
-* @method setMasterClock
-*
-*/
-
-TimeComponent.prototype.setMasterClock = function () {
-  this.livedate = this.liveTimeUtil.timeConversionUtility(this.livedate) // this.did.time
-  return true
-}
-
-/**
 *  what time segement is required?
-* @method timeProfiling
+* @method
 *
 */
 TimeComponent.prototype.timeProfiling = function () {

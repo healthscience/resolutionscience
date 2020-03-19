@@ -44,6 +44,27 @@ EntitiesManager.prototype.peerKBLstart = async function () {
 }
 
 /**
+* peer input into ECS
+* @method PeerInput
+*
+*/
+EntitiesManager.prototype.peerInput = async function (input) {
+  // what type of input  CNRL NXP  Module or KBID entry???
+  console.log('peer input')
+  console.log(input)
+  let modKbids = {}
+  let entityData = {}
+  // now filter for type?
+  let modules = await this.NXPmodules(input.modules)
+  for (let md of modules) {
+    let kbidInfo = await this.CNRLmodKBID(md.prime.cnrl)
+    modKbids[md.prime.cnrl] = kbidInfo
+  }
+  entityData[input.cnrl] = await this.addHSentity(modKbids)
+  return entityData
+}
+
+/**
 * modules per NXP cnrl
 * @method NXPmodules
 *
@@ -82,18 +103,106 @@ EntitiesManager.prototype.kbidEntry = async function (kbid) {
 }
 
 /**
+*  create new HS entity
+* @method addHSEntity
+*
+*/
+EntitiesManager.prototype.addHSentity = async function (ecsIN) {
+  console.log('ENTITY maker')
+  console.log(ecsIN)
+  let moduleState = false
+  let shellID = this.entityID(ecsIN)
+  if (this.liveSEntities[shellID]) {
+    console.log('entity' + shellID + 'already exists')
+    this.entityExists()
+  } else {
+    console.log('entity' + shellID + 'is new')
+    // start workflow for setting up entity
+    this.liveSEntities[shellID] = new Entity(ecsIN, this.auth)
+    // default input set on setting up of component
+    // extract types of modules from keys
+    // feed into ECS entity maker
+    let modules = Object.keys(ecsIN)
+    for (let kl of modules) {
+      // temp if null content for module give it some
+      if (kl.length === 0) {
+        moduleState = {'data': 'module content'}
+      } else {
+        moduleState = await this.moduleFlow(shellID, ecsIN[kl])
+      }
+    }
+  }
+  let entityStatus = ''
+  if (moduleState === true) {
+    entityStatus = shellID
+  } else {
+    entityStatus = 'failed'
+  }
+  return entityStatus
+}
+
+/**
+*  list all live Enties index CIDs
+* @method listEntities
+*
+*/
+EntitiesManager.prototype.listEntities = function () {
+  return this.liveSEntities
+}
+
+/**
+*  return data from an entity
+* @method entityDataReturn
+*
+*/
+EntitiesManager.prototype.entityDataReturn = async function (eid) {
+  let GroupDataBundle = {}
+  GroupDataBundle['cnrl-848388553323'] = {'prime': {'cnrl': 'cnrl-111', 'text': 'Mod1', 'active': true}}
+  return GroupDataBundle
+}
+
+/**
+*  return chart data from an entity
+* @method entityChartReturn
+*
+*/
+EntitiesManager.prototype.entityChartReturn = async function (eid) {
+  return this.liveSEntities[eid].liveVisualC
+}
+
+/**
+*  examines each module and prepares path through
+* @method moduleFlow
+*
+*/
+EntitiesManager.prototype.moduleFlow = async function (shellID, mkids) {
+  let kbidData = {}
+  // assess type and build components and systems
+  let moduleEntry = Object.keys(mkids)
+  if (moduleEntry.length > 0) {
+    for (let ei of moduleEntry) {
+      console.log('module')
+      console.log(ei)
+      // let preparedBundle = this.prepareECSinput(mkids[ei])
+      kbidData[ei] = await this.controlFlow(shellID, mkids[ei])
+    }
+  }
+  return true // kbidData
+}
+
+/**
 * input context from UI
 * @method peerContext
 *
 */
-EntitiesManager.prototype.prepareECSinput = function (cnrl, bundleIN) {
+EntitiesManager.prototype.prepareECSinput = function (bundleIN) {
   console.log('prepare input for ECS')
   console.log(bundleIN)
   let ecsIN = {}
   ecsIN.kbid = bundleIN.kbid
-  ecsIN.cid = cnrl
+  // ecsIN.cid = cnrl
   ecsIN.storageAPI = bundleIN.device
-  // ecsIN.devices = bundleIN.devices
+  ecsIN.devices = bundleIN.device
   ecsIN.visID = 'chart'
   // convert all the time to millisecons format
   let timeBundle = {}
@@ -103,52 +212,8 @@ EntitiesManager.prototype.prepareECSinput = function (cnrl, bundleIN) {
   ecsIN.compute = bundleIN.compute
   ecsIN.data = bundleIN.data
   // ecsIN.language = bundleIN.language
-  // console.log(ecsIN)
-  return ecsIN
-}
-
-/**
-*  create new HS entity
-* @method addHSEntity
-*
-*/
-EntitiesManager.prototype.addHSentity = async function (ecsIN) {
-  console.log('ENTITY maker')
   console.log(ecsIN)
-  let kbid = this.entityID(ecsIN)
-  if (this.liveSEntities[kbid]) {
-    console.log('entity' + kbid + 'already exists')
-    this.entityExists()
-  } else {
-    console.log('entity' + kbid + 'is new')
-    // start workflow for setting up entity
-    this.liveSEntities[kbid] = new Entity(ecsIN, this.auth)
-    // default input set on setting up of component
-    // extract types of modules from keys
-    // feed into ECS entity maker
-    let modules = Object.keys(ecsIN)
-    console.log(modules)
-    for (let kl of modules) {
-      console.log(kl)
-      let moduleState = await this.moduleFlow(kl)
-      console.log(moduleState)
-    }
-  }
-  return true
-}
-
-/**
-*  examines each module and prepares path through
-* @method moduleFlow
-*
-*/
-EntitiesManager.prototype.moduleFlow = async function (mkids) {
-  console.log('module flow')
-  console.log(mkids)
-  // assess type and build components and systems
-  // let preparedBundle = this.prepareECSinput(ecsIN[kl])
-  // await this.controlFlow(preparedBundle)
-  return false
+  return ecsIN
 }
 
 /**
@@ -157,23 +222,22 @@ EntitiesManager.prototype.moduleFlow = async function (mkids) {
 * @method controlFlow
 *
 */
-EntitiesManager.prototype.controlFlow = async function (kbid, cflowIN) {
-  let cid = cflowIN.kbid
+EntitiesManager.prototype.controlFlow = async function (shellid, cflowIN) {
   console.log('EMANAGER0-----beginCONTROL-FLOW')
   // set the MASTER TIME CLOCK for entity
-  this.liveSEntities[kbid].liveTimeC.setMasterClock()
-  this.liveSEntities[kbid].liveDatatypeC.dataTypeMapping()
-  this.liveSEntities[kbid].liveTimeC.timeProfiling()
-  await this.liveSEntities[kbid].liveDataC.sourceData(this.liveSEntities[kbid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[kbid].liveTimeC)
+  /* this.liveSEntities[shellid].liveTimeC.setMasterClock()
+  this.liveSEntities[shellid].liveDatatypeC.dataTypeMapping()
+  this.liveSEntities[shellid].liveTimeC.timeProfiling()
+  await this.liveSEntities[shellid].liveDataC.sourceData(this.liveSEntities[shellid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[shellid].liveTimeC)
   this.emit('computation', 'in-progress')
-  await this.liveSEntities[kbid].liveTimeC.startTimeSystem(this.liveSEntities[kbid].liveDatatypeC, this.liveSEntities[kbid].liveDataC.liveData)
-  this.computeStatus = await this.liveSEntities[kbid].liveComputeC.filterCompute(this.liveSEntities[kbid].liveTimeC, this.liveSEntities[kbid].liveDatatypeC.datatypeInfoLive)
+  await this.liveSEntities[shellid].liveTimeC.startTimeSystem(this.liveSEntities[shellid].liveDatatypeC, this.liveSEntities[shellid].liveDataC.liveData)
+  this.computeStatus = await this.liveSEntities[shellid].liveComputeC.filterCompute(this.liveSEntities[shellid].liveTimeC, this.liveSEntities[shellid].liveDatatypeC.datatypeInfoLive)
   this.emit('computation', 'finished')
   if (this.computeStatus === true) {
   // go direct and get raw data direct
-    await this.liveSEntities[cid].liveDataC.directSourceUpdated(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveTimeC)
+    await this.liveSEntities[shellid].liveDataC.directSourceUpdated(this.liveSEntities[shellid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[shellid].liveTimeC)
   }
-  this.liveSEntities[cid].liveVisualC.filterVisual(this.liveSEntities[cid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[cid].liveDataC.liveData, this.liveSEntities[cid].liveTimeC)
+  this.liveSEntities[shellid].liveVisualC.filterVisual(this.liveSEntities[shellid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[shellid].liveDataC.liveData, this.liveSEntities[shellid].liveTimeC) */
   console.log('visCompenent--FINISHED')
   return true
 }
@@ -183,21 +247,29 @@ EntitiesManager.prototype.controlFlow = async function (kbid, cflowIN) {
 * @method entityExists
 *
 */
-EntitiesManager.prototype.entityExists = function (kbid, dataIn) {
+EntitiesManager.prototype.entityExists = function (shellid, dataIn) {
   // does the data exist for this visualisation and time?
-  let checkDataExist = this.checkForVisualData(kbid, dataIn)
+  let checkDataExist = this.checkForVisualData(shellid, dataIn)
   if (checkDataExist === true) {
     console.log('data already ready')
-    this.liveSEntities[kbid].liveTimeC.setStartPeriod(dataIn.startperiod)
-    this.liveSEntities[kbid].liveTimeC.setRealtime(dataIn.realtime)
-    this.liveSEntities[kbid].liveTimeC.setLastTimeperiod(dataIn.laststartperiod)
-    this.liveSEntities[kbid].liveTimeC.setTimeList(dataIn.startperiod)
-    this.liveSEntities[kbid].liveTimeC.setTimeSegments(dataIn.timeseg)
-    this.liveSEntities[kbid].liveTimeC.setTimeVis(dataIn.timevis)
-    this.liveSEntities[kbid].liveDataC.setDatatypesLive(dataIn.datatypes)
-    this.liveSEntities[kbid].liveDataC.setCategories(dataIn.categories)
+    this.liveSEntities[shellid].liveTimeC.setStartPeriod(dataIn.startperiod)
+    this.liveSEntities[shellid].liveTimeC.setRealtime(dataIn.realtime)
+    this.liveSEntities[shellid].liveTimeC.setLastTimeperiod(dataIn.laststartperiod)
+    this.liveSEntities[shellid].liveTimeC.setTimeList(dataIn.startperiod)
+    this.liveSEntities[shellid].liveTimeC.setTimeSegments(dataIn.timeseg)
+    this.liveSEntities[shellid].liveTimeC.setTimeVis(dataIn.timevis)
+    this.liveSEntities[shellid].liveDataC.setDatatypesLive(dataIn.datatypes)
+    this.liveSEntities[shellid].liveDataC.setCategories(dataIn.categories)
   }
   return true
+}
+
+/**
+*  add component
+* @method addComponent
+*
+*/
+EntitiesManager.prototype.addComponent = function (entID) {
 }
 
 /**
@@ -246,68 +318,6 @@ EntitiesManager.prototype.checkForVisualData = function (cid, timePeriod, visSty
   } else {
     return false
   }
-}
-
-/**
-*  list all live Enties index CIDs
-* @method listEntities
-*
-*/
-EntitiesManager.prototype.listEntities = function () {
-  return this.liveSEntities
-}
-
-/**
-*  return data from an entity
-* @method entityDataReturn
-*
-*/
-EntitiesManager.prototype.entityDataReturn = async function (eid, visStyle) {
-  let GroupVisBundle = {}
-  let messageVisBundle = {}
-  let timeLive = this.liveSEntities[eid].liveTimeC.livedate.startperiod
-  // loop over visualisation available and pick out match
-  let lvc = this.liveSEntities[eid].liveVisualC.visualData[visStyle]
-  if (visStyle === 'vis-sc-1') {
-    // if (lvc[visStyle][timeLive].day) {
-    if (lvc) {
-      messageVisBundle = {}
-      messageVisBundle.chartMessage = 'Chart'
-      messageVisBundle.liveChartOptions = lvc[0]['vis-sc-1'][timeLive].day.options
-      messageVisBundle.chartPackage = lvc[0]['vis-sc-1'][timeLive].day.prepared
-      messageVisBundle.displayTime = timeLive
-      // messageVisBundle.selectTimeStart = this.liveSEntities[eid].liveVisualC.liveVisSystem // liveChartSystem
-      GroupVisBundle = messageVisBundle
-    }
-  }
-  if (visStyle === 'vis-sc-2') {
-    // if (lvc[visStyle][timeLive].day) {
-    if (lvc) {
-      messageVisBundle = {}
-      messageVisBundle.chartMessage = 'Table'
-      messageVisBundle.tablePackage = lvc // [timeLive].day.prepared
-      messageVisBundle.displayTime = timeLive
-      GroupVisBundle = messageVisBundle
-    }
-  }
-  return GroupVisBundle
-}
-
-/**
-*  return chart data from an entity
-* @method entityChartReturn
-*
-*/
-EntitiesManager.prototype.entityChartReturn = async function (eid) {
-  return this.liveSEntities[eid].liveVisualC
-}
-
-/**
-*  add component
-* @method addComponent
-*
-*/
-EntitiesManager.prototype.addComponent = function (entID) {
 }
 
 /**

@@ -63,24 +63,6 @@
     },
     mixins: [liveMixinSAFEflow],
     methods: {
-      openCompute (oc) {
-        oc.active = !oc.active
-        if (oc.active === true) {
-          oc.name = 'Close compute'
-        } else {
-          oc.name = 'Open compute'
-        }
-      },
-      updateSciDTs (sciIN) {
-        this.activeEntity = sciIN
-        // use cid to look up datatype for this scienceEntities
-        // let sciDTypesSelect = {} // this.GETcnrlScienceDTs(sciIN)
-        // sciDTypesSelect.cnrl = sciIN
-        // this.scidtypes = sciDTypesSelect.datatypes
-        // this.cdtypes = sciDTypesSelect.categories
-        // this.liveScience.livingpaper = sciDTypesSelect.contract.livingpaper
-        // kBus.$emit('setVScience', sciDTypesSelect.contract)
-      }
     }
   }
 </script>

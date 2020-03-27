@@ -1,5 +1,5 @@
 <template>
-  <div id="dashboard-holder"> <!-- v-if="moduleContent" -->
+  <div id="dashboard-holder" v-if="moduleContent">
     <div id="dash-modules"> modCNRL -- {{ moduleCNRL }}
       content per module {{ moduleContent }}
       <module-board @close="closeModule">
@@ -10,16 +10,6 @@
         <template v-slot:body>
         <!-- The code below goes into the header slot -->
           <header>CONTENT</header>
-          <!-- <div id="dashboard-grid" >
-            <div class='layoutJSON'>
-                Displayed as <code>[x, y, w, h]</code>
-                <div class='columns'> currstart--- {{ currentLayout }}
-                    <div class='layoutItem' v-for='item in currentLayout' :key='item.id'>
-                        <b>{{item.i}}</b>:  [{{item.x}}, {{item.y}}, {{item.w}}, {{item.h}}]
-                    </div>
-                </div>
-            </div>
-          </div>-->
           <div id="module-toolbar">
             <header>TOOLBAR---</header>
             <!-- <button @click='decreaseWidth'>Decrease Width</button>
@@ -28,9 +18,8 @@
             <input type='checkbox' v-model='draggable'/> Draggable
             <input type='checkbox' v-model='resizable'/> Resizable
             <br/> <!-- @changes="updateLayout"  -->
-            layoutDataObject-- {{ layout }}
-            <grid-layout v-if="layout"
-                         :layout='layout'
+            <grid-layout v-if="moduleContent.grid"
+                         :layout='moduleContent.grid'
                          :col-num='12'
                          :row-height='30'
                          :is-draggable='draggable'
@@ -38,7 +27,7 @@
                          :vertical-compact='true'
                          :use-css-transforms='true'
             >
-              <grid-item v-for='item in layout' :key='item.id'
+              <grid-item v-for='item in moduleContent.grid' :key='item.id'
                          :static='item.static'
                          :x='item.x'
                          :y='item.y'
@@ -92,21 +81,19 @@
         return dashStateNXP[this.shellCNRL]
       },
       moduleContent: function () {
-        console.log('module holder')
-        console.log(this.$store.state.NXPexperimentStatus)
-        let contentModule = this.$store.state.NXPexperimentStatus // [{'kbid': {'id': '2323232323'}}]
-        return contentModule[this.shellCNRL][this.moduleCNRL]
+        let contentModule = this.$store.state.NXPexperimentStatus[this.shellCNRL]
+        console.log('start module content ------')
+        console.log(contentModule)
+        if (contentModule === undefined) {
+          return false
+        } else {
+          return contentModule.modules[this.moduleCNRL]
+        }
       },
       kBundles: function () {
         console.log('kbids per module')
         let cnrlKBIDS = this.$store.state.NXPexperimentKBundles
         return cnrlKBIDS[this.moduleCNRL]
-      },
-      layout: function () {
-        console.log('dashboard grid vue')
-        console.log(this.$store.state.dashboardGrid)
-        let cnrlGrid = this.$store.state.dashboardGrid
-        return cnrlGrid[this.shellCNRL]
       }
     },
     data () {
@@ -199,7 +186,7 @@ header {
 }
 
 .vue-grid-layout {
-    border: 5px solid black;
+    border: 1px solid black;
     background: #eee;
 }
 

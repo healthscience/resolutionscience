@@ -108,7 +108,7 @@ export default new Vuex.Store({
       }
     },
     setLiveNXPModules: (state, inVerified) => {
-      Vue.set(state.NXPexperimentStatus, inVerified.cnrl, inVerified.modules)
+      Vue.set(state.NXPexperimentStatus, inVerified.cnrl, inVerified)
     },
     setPrepareBundle: (state, inVerified) => {
       Vue.set(state.NXPexperimentKBundles, inVerified.cnrl, inVerified.kbid)
@@ -399,11 +399,9 @@ export default new Vuex.Store({
         let Dholder = {}
         Dholder.cnrl = update
         Dholder.modules = dataFlow
-        let moduleGrid = [
-          { 'x': 0, 'y': 0, 'w': 8, 'h': 5, 'i': '1', static: false }]
-        this.state.dashboardGrid[update] = moduleGrid
+        // Dholder.moduleGrid = [{ 'x': 0, 'y': 0, 'w': 8, 'h': 5, 'i': '1', static: false }]
+        this.state.dashboardGrid[update] = Dholder.moduleGrid
         context.commit('setLiveNXPModules', Dholder)
-        // context.commit('setPrepareBundle', Dholder)
       }
     },
     actionVisualOptions: (context, update) => {

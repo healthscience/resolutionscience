@@ -1,21 +1,12 @@
 <template>
   <div id="visualise-nxp">
-    <header>VISUALISE:</header>
+    <header>VISUALISE:</header>kbid {{ moduleCNRL }} vmdata {{ mData }}
     <div id="prime-visualise">
-    <!-- <progress-Message :progressMessage="entityPrepareStatus"></progress-Message> -->
-      <div id="visulation-select">
-        <ul>
-          <li class="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis1)" v-bind:class="{ 'active': vis1.active}">{{ vis1.name }}</a></li>
-          <li class="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis2)" v-bind:class="{ 'active': vis2.active}">{{ vis2.name }}</a></li>
-          <li class="visualisation-type"><a class="" href="" id="" @click.prevent="selectVis(vis3)" v-bind:class="{ 'active': vis3.active}">{{ vis3.name }}</a></li>
-        </ul>
-      </div>
-      <chart-context v-if="vis1.active"></chart-context>
-      <div v-if="visTableview" id="table-view">
-        <table-Build :tableData="tablecollection"></table-Build>
-      </div>
-      <div v-if="visSimview" id="sim-view">
-        <simulation-View :simData="datacollection"></simulation-View>
+      <!-- <progress-Message :progressMessage="entityPrepareStatus"></progress-Message> -->
+      <component v-bind:is="moduleVisType"></component>
+      <!-- <chart-context></chart-context>
+      <table-Build :tableData="tablecollection"></table-Build>
+      <simulation-View :simData="datacollection"></simulation-View> -->
       </div>
     </div>
   </div>
@@ -23,7 +14,7 @@
 
 <script>
   import progressMessage from '@/components/toolbar/inProgress'
-  import chartContext from '@/components/visualise/visualiseContext'
+  import chartContext from '@/components/visualise/chartBuilder'
   import tableBuild from '@/components/visualise/table/tableBuilder'
   import simulationView from '@/components/visualise/simulation/simulation-life'
 
@@ -34,6 +25,18 @@
       chartContext,
       tableBuild,
       simulationView
+    },
+    props: {
+      moduleCNRL: '',
+      mData: {}
+    },
+    computed: {
+      moduleVisType: function () {
+        let modvisType = this.$store.state.experimentStatus
+        console.log('mod vis type')
+        console.log(modvisType)
+        return 'chart-context' // modvisType[this.dashCNRL].vistype
+      }
     },
     data: () => ({
       visualise:

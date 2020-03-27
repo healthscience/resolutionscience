@@ -157,7 +157,14 @@ EntitiesManager.prototype.listEntities = function () {
 */
 EntitiesManager.prototype.entityDataReturn = async function (eid) {
   let GroupDataBundle = {}
-  GroupDataBundle['cnrl-848388553323'] = {'prime': {'cnrl': 'cnrl-111', 'text': 'Mod1', 'active': true}}
+  GroupDataBundle['cnrl-001234543212'] = {'prime': {'cnrl': 'cnrl-112', 'vistype': 'nxp-plain', 'text': 'Question', 'active': true}, 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
+  GroupDataBundle['cnrl-001234543213'] = {'prime': {'cnrl': 'cnrl-113', 'vistype': 'nxp-plain', 'text': 'Results', 'active': true}, 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
+  GroupDataBundle['cnrl-001234543214'] = {'prime': {'cnrl': 'cnrl-114', 'vistype': 'nxp-visualise', 'text': 'Controls', 'active': true}, 'data': {'chartOptions': ['a', 'b', 'c'], 'chartPackage': [1, 2, 3]}, 'message': 'compute-complete'}
+  GroupDataBundle['cnrl-001234543215'] = {'prime': {'cnrl': 'cnrl-115', 'vistype': 'nxp-plain', 'text': 'Errors', 'active': true}, 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
+  GroupDataBundle['cnrl-001234543216'] = {'prime': {'cnrl': 'cnrl-116', 'vistype': 'nxp-plain', 'text': 'Lifestyle Medicine', 'active': true}, 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
+  GroupDataBundle['cnrl-001234543217'] = {'prime': {'cnrl': 'cnrl-117', 'vistype': 'nxp-plain', 'text': 'Educate', 'active': true}, 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
+  GroupDataBundle['cnrl-001234543218'] = {'prime': {'cnrl': 'cnrl-1118', 'vistype': 'nxp-plain', 'text': 'Evovle', 'active': true}, 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
+  GroupDataBundle['cnrl-001234543219'] = {'prime': {'cnrl': 'cnrl-119', 'vistype': 'nxp-plain', 'text': 'Drugs', 'active': true}, 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
   return GroupDataBundle
 }
 
@@ -176,15 +183,15 @@ EntitiesManager.prototype.entityChartReturn = async function (eid) {
 *
 */
 EntitiesManager.prototype.moduleFlow = async function (shellID, mkids) {
-  let kbidData = {}
+  // let kbidData = {}
   // assess type and build components and systems
   let moduleEntry = Object.keys(mkids)
   if (moduleEntry.length > 0) {
     for (let ei of moduleEntry) {
-      console.log('module')
+      console.log('moduleEM')
       console.log(ei)
       // let preparedBundle = this.prepareECSinput(mkids[ei])
-      kbidData[ei] = await this.controlFlow(shellID, mkids[ei])
+      // kbidData[ei] = await this.controlFlow(shellID, mkids[ei])
     }
   }
   return true // kbidData

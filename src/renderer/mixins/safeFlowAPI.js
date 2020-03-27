@@ -103,26 +103,10 @@ safeFlowAPI.prototype.moduleKBID = async function (cnrl) {
 */
 safeFlowAPI.prototype.displayFilter = async function (shellID) {
   // setup return vis Object
-  let entityDataVUE = {}
-  let entityGetter = await this.SAPI.entityGetter(shellID)
-  console.log('module data raw')
-  console.log(entityGetter)
-  entityDataVUE = entityGetter
-  if (entityGetter === 'vis-sc-1') {
-    this.chartmessage.text = 'computation up-to-date'
-    this.options2 = entityGetter.liveChartOptions
-    this.datacollection2 = entityGetter.chartPackage
-    // entityDataVUE.kContext = this.liveanalysisStart
-    entityDataVUE.displayTime = this.liveTimeV2
-    entityDataVUE.displayTimeF = this.setFutureUItime(entityGetter.displayTime)
-    entityDataVUE.liveOptions = this.options2
-    entityDataVUE.liveDataCollection = this.datacollection2
-  } else if (this.activevis === 'vis-sc-2') {
-    // localthis.tableHTML = entityGetter.table
-  } else if (this.activevis === 'vis-sc-3') {
-    // localthis.simulationHeart = entityGetter
-  }
-  return entityDataVUE
+  let entityData = await this.SAPI.entityGetter(shellID)
+  console.log('display filder data raw')
+  console.log(entityData)
+  return entityData
 }
 
 export default safeFlowAPI

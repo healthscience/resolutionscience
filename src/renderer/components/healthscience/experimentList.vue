@@ -1,7 +1,8 @@
 <template>
   <div id="experiment-view">
-    <ul v-if="PeerexperimentData.length !== 0" > {{ PeerexperimentData }}
+    <ul v-if="PeerexperimentData.length !== 0" >
       <li id="experiment-item" v-for="(exp, index) in PeerexperimentData">
+        Summary expID-- {{ exp }}
         <div id="live-experiment-elements">
           <div id="select-ebox" class="live-expelement">
             <div id="select-ebox-container">
@@ -43,8 +44,10 @@
             </div>
           </div>
           <div id="experiment-close"></div>
-        </div> exp {{ exp.prime}}
-        <edashboard :dashCNRL="exp.prime.cnrl"></edashboard>
+        </div> modules per shell {{ exp.modules}}
+        <div id="modules-list" v-for="(mod, index) in exp.modules">
+          <edashboard :shellCNRL="exp.prime.cnrl" :moduleCNRL="mod"></edashboard>
+        </div>
       </li>
     </ul>
   </div>

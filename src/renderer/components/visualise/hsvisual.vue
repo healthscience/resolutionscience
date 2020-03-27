@@ -1,11 +1,11 @@
 <template>
   <div id="visual-view">PAST
     <div id="diy-science">
-      <div v-if="visChartview" id="charts-live">
+      <div id="charts-live">
         <reactive :chartData="datacollection" :options="options" :width="1200" :height="600"></reactive>
       </div>
-      <calendar-tool></calendar-tool>
-      <multi-chart></multi-chart>
+      <!-- <calendar-tool></calendar-tool>
+      <multi-chart></multi-chart> -->
     </div>
   </div>
 </template>
@@ -182,47 +182,5 @@ li {
 
 #additional-chart {
   border: 1px solid green;
-}
-
-.custom-resizer {
-  width: 100%;
-  height: 600px;
-}
-
-.custom-resizer > .pane {
-  text-align: left;
-  padding: 1px;
-  overflow: scroll;
-  overflow-y:scroll;
-  background: #eee;
-  border: 1px solid #ccc;
-}
-
-.custom-resizer > .pane ~ .pane {
-}
-
-.custom-resizer > .multipane-resizer {
-  margin: 0; left: 0;
-  position: relative;
-
-  &:before {
-    display: block;
-    content: "";
-    width: 3px;
-    height: 40px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-top: -20px;
-    margin-left: -1.5px;
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
-  }
-
-  &:hover {
-    &:before {
-      border-color: #999;
-    }
-  }
 }
 </style>

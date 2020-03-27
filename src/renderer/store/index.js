@@ -16,6 +16,7 @@ export default new Vuex.Store({
     dashboardNXP: {},
     liveNXPbundleList: [],
     newNXP: false,
+    dashboardGrid: {},
     gridDefault: [
       { 'x': 0, 'y': 0, 'w': 20, 'h': 2, 'i': '0', static: true },
       { 'x': 0, 'y': 0, 'w': 2, 'h': 5, 'i': '1', static: false },
@@ -367,9 +368,13 @@ export default new Vuex.Store({
     },
     setLayoutGridItem: (state, inVerified) => {
       console.log('update gride ITEM')
-      state.gridDefault.push(inVerified)
+      console.log(state.liveNXP)
+      let newGriditem = state.dashboardGrid[state.liveNXP]
+      newGriditem.push(inVerified)
+      // state.dashboardGrid[state.liveNXP].push(inVerified)
+      Vue.set(state.dashboardGrid, state.liveNXP, newGriditem)
       console.log('upodated grid---')
-      console.log(state.gridDefault)
+      console.log(state.dashboardGrid)
     }
   },
   actions: {
@@ -385,6 +390,7 @@ export default new Vuex.Store({
       let inputBundle = this.state.experimentStatus[update]
       console.log(inputBundle)
       let entityReturn = await safeAPI.ECSinput(inputBundle)
+      console.log('entityRETURNED')
       console.log(entityReturn)
       if (entityReturn !== 'failed') {
         // go ahead and get data and display modules and set listeniners for changes in entity
@@ -393,8 +399,11 @@ export default new Vuex.Store({
         let Dholder = {}
         Dholder.cnrl = update
         Dholder.modules = dataFlow
+        let moduleGrid = [
+          { 'x': 0, 'y': 0, 'w': 8, 'h': 5, 'i': '1', static: false }]
+        this.state.dashboardGrid[update] = moduleGrid
         context.commit('setLiveNXPModules', Dholder)
-        // context.commit('setPrepareBundle', peerInput)
+        // context.commit('setPrepareBundle', Dholder)
       }
     },
     actionVisualOptions: (context, update) => {

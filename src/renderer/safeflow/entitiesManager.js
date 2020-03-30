@@ -13,9 +13,6 @@ import KBLedger from './kbl-cnrl/kbledger.js'
 import Entity from './scienceEntities.js'
 const util = require('util')
 const events = require('events')
-const crypto = require('crypto')
-const bs58 = require('bs58')
-const hashObject = require('object-hash')
 
 var EntitiesManager = function (apiCNRL, auth) {
   events.EventEmitter.call(this)
@@ -111,7 +108,7 @@ EntitiesManager.prototype.addHSentity = async function (ecsIN) {
   console.log('ENTITY maker')
   console.log(ecsIN)
   let moduleState = false
-  let shellID = this.entityID(ecsIN)
+  let shellID = this.KBLlive.accessCryptoUtility(ecsIN)
   if (this.liveSEntities[shellID]) {
     console.log('entity' + shellID + 'already exists')
     this.entityExists()
@@ -151,76 +148,22 @@ EntitiesManager.prototype.listEntities = function () {
 }
 
 /**
-*  return data from an entity
-* @method entityDataReturn
-*
-*/
-EntitiesManager.prototype.entityDataReturn = async function (eid) {
-  let GroupDataBundle = {}
-  GroupDataBundle['cnrl-001234543212'] = {'prime': {'cnrl': 'cnrl-112', 'vistype': 'nxp-plain', 'text': 'Question', 'active': true}, 'grid': [{ 'x': 0, 'y': 0, 'w': 8, 'h': 2, 'i': '1', static: false }], 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
-  GroupDataBundle['cnrl-001234543213'] = {'prime': {'cnrl': 'cnrl-113', 'vistype': 'nxp-plain', 'text': 'Results', 'active': true}, 'grid': [{ 'x': 0, 'y': 0, 'w': 8, 'h': 2, 'i': '1', static: false }], 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
-  GroupDataBundle['cnrl-001234543214'] = {'prime': {'cnrl': 'cnrl-114', 'vistype': 'nxp-visualise', 'text': 'Controls', 'active': true}, 'grid': [{ 'x': 0, 'y': 0, 'w': 8, 'h': 8, 'i': '1', static: false }], 'data': {'chartOptions': ['1', '2', '3'], 'chartPackage': [1, 2, 3]}, 'message': 'compute-complete'}
-  GroupDataBundle['cnrl-001234543215'] = {'prime': {'cnrl': 'cnrl-115', 'vistype': 'nxp-plain', 'text': 'Errors', 'active': true}, 'grid': [{ 'x': 0, 'y': 0, 'w': 8, 'h': 2, 'i': '1', static: false }], 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
-  GroupDataBundle['cnrl-001234543216'] = {'prime': {'cnrl': 'cnrl-116', 'vistype': 'nxp-plain', 'text': 'Lifestyle Medicine', 'active': true}, 'grid': [{ 'x': 0, 'y': 0, 'w': 8, 'h': 8, 'i': '1', static: false }], 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
-  GroupDataBundle['cnrl-001234543217'] = {'prime': {'cnrl': 'cnrl-117', 'vistype': 'nxp-plain', 'text': 'Educate', 'active': true}, 'grid': [{ 'x': 0, 'y': 0, 'w': 8, 'h': 2, 'i': '1', static: false }], 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
-  GroupDataBundle['cnrl-001234543218'] = {'prime': {'cnrl': 'cnrl-1118', 'vistype': 'nxp-plain', 'text': 'Evovle', 'active': true}, 'grid': [{ 'x': 0, 'y': 0, 'w': 8, 'h': 2, 'i': '1', static: false }], 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
-  GroupDataBundle['cnrl-001234543219'] = {'prime': {'cnrl': 'cnrl-119', 'vistype': 'nxp-plain', 'text': 'Drugs', 'active': true}, 'grid': [{ 'x': 0, 'y': 0, 'w': 8, 'h': 2, 'i': '1', static: false }], 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
-  return GroupDataBundle
-}
-
-/**
-*  return chart data from an entity
-* @method entityChartReturn
-*
-*/
-EntitiesManager.prototype.entityChartReturn = async function (eid) {
-  return this.liveSEntities[eid].liveVisualC
-}
-
-/**
 *  examines each module and prepares path through
 * @method moduleFlow
 *
 */
 EntitiesManager.prototype.moduleFlow = async function (shellID, mkids) {
-  // let kbidData = {}
+  let kbidData = {}
   // assess type and build components and systems
   let moduleEntry = Object.keys(mkids)
   if (moduleEntry.length > 0) {
     for (let ei of moduleEntry) {
       console.log('moduleEM')
       console.log(ei)
-      // let preparedBundle = this.prepareECSinput(mkids[ei])
-      // kbidData[ei] = await this.controlFlow(shellID, mkids[ei])
+      kbidData[ei] = await this.controlFlow(shellID, mkids[ei])
     }
   }
   return true // kbidData
-}
-
-/**
-* input context from UI
-* @method peerContext
-*
-*/
-EntitiesManager.prototype.prepareECSinput = function (bundleIN) {
-  console.log('prepare input for ECS')
-  console.log(bundleIN)
-  let ecsIN = {}
-  ecsIN.kbid = bundleIN.kbid
-  // ecsIN.cid = cnrl
-  ecsIN.storageAPI = bundleIN.device
-  ecsIN.devices = bundleIN.device
-  ecsIN.visID = 'chart'
-  // convert all the time to millisecons format
-  let timeBundle = {}
-  timeBundle.time = bundleIN.time.startperiod
-  timeBundle.realtime = bundleIN.time.realtime
-  ecsIN.time = timeBundle
-  ecsIN.compute = bundleIN.compute
-  ecsIN.data = bundleIN.data
-  // ecsIN.language = bundleIN.language
-  console.log(ecsIN)
-  return ecsIN
 }
 
 /**
@@ -230,10 +173,10 @@ EntitiesManager.prototype.prepareECSinput = function (bundleIN) {
 *
 */
 EntitiesManager.prototype.controlFlow = async function (shellid, cflowIN) {
-  console.log('EMANAGER0-----beginCONTROL-FLOW')
+  console.log('CONTROLFLOW0-----begin')
   // set the MASTER TIME CLOCK for entity
-  /* this.liveSEntities[shellid].liveTimeC.setMasterClock()
-  this.liveSEntities[shellid].liveDatatypeC.dataTypeMapping()
+  this.liveSEntities[shellid].liveTimeC.setMasterClock()
+  /* this.liveSEntities[shellid].liveDatatypeC.dataTypeMapping()
   this.liveSEntities[shellid].liveTimeC.timeProfiling()
   await this.liveSEntities[shellid].liveDataC.sourceData(this.liveSEntities[shellid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[shellid].liveTimeC)
   this.emit('computation', 'in-progress')
@@ -245,7 +188,8 @@ EntitiesManager.prototype.controlFlow = async function (shellid, cflowIN) {
     await this.liveSEntities[shellid].liveDataC.directSourceUpdated(this.liveSEntities[shellid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[shellid].liveTimeC)
   }
   this.liveSEntities[shellid].liveVisualC.filterVisual(this.liveSEntities[shellid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[shellid].liveDataC.liveData, this.liveSEntities[shellid].liveTimeC) */
-  console.log('visCompenent--FINISHED')
+  console.log('CONTROLFLOW9-----FINISHED')
+  console.log(this.liveSEntities[shellid])
   return true
 }
 
@@ -272,32 +216,32 @@ EntitiesManager.prototype.entityExists = function (shellid, dataIn) {
 }
 
 /**
+*  return data from an entity
+* @method entityDataReturn
+*
+*/
+EntitiesManager.prototype.entityDataReturn = async function (shellID) {
+  let GroupDataBundle = {}
+  let TestDataBundle = {}
+  TestDataBundle['cnrl-001234543212'] = {'prime': {'cnrl': 'cnrl-112', 'vistype': 'nxp-plain', 'text': 'Question', 'active': true}, 'grid': [{ 'x': 0, 'y': 0, 'w': 8, 'h': 2, 'i': '1', static: false }], 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
+  TestDataBundle['cnrl-001234543214'] = {'prime': {'cnrl': 'cnrl-114', 'vistype': 'nxp-visualise', 'text': 'Results', 'active': true}, 'grid': [{ 'x': 0, 'y': 0, 'w': 8, 'h': 20, 'i': '0', static: false }, { 'x': 0, 'y': 0, 'w': 8, 'h': 20, 'i': '1', static: false }], 'data': [{'chartOptions': ['1', '2', '3'], 'chartPackage': [1, 2, 3]}, {'chartOptions': ['4', '5', '6'], 'chartPackage': [4, 5, 6]}], 'message': 'compute-complete'}
+  TestDataBundle['cnrl-001234543213'] = {'prime': {'cnrl': 'cnrl-113', 'vistype': 'nxp-plain', 'text': 'Controls', 'active': true}, 'grid': [{ 'x': 0, 'y': 0, 'w': 8, 'h': 2, 'i': '1', static: false }], 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
+  TestDataBundle['cnrl-001234543215'] = {'prime': {'cnrl': 'cnrl-115', 'vistype': 'nxp-plain', 'text': 'Errors', 'active': true}, 'grid': [{ 'x': 0, 'y': 0, 'w': 8, 'h': 2, 'i': '1', static: false }], 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
+  TestDataBundle['cnrl-001234543216'] = {'prime': {'cnrl': 'cnrl-116', 'vistype': 'nxp-plain', 'text': 'Lifestyle Medicine', 'active': true}, 'grid': [{ 'x': 0, 'y': 0, 'w': 8, 'h': 2, 'i': '1', static: false }], 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
+  TestDataBundle['cnrl-001234543217'] = {'prime': {'cnrl': 'cnrl-117', 'vistype': 'nxp-plain', 'text': 'Educate', 'active': true}, 'grid': [{ 'x': 0, 'y': 0, 'w': 8, 'h': 2, 'i': '1', static: false }], 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
+  TestDataBundle['cnrl-001234543218'] = {'prime': {'cnrl': 'cnrl-1118', 'vistype': 'nxp-plain', 'text': 'Evovle', 'active': true}, 'grid': [{ 'x': 0, 'y': 0, 'w': 8, 'h': 2, 'i': '1', static: false }], 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
+  TestDataBundle['cnrl-001234543219'] = {'prime': {'cnrl': 'cnrl-119', 'vistype': 'nxp-plain', 'text': 'Communicate', 'active': true}, 'grid': [{ 'x': 0, 'y': 0, 'w': 8, 'h': 2, 'i': '1', static: false }], 'data': {'form': ['a', 'b', 'c'], 'content': [1, 2, 3]}, 'message': 'compute-complete'}
+  this.liveSEntities[shellID] = TestDataBundle
+  GroupDataBundle = this.liveSEntities[shellID]
+  return GroupDataBundle
+}
+
+/**
 *  add component
 * @method addComponent
 *
 */
 EntitiesManager.prototype.addComponent = function (entID) {
-}
-
-/**
-*  create a new entity to hold KBIDs
-* @method createKBID
-*
-*/
-EntitiesManager.prototype.entityID = function (addressIN) {
-  // hash Object
-  let kbundleHash = hashObject(addressIN)
-  let tempTokenG = ''
-  let salt = crypto.randomBytes(16).toString('base64')
-  // let hashs = crypto.createHmac('sha256',salt).update(password).digest('base64')
-  let hash = crypto.createHmac('sha256', salt).update(kbundleHash).digest()
-  // const bytes = Buffer.from('003c176e659bea0f29a3e9bf7880c112b1b31b4dc826268187', 'hex')
-  tempTokenG = bs58.encode(hash)
-  // decode
-  // const addressde = address
-  // const bytes = bs58.decode(addressde)
-  // console.log(bytes.toString('base64'))
-  return tempTokenG
 }
 
 /**

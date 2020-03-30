@@ -2,19 +2,15 @@
   <div id="visualise-nxp">
     <header>VISUALISE:</header>kbid {{ moduleCNRL }} vmdata {{ mData }}
     <div id="prime-visualise">
-      <!-- <progress-Message :progressMessage="entityPrepareStatus"></progress-Message> -->
+        <!-- <progress-Message :progressMessage="entityPrepareStatus"></progress-Message> -->
       <component v-bind:is="moduleVisType"></component>
-      <!-- <chart-context></chart-context>
-      <table-Build :tableData="tablecollection"></table-Build>
-      <simulation-View :simData="datacollection"></simulation-View> -->
-      </div>
     </div>
   </div>
 </template>
 
 <script>
   import progressMessage from '@/components/toolbar/inProgress'
-  import chartContext from '@/components/visualise/chartBuilder'
+  import chartBuilder from '@/components/visualise/chartBuilder'
   import tableBuild from '@/components/visualise/table/tableBuilder'
   import simulationView from '@/components/visualise/simulation/simulation-life'
 
@@ -22,7 +18,7 @@
     name: 'nxp-question',
     components: {
       progressMessage,
-      chartContext,
+      chartBuilder,
       tableBuild,
       simulationView
     },
@@ -32,10 +28,7 @@
     },
     computed: {
       moduleVisType: function () {
-        let modvisType = this.$store.state.experimentStatus
-        console.log('mod vis type')
-        console.log(modvisType)
-        return 'chart-context' // modvisType[this.dashCNRL].vistype
+        return 'chart-builder' // modvisType[this.dashCNRL].vistype
       }
     },
     data: () => ({

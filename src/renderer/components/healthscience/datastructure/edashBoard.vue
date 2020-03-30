@@ -1,7 +1,6 @@
 <template>
   <div id="dashboard-holder" v-if="moduleContent">
-    <div id="dash-modules"> modCNRL -- {{ moduleCNRL }}
-      content per module {{ moduleContent }}
+    <div id="dash-modules">
       <module-board @close="closeModule">
         <template v-slot:header>
         <!-- The code below goes into the header slot -->
@@ -9,7 +8,6 @@
         </template>
         <template v-slot:body>
         <!-- The code below goes into the header slot -->
-          <header>CONTENT</header>
           <div id="module-toolbar">
             <header>TOOLBAR---</header>
             <!-- <button @click='decreaseWidth'>Decrease Width</button>
@@ -35,9 +33,8 @@
                          :h='item.h'
                          :i='item.i'
                       >
-                  <span class='text'>kbid holder box{{itemTitle(item)}}</span>
-                  module type --- {{ moduleType }} ii {{ moduleContent.prime.vistype }} md -- {{ moduleContent.data }}
-                  <component v-bind:is="moduleContent.prime.vistype" :moduleCNRL="moduleContent.prime.cnrl" :mData="moduleContent.data"></component>
+                  <span class='text'>box{{itemTitle(item)}}</span>
+                  <component v-bind:is="moduleContent.prime.vistype" :moduleCNRL="moduleContent.prime.cnrl" :mData="moduleContent.data[item.i]"></component>
                   <!-- <nxp-visualise :moduleCNRL="mod"></nxp-visualise> -->
                   {{ item.i }} --
               </grid-item>
@@ -82,8 +79,6 @@
       },
       moduleContent: function () {
         let contentModule = this.$store.state.NXPexperimentStatus[this.shellCNRL]
-        console.log('start module content ------')
-        console.log(contentModule)
         if (contentModule === undefined) {
           return false
         } else {

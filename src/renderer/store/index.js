@@ -16,13 +16,6 @@ export default new Vuex.Store({
     dashboardNXP: {},
     liveNXPbundleList: [],
     newNXP: false,
-    dashboardGrid: {},
-    gridDefault: [
-      { 'x': 0, 'y': 0, 'w': 20, 'h': 2, 'i': '0', static: true },
-      { 'x': 0, 'y': 0, 'w': 2, 'h': 5, 'i': '1', static: false },
-      { 'x': 4, 'y': 0, 'w': 2, 'h': 5, 'i': '2', static: false },
-      { 'x': 6, 'y': 0, 'w': 2, 'h': 5, 'i': '3', static: false }
-    ],
     compute: {},
     tools: {},
     visualisation: ['vis-sc-2'],
@@ -362,19 +355,9 @@ export default new Vuex.Store({
     },
     setLayoutGrid: (state, inVerified) => {
       console.log('update gride')
-      state.gridDefault = inVerified
-      console.log('upodated grid---')
-      console.log(state.gridDefault)
     },
     setLayoutGridItem: (state, inVerified) => {
       console.log('update gride ITEM')
-      console.log(state.liveNXP)
-      let newGriditem = state.dashboardGrid[state.liveNXP]
-      newGriditem.push(inVerified)
-      // state.dashboardGrid[state.liveNXP].push(inVerified)
-      Vue.set(state.dashboardGrid, state.liveNXP, newGriditem)
-      console.log('upodated grid---')
-      console.log(state.dashboardGrid)
     }
   },
   actions: {
@@ -384,14 +367,8 @@ export default new Vuex.Store({
       context.commit('setExperimentList', NXPstart)
     },
     async actionDashboardState (context, update) {
-      console.log('active NXP')
-      console.log(update)
-      context.commit('setLiveNXP', update)
       let inputBundle = this.state.experimentStatus[update]
-      console.log(inputBundle)
       let entityReturn = await safeAPI.ECSinput(inputBundle)
-      console.log('entityRETURNED')
-      console.log(entityReturn)
       if (entityReturn !== 'failed') {
         // go ahead and get data and display modules and set listeniners for changes in entity
         context.commit('setDashboardNXP', update)
@@ -399,8 +376,6 @@ export default new Vuex.Store({
         let Dholder = {}
         Dholder.cnrl = update
         Dholder.modules = dataFlow
-        // Dholder.moduleGrid = [{ 'x': 0, 'y': 0, 'w': 8, 'h': 5, 'i': '1', static: false }]
-        this.state.dashboardGrid[update] = Dholder.moduleGrid
         context.commit('setLiveNXPModules', Dholder)
       }
     },

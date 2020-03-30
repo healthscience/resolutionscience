@@ -11,14 +11,14 @@
 */
 import CNRLmaster from './cnrlMaster.js'
 import KBLstorage from './kblStorage.js'
-// import DatadeviceSystem from '../systems/data/datadeviceSystem.js'
-// import DTsystem from '../systems/data/dtSystem.js'
-// import DataSystem from '../systems/data/dataSystem.js'
+import CryptoUtility from './cryptoUtility.js'
+
 const util = require('util')
 const events = require('events')
 
 var KBLedger = function (apiCNRL, setIN) {
   events.EventEmitter.call(this)
+  this.liveCrypto = new CryptoUtility()
   this.liveKBLStorage = new KBLstorage(setIN)
   this.liveCNRL = new CNRLmaster(setIN, this.liveKBLStorage)
   this.liveAPI = apiCNRL
@@ -327,6 +327,17 @@ KBLedger.prototype.cnrlDeviceDTs = function (cid) {
   let convertedDTs = this.liveDTsystem.convertAPIdatatypeToCNRL(cnrlContract)
   cnrlContract.datatypes = convertedDTs
   return cnrlContract
+}
+
+/**
+* access to KBL cryto utility
+* @method accessCryptoUtility
+*
+*/
+KBLedger.prototype.accessCryptoUtility = function (input) {
+  let hashEntry = ''
+  hashEntry = this.liveCrypto.entityID(input)
+  return hashEntry
 }
 
 export default KBLedger

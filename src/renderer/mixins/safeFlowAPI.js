@@ -51,7 +51,6 @@ safeFlowAPI.prototype.connectNSnetwork = async function (authNetwork, authBundle
 *
 */
 safeFlowAPI.prototype.startCycle = async function (authIN) {
-  console.log('start cycle')
   let entityData = {}
   // AUTHORISATION KLB entry or non for network KBLedger
   let defaultAPI = '33221100'
@@ -104,7 +103,7 @@ safeFlowAPI.prototype.moduleKBID = async function (cnrl) {
 safeFlowAPI.prototype.displayFilter = async function (shellID) {
   // setup return vis Object
   let entityData = await this.SAPI.entityGetter(shellID)
-  console.log('display filder data raw')
+  console.log('display filter data prepared')
   console.log(entityData)
   return entityData
 }

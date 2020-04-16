@@ -10,14 +10,14 @@
 * @version    $Id$
 */
 
-import CNRLmaster from '../../kbl-cnrl/cnrlMaster.js'
+// import CNRLmaster from '../../kbl-cnrl/cnrlMaster.js'
 import TestStorageAPI from './dataprotocols/teststorage/testStorage.js'
 const util = require('util')
 const events = require('events')
 
 var DTSystem = function (setIN) {
   events.EventEmitter.call(this)
-  this.liveCNRL = new CNRLmaster(setIN)
+  // this.liveCNRL = new CNRLmaster(setIN)
   this.liveTestStorage = new TestStorageAPI(setIN)
 }
 
@@ -36,7 +36,7 @@ DTSystem.prototype.DTStartMatch = function (devicesIN, lDTs, catDTs) {
   let datatypePerdevice = {}
   // loop over devices and match to API etc
   for (let dliv of devicesIN) {
-    let packagingDTs = this.liveCNRL.lookupContract(dliv.cnrl)
+    let packagingDTs = null // this.liveCNRL.lookupContract(dliv.cnrl)
     // is the data type primary?
     let sourceDTextract = this.mapSourceDTs(lDTs)
     let sourceDTmapAPI = this.datatypeCheckAPI(packagingDTs, sourceDTextract)
@@ -45,7 +45,7 @@ DTSystem.prototype.DTStartMatch = function (devicesIN, lDTs, catDTs) {
     // is this a derived source?
     if (packagingDTs.source !== 'cnrl-primary') {
       // look up source data packaging
-      SpackagingDTs = this.liveCNRL.lookupContract(packagingDTs.source)
+      SpackagingDTs = null // this.liveCNRL.lookupContract(packagingDTs.source)
       // tidy data info available?
       if (packagingDTs.tidy === true) {
         // investiage the source contract
@@ -100,7 +100,7 @@ DTSystem.prototype.mapCategoryDataTypes = function (catDTs, packagingDTs, lDTs, 
     // todo extract data type ie loop over category matches, same or all different?
     // lookup the dataType
     let catDT = []
-    extractCatDT = this.liveCNRL.lookupContract(checkDTcategory[0].column)
+    extractCatDT = null // this.liveCNRL.lookupContract(checkDTcategory[0].column)
     catDT.push(extractCatDT.prime)
     // catDTmapAPI = this.datatypeCheckAPI(packagingDTs, catDT)
   } else {
@@ -173,12 +173,12 @@ DTSystem.prototype.mapSourceDTs = function (lDTs) {
   let sourceDTextract = []
   for (let iDT of lDTs) {
     // look up datatype contract to see if derived?
-    let dtSourceContract = this.liveCNRL.lookupContract(iDT.cnrl)
+    let dtSourceContract = {'dtsource': {}} // this.liveCNRL.lookupContract(iDT.cnrl)
     if (dtSourceContract.source === 'cnrl-derived') {
       // loop over source DT's
       for (let sDT of dtSourceContract.dtsource) {
         // look up datatype contract
-        let dtprime = this.liveCNRL.lookupContract(sDT)
+        let dtprime = sDT // this.liveCNRL.lookupContract(sDT)
         dtprime.prime['primary'] = 'derived'
         sourceDTextract.push(dtprime.prime)
       }
@@ -242,24 +242,24 @@ DTSystem.prototype.DTtableStructure = function (dAPI) {
   let apiDTs = []
   // given datastore and CNRL science contract map the source API queries to datatypes or source Types
   let indivDT = {}
-  let APIcnrl = this.liveCNRL.lookupContract(dAPI)
+  let APIcnrl = dAPI // this.liveCNRL.lookupContract(dAPI)
   // loop over table structure and extract out the dataTypes
   for (let dtt of APIcnrl.tableStructure[0]) {
     // lookup source DT contracts and build
     if (dtt.cnrl !== 'datasub') {
-      indivDT = this.liveCNRL.lookupContract(dtt.cnrl)
+      indivDT = dtt.cnrl // this.liveCNRL.lookupContract(dtt.cnrl)
       apiDTs.push(indivDT.prime)
     } else {
       // drill down a table level to access datatypes
       for (let stt of dtt.data) {
-        indivDT = this.liveCNRL.lookupContract(stt.cnrl)
+        indivDT = stt.cnrl // this.liveCNRL.lookupContract(stt.cnrl)
         apiDTs.push(indivDT.prime)
       }
     }
   }
   // does a sub or source structure contract exist?
   if (APIcnrl.source) {
-    subSourceAPI = this.liveCNRL.lookupContract(APIcnrl.source)
+    subSourceAPI = APIcnrl.source // this.liveCNRL.lookupContract(APIcnrl.source)
   }
   dtHolder.datatypes = apiDTs
   dtHolder.sourcedts = subSourceAPI
@@ -275,14 +275,14 @@ DTSystem.prototype.DTscienceStructure = function (cnrl) {
   let sciDTholder = {}
   let sciSourceDTs = []
   let sciCategoryDTs = []
-  let scienceCNRL = this.liveCNRL.lookupContract(cnrl)
+  let scienceCNRL = cnrl // this.liveCNRL.lookupContract(cnrl)
   // look up datatypes and check to see if they are derive from other datatypes?
   for (let iDT of scienceCNRL.datatypes) {
-    let indivDT = this.liveCNRL.lookupContract(iDT.cnrl)
+    let indivDT = iDT.cnrl // this.liveCNRL.lookupContract(iDT.cnrl)
     sciSourceDTs.push(indivDT.prime)
   }
   for (let icDT of scienceCNRL.categories) {
-    let indivcDT = this.liveCNRL.lookupContract(icDT.cnrl)
+    let indivcDT = icDT.cnrl // this.liveCNRL.lookupContract(icDT.cnrl)
     sciCategoryDTs.push(indivcDT.prime)
   }
   sciDTholder.contract = scienceCNRL
@@ -299,7 +299,7 @@ DTSystem.prototype.DTscienceStructure = function (cnrl) {
 DTSystem.prototype.convertAPIdatatypeToCNRL = function (dtapiList) {
   let convertDTcnrl = []
   for (let dta of dtapiList.datatypes) {
-    let conDT = this.liveCNRL.lookupContract(dta.cnrl)
+    let conDT = dta.cnrl // this.liveCNRL.lookupContract(dta.cnrl)
     let convertDT = this.matchConvert(conDT)
     convertDTcnrl.push(convertDT)
   }

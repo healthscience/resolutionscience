@@ -13,9 +13,8 @@ import ComputeSystem from '../systems/compute/computeSystem.js'
 const util = require('util')
 const events = require('events')
 
-var ComputeComponent = function (EID, setIN) {
+var ComputeComponent = function (setIN) {
   events.EventEmitter.call(this)
-  this.EIDinfo = EID
   this.computeCNRLlist = []
   this.liveComputeSystem = new ComputeSystem(setIN)
   this.computeStatus = false

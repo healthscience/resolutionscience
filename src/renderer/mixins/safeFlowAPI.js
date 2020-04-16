@@ -47,6 +47,17 @@ safeFlowAPI.prototype.connectNSnetwork = async function (authNetwork, authBundle
 
 /**
 *
+* @method deviceGetter
+*
+*/
+safeFlowAPI.prototype.deviceGetter = async function (NXPlist) {
+  console.log('lookup devices per nxpContract')
+  let devicesNXP = await this.SAPI.liveEManager.deviceFlow(NXPlist)
+  return devicesNXP
+}
+
+/**
+*
 * @method
 *
 */

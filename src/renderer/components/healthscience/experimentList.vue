@@ -61,6 +61,11 @@
     components: {
       edashboard
     },
+    computed: {
+      PeerexperimentData: function () {
+        return this.$store.state.experimentList
+      }
+    },
     data () {
       return {
         eboxSelect: [],
@@ -71,11 +76,6 @@
       }
     },
     created () {
-    },
-    computed: {
-      PeerexperimentData: function () {
-        return this.$store.state.experimentList
-      }
     },
     mounted () {
     },

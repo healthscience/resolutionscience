@@ -9,17 +9,17 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import TimeUtilities from '../systems/timeUtility.js'
-import TimeSystem from '../systems/data/timeSystem.js'
+import TimeUtilities from '../systems/time/timeUtility.js'
+import TimeSystem from '../systems/time/timeSystem.js'
 const util = require('util')
 const events = require('events')
 const moment = require('moment')
 
-var TimeComponent = function (DID, setIN) {
-  this.did = DID
+var TimeComponent = function (setIN) {
   this.liveTimeUtil = new TimeUtilities()
   this.liveTimeSystem = new TimeSystem(setIN)
-  this.livedate = this.did.time
+  this.time = {} // holds all time info. per cnrl module???
+  this.livedate = 0
   this.liveTime = {}
   this.timerange = []
   this.lastactiveStartTime = 0
@@ -38,8 +38,8 @@ util.inherits(TimeComponent, events.EventEmitter)
 *
 */
 
-TimeComponent.prototype.setMasterClock = function () {
-  this.livedate = this.liveTimeUtil.timeConversionUtility(this.livedate)
+TimeComponent.prototype.setMasterClock = function (startTime) {
+  this.livedate = startTime
   return true
 }
 

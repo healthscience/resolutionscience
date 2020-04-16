@@ -1,20 +1,13 @@
-import Vue from 'vue'
+// import Vue from 'vue'
 
 export default {
   state: {
     safeFlow: {},
-    system: {'publickey': '', 'token': ''},
-    context: {}
+    system: {'publickey': '', 'token': ''}
   },
   getters: {
-    liveSafeFlow: state => state.safeFlow,
-    liveSystem: state => state.system,
-    liveContext: state => state.context
   },
   mutations: {
-    setSafeflow: (state, inVerified) => {
-      state.safeFlow = inVerified
-    },
     setBoth: (state, inVerified) => {
       state.system = inVerified
     },
@@ -24,18 +17,11 @@ export default {
     setToken: (state, inVerified) => {
       state.system.token = inVerified
     },
-    setDevice: (state, inVerified) => {
-      state.context.device = Vue.set(state, 'device', inVerified)
-    },
     setDatatype: (state, inVerified) => {
       state.context.datatypes = inVerified
     }
   },
   actions: {
-    actionDeviceDataAPI: (context, update) => {
-    // filter a list of Kentity bundles given the Experiment CNRL
-      context.commit('setDevice', update)
-    },
     actionSetDataTypes: (context, update) => {
     // filter a list of Kentity bundles given the Experiment CNRL
       context.commit('setDatatype', update)

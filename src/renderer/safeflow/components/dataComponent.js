@@ -17,13 +17,12 @@ const util = require('util')
 const events = require('events')
 const moment = require('moment')
 
-var DataComponent = function (DID, setIN) {
+var DataComponent = function (setIN) {
   events.EventEmitter.call(this)
   this.liveTidyData = new TidyDataSystem(setIN)
   this.liveFilterData = new FilterDataSystem(setIN)
   this.liveCategoryData = new CategoryDataSystem(setIN)
   this.liveDataSystem = new DataSystem(setIN)
-  this.did = DID
   this.liveData = []
   this.livedate = 0
   this.deviceList = []

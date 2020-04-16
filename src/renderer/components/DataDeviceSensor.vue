@@ -157,10 +157,9 @@
 
 <script>
   import fs from 'fs'
-  import liveMixinSAFEflow from '@/mixins/safeFlowAPI'
   import TokenReader from './LandingPage/token-reader.vue'
   import FirstToken from './LandingPage/token-first.vue'
-  import deviceList from './healthscience/datastructure/deviceData.vue'
+  import deviceList from './healthscience/devices/deviceData.vue'
 
   export default {
     name: 'data-page',
@@ -169,7 +168,6 @@
       FirstToken,
       deviceList
     },
-    mixins: [liveMixinSAFEflow],
     computed: {
     },
     data: () => ({

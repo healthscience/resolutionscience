@@ -13,9 +13,8 @@ import DTsystem from '../systems/data/dtSystem.js'
 const util = require('util')
 const events = require('events')
 
-var DatatypeComponent = function (DID, setIN) {
+var DatatypeComponent = function (setIN) {
   events.EventEmitter.call(this)
-  this.did = DID
   this.liveDTsystem = new DTsystem(setIN)
   this.datatypeInfoLive = []
 }
@@ -31,9 +30,9 @@ util.inherits(DatatypeComponent, events.EventEmitter)
 * @method dataType
 *
 */
-DatatypeComponent.prototype.dataTypeMapping = function () {
+DatatypeComponent.prototype.dataTypeMapping = function (dtBundle) {
   // query CNRL for hash and parse out datatype and packaging info.
-  let dataTypeMapped = this.liveDTsystem.DTStartMatch(this.did.devices, this.did.datatypes, this.did.categories)
+  let dataTypeMapped = this.liveDTsystem.DTStartMatch(dtBundle.devices, dtBundle.datatypes, dtBundle.categories)
   this.datatypeInfoLive = dataTypeMapped
   return true
 }

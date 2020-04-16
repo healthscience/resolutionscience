@@ -10,6 +10,7 @@
 * @version    $Id$
 */
 import KBLedger from './kbl-cnrl/kbledger.js'
+import CryptoUtility from './kbl-cnrl/cryptoUtility.js'
 import Entity from './scienceEntities.js'
 const util = require('util')
 const events = require('events')
@@ -18,6 +19,7 @@ var EntitiesManager = function (apiCNRL, auth) {
   events.EventEmitter.call(this)
   this.auth = auth
   this.KBLlive = new KBLedger(apiCNRL, auth)
+  this.liveCrypto = new CryptoUtility()
   this.liveSEntities = {}
 }
 
@@ -36,8 +38,28 @@ EntitiesManager.prototype.peerKBLstart = async function () {
   // read peer kbledger
   // let entityModule = {}
   let nxpList = await this.KBLlive.startKBL()
-  // should return light data to UI or go ahead and prepare entity for this NXP?
+  // should return light data to UI or go ahead and prepare entity for this NXP
+  // extract device per NXP so
   return nxpList
+}
+
+/**
+* extract devices info
+* @method deviceFlow
+*
+*/
+EntitiesManager.prototype.deviceFlow = async function (nxpList) {
+  // what type of input  CNRL NXP  Module or KBID entry???
+  console.log('device flow')
+  console.log(nxpList)
+  let deviceList = []
+  for (let dev of nxpList) {
+    let device = await this.deviceExtract(dev)
+    deviceList.push(device)
+  }
+  console.log('devices returned')
+  console.log(deviceList)
+  return deviceList
 }
 
 /**
@@ -108,24 +130,22 @@ EntitiesManager.prototype.addHSentity = async function (ecsIN) {
   console.log('ENTITY maker')
   console.log(ecsIN)
   let moduleState = false
-  let shellID = this.KBLlive.accessCryptoUtility(ecsIN)
+  let shellID = this.liveCrypto.entityID(ecsIN)
   if (this.liveSEntities[shellID]) {
     console.log('entity' + shellID + 'already exists')
     this.entityExists()
   } else {
     console.log('entity' + shellID + 'is new')
-    // start workflow for setting up entity
-    this.liveSEntities[shellID] = new Entity(ecsIN, this.auth)
-    // default input set on setting up of component
+    // setup entity to hold components per module
     // extract types of modules from keys
     // feed into ECS entity maker
     let modules = Object.keys(ecsIN)
-    for (let kl of modules) {
+    for (let mc of modules) {
       // temp if null content for module give it some
-      if (kl.length === 0) {
+      if (mc.length === 0) {
         moduleState = {'data': 'module content'}
       } else {
-        moduleState = await this.moduleFlow(shellID, ecsIN[kl])
+        moduleState = await this.KBflow(shellID, mc, ecsIN[mc])
       }
     }
   }
@@ -135,16 +155,9 @@ EntitiesManager.prototype.addHSentity = async function (ecsIN) {
   } else {
     entityStatus = 'failed'
   }
+  console.log('setup entity and components per module')
+  console.log(this.liveSEntities)
   return entityStatus
-}
-
-/**
-*  list all live Enties index CIDs
-* @method listEntities
-*
-*/
-EntitiesManager.prototype.listEntities = function () {
-  return this.liveSEntities
 }
 
 /**
@@ -152,15 +165,19 @@ EntitiesManager.prototype.listEntities = function () {
 * @method moduleFlow
 *
 */
-EntitiesManager.prototype.moduleFlow = async function (shellID, mkids) {
+EntitiesManager.prototype.KBflow = async function (shellID, mc, mkids) {
   let kbidData = {}
   // assess type and build components and systems
   let moduleEntry = Object.keys(mkids)
   if (moduleEntry.length > 0) {
-    for (let ei of moduleEntry) {
-      console.log('moduleEM')
-      console.log(ei)
-      kbidData[ei] = await this.controlFlow(shellID, mkids[ei])
+    for (let ki of moduleEntry) {
+      // start workflow for setting up entity to hold components per module
+      let kbComponent = new Entity(this.auth)
+      kbComponent[ki] = kbComponent
+      let modComponents = {}
+      modComponents[mc] = kbComponent
+      this.liveSEntities[shellID] = modComponents
+      kbidData[ki] = await this.controlFlow(shellID, mc, ki, mkids[ki])
     }
   }
   return true // kbidData
@@ -172,22 +189,23 @@ EntitiesManager.prototype.moduleFlow = async function (shellID, mkids) {
 * @method controlFlow
 *
 */
-EntitiesManager.prototype.controlFlow = async function (shellid, cflowIN) {
+EntitiesManager.prototype.controlFlow = async function (shellid, mid, kid, kbEntryIN) {
   console.log('CONTROLFLOW0-----begin')
+  console.log(kbEntryIN)
   // set the MASTER TIME CLOCK for entity
-  this.liveSEntities[shellid].liveTimeC.setMasterClock()
-  /* this.liveSEntities[shellid].liveDatatypeC.dataTypeMapping()
-  this.liveSEntities[shellid].liveTimeC.timeProfiling()
-  await this.liveSEntities[shellid].liveDataC.sourceData(this.liveSEntities[shellid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[shellid].liveTimeC)
+  this.liveSEntities[shellid][mid][kid].liveTimeC.setMasterClock(kbEntryIN.time.startperiod)
+  this.liveSEntities[shellid][mid][kid].liveDatatypeC.dataTypeMapping()
+  /* this.liveSEntities[shellid][mid][kid].liveTimeC.timeProfiling()
+  await this.liveSEntities[shellid][mid][kid].liveDataC.sourceData(this.liveSEntities[shellid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[shellid].liveTimeC)
   this.emit('computation', 'in-progress')
-  await this.liveSEntities[shellid].liveTimeC.startTimeSystem(this.liveSEntities[shellid].liveDatatypeC, this.liveSEntities[shellid].liveDataC.liveData)
-  this.computeStatus = await this.liveSEntities[shellid].liveComputeC.filterCompute(this.liveSEntities[shellid].liveTimeC, this.liveSEntities[shellid].liveDatatypeC.datatypeInfoLive)
+  await this.liveSEntities[shellid][mid][kid].liveTimeC.startTimeSystem(this.liveSEntities[shellid].liveDatatypeC, this.liveSEntities[shellid][mid][kid].liveDataC.liveData)
+  this.computeStatus = await this.liveSEntities[shellid][mid][kid].liveComputeC.filterCompute(this.liveSEntities[shellid].liveTimeC, this.liveSEntities[shellid][mid][kid].liveDatatypeC.datatypeInfoLive)
   this.emit('computation', 'finished')
   if (this.computeStatus === true) {
   // go direct and get raw data direct
-    await this.liveSEntities[shellid].liveDataC.directSourceUpdated(this.liveSEntities[shellid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[shellid].liveTimeC)
+    await this.liveSEntities[shellid][mid][kid].liveDataC.directSourceUpdated(this.liveSEntities[shellid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[shellid].liveTimeC)
   }
-  this.liveSEntities[shellid].liveVisualC.filterVisual(this.liveSEntities[shellid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[shellid].liveDataC.liveData, this.liveSEntities[shellid].liveTimeC) */
+  this.liveSEntities[shellid][mid][kid].liveVisualC.filterVisual(this.liveSEntities[shellid].liveDatatypeC.datatypeInfoLive, this.liveSEntities[shellid].liveDataC.liveData, this.liveSEntities[shellid][mid][kid].liveTimeC) */
   console.log('CONTROLFLOW9-----FINISHED')
   console.log(this.liveSEntities[shellid])
   return true
@@ -237,6 +255,15 @@ EntitiesManager.prototype.entityDataReturn = async function (shellID) {
 }
 
 /**
+*  list all live Enties index CIDs
+* @method listEntities
+*
+*/
+EntitiesManager.prototype.listEntities = function () {
+  return this.liveSEntities
+}
+
+/**
 *  add component
 * @method addComponent
 *
@@ -269,6 +296,25 @@ EntitiesManager.prototype.checkForVisualData = function (cid, timePeriod, visSty
   } else {
     return false
   }
+}
+
+/**
+* build context for Toolkit
+* @method deviceExtract
+*
+*/
+EntitiesManager.prototype.deviceExtract = async function (flag, device) {
+  // first time start of device, datatype context for toolkitContext
+  let apiData = {}
+  if (flag === 'device') {
+    apiData = await this.livedeviceSystem.storedDevices(device)
+    // merg arrays
+    // let flatd = [].concat(...devicesList)
+    // apiData = flatd // await this.livedeviceSystem.systemDevice(dapi
+  } else if (flag === 'dataType') {
+    apiData[device.device_mac] = this.cnrlDeviceDTs(device.cnrl)
+  }
+  return apiData
 }
 
 /**

@@ -9,7 +9,6 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import TimeUtilities from '../../../../systems/timeUtility.js'
 const util = require('util')
 const events = require('events')
 const axios = require('axios')
@@ -20,7 +19,6 @@ const moment = require('moment')
 
 var TestStorageAPI = function (setUP) {
   events.EventEmitter.call(this)
-  this.liveTimeUtil = new TimeUtilities()
   this.baseAPI = setUP.namespace
   this.tempPubkey = setUP.publickey
   this.tempToken = setUP.token

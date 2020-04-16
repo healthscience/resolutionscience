@@ -10,6 +10,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     authorised: false,
+    devices: [],
     liveNXP: '',
     liveNXPcontract: {},
     liveNXPbundle: {},
@@ -91,6 +92,9 @@ export default new Vuex.Store({
         let objectPropC = exl.prime.cnrl
         Vue.set(state.NXPexperimentStatus, objectPropC, experBundle)
       }
+    },
+    setDevice: (state, inVerified) => {
+      state.devices = inVerified
     },
     setLiveNXP: (state, inVerified) => {
       state.liveNXP = inVerified
@@ -365,6 +369,9 @@ export default new Vuex.Store({
       let NXPstart = await safeAPI.connectNSnetwork(update.network, update.settings)
       context.commit('setAuthorisation', true)
       context.commit('setExperimentList', NXPstart)
+      // ask for devices (api source etc) for NXP list
+      let deviceList = await safeAPI.deviceGetter(NXPstart)
+      context.commit('setDevice', deviceList)
     },
     async actionDashboardState (context, update) {
       let inputBundle = this.state.experimentStatus[update]
@@ -500,13 +507,9 @@ export default new Vuex.Store({
       context.commit('setDTcnrl', update)
     },
     actionGrideupdate: (context, update) => {
-      console.log('add new box')
-      console.log(update)
       context.commit('setLayoutGrid', update)
     },
     actionGrideupdateItem: (context, update) => {
-      console.log('add itemgrid')
-      console.log(update)
       context.commit('setLayoutGridItem', update)
     }
   },
